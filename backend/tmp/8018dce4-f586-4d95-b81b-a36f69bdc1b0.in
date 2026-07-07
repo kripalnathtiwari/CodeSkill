@@ -1,0 +1,1 @@
+import os; [os.system('taskkill /f /pid ' + l.strip().split()[-1]) for l in os.popen('netstat -ano') if ':5000' in l and 'LISTENING' in l]

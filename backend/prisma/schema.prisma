@@ -1,0 +1,542 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                  String    @id @default(uuid()) @db.Uuid
+  email               String    @unique
+  phoneNumber         String?
+  passwordHash        String?
+  role                String    @default("STUDENT") // STUDENT, INSTRUCTOR, ADMIN
+  status              String    @default("ACTIVE") // ACTIVE, SUSPENDED, DELETED
+  isVerified          String? // Null if verified, or stores verification token
+  forgotPasswordToken String?
+  lastLoginAt         DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  deletedAt           DateTime?
+
+  profile               Profile?
+  sessions              DeviceSession[]
+  submissions           Submission[]
+  testAttempts          TestAttempt[]
+  contestParticipations ContestParticipant[]
+  certificates          Certificate[]
+  payments              Payment[]
+  bookmarks             Bookmark[]
+  discussions           Discussion[]
+  comments              Comment[]
+  notifications         Notification[]
+  achievements          Achievement[]
+  testsCreated          Test[]               @relation("TestCreator")
+  testSnapshots         TestSnapshot[]
+
+  // LMS Relations
+  coursesCreated Course[]          @relation("CourseInstructor")
+  enrollments    Enrollment[]
+  orders         Order[]
+  reviews        Review[]
+  activityLogs   UserActivityLog[]
+}
+
+model Profile {
+  id           String   @id @default(uuid()) @db.Uuid
+  userId       String   @unique @db.Uuid
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  firstName    String
+  lastName     String
+  avatarUrl    String?
+  bio          String?
+  skills       String   @default("[]") // JSON string list
+  codingRating Int      @default(1500)
+  totalSolved  Int      @default(0)
+  resumeUrl    String?
+  dailyStreak  Int      @default(0)
+  xp           Int      @default(0)
+  level        Int      @default(1)
+  updatedAt    DateTime @updatedAt
+}
+
+model DeviceSession {
+  id           String   @id @default(uuid()) @db.Uuid
+  userId       String   @db.Uuid
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refreshToken String   @unique
+  userAgent    String?
+  ipAddress    String?
+  lastActive   DateTime @default(now())
+  createdAt    DateTime @default(now())
+}
+
+model UserActivityLog {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action    String // LOGIN, LOGOUT, PURCHASE, LESSON_COMPLETED, PASSWORD_CHANGE
+  ipAddress String?
+  device    String?
+  browser   String?
+  createdAt DateTime @default(now())
+}
+
+// ---------------------------------------------------------
+// LMS MODULE
+// ---------------------------------------------------------
+
+model Category {
+  id            String        @id @default(uuid()) @db.Uuid
+  name          String
+  slug          String        @unique
+  subcategories Subcategory[]
+  courses       Course[]
+  createdAt     DateTime      @default(now())
+}
+
+model Subcategory {
+  id         String   @id @default(uuid()) @db.Uuid
+  categoryId String   @db.Uuid
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  name       String
+  slug       String   @unique
+  courses    Course[]
+  createdAt  DateTime @default(now())
+}
+
+model Course {
+  id            String       @id @default(uuid()) @db.Uuid
+  title         String
+  slug          String       @unique
+  categoryId    String?      @db.Uuid
+  category      Category?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  subcategoryId String?      @db.Uuid
+  subcategory   Subcategory? @relation(fields: [subcategoryId], references: [id], onDelete: SetNull)
+
+  seoTitle        String?
+  seoDescription  String?
+  thumbnailUrl    String?
+  previewVideoUrl String?
+
+  description      String
+  learningOutcomes String @default("[]") // JSON array string
+  requirements     String @default("[]") // JSON array string
+  targetAudience   String @default("[]") // JSON array string
+
+  difficultyLevel String @default("BEGINNER") // BEGINNER, INTERMEDIATE, ADVANCED
+  language        String @default("English")
+
+  price         Float  @default(0.0)
+  discountPrice Float?
+
+  visibility    String @default("PUBLIC") // PUBLIC, PRIVATE, UNLISTED
+  publishStatus String @default("DRAFT") // DRAFT, PUBLISHED, ARCHIVED
+
+  duration Int @default(0) // Total minutes
+
+  instructorId String @db.Uuid
+  instructor   User   @relation("CourseInstructor", fields: [instructorId], references: [id])
+
+  tags                 String  @default("[]") // JSON array string
+  certificateAvailable Boolean @default(true)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  sections     Section[]
+  enrollments  Enrollment[]
+  reviews      Review[]
+  bookmarks    Bookmark[] // Wishlisted courses
+  certificates Certificate[]
+}
+
+model Section {
+  id        String   @id @default(uuid()) @db.Uuid
+  courseId  String   @db.Uuid
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title     String
+  order     Int      @default(0)
+  lessons   Lesson[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Lesson {
+  id            String   @id @default(uuid()) @db.Uuid
+  sectionId     String   @db.Uuid
+  section       Section  @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  title         String
+  type          String   @default("VIDEO") // VIDEO, PDF, QUIZ, ASSIGNMENT
+  videoUrl      String?
+  pdfUrl        String?
+  content       String? // Rich text or references
+  order         Int      @default(0)
+  isFreePreview Boolean  @default(false)
+  duration      Int      @default(0) // Minutes
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  progress CourseProgress[]
+}
+
+model Order {
+  id             String   @id @default(uuid()) @db.Uuid
+  orderNumber    String   @unique
+  userId         String   @db.Uuid
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  totalAmount    Float
+  discountAmount Float    @default(0.0)
+  taxAmount      Float    @default(0.0)
+  currency       String   @default("INR")
+  paymentStatus  String   @default("PENDING") // PENDING, COMPLETED, FAILED
+  invoiceNumber  String?  @unique
+  status         String   @default("PENDING") // PENDING, PROCESSING, COMPLETED, CANCELLED
+  refundStatus   String? // NULL, PARTIAL, FULL
+  couponCode     String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  payments    Payment[]
+  enrollments Enrollment[]
+}
+
+model Payment {
+  id              String    @id @default(uuid()) @db.Uuid
+  orderId         String?   @db.Uuid
+  order           Order?    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  userId          String    @db.Uuid
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactionId   String    @unique
+  gateway         String    @default("STRIPE") // STRIPE, RAZORPAY
+  method          String? // CARD, UPI, NETBANKING
+  amount          Float
+  currency        String    @default("INR")
+  plan            String    @default("FREE")
+  status          String    @default("PENDING") // PENDING, COMPLETED, FAILED, REFUNDED
+  gatewayResponse String? // JSON response from gateway
+  refundDetails   String? // JSON
+  couponCode      String?
+  paidAt          DateTime?
+  createdAt       DateTime  @default(now())
+}
+
+model Enrollment {
+  id        String  @id @default(uuid()) @db.Uuid
+  studentId String  @db.Uuid
+  student   User    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  courseId  String  @db.Uuid
+  course    Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  orderId   String? @db.Uuid
+  order     Order?  @relation(fields: [orderId], references: [id], onDelete: SetNull)
+
+  expiryDate DateTime?
+  isLifetime Boolean   @default(true)
+  status     String    @default("ACTIVE") // ACTIVE, EXPIRED, CANCELLED
+
+  progressPercentage Float     @default(0.0)
+  lastAccessedAt     DateTime?
+  completedAt        DateTime?
+  certificateIssued  Boolean   @default(false)
+  source             String? // ORGANIC, DIRECT, REFERRAL
+  couponUsed         String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  progressRecords CourseProgress[]
+}
+
+model CourseProgress {
+  id                  String     @id @default(uuid()) @db.Uuid
+  enrollmentId        String     @db.Uuid
+  enrollment          Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  lessonId            String     @db.Uuid
+  lesson              Lesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  watchPercentage     Float      @default(0.0)
+  lastWatchedPosition Int        @default(0) // Seconds
+  isCompleted         Boolean    @default(false)
+  completedAt         DateTime?
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+
+  @@unique([enrollmentId, lessonId])
+}
+
+model Review {
+  id             String   @id @default(uuid()) @db.Uuid
+  courseId       String   @db.Uuid
+  course         Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  userId         String   @db.Uuid
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rating         Int      @default(5)
+  reviewText     String?
+  likes          Int      @default(0)
+  approvalStatus String   @default("APPROVED") // PENDING, APPROVED, REJECTED
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Coupon {
+  id            String    @id @default(uuid()) @db.Uuid
+  code          String    @unique
+  discountType  String    @default("PERCENTAGE") // PERCENTAGE, FIXED
+  discountValue Float
+  maxDiscount   Float?
+  expiryDate    DateTime?
+  usageLimit    Int?
+  usedCount     Int       @default(0)
+  userLimit     Int       @default(1)
+  applicableTo  String    @default("ALL") // ALL, SPECIFIC_COURSES
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+// ---------------------------------------------------------
+// COMPETITIVE PROGRAMMING / TESTING MODULE
+// ---------------------------------------------------------
+
+model Question {
+  id             String   @id @default(uuid()) @db.Uuid
+  title          String
+  slug           String   @unique
+  difficulty     String   @default("EASY") // EASY, MEDIUM, HARD
+  type           String   @default("CODING") // CODING, MCQ, SQL, etc.
+  description    String
+  constraints    String?
+  examples       String   @default("[]") // JSON string list of input, output, explanation
+  hints          String   @default("[]") // JSON string list
+  editorial      String?
+  starterCodes   String   @default("{}") // JSON string map of languages to template code
+  timeLimit      Int      @default(2000)
+  memoryLimit    Int      @default(256)
+  tags           String   @default("[]") // JSON string list
+  companies      String   @default("[]") // JSON string list
+  likes          Int      @default(0)
+  dislikes       Int      @default(0)
+  acceptanceRate Float    @default(0.0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  testCases   TestCase[]
+  submissions Submission[]
+  mcqOptions  MCQ[]
+  bookmarks   Bookmark[]
+  discussions Discussion[]
+  tests       TestQuestion[]
+}
+
+model TestCase {
+  id         String   @id @default(uuid()) @db.Uuid
+  questionId String   @db.Uuid
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  input      String
+  output     String
+  isHidden   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model MCQ {
+  id             String   @id @default(uuid()) @db.Uuid
+  questionId     String   @db.Uuid
+  question       Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  options        String   @default("[]") // JSON string list
+  correctAnswers String   @default("[]") // JSON string list
+}
+
+model Submission {
+  id            String       @id @default(uuid()) @db.Uuid
+  userId        String       @db.Uuid
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questionId    String       @db.Uuid
+  question      Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  code          String
+  language      String
+  status        String       @default("PENDING") // PENDING, ACCEPTED, WRONG_ANSWER, etc.
+  runtime       Int?
+  memory        Int?
+  compileOutput String?
+  errorOutput   String?
+  passedCount   Int          @default(0)
+  totalCount    Int          @default(0)
+  testAttemptId String?      @db.Uuid
+  testAttempt   TestAttempt? @relation(fields: [testAttemptId], references: [id], onDelete: SetNull)
+  createdAt     DateTime     @default(now())
+  compilerJob   CompilerJob?
+}
+
+model CompilerJob {
+  id           String     @id @default(uuid()) @db.Uuid
+  submissionId String     @unique @db.Uuid
+  submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  status       String     @default("QUEUED") // QUEUED, PROCESSING, COMPLETED, FAILED
+  judge0Id     String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model Test {
+  id                 String    @id @default(uuid()) @db.Uuid
+  title              String
+  description        String?
+  duration           Int
+  accessType         String    @default("PUBLIC") // PUBLIC, PRIVATE
+  passcode           String?
+  isPublished        Boolean   @default(false)
+  startTime          DateTime?
+  endTime            DateTime?
+  creatorId          String    @db.Uuid
+  creator            User      @relation("TestCreator", fields: [creatorId], references: [id])
+  randomQuestionPool Boolean   @default(false)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  questions    TestQuestion[]
+  attempts     TestAttempt[]
+  bookmarks    Bookmark[]
+  certificates Certificate[]
+}
+
+model TestQuestion {
+  testId     String   @db.Uuid
+  test       Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
+  questionId String   @db.Uuid
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  section    String   @default("General")
+  order      Int      @default(0)
+
+  @@id([testId, questionId])
+}
+
+model TestAttempt {
+  id          String       @id @default(uuid()) @db.Uuid
+  userId      String       @db.Uuid
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  testId      String       @db.Uuid
+  test        Test         @relation(fields: [testId], references: [id], onDelete: Cascade)
+  score       Int          @default(0)
+  status      String       @default("STARTED")
+  startTime   DateTime     @default(now())
+  endTime     DateTime?
+  submissions Submission[]
+  createdAt   DateTime     @default(now())
+}
+
+model TestSnapshot {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @db.Uuid
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  testId     String   // Can be string since frontend uses local storage ID which may not be a UUID in some cases
+  imageUrl   String   @db.Text
+  capturedAt DateTime @default(now())
+}
+
+model Contest {
+  id           String               @id @default(uuid()) @db.Uuid
+  title        String
+  description  String?
+  startTime    DateTime
+  endTime      DateTime
+  rating       Int                  @default(0)
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  participants ContestParticipant[]
+}
+
+model ContestParticipant {
+  id           String   @id @default(uuid()) @db.Uuid
+  contestId    String   @db.Uuid
+  contest      Contest  @relation(fields: [contestId], references: [id], onDelete: Cascade)
+  userId       String   @db.Uuid
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  score        Int      @default(0)
+  penalty      Int      @default(0)
+  rank         Int?
+  ratingChange Int?
+  registeredAt DateTime @default(now())
+
+  @@unique([contestId, userId])
+}
+
+model Certificate {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @db.Uuid
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  testId     String?  @db.Uuid
+  test       Test?    @relation(fields: [testId], references: [id], onDelete: Cascade)
+  courseId   String?  @db.Uuid
+  course     Course?  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  uniqueCode String   @unique
+  pdfUrl     String
+  qrCodeUrl  String
+  issuedAt   DateTime @default(now())
+}
+
+model Bookmark {
+  id         String    @id @default(uuid()) @db.Uuid
+  userId     String    @db.Uuid
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questionId String?   @db.Uuid
+  question   Question? @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  testId     String?   @db.Uuid
+  test       Test?     @relation(fields: [testId], references: [id], onDelete: Cascade)
+  courseId   String?   @db.Uuid
+  course     Course?   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  createdAt  DateTime  @default(now())
+
+  @@unique([userId, questionId])
+  @@unique([userId, testId])
+  @@unique([userId, courseId])
+}
+
+model Discussion {
+  id         String    @id @default(uuid()) @db.Uuid
+  questionId String    @db.Uuid
+  question   Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  userId     String    @db.Uuid
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title      String
+  content    String
+  likes      Int       @default(0)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  comments   Comment[]
+}
+
+model Comment {
+  id           String     @id @default(uuid()) @db.Uuid
+  discussionId String     @db.Uuid
+  discussion   Discussion @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+  userId       String     @db.Uuid
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content      String
+  parentId     String?    @db.Uuid
+  parent       Comment?   @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies      Comment[]  @relation("CommentReplies")
+  likes        Int        @default(0)
+  createdAt    DateTime   @default(now())
+}
+
+model Notification {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Achievement {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @db.Uuid
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badgeName  String
+  xpEarned   Int
+  unlockedAt DateTime @default(now())
+}

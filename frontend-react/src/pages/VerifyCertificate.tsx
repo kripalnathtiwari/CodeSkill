@@ -1,0 +1,131 @@
+import React, { useState } from "react";
+import { Search, CheckCircle, XCircle, Award, Calendar, User } from "lucide-react";
+import { motion } from "framer-motion";
+
+export default function VerifyCertificate() {
+  const [certId, setCertId] = useState("");
+  const [result, setResult] = useState<any>(null);
+  const [hasSearched, setHasSearched] = useState(false);
+
+  const handleVerify = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!certId.trim()) return;
+
+    setHasSearched(true);
+    
+    // In a real app, this would be an API call to a backend database.
+    // Here we simulate checking the local mock database.
+    const existingStr = localStorage.getItem("enrolledCourses");
+    if (existingStr) {
+      try {
+        const parsed = JSON.parse(existingStr);
+        const match = parsed.find((e: any) => e.certificateId === certId.trim());
+        if (match) {
+          setResult(match);
+        } else {
+          setResult(null);
+        }
+      } catch (e) {
+        setResult(null);
+      }
+    } else {
+      setResult(null);
+    }
+  };
+
+  return (
+    <div className="flex-1 bg-[#0a1128] text-slate-200 w-full min-h-screen py-20 px-6 flex flex-col items-center">
+      <div className="max-w-2xl w-full text-center mb-12">
+        <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+          <Award className="w-10 h-10 text-emerald-500" />
+        </div>
+        <h1 className="text-4xl font-bold text-white mb-4">Verify a Certificate</h1>
+        <p className="text-slate-400">
+          Enter the unique Certificate ID located at the bottom left of any valid TeachSkill certificate to verify its authenticity.
+        </p>
+      </div>
+
+      <div className="max-w-xl w-full">
+        <form onSubmit={handleVerify} className="relative mb-12">
+          <input 
+            type="text" 
+            value={certId}
+            onChange={(e) => setCertId(e.target.value)}
+            placeholder="e.g. CS-20260625-A8B9"
+            className="w-full bg-[#111827] border border-slate-700 rounded-2xl py-4 pl-6 pr-32 text-lg text-white font-mono focus:outline-none focus:border-emerald-500 shadow-xl"
+          />
+          <button 
+            type="submit"
+            className="absolute right-2 top-2 bottom-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 rounded-xl transition-colors flex items-center shadow-lg"
+          >
+            <Search className="w-5 h-5 mr-2" />
+            Verify
+          </button>
+        </form>
+
+        {hasSearched && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="w-full"
+          >
+            {result ? (
+              <div className="bg-[#111827] border-2 border-emerald-500/50 rounded-2xl p-8 shadow-[0_0_40px_rgba(16,185,129,0.1)]">
+                <div className="flex items-center text-emerald-500 font-bold text-lg mb-6 pb-6 border-b border-slate-800">
+                  <CheckCircle className="w-6 h-6 mr-3" />
+                  Authentic Certificate Found
+                </div>
+                
+                <div className="space-y-6">
+                  <div>
+                    <p className="text-sm text-slate-500 mb-1 flex items-center">
+                      <User className="w-4 h-4 mr-2" /> Recipient Name
+                    </p>
+                    <p className="text-xl font-bold text-white" style={{ fontFamily: '"Playfair Display", serif' }}>
+                      {result.certificateName}
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <p className="text-sm text-slate-500 mb-1 flex items-center">
+                      <Award className="w-4 h-4 mr-2" /> Course Completed
+                    </p>
+                    <p className="text-lg font-bold text-slate-300">
+                      {result.courseName}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-slate-500 mb-1 flex items-center">
+                      <Calendar className="w-4 h-4 mr-2" /> Registration Date
+                    </p>
+                    <p className="text-slate-300 font-mono">
+                      {new Date(result.dateRegistered).toLocaleDateString()}
+                    </p>
+                  </div>
+
+                  <div className="bg-emerald-500/10 rounded-xl p-4 mt-6">
+                    <p className="text-xs text-emerald-400 font-mono text-center tracking-widest">
+                      CERTIFICATE ID: {result.certificateId}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-[#111827] border-2 border-rose-500/30 rounded-2xl p-8 text-center shadow-xl">
+                <div className="w-16 h-16 bg-rose-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <XCircle className="w-8 h-8 text-rose-500" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">Certificate Not Found</h3>
+                <p className="text-slate-400 text-sm">
+                  We couldn't find a certificate matching the ID <span className="font-mono text-white">"{certId}"</span>. 
+                  Please ensure you've typed it exactly as it appears on the document.
+                </p>
+              </div>
+            )}
+          </motion.div>
+        )}
+      </div>
+    </div>
+  );
+}

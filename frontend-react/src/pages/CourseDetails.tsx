@@ -15,6 +15,7 @@ export default function CourseDetails() {
   const [enrollmentStatus, setEnrollmentStatus] = useState<string | null>(null);
 
   useEffect(() => {
+    setEnrollmentStatus(null);
     if (user) {
       const existingStr = localStorage.getItem("enrolledCourses");
       if (existingStr) {

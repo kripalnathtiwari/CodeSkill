@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { getApiUrl } from "../utils/apiConfig";
 import { Search, Bookmark, ChevronDown, ListFilter, Check, Lock, BrainCircuit, Code2, Building2 } from "lucide-react";
 import Fuse from "fuse.js";
 import { useAuth } from "../context/AuthContext";
+import PracticeTimer from "../components/PracticeTimer";
 
 const TOPICS = [
   { id: "Array", label: "Arrays" },
@@ -15,7 +17,7 @@ const TOPICS = [
   { id: "Database", label: "SQL/Databases" }
 ];
 
-const COMPANIES = ["Google", "Amazon", "Microsoft", "Meta", "Apple"];
+// COMPANIES removed, will be dynamically generated
 const DIFFICULTIES = ["Easy", "Medium", "Hard"];
 const STATUSES = ["Solved", "Unsolved", "Attempted"];
 
@@ -47,7 +49,7 @@ export default function ProblemsPage() {
     // Fetch Questions
     const fetchQuestions = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/v1/questions?limit=100");
+        const res = await axios.get(getApiUrl("/api/v1/questions?limit=100&type=CODING"));
         const fetched = res.data.questions || [];
         const saved = localStorage.getItem("admin_custom_problems");
         if (saved) {
@@ -130,6 +132,21 @@ export default function ProblemsPage() {
     return map;
   }, [submissions]);
 
+  const dynamicCompanies = useMemo(() => {
+    const set = new Set<string>();
+    questions.forEach(q => {
+      let tags: any[] = [];
+      if (Array.isArray(q.companies)) tags = q.companies;
+      if (Array.isArray(q.companyTags)) tags = [...tags, ...q.companyTags];
+      
+      tags.forEach((t: any) => {
+        const name = typeof t === 'string' ? t : t.name;
+        if (name) set.add(name);
+      });
+    });
+    return Array.from(set).sort();
+  }, [questions]);
+
   // Compute exact counts for filters
   const filterCounts = useMemo(() => {
     const counts = {
@@ -140,7 +157,7 @@ export default function ProblemsPage() {
     };
 
     TOPICS.forEach(t => counts.topics[t.id] = 0);
-    COMPANIES.forEach(c => counts.companies[c] = 0);
+    dynamicCompanies.forEach(c => counts.companies[c] = 0);
     DIFFICULTIES.forEach(d => counts.difficulty[d] = 0);
 
     questions.forEach(q => {
@@ -162,11 +179,14 @@ export default function ProblemsPage() {
       });
 
       // Companies
-      if (q.companies) {
-        q.companies.forEach((company: string) => {
-          if (counts.companies[company] !== undefined) counts.companies[company]++;
-        });
-      }
+      let cTags: any[] = [];
+      if (Array.isArray(q.companies)) cTags = q.companies;
+      if (Array.isArray(q.companyTags)) cTags = [...cTags, ...q.companyTags];
+      
+      cTags.forEach((t: any) => {
+        const name = typeof t === 'string' ? t : t.name;
+        if (name && counts.companies[name] !== undefined) counts.companies[name]++;
+      });
 
       // Status
       const status = userStatusMap.get(q.id) || { solved: false, attempted: false };
@@ -282,7 +302,9 @@ export default function ProblemsPage() {
             )}
           </div>
           <div className="space-y-3 pt-2">
-            {COMPANIES.map((company) => {
+            {dynamicCompanies.length === 0 ? (
+              <div className="text-sm text-slate-500">No companies available</div>
+            ) : dynamicCompanies.map((company) => {
               const isSelected = selectedCompanies.includes(company);
               return (
                 <div
@@ -438,6 +460,27 @@ export default function ProblemsPage() {
           </Link>
         </div>
 
+        {/* Timed Practice Section for All Sections */}
+        <div className="bg-gradient-to-r from-purple-500/10 via-slate-900/40 to-emerald-500/10 border border-purple-500/20 dark:border-purple-500/30 rounded-2xl p-5 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm">
+          <div className="flex items-center space-x-4">
+            <div className="bg-purple-500/20 p-3 rounded-xl">
+              <BrainCircuit className="w-7 h-7 text-purple-400" />
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Timed Practice Section</h2>
+                <span className="px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider bg-purple-500/20 text-purple-400 rounded-md">All Sections</span>
+              </div>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                Time your problem-solving across any section (Arrays, Dynamic Programming, SQL, etc.) to practice under interview conditions.
+              </p>
+            </div>
+          </div>
+          <div className="shrink-0 flex items-center space-x-3">
+            <PracticeTimer storageKey="all_sections_practice" defaultMode="countdown" defaultMinutes={45} />
+          </div>
+        </div>
+
         {/* Header Area */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Popular Problems</h1>
@@ -505,7 +548,7 @@ export default function ProblemsPage() {
             {paginatedQuestions.map((q, idx) => (
               <div
                 key={q._id || q.id || idx}
-                className={`flex items-center justify-between p-5 hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors ${idx !== paginatedQuestions.length - 1 ? 'border-b border-slate-100 dark:border-slate-800/60' : ''
+                className={`flex flex-col sm:flex-row sm:items-center justify-between p-5 gap-4 hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors ${idx !== paginatedQuestions.length - 1 ? 'border-b border-slate-100 dark:border-slate-800/60' : ''
                   }`}
               >
                 <div className="flex items-start space-x-4">
@@ -551,7 +594,7 @@ export default function ProblemsPage() {
                   </div>
                 </div>
 
-                <div>
+                <div className="w-full sm:w-auto flex justify-end">
                   {!user ? (
                     <button
                       onClick={() => navigate('/login')}

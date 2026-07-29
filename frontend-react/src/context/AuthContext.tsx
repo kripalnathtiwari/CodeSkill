@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { getApiUrl } from "../utils/apiConfig";
 
 interface User {
   id: string;
   email: string;
-  role: "STUDENT" | "INSTRUCTOR" | "ADMIN";
+  role: "STUDENT" | "INSTRUCTOR" | "ADMIN" | "COLLEGE_ADMIN" | string;
   profile?: {
     firstName: string;
     lastName: string;
@@ -88,7 +89,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const refreshToken = localStorage.getItem("refreshToken");
       if (refreshToken) {
-        await axios.post("http://localhost:5000/api/v1/auth/logout", { refreshToken }).catch(() => {});
+        await axios.post(getApiUrl("/api/v1/auth/logout"), { refreshToken }).catch(() => {});
       }
     } finally {
       localStorage.removeItem("accessToken");

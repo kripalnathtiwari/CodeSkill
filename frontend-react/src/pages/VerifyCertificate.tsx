@@ -41,7 +41,7 @@ export default function VerifyCertificate() {
         </div>
         <h1 className="text-4xl font-bold text-white mb-4">Verify a Certificate</h1>
         <p className="text-slate-400">
-          Enter the unique Certificate ID located at the bottom left of any valid TeachSkill certificate to verify its authenticity.
+          Enter the unique Certificate ID located at the bottom left of any valid CodeSkill certificate to verify its authenticity.
         </p>
       </div>
 

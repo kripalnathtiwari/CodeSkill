@@ -13,19 +13,26 @@ import {
   LogOut,
   Activity,
   Building2,
-  BrainCircuit
+  BrainCircuit,
+  Database,
+  TrendingUp,
+  FileText
 } from "lucide-react";
 
 import DashboardOverview from "./admin/DashboardOverview";
 import CourseManagement from "./admin/CourseManagement";
 import UserManagement from "./admin/UserManagement";
-import ProblemManagement from "./admin/ProblemManagement";
+import QuestionsMaster from "./admin/QuestionsMaster";
 import SalesManagement from "./admin/SalesManagement";
+import CourseWiseSell from "./admin/CourseWiseSell";
 import TestManagement from "./admin/TestManagement";
 import ActivityLogs from "./admin/ActivityLogs";
 import CollegeManagement from "./admin/CollegeManagement";
 import CollegeCollection from "./admin/CollegeCollection";
 import AptitudeManagement from "./admin/AptitudeManagement";
+import DatabaseManagement from "./admin/DatabaseManagement";
+import CvManagement from "./admin/CvManagement";
+import UserActivityManagement from "./admin/UserActivityManagement";
 
 export default function AdminDashboard() {
   const { user, isLoading, logout } = useAuth();
@@ -39,12 +46,15 @@ export default function AdminDashboard() {
     { id: "courses", label: "Courses", icon: BookOpen, roles: ["ADMIN"] },
     { id: "users", label: "Users", icon: Users, roles: ["ADMIN"] },
     { id: "problems", label: "Problems", icon: Code, roles: ["ADMIN"] },
-    { id: "aptitude", label: "Aptitude Questions", icon: BrainCircuit, roles: ["ADMIN"] },
     { id: "tests", label: "Tests & Contests", icon: ShieldAlert, roles: ["ADMIN", "INSTRUCTOR"] },
     { id: "sales", label: "Sales & Enrollments", icon: CreditCard, roles: ["ADMIN"] },
+    { id: "course_wise_sell", label: "Course Wise Sell", icon: TrendingUp, roles: ["ADMIN"] },
     { id: "colleges", label: "Colleges", icon: Building2, roles: ["ADMIN"] },
     { id: "college_collection", label: "College Collection", icon: Users, roles: ["COLLEGE_ADMIN"] },
+    { id: "cv_management", label: "CV Management", icon: FileText, roles: ["ADMIN"] },
+    { id: "user_activity", label: "User Activity", icon: TrendingUp, roles: ["ADMIN"] },
     { id: "activity", label: "Activity Logs", icon: Activity, roles: ["ADMIN"] },
+    { id: "database", label: "Database", icon: Database, roles: ["ADMIN"] },
   ];
 
   NAV_ITEMS = NAV_ITEMS.filter(item => item.roles.includes(user?.role || "ADMIN"));
@@ -103,16 +113,19 @@ export default function AdminDashboard() {
 
       {/* Main Content Area */}
       <main className="flex-1 overflow-y-auto bg-[#0a1128] p-8 h-full">
-        {activeTab === "dashboard" && <DashboardOverview />}
+        {activeTab === "dashboard" && <DashboardOverview setActiveTab={setActiveTab} />}
         {activeTab === "courses" && <CourseManagement />}
         { activeTab === "users" && <UserManagement />}
-        { activeTab === "problems" && <ProblemManagement /> }
-        { activeTab === "aptitude" && <AptitudeManagement /> }
+        { activeTab === "problems" && <QuestionsMaster /> }
         { activeTab === "tests" && <TestManagement /> }
         { activeTab === "sales" && <SalesManagement /> }
+        { activeTab === "course_wise_sell" && <CourseWiseSell /> }
         { activeTab === "colleges" && <CollegeManagement /> }
         { activeTab === "college_collection" && <CollegeCollection /> }
+        { activeTab === "cv_management" && <CvManagement /> }
+        { activeTab === "user_activity" && <UserActivityManagement /> }
         { activeTab === "activity" && <ActivityLogs /> }
+        { activeTab === "database" && <DatabaseManagement />}
       </main>
 
     </div>

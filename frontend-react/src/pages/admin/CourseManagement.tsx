@@ -22,6 +22,9 @@ export default function CourseManagement() {
   const [visibility, setVisibility] = useState("PUBLIC");
   const [publishStatus, setPublishStatus] = useState("DRAFT");
   const [seoTitle, setSeoTitle] = useState("");
+  const [overview, setOverview] = useState("");
+  const [skillsYouWillLearn, setSkillsYouWillLearn] = useState("");
+  const [techStack, setTechStack] = useState("");
 
   useEffect(() => {
     const saved = localStorage.getItem("admin_custom_courses");
@@ -35,7 +38,7 @@ export default function CourseManagement() {
     setPrice("₹2,999"); setImage(""); setTags("");
     setDuration("4 Weeks"); setLevel("Beginner to Advanced");
     setLanguage("English"); setVisibility("PUBLIC"); setPublishStatus("DRAFT");
-    setSeoTitle("");
+    setSeoTitle(""); setOverview(""); setSkillsYouWillLearn(""); setTechStack("");
   };
 
   const openCreate = () => {
@@ -57,6 +60,9 @@ export default function CourseManagement() {
     setVisibility(course.visibility || "PUBLIC");
     setPublishStatus(course.publishStatus || "DRAFT");
     setSeoTitle(course.seoTitle || "");
+    setOverview(course.overview || "");
+    setSkillsYouWillLearn(Array.isArray(course.skillsYouWillLearn) ? course.skillsYouWillLearn.join(", ") : (course.skillsYouWillLearn || ""));
+    setTechStack(Array.isArray(course.techStack) ? course.techStack.join(", ") : (course.techStack || ""));
     setEditingCourse(course);
     setIsCreating(true);
   };
@@ -72,7 +78,7 @@ export default function CourseManagement() {
       const existingCustom = saved ? JSON.parse(saved) : [];
       const updatedCustom = existingCustom.map((c: any) =>
         c.id === editingCourse.id
-          ? { ...c, title, description, category, price, image: image || c.image, tags: tags.split(",").map((t: string) => t.trim()).filter(Boolean), duration, level, language, visibility, publishStatus, seoTitle }
+          ? { ...c, title, description, category, price, image: image || c.image, tags: tags.split(",").map((t: string) => t.trim()).filter(Boolean), duration, level, language, visibility, publishStatus, seoTitle, overview, skillsYouWillLearn: skillsYouWillLearn.split(",").map((t: string) => t.trim()).filter(Boolean), techStack: techStack.split(",").map((t: string) => t.trim()).filter(Boolean) }
           : c
       );
       localStorage.setItem("admin_custom_courses", JSON.stringify(updatedCustom));
@@ -86,7 +92,9 @@ export default function CourseManagement() {
         tags: tags.split(",").map((t: string) => t.trim()).filter(Boolean),
         students: 0, rating: 5.0, duration, level,
         features: ["Live Sessions", "Certificate", "Projects"],
-        language, visibility, publishStatus, seoTitle
+        language, visibility, publishStatus, seoTitle, overview,
+        skillsYouWillLearn: skillsYouWillLearn.split(",").map((t: string) => t.trim()).filter(Boolean),
+        techStack: techStack.split(",").map((t: string) => t.trim()).filter(Boolean)
       };
       const saved = localStorage.getItem("admin_custom_courses");
       const existingCustom = saved ? JSON.parse(saved) : [];
@@ -327,6 +335,38 @@ export default function CourseManagement() {
               className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed resize-none"
               placeholder="Detailed course description..."
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-bold text-slate-400 mb-2">Course Overview</label>
+            <textarea
+              value={overview} onChange={e => setOverview(e.target.value)}
+              rows={4}
+              disabled={!!isEditingDefault}
+              className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed resize-none"
+              placeholder="Provide a high-level overview of the course..."
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-bold text-slate-400 mb-2">Skills You Will Learn (Comma Separated)</label>
+              <input
+                type="text" value={skillsYouWillLearn} onChange={e => setSkillsYouWillLearn(e.target.value)}
+                disabled={!!isEditingDefault}
+                className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                placeholder="e.g. Problem Solving, Web Development"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-slate-400 mb-2">Tech Stack (Comma Separated)</label>
+              <input
+                type="text" value={techStack} onChange={e => setTechStack(e.target.value)}
+                disabled={!!isEditingDefault}
+                className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                placeholder="e.g. React, Node.js, MongoDB"
+              />
+            </div>
           </div>
         </div>
       </div>

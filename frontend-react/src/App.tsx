@@ -27,9 +27,13 @@ const Contests = lazy(() => import('./pages/Contests'));
 const TakeTest = lazy(() => import('./pages/TakeTest'));
 const SolveProblem = lazy(() => import('./pages/SolveProblem'));
 const Aptitude = lazy(() => import('./pages/Aptitude'));
+const AptitudeTopic = lazy(() => import('./pages/AptitudeTopic'));
 const SolveAptitude = lazy(() => import('./pages/SolveAptitude'));
 const VerifyCertificate = lazy(() => import('./pages/VerifyCertificate'));
 const About = lazy(() => import('./pages/About'));
+const Contact = lazy(() => import('./pages/Contact'));
+const CVBuilder = lazy(() => import('./pages/CVBuilder'));
+const ATSChecker = lazy(() => import('./pages/ATSChecker'));
 
 function AppContent() {
   const location = useLocation();
@@ -44,6 +48,7 @@ function AppContent() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/change-password" element={<ChangePassword />} />
@@ -53,6 +58,7 @@ function AppContent() {
             <Route path="/my-courses" element={<ProtectedRoute><MyCourses /></ProtectedRoute>} />
             <Route path="/problems" element={<Problems />} />
             <Route path="/aptitude" element={<Aptitude />} />
+            <Route path="/aptitude/topic/:topic" element={<AptitudeTopic />} />
             <Route path="/company-problems" element={<CompanyProblems />} />
             <Route path="/courses-training" element={<CoursesTraining />} />
             <Route path="/course/:id" element={<CourseDetails />} />
@@ -64,6 +70,8 @@ function AppContent() {
             <Route path="/solve/:id" element={<ProtectedRoute><SolveProblem /></ProtectedRoute>} />
             <Route path="/aptitude/:id" element={<ProtectedRoute><SolveAptitude /></ProtectedRoute>} />
             <Route path="/verify" element={<VerifyCertificate />} />
+            <Route path="/cv-builder" element={<CVBuilder />} />
+            <Route path="/ats-checker" element={<ATSChecker />} />
           </Routes>
         </Suspense>
       </main>

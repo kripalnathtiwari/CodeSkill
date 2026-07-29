@@ -3,6 +3,8 @@ import { Trophy, Calendar, Clock, Users, ArrowRight, Award, Star, Search, Lock, 
 import Fuse from "fuse.js";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import axios from "axios";
+import { getApiUrl } from "../utils/apiConfig";
 
 function SearchableDropdown({ options, value, onChange, placeholder, disabled }: any) {
   const [isOpen, setIsOpen] = useState(false);
@@ -111,10 +113,15 @@ export default function Contests() {
     if (savedTests) {
       setCustomTests(JSON.parse(savedTests));
     }
-    const savedColleges = localStorage.getItem("admin_colleges_v2");
-    if (savedColleges) {
-      setColleges(JSON.parse(savedColleges));
-    }
+    const fetchColleges = async () => {
+      try {
+        const response = await axios.get(getApiUrl("/api/v1/college-management/public"));
+        setColleges(response.data);
+      } catch (error) {
+        console.error('Error fetching colleges:', error);
+      }
+    };
+    fetchColleges();
   }, []);
 
   const selectedCollege = colleges.find(c => c.id === selectedCollegeId);
@@ -320,7 +327,7 @@ export default function Contests() {
                   }
                 }
               }}
-              className="p-4 border-b border-slate-200 dark:border-slate-800 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer flex flex-row justify-between items-start"
+              className="p-4 border-b border-slate-200 dark:border-slate-800 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer flex flex-col sm:flex-row justify-between sm:items-start gap-4"
             >
               <div>
                 <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200 uppercase tracking-wide">
@@ -331,8 +338,8 @@ export default function Contests() {
                   <p>End: {endTimeStr}</p>
                 </div>
               </div>
-              <div className="flex-shrink-0 ml-4">
-                <span className={`px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap text-white ${hasTaken ? 'bg-emerald-500' : (isLate ? 'bg-rose-600' : 'bg-emerald-600')}`}>
+              <div className="flex-shrink-0 w-full sm:w-auto">
+                <span className={`px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap text-white block text-center sm:inline-block ${hasTaken ? 'bg-emerald-500' : (isLate ? 'bg-rose-600' : 'bg-emerald-600')}`}>
                   {hasTaken ? 'View Mark' : (isLate ? 'Test Expired' : 'Take Test')}
                 </span>
               </div>

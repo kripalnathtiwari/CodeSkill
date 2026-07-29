@@ -48,7 +48,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 glass border-b border-slate-200 dark:border-slate-800 px-6 py-4 flex items-center justify-between transition-colors">
       <Link to="/" className="flex items-center space-x-2 text-xl font-bold tracking-tight bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent">
         <Code2 className="h-6 w-6 text-emerald-500" />
-        <span>TeachSkill</span>
+        <span>CodeSkill</span>
       </Link>
 
       <nav className="hidden lg:flex items-center space-x-6 text-base font-medium text-slate-900 dark:text-slate-200">

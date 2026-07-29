@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { getApiUrl } from "../../utils/apiConfig";
 import {
   Plus, Edit, Trash2, Search, Code2, Wand2, Loader2,
   X, Save, ArrowLeft, Lock, AlertTriangle, Upload, FileJson, FileText
@@ -53,7 +54,7 @@ export default function ProblemManagement() {
         // Pre-fill the form with the parsed JSON data for cross-checking
         setTitle(qData.title || qData.name || "");
         setDifficulty(qData.difficulty || qData.level || "Easy");
-        setDescription(qData.content || qData.description || qData.statement || "");
+        setDescription(qData.content || qData.description || qData.statement || qData.problemStatement || qData.problem_statement || qData.body || qData.text || "");
         
         const tags = qData.topicTags || qData.tags || [];
         setTopics(Array.isArray(tags) ? tags.map((t: any) => t.name || t).join(", ") : (typeof tags === "string" ? tags : ""));
@@ -65,7 +66,8 @@ export default function ProblemManagement() {
         setStarterCodes({
           javascript: sc.javascript || sc.js || "",
           cpp: sc.cpp || sc["c++"] || "",
-          python: sc.python || sc.py || sc.python3 || ""
+          python: sc.python || sc.py || sc.python3 || "",
+          java: sc.java || ""
         });
         
         // Extract and aggregate all test cases
@@ -142,7 +144,7 @@ export default function ProblemManagement() {
           ...p,
           _id: "custom-uploaded-pdf-" + Date.now() + Math.random().toString(36).substr(2, 9),
           acRate: 0, status: "Unsolved",
-          starterCode: { javascript: p.defaultCode || "// write here", cpp: "// write here", python: "# write here" }
+          starterCode: { javascript: p.defaultCode || "// write here", cpp: "// write here", python: "# write here", java: "// write here" }
         }));
         
         const saved = localStorage.getItem("admin_custom_problems");
@@ -172,7 +174,8 @@ export default function ProblemManagement() {
   const [starterCodes, setStarterCodes] = useState<{ [key: string]: string }>({
     javascript: "",
     cpp: "",
-    python: ""
+    python: "",
+    java: ""
   });
   const [testCases, setTestCases] = useState<{input: string, output: string, isHidden: boolean}[]>([]);
 
@@ -181,7 +184,7 @@ export default function ProblemManagement() {
       _id: "p1", title: "Two Sum", slug: "two-sum", difficulty: "Easy",
       topicTags: [{ name: "Array" }, { name: "HashMap" }],
       content: "Given an integer array nums and an integer target, return the indices of the two numbers such that they add up to target.",
-      starterCode: { javascript: "function twoSum(nums, target) {\n    return [];\n}", cpp: "#include <vector>\nusing namespace std;\nvector<int> twoSum(vector<int>& nums, int target){ return {}; }", python: "def twoSum(nums, target):\n    pass" },
+      starterCode: { javascript: "function twoSum(nums, target) {\n    return [];\n}", cpp: "#include <vector>\nusing namespace std;\nvector<int> twoSum(vector<int>& nums, int target){ return {}; }", python: "def twoSum(nums, target):\n    pass", java: "class Solution {\n    public int[] twoSum(int[] nums, int target) {\n        return new int[]{};\n    }\n}" },
     },
     { _id: "p2", title: "Add Two Numbers", difficulty: "Medium", topicTags: [{ name: "Linked List" }, { name: "Math" }] },
     { _id: "p3", title: "Median of Two Sorted Arrays", difficulty: "Hard", topicTags: [{ name: "Array" }, { name: "Binary Search" }] },
@@ -189,7 +192,7 @@ export default function ProblemManagement() {
   ];
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/v1/questions?limit=50")
+    axios.get(getApiUrl("/api/v1/questions?limit=50"))
       .then(res => {
         const fetched = res.data.questions || [];
         const saved = localStorage.getItem("admin_custom_problems");
@@ -208,7 +211,7 @@ export default function ProblemManagement() {
   const resetForm = () => {
     setTitle(""); setDifficulty("Easy"); setDescription("");
     setTopics(""); setCompanies("");
-    setStarterCodes({ javascript: "", cpp: "", python: "" });
+    setStarterCodes({ javascript: "", cpp: "", python: "", java: "" });
     setTestCases([]);
   };
 
@@ -231,6 +234,7 @@ export default function ProblemManagement() {
       javascript: sc.javascript || sc.js || "",
       cpp: sc.cpp || "",
       python: sc.python || sc.py || "",
+      java: sc.java || "",
       ...sc
     });
     const tc = problem.testCases || problem.tests || problem.examples || [];

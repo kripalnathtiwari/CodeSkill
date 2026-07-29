@@ -12,8 +12,10 @@ router.post("/google", rateLimiter({ windowSeconds: 60, maxRequests: 10 }), Auth
 router.post("/refresh", AuthController.refresh);
 router.post("/logout", AuthController.logout);
 router.get("/users", AuthController.getAllUsers);
-router.put("/users/:userId/role", AuthController.updateUserRole);
-router.put("/profile", authenticateJWT, AuthController.updateProfile as any);
+router.delete("/users/:userId", authenticateJWT, AuthController.deleteUser as any);
+    router.put("/users/:userId/role", AuthController.updateUserRole);
+    router.put("/profile", authenticateJWT, AuthController.updateProfile as any);
+    router.post("/log-activity", authenticateJWT, AuthController.logActivity as any);
 
 // Password Reset Routes
 router.post("/request-otp", rateLimiter({ windowSeconds: 60, maxRequests: 3 }), AuthController.requestOtp);

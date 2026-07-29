@@ -6,10 +6,11 @@ interface CertificateModalProps {
   studentName: string;
   courseName: string;
   certificateId: string;
+  templateImage?: string;
   onClose: () => void;
 }
 
-export default function CertificateModal({ studentName, courseName, certificateId, onClose }: CertificateModalProps) {
+export default function CertificateModal({ studentName, courseName, certificateId, templateImage, onClose }: CertificateModalProps) {
 
   // Provide a way to print/download the certificate (browser print for now)
   const handleDownload = () => {
@@ -52,7 +53,7 @@ export default function CertificateModal({ studentName, courseName, certificateI
 
             {/* Background Image */}
             <img
-              src="/images/certificate.png"
+              src={templateImage || "/images/certificate.png"}
               alt="Certificate Background"
               loading="lazy"
               className="w-full h-full object-cover"
@@ -62,22 +63,22 @@ export default function CertificateModal({ studentName, courseName, certificateI
 
             {/* 1. Student Name Overlay */}
             {/* These percentages are approximate based on standard certificate layouts to cover the center area */}
-            <div className="absolute top-[48%] left-[10%] right-[10%] h-[12%] bg-white flex items-center justify-center">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#1a202c] tracking-wide" style={{ fontFamily: '"Playfair Display", serif' }}>
+            <div className={`absolute ${templateImage ? 'top-[44%]' : 'top-[48%]'} left-[10%] right-[10%] h-[12%] flex items-center justify-center ${templateImage ? 'bg-transparent' : 'bg-white'}`}>
+              <h1 className={`text-4xl md:text-5xl lg:text-6xl font-bold text-[#1a202c] tracking-wide ${templateImage ? 'bg-white px-8 py-2 rounded-xl' : ''}`} style={{ fontFamily: '"Playfair Display", serif' }}>
                 {studentName}
               </h1>
             </div>
 
             {/* 2. Course Name Overlay (Made taller to cover any baked-in subtitle text) */}
-            <div className="absolute top-[72%] left-[10%] right-[10%] h-[18%] bg-white flex items-center justify-center">
-              <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-[#1a202c] tracking-[0.1em] text-center px-4" style={{ fontFamily: '"Playfair Display", serif' }}>
+            <div className={`absolute ${templateImage ? 'top-[58%]' : 'top-[72%]'} left-[10%] right-[10%] h-[18%] flex items-center justify-center ${templateImage ? 'bg-transparent' : 'bg-white'}`}>
+              <h2 className={`text-xl md:text-2xl lg:text-3xl font-bold text-[#1a202c] tracking-[0.1em] text-center px-4 ${templateImage ? 'bg-white py-2 rounded-xl' : ''}`} style={{ fontFamily: '"Playfair Display", serif' }}>
                 {courseName.toUpperCase()}
               </h2>
             </div>
 
             {/* 3. Certificate ID Overlay (Bottom Left) */}
             <div className="absolute bottom-[5%] left-[8%] text-left">
-              <p className="text-xs md:text-sm text-slate-500 font-mono tracking-widest bg-white/80 px-2 py-1 rounded">
+              <p className={`text-xs md:text-sm text-slate-500 font-mono tracking-widest px-2 py-1 rounded ${templateImage ? 'bg-transparent' : 'bg-white/80'}`}>
                 ID: {certificateId}
               </p>
             </div>

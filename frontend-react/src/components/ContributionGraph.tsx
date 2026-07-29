@@ -72,7 +72,7 @@ export default function ContributionGraph() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <div>
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{totalContributions} contributions in the last year</h2>
-          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Your coding and learning activity on TeachSkill.</p>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Your coding and learning activity on CodeSkill.</p>
         </div>
       </div>
       

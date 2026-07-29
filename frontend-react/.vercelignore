@@ -1,0 +1,8 @@
+node_modules
+dist
+.vercel
+.git
+logs
+*.log
+tmp
+coverage

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { API_BASE_URL as API_URL } from "../../utils/apiConfig";
 import {
   Plus, Edit, Trash2, Search, BrainCircuit, X, Save, ArrowLeft, AlertTriangle, Upload, FileJson, FileText, Lock, Loader2
 } from "lucide-react";
@@ -36,14 +37,41 @@ export default function AptitudeManagement() {
   const [correctOption, setCorrectOption] = useState("A");
   const [company, setCompany] = useState("");
   const [topic, setTopic] = useState("");
+  // API_URL imported from apiConfig
+
+  const fetchProblems = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${API_URL}/api/v1/aptitude-problems`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+      });
+      const parsedProblems = response.data.map((p: any) => {
+        let opts = p.options;
+        try {
+          while (typeof opts === 'string') {
+            const parsed = JSON.parse(opts);
+            if (parsed === opts || typeof parsed !== 'string' && typeof parsed !== 'object') break;
+            opts = parsed;
+          }
+        } catch(e) {}
+        
+        return {
+          ...p,
+          _id: p.id,
+          options: opts,
+          correctOption: p.correctAnswer || p.correctOption
+        };
+      });
+      setProblems(parsedProblems);
+    } catch (error) {
+      console.error('Error fetching aptitude problems:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // Load aptitude problems from local storage
-    const saved = localStorage.getItem("admin_aptitude_problems");
-    if (saved) {
-      setProblems(JSON.parse(saved));
-    }
-    setLoading(false);
+    fetchProblems();
   }, []);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -179,53 +207,45 @@ export default function AptitudeManagement() {
     setIsCreating(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!title || !description || !optionA || !optionB || !optionC || !optionD) {
       return alert("All fields are required!");
     }
 
-    const updatedProblem = {
+    const payload = {
       title, 
       topic,
       difficulty, 
       description,
-      options: {
+      options: JSON.stringify({
         A: optionA,
         B: optionB,
         C: optionC,
         D: optionD
-      },
-      correctOption,
+      }),
+      correctAnswer: correctOption, // backend expects correctAnswer
       company,
-      type: "MCQ"
     };
 
-    let existing: any[] = [];
-    const saved = localStorage.getItem("admin_aptitude_problems");
-    if (saved) {
-      existing = JSON.parse(saved);
-    }
-
-    if (editingProblem) {
-      const idx = existing.findIndex((p: any) => p._id === editingProblem._id);
-      if (idx >= 0) {
-        existing[idx] = { ...existing[idx], ...updatedProblem };
+    try {
+      if (editingProblem) {
+        await axios.put(`${API_URL}/api/v1/aptitude-problems/${editingProblem._id}`, payload, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+        });
+      } else {
+        await axios.post(`${API_URL}/api/v1/aptitude-problems`, payload, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+        });
       }
-      setProblems(prev => prev.map(p => p._id === editingProblem._id ? { ...p, ...updatedProblem } : p));
-    } else {
-      const newProblem = {
-        _id: "aptitude-" + Date.now(),
-        ...updatedProblem,
-      };
-      existing.push(newProblem);
-      setProblems(prev => [...prev, newProblem]);
+      
+      fetchProblems();
+      setIsCreating(false);
+      setEditingProblem(null);
+      resetForm();
+    } catch (error) {
+      console.error('Error saving problem:', error);
+      alert('Failed to save aptitude problem');
     }
-
-    localStorage.setItem("admin_aptitude_problems", JSON.stringify(existing));
-
-    setIsCreating(false);
-    setEditingProblem(null);
-    resetForm();
   };
 
   const handleCancel = () => {
@@ -243,31 +263,51 @@ export default function AptitudeManagement() {
     return acc;
   }, {});
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (!deleteConfirmId) return;
-    const saved = localStorage.getItem("admin_aptitude_problems");
-    if (saved) {
-      const updated = JSON.parse(saved).filter((p: any) => p._id !== deleteConfirmId);
-      localStorage.setItem("admin_aptitude_problems", JSON.stringify(updated));
-      setProblems(prev => prev.filter(p => p._id !== deleteConfirmId));
+    try {
+      await axios.delete(`${API_URL}/api/v1/aptitude-problems/${deleteConfirmId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+      });
+      fetchProblems();
+    } catch (error) {
+      console.error('Error deleting problem:', error);
+      alert('Failed to delete aptitude problem');
+    } finally {
+      setDeleteConfirmId(null);
     }
-    setDeleteConfirmId(null);
   };
 
-  const handleSaveBulk = () => {
+  const handleSaveBulk = async () => {
     const missingOption = pendingBulkQuestions.find(q => !q.correctOption);
     if (missingOption) {
       return alert("Please select a correct answer for all questions before saving.");
     }
     
-    const saved = localStorage.getItem("admin_aptitude_problems");
-    const existing = saved ? JSON.parse(saved) : [];
-    localStorage.setItem("admin_aptitude_problems", JSON.stringify([...existing, ...pendingBulkQuestions]));
-    setProblems(prev => [...prev, ...pendingBulkQuestions]);
-    
-    setPendingBulkQuestions([]);
-    setIsReviewingBulk(false);
-    alert(`Successfully saved ${pendingBulkQuestions.length} questions!`);
+    try {
+      // Create all sequentially or in parallel
+      await Promise.all(pendingBulkQuestions.map(q => 
+        axios.post(`${API_URL}/api/v1/aptitude-problems`, {
+          title: q.title, 
+          topic: q.topic || "General Aptitude",
+          difficulty: q.difficulty, 
+          description: q.description,
+          options: typeof q.options === 'string' ? q.options : JSON.stringify(q.options),
+          correctAnswer: q.correctOption,
+          company: q.company || ""
+        }, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+        })
+      ));
+
+      fetchProblems();
+      setPendingBulkQuestions([]);
+      setIsReviewingBulk(false);
+      alert(`Successfully saved ${pendingBulkQuestions.length} questions!`);
+    } catch (error) {
+      console.error('Error saving bulk questions:', error);
+      alert('Failed to save some or all questions.');
+    }
   };
 
   // ─── Bulk Review View ─────────────────────────────────────────────────────
@@ -484,10 +524,14 @@ export default function AptitudeManagement() {
         </div>
         <div className="flex space-x-3">
           <button
-            onClick={() => {
-              if (window.confirm("Are you sure you want to clear all aptitude problems?")) {
-                localStorage.removeItem("admin_aptitude_problems");
-                setProblems([]);
+            onClick={async () => {
+              if (window.confirm("Are you sure you want to clear all aptitude problems? This is dangerous!")) {
+                try {
+                  // The API doesn't have a clear all endpoint, so we have to delete one by one or create a new endpoint.
+                  alert("Clear all via frontend is disabled for safety. Please delete individually.");
+                } catch (e) {
+                  console.error(e);
+                }
               }
             }}
             className="flex items-center space-x-2 bg-rose-600 hover:bg-rose-500 text-white px-4 py-2 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(225,29,72,0.3)]"

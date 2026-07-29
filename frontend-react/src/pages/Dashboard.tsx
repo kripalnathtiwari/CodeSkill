@@ -4,6 +4,7 @@ import { Award, PlayCircle, BookOpen, Download, Settings, Lock, Sparkles, Trendi
 import CertificateModal from "../components/CertificateModal";
 import ContributionGraph from "../components/ContributionGraph";
 import { useAuth } from "../context/AuthContext";
+import { getApiUrl } from "../utils/apiConfig";
 import { motion } from "framer-motion";
 
 export default function Dashboard() {
@@ -15,6 +16,7 @@ export default function Dashboard() {
   const [testStats, setTestStats] = useState({ attempted: 0, correct: 0 });
   const [generatingCertIdx, setGeneratingCertIdx] = useState<number | null>(null);
   const [certNameInput, setCertNameInput] = useState("");
+  const [courseSettings, setCourseSettings] = useState<Record<string, any>>({});
 
   // Password Change State
   const [currentPassword, setCurrentPassword] = useState("");
@@ -24,27 +26,131 @@ export default function Dashboard() {
   const [trainerId, setTrainerId] = useState<string | null>(null);
 
   useEffect(() => {
-    // Load enrollments
-    const existingStr = localStorage.getItem("enrolledCourses");
-    if (existingStr && user?.email) {
-      try {
-        const parsed = JSON.parse(existingStr);
-        
-        // Deduplicate by courseId
-        const uniqueEnrollments: any[] = [];
-        const seen = new Set();
-        
-        for (const e of parsed) {
-          if (e.email === user.email && !seen.has(e.courseId)) {
-            seen.add(e.courseId);
-            uniqueEnrollments.push(e);
+    const loadData = () => {
+      // Load enrollments
+      const existingStr = localStorage.getItem("enrolledCourses");
+      if (existingStr && user?.email) {
+        try {
+          const parsed = JSON.parse(existingStr);
+          
+          // Deduplicate by courseId, prioritizing PAID status
+          const bestEnrollments = new Map();
+          
+          for (const e of parsed) {
+            const matchEmail = e.email?.toLowerCase().trim() === user.email?.toLowerCase().trim();
+            const matchAccountEmail = e.accountEmail?.toLowerCase().trim() === user.email?.toLowerCase().trim();
+            
+            if (matchEmail || matchAccountEmail) {
+              const existing = bestEnrollments.get(e.courseId);
+              if (!existing) {
+                bestEnrollments.set(e.courseId, e);
+              } else {
+                 const isPaid = (status: string) => ["PAID", "completed", "active", "Success"].includes(status);
+                 const existingPaid = isPaid(existing.status);
+                 const currentPaid = isPaid(e.status);
+                 
+                 // Upgrade to PAID if current is PAID and existing is UNPAID
+                 if (currentPaid && !existingPaid) {
+                   bestEnrollments.set(e.courseId, e);
+                 } else if (currentPaid === existingPaid) {
+                   // If both have the same status priority, keep the latest one
+                   bestEnrollments.set(e.courseId, e);
+                 }
+              }
+            }
           }
+          
+          const sortedEnrollments = Array.from(bestEnrollments.values()).sort((a: any, b: any) => 
+            new Date(b.dateRegistered).getTime() - new Date(a.dateRegistered).getTime()
+          );
+          
+          setEnrollments(sortedEnrollments);
+          
+          const settingsStr = localStorage.getItem("courseSettings");
+          if (settingsStr) {
+            try {
+              setCourseSettings(JSON.parse(settingsStr));
+            } catch (e) {}
+          }
+          
+        } catch (e) {}
+      }
+
+      // Load solved problems count and compute difficulty breakdown
+      const fetchDsaStats = async () => {
+        let solvedArr: string[] = [];
+        const solvedStr = localStorage.getItem(`solved_problems_progress_${user?.email || "guest"}`);
+        if (solvedStr) {
+          try {
+            solvedArr = JSON.parse(solvedStr);
+            let easy = 0, medium = 0, hard = 0;
+            
+            solvedArr.forEach((qId: string) => {
+              const d = localStorage.getItem(`q_difficulty_${qId}`);
+              if (d === "Easy" || d === "easy") easy++;
+              else if (d === "Medium" || d === "medium") medium++;
+              else if (d === "Hard" || d === "hard") hard++;
+              else easy++; // fallback
+            });
+            
+            setDsaStats({ easy, medium, hard, total: solvedArr.length });
+          } catch (e) {}
         }
-        
-        setEnrollments(uniqueEnrollments);
-        
-      } catch (e) {}
-    }
+      };
+      fetchDsaStats();
+
+      // Load test statistics
+      if (user?.email) {
+        try {
+          const allScores = JSON.parse(localStorage.getItem("all_student_scores") || "[]");
+          const myScores = allScores.filter((s: any) => s.studentEmail === user.email);
+          
+          let totalCorrect = 0;
+          let totalAttempted = 0;
+
+          myScores.forEach((s: any) => {
+            totalCorrect += (s.score || 0);
+            
+            // Try to find the exact attempt count from testResult_
+            const testResult = localStorage.getItem(`testResult_${s.testId}`);
+            if (testResult) {
+              const parsedResult = JSON.parse(testResult);
+              if (parsedResult.selectedAnswers) {
+                totalAttempted += Object.keys(parsedResult.selectedAnswers).length;
+              } else {
+                totalAttempted += (s.totalQuestions || 0);
+              }
+            } else {
+               totalAttempted += (s.totalQuestions || 0);
+            }
+          });
+
+          setTestStats({ attempted: totalAttempted, correct: totalCorrect });
+        } catch (e) {}
+      }
+      
+      // Load trainer ID for Instructors
+      if (user?.role === "INSTRUCTOR") {
+        const savedColleges = localStorage.getItem("admin_colleges_v2");
+        if (savedColleges) {
+          try {
+            const colleges = JSON.parse(savedColleges);
+            for (const college of colleges) {
+              const tutor = college.tutors.find((t: any) => t.email === user.email);
+              if (tutor && tutor.trainerId) {
+                setTrainerId(tutor.trainerId);
+                break;
+              }
+            }
+          } catch (e) {}
+        }
+      }
+    };
+
+    loadData();
+    window.addEventListener("storage", loadData);
+    return () => window.removeEventListener("storage", loadData);
+  }, [user]);
 
     // Load solved problems count and compute difficulty breakdown
     const fetchDsaStats = async () => {
@@ -73,7 +179,7 @@ export default function Dashboard() {
           
           let fetched = [];
           try {
-            const res = await fetch("http://localhost:5000/api/v1/questions?limit=100");
+            const res = await fetch(getApiUrl("/api/v1/questions?limit=100"));
             const data = await res.json();
             if (data.questions) fetched = data.questions;
           } catch(e) {}
@@ -95,55 +201,7 @@ export default function Dashboard() {
         } catch (e) {}
       }
     };
-    fetchDsaStats();
-
-    // Load test statistics
-    if (user?.email) {
-      try {
-        const allScores = JSON.parse(localStorage.getItem("all_student_scores") || "[]");
-        const myScores = allScores.filter((s: any) => s.studentEmail === user.email);
-        
-        let totalCorrect = 0;
-        let totalAttempted = 0;
-
-        myScores.forEach((s: any) => {
-          totalCorrect += (s.score || 0);
-          
-          // Try to find the exact attempt count from testResult_
-          const testResult = localStorage.getItem(`testResult_${s.testId}`);
-          if (testResult) {
-            const parsedResult = JSON.parse(testResult);
-            if (parsedResult.selectedAnswers) {
-              totalAttempted += Object.keys(parsedResult.selectedAnswers).length;
-            } else {
-              totalAttempted += (s.totalQuestions || 0);
-            }
-          } else {
-             totalAttempted += (s.totalQuestions || 0);
-          }
-        });
-
-        setTestStats({ attempted: totalAttempted, correct: totalCorrect });
-      } catch (e) {}
-    }
-    
-    // Load trainer ID for Instructors
-    if (user?.role === "INSTRUCTOR") {
-      const savedColleges = localStorage.getItem("admin_colleges_v2");
-      if (savedColleges) {
-        try {
-          const colleges = JSON.parse(savedColleges);
-          for (const college of colleges) {
-            const tutor = college.tutors.find((t: any) => t.email === user.email);
-            if (tutor && tutor.trainerId) {
-              setTrainerId(tutor.trainerId);
-              break;
-            }
-          }
-        } catch (e) {}
-      }
-    }
-  }, [user]);
+    // fetchDsaStats(); is already called inside loadData, no need to duplicate
 
   const markCompleted = (index: number) => {
     const updated = [...enrollments];
@@ -154,7 +212,10 @@ export default function Dashboard() {
     const existingStr = localStorage.getItem("enrolledCourses");
     if (existingStr) {
       const parsed = JSON.parse(existingStr);
-      const globalIndex = parsed.findIndex((e: any) => e.courseId === updated[index].courseId && e.email === user?.email);
+      const globalIndex = parsed.findIndex((e: any) => 
+        e.courseId === updated[index].courseId && 
+        (e.email?.toLowerCase().trim() === user?.email?.toLowerCase().trim() || e.accountEmail?.toLowerCase().trim() === user?.email?.toLowerCase().trim())
+      );
       if (globalIndex > -1) {
         parsed[globalIndex].status = "completed";
         localStorage.setItem("enrolledCourses", JSON.stringify(parsed));
@@ -172,7 +233,10 @@ export default function Dashboard() {
       const existingStr = localStorage.getItem("enrolledCourses");
       if (existingStr) {
         const parsed = JSON.parse(existingStr);
-        const newParsed = parsed.filter((e: any) => !(e.courseId === canceled.courseId && e.email === user?.email));
+        const newParsed = parsed.filter((e: any) => 
+          !(e.courseId === canceled.courseId && 
+           (e.email?.toLowerCase().trim() === user?.email?.toLowerCase().trim() || e.accountEmail?.toLowerCase().trim() === user?.email?.toLowerCase().trim()))
+        );
         localStorage.setItem("enrolledCourses", JSON.stringify(newParsed));
       }
     }
@@ -197,7 +261,10 @@ export default function Dashboard() {
     const existingStr = localStorage.getItem("enrolledCourses");
     if (existingStr) {
       const parsed = JSON.parse(existingStr);
-      const globalIndex = parsed.findIndex((e: any) => e.courseId === updated[idx].courseId && e.email === user?.email);
+      const globalIndex = parsed.findIndex((e: any) => 
+        e.courseId === updated[idx].courseId && 
+        (e.email?.toLowerCase().trim() === user?.email?.toLowerCase().trim() || e.accountEmail?.toLowerCase().trim() === user?.email?.toLowerCase().trim())
+      );
       if (globalIndex > -1) {
         parsed[globalIndex].certificateName = certNameInput;
         parsed[globalIndex].certificateId = newCertId;
@@ -247,7 +314,7 @@ export default function Dashboard() {
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+    show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 300, damping: 24 } }
   };
 
   return (
@@ -268,26 +335,28 @@ export default function Dashboard() {
           <p className="text-slate-500 dark:text-slate-400 text-lg max-w-2xl">Manage your active enrollments, track coding progress, and view your earned certificates in one beautiful place.</p>
         </motion.div>
 
-        <div className={`grid grid-cols-1 gap-8 ${(!user?.role || user?.role === "STUDENT") ? "lg:grid-cols-2" : ""}`}>
+        <div className={`grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 ${(!user?.role || user?.role === "STUDENT") ? "" : "xl:grid-cols-2"}`}>
           {/* Coding Statistics Panel */}
-          <motion.div variants={itemVariants} className="glass-card bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl border border-slate-200 dark:border-slate-800 p-8 shadow-xl shadow-slate-200/50 dark:shadow-none hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden flex flex-col justify-center">
+          <motion.div variants={itemVariants} className="glass-card bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl shadow-slate-200/50 dark:shadow-none hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden flex flex-col justify-between">
             <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-[80px] -z-10"></div>
             
-            <div className="flex items-center space-x-2 mb-2">
-              <Award className="w-5 h-5 text-emerald-500" />
-              <h3 className="text-xl font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wide">Coding Statistics</h3>
-            </div>
-            <div className="flex items-baseline space-x-2 mb-8">
-              <div className="text-4xl font-black text-slate-900 dark:text-slate-100">
-                {solvedCount}
+            <div>
+              <div className="flex items-center space-x-2 mb-2">
+                <Award className="w-5 h-5 text-emerald-500" />
+                <h3 className="text-lg font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wide">Coding Stats</h3>
               </div>
-              <div className="text-lg font-bold text-slate-500 uppercase tracking-wide">Problems Solved</div>
+              <div className="flex items-baseline space-x-2 mb-6">
+                <div className="text-3xl font-black text-slate-900 dark:text-slate-100">
+                  {solvedCount}
+                </div>
+                <div className="text-sm font-bold text-slate-500 uppercase tracking-wide">Problems</div>
+              </div>
             </div>
 
-            <div className="flex flex-col md:flex-row items-center space-y-8 md:space-y-0 md:space-x-12">
+            <div className="flex flex-col items-center space-y-6">
               
               {/* Multi-colored Donut Chart for DSA */}
-              <div className="relative w-48 h-48 flex-shrink-0">
+              <div className="relative w-40 h-40 flex-shrink-0">
                 <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                   <circle cx="50" cy="50" r="45" fill="none" className="stroke-slate-200 dark:stroke-slate-800 opacity-20" strokeWidth="8" />
                   {(() => {
@@ -309,31 +378,33 @@ export default function Dashboard() {
                   })()}
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-sm font-bold text-slate-600 dark:text-slate-400">Total Solved</span>
-                  <span className="text-2xl font-black text-slate-900 dark:text-slate-100">{dsaStats.total}</span>
+                  <span className="text-xs font-bold text-slate-600 dark:text-slate-400">Total</span>
+                  <span className="text-xl font-black text-slate-900 dark:text-slate-100">{dsaStats.total}</span>
                 </div>
               </div>
 
               {/* Stats Breakdown / Legend */}
-              <div className="flex flex-col space-y-6">
-                <div>
-                  <p className="text-lg font-semibold text-slate-500 dark:text-slate-400">Current Streak</p>
-                  <p className="text-3xl font-black text-slate-900 dark:text-slate-100">0 <span className="text-sm text-slate-500 font-bold uppercase tracking-wider">Days</span></p>
+              <div className="flex flex-col space-y-2 w-full">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <span className="w-3 h-3 rounded-full bg-[#22c55e]"></span>
+                    <span className="text-sm font-semibold text-slate-600 dark:text-slate-400">Easy</span>
+                  </div>
+                  <span className="text-sm font-bold text-slate-900 dark:text-white">{dsaStats.easy}</span>
                 </div>
-                
-                <div className="space-y-2 mt-2">
-                  <div className="flex items-center space-x-3">
-                    <span className="w-4 h-4 rounded-full bg-[#22c55e]"></span>
-                    <span className="text-base font-semibold text-slate-600 dark:text-slate-400 whitespace-nowrap">Easy <span className="text-slate-900 dark:text-white ml-2">{dsaStats.easy}</span></span>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <span className="w-3 h-3 rounded-full bg-[#f59e0b]"></span>
+                    <span className="text-sm font-semibold text-slate-600 dark:text-slate-400">Medium</span>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <span className="w-4 h-4 rounded-full bg-[#f59e0b]"></span>
-                    <span className="text-base font-semibold text-slate-600 dark:text-slate-400 whitespace-nowrap">Medium <span className="text-slate-900 dark:text-white ml-2">{dsaStats.medium}</span></span>
+                  <span className="text-sm font-bold text-slate-900 dark:text-white">{dsaStats.medium}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <span className="w-3 h-3 rounded-full bg-[#ef4444]"></span>
+                    <span className="text-sm font-semibold text-slate-600 dark:text-slate-400">Hard</span>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <span className="w-4 h-4 rounded-full bg-[#ef4444]"></span>
-                    <span className="text-base font-semibold text-slate-600 dark:text-slate-400 whitespace-nowrap">Hard <span className="text-slate-900 dark:text-white ml-2">{dsaStats.hard}</span></span>
-                  </div>
+                  <span className="text-sm font-bold text-slate-900 dark:text-white">{dsaStats.hard}</span>
                 </div>
               </div>
 
@@ -342,53 +413,107 @@ export default function Dashboard() {
 
           {/* MCQ Analytics Card for Students */}
           {(!user?.role || user?.role === "STUDENT") && (
-            <motion.div variants={itemVariants} className="glass-card bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl border border-slate-200 dark:border-slate-800 p-8 shadow-xl shadow-slate-200/50 dark:shadow-none hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden flex flex-col justify-center">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-[80px] -z-10"></div>
-            
-            <div className="flex items-center space-x-2 mb-2">
-              <TrendingUp className="w-5 h-5 text-indigo-500" />
-              <h3 className="text-xl font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wide">MCQ Analytics</h3>
-            </div>
-            <div className="text-4xl font-black text-slate-900 dark:text-slate-100 mb-8">
-              {testStats.attempted * 10 + testStats.correct * 5}
-            </div>
-
-            <div className="flex flex-col md:flex-row items-center space-y-8 md:space-y-0 md:space-x-12">
+            <motion.div variants={itemVariants} className="glass-card bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl shadow-slate-200/50 dark:shadow-none hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden flex flex-col justify-between">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-[80px] -z-10"></div>
               
-              {/* Circular Progress Donut */}
-              <div className="relative w-48 h-48 flex-shrink-0">
-                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="45" fill="none" className="stroke-[#6366f1] dark:stroke-[#4f46e5]" strokeWidth="8" />
-                  <circle cx="50" cy="50" r="45" fill="none" className="stroke-[#22c55e] dark:stroke-[#10b981]" strokeWidth="8" strokeLinecap="round" strokeDasharray={`${testStats.attempted > 0 ? (testStats.correct / testStats.attempted) * 282.74 : 0} 282.74`} />
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-sm font-bold text-slate-600 dark:text-slate-400">Total Score</span>
-                  <span className="text-2xl font-black text-slate-900 dark:text-slate-100">
-                    {testStats.correct}/{testStats.attempted}
+              <div>
+                <div className="flex items-center space-x-2 mb-2">
+                  <TrendingUp className="w-5 h-5 text-indigo-500" />
+                  <h3 className="text-lg font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wide">MCQ Analytics</h3>
+                </div>
+                <div className="text-3xl font-black text-slate-900 dark:text-slate-100 mb-6">
+                  {testStats.attempted * 10 + testStats.correct * 5}
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center space-y-6">
+                
+                {/* Circular Progress Donut */}
+                <div className="relative w-40 h-40 flex-shrink-0">
+                  <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="none" className="stroke-[#6366f1] dark:stroke-[#4f46e5]" strokeWidth="8" />
+                    <circle cx="50" cy="50" r="45" fill="none" className="stroke-[#22c55e] dark:stroke-[#10b981]" strokeWidth="8" strokeLinecap="round" strokeDasharray={`${testStats.attempted > 0 ? (testStats.correct / testStats.attempted) * 282.74 : 0} 282.74`} />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="text-xs font-bold text-slate-600 dark:text-slate-400">Score</span>
+                    <span className="text-xl font-black text-slate-900 dark:text-slate-100">
+                      {testStats.correct}/{testStats.attempted}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Stats Breakdown */}
+                <div className="flex flex-col space-y-2 w-full pt-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">Attempted</span>
+                    <span className="text-sm font-bold text-slate-900 dark:text-slate-100">{testStats.attempted}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">Correct</span>
+                    <span className="text-sm font-bold text-slate-900 dark:text-slate-100">{testStats.correct}</span>
+                  </div>
+                </div>
+
+              </div>
+            </motion.div>
+          )}
+
+          {/* ATS Checker Card */}
+          {(!user?.role || user?.role === "STUDENT") && (
+            <Link to="/ats-checker" className="group h-full">
+              <motion.div variants={itemVariants} className="glass-card bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-6 flex flex-col h-full shadow-xl shadow-slate-200/30 dark:shadow-none hover:shadow-fuchsia-500/20 transition-all duration-300 hover:-translate-y-1 relative overflow-hidden group-hover:border-fuchsia-500/50 border border-slate-200 dark:border-slate-800">
+                <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-fuchsia-500/10 to-transparent rounded-full blur-[50px] -z-10 group-hover:from-fuchsia-500/20 transition-colors duration-500"></div>
+                <div className="flex flex-col space-y-4 mb-4">
+                  <div className="w-12 h-12 bg-fuchsia-100 dark:bg-fuchsia-900/40 rounded-xl flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform duration-300">
+                    <TrendingUp className="w-6 h-6 text-fuchsia-600 dark:text-fuchsia-400" />
+                  </div>
+                  <h3 className="text-xl font-black text-slate-900 dark:text-slate-100">ATS Score Checker</h3>
+                </div>
+                <p className="text-slate-500 dark:text-slate-400 mb-6 flex-1 text-sm leading-relaxed">
+                  Upload your resume and a job description to get an AI-powered ATS score. Discover missing keywords and get actionable tips.
+                </p>
+                <div className="flex items-center justify-between mt-auto">
+                  <span className="text-fuchsia-600 dark:text-fuchsia-400 text-sm font-bold flex items-center group-hover:translate-x-1 transition-transform duration-300">
+                    Check Score <Sparkles className="w-3 h-3 ml-1" />
                   </span>
+                  <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center group-hover:bg-fuchsia-500 group-hover:text-white transition-colors duration-300">
+                    &rarr;
+                  </div>
                 </div>
-              </div>
+              </motion.div>
+            </Link>
+          )}
 
-              {/* Stats Breakdown */}
-              <div className="flex flex-col space-y-6">
-                <div>
-                  <p className="text-lg font-semibold text-slate-500 dark:text-slate-400">Solved Questions</p>
-                  <p className="text-3xl font-black text-slate-900 dark:text-slate-100">{testStats.attempted}</p>
+          {/* CV Builder Card */}
+          {(!user?.role || user?.role === "STUDENT") && (
+            <Link to="/cv-builder" className="group h-full">
+              <motion.div variants={itemVariants} className="glass-card bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-6 flex flex-col h-full shadow-xl shadow-slate-200/30 dark:shadow-none hover:shadow-cyan-500/20 transition-all duration-300 hover:-translate-y-1 relative overflow-hidden group-hover:border-cyan-500/50 border border-slate-200 dark:border-slate-800">
+                <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-cyan-500/10 to-transparent rounded-full blur-[50px] -z-10 group-hover:from-cyan-500/20 transition-colors duration-500"></div>
+                <div className="flex flex-col space-y-4 mb-4">
+                  <div className="w-12 h-12 bg-cyan-100 dark:bg-cyan-900/40 rounded-xl flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform duration-300">
+                    <BookOpen className="w-6 h-6 text-cyan-600 dark:text-cyan-400" />
+                  </div>
+                  <h3 className="text-xl font-black text-slate-900 dark:text-slate-100">Pro CV Builder</h3>
                 </div>
-                <div>
-                  <p className="text-lg font-semibold text-slate-500 dark:text-slate-400">Correct Answers</p>
-                  <p className="text-3xl font-black text-slate-900 dark:text-slate-100">{testStats.correct}</p>
+                <p className="text-slate-500 dark:text-slate-400 mb-6 flex-1 text-sm leading-relaxed">
+                  Craft a stunning, professional, and ATS-friendly resume from scratch using our customizable templates and preview editor.
+                </p>
+                <div className="flex items-center justify-between mt-auto">
+                  <span className="text-cyan-600 dark:text-cyan-400 text-sm font-bold flex items-center group-hover:translate-x-1 transition-transform duration-300">
+                    Build CV <Sparkles className="w-3 h-3 ml-1" />
+                  </span>
+                  <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center group-hover:bg-cyan-500 group-hover:text-white transition-colors duration-300">
+                    &rarr;
+                  </div>
                 </div>
-              </div>
-
-            </div>
-          </motion.div>
-        )}
+              </motion.div>
+            </Link>
+          )}
         </div>
 
         {/* Contribution Graph for Students */}
         {(!user?.role || user?.role === "STUDENT") && (
-          <motion.div variants={itemVariants}>
+          <motion.div variants={itemVariants} className="pt-6 border-t border-slate-200 dark:border-slate-800">
             <ContributionGraph />
           </motion.div>
         )}
@@ -476,6 +601,7 @@ export default function Dashboard() {
         </motion.div>
         )}
 
+
         <motion.div variants={itemVariants} className="pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center space-x-3">
           <BookOpen className="w-8 h-8 text-emerald-500" />
           <h2 className="text-3xl font-black">Enrolled Courses</h2>
@@ -506,20 +632,20 @@ export default function Dashboard() {
                     <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Student: <span className="font-semibold text-slate-700 dark:text-slate-300">{course.fullName}</span></p>
                   </div>
                   <span className={`px-3 py-1 text-xs font-bold rounded-full ${
-                    course.status === 'completed' 
+                    (course.status === 'completed' || courseSettings[course.courseName]?.certificatePublished) 
                       ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' 
                       : course.status === 'UNPAID'
                         ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
                         : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
                   }`}>
-                    {course.status === 'completed' ? 'Completed' : course.status === 'UNPAID' ? 'Pending Payment' : 'In Progress'}
+                    {(course.status === 'completed' || courseSettings[course.courseName]?.certificatePublished) ? 'Completed' : course.status === 'UNPAID' ? 'Pending Payment' : 'In Progress'}
                   </span>
                 </div>
 
                 <div className="flex-1"></div>
 
                 <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800 flex justify-end space-x-3">
-                  {course.status === 'completed' ? (
+                  {(course.status === 'completed' || courseSettings[course.courseName]?.certificatePublished) ? (
                     <>
                       <Link to={`/course/${course.courseId}`} className="mr-2">
                         <button className="flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg transition-colors shadow-lg">
@@ -560,20 +686,12 @@ export default function Dashboard() {
                       </Link>
                     </>
                   ) : (
-                    <>
                       <Link to={`/course/${course.courseId}`} className="mr-2">
                         <button className="flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg transition-colors shadow-lg">
                           <PlayCircle className="w-4 h-4 mr-2" />
                           Go to Course
                         </button>
                       </Link>
-                      <button 
-                        onClick={() => markCompleted(idx)}
-                        className="flex items-center px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold rounded-lg hover:bg-emerald-600 dark:hover:bg-emerald-500 hover:text-white transition-colors"
-                      >
-                        Complete Course
-                      </button>
-                    </>
                   )}
                 </div>
               </div>
@@ -588,6 +706,7 @@ export default function Dashboard() {
           studentName={selectedCert.name} 
           courseName={selectedCert.course} 
           certificateId={selectedCert.id}
+          templateImage={courseSettings[selectedCert.course]?.templateImage}
           onClose={() => setSelectedCert(null)} 
         />
       )}

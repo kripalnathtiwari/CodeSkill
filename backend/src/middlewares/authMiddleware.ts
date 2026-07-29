@@ -8,7 +8,7 @@ export interface AuthenticatedRequest extends Request {
   user?: {
     id: string;
     email: string;
-    role: "STUDENT" | "INSTRUCTOR" | "ADMIN";
+    role: string;
   };
 }
 
@@ -25,10 +25,10 @@ export const authenticateJWT = async (
   const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "supersecretkey") as {
       id: string;
       email: string;
-      role: "STUDENT" | "INSTRUCTOR" | "ADMIN";
+      role: string;
     };
 
     const user = await prisma.user.findUnique({
@@ -40,14 +40,14 @@ export const authenticateJWT = async (
       return res.status(401).json({ error: "User session expired or user not found" });
     }
 
-    req.user = user;
+    req.user = user as { id: string; email: string; role: string; };
     return next();
   } catch (error) {
     return res.status(403).json({ error: "Invalid or expired access token" });
   }
 };
 
-export const requireRole = (roles: ("STUDENT" | "INSTRUCTOR" | "ADMIN")[]) => {
+export const requireRole = (roles: string[]) => {
   return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     if (!req.user || !roles.includes(req.user.role)) {
       return res.status(403).json({ error: "Insufficient permissions for this resource" });

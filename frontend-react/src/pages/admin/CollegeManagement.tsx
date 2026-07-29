@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Building2, Plus, Trash2, Edit2, Save, X, Phone, Mail, Calendar, User, BookOpen, ArrowLeft, ChevronRight, Search, Upload, Award, Download } from "lucide-react";
 import CollegeCollection from "./CollegeCollection";
 import axios from "axios";
+import { API_BASE_URL as API_URL } from "../../utils/apiConfig";
 
 type Tutor = {
   id: string;
@@ -48,88 +49,73 @@ export default function CollegeManagement() {
   const [tutorSearch, setTutorSearch] = useState("");
 
   useEffect(() => {
-    const saved = localStorage.getItem("admin_colleges_v2");
-    if (saved) {
-      let parsed = JSON.parse(saved);
-      let needsSave = false;
-      parsed = parsed.map((c: any) => ({
-        ...c,
-        tutors: c.tutors.map((t: any) => {
-          if (!t.trainerId) {
-            needsSave = true;
-            return { ...t, trainerId: `TRN-${Math.floor(100000 + Math.random() * 900000)}` };
-          }
-          return t;
-        })
-      }));
-      setColleges(parsed);
-      if (needsSave) localStorage.setItem("admin_colleges_v2", JSON.stringify(parsed));
-    }
-    
-    // Auto-sync missing colleges for existing COLLEGE_ADMIN users
-    const syncColleges = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/api/v1/auth/users");
-        const collegeAdmins = response.data.filter((u: any) => u.role === "COLLEGE_ADMIN");
-        
-        let currentColleges = saved ? JSON.parse(saved) : [];
-        let modified = false;
-        
-        collegeAdmins.forEach((admin: any) => {
-          const adminName = admin.name || "Unknown College";
-          const existingCollegeIndex = currentColleges.findIndex((c: any) => c.name === adminName);
-          
-          if (existingCollegeIndex === -1) {
-            currentColleges.push({
-              id: "col-sync-" + Date.now() + Math.random(),
-              name: adminName,
-              adminEmail: admin.email,
-              tutors: []
-            });
-            modified = true;
-          } else if (!currentColleges[existingCollegeIndex].adminEmail) {
-            currentColleges[existingCollegeIndex].adminEmail = admin.email;
-            modified = true;
-          }
-        });
-        
-        if (modified) {
-          localStorage.setItem("admin_colleges_v2", JSON.stringify(currentColleges));
-          setColleges(currentColleges);
-        }
-      } catch (err) {
-        console.error("Failed to sync colleges with backend users", err);
-      }
-    };
-    
-    syncColleges();
+    fetchColleges();
   }, []);
+  // API_URL imported from apiConfig
 
-  const saveToStorage = (data: College[]) => {
-    localStorage.setItem("admin_colleges_v2", JSON.stringify(data));
+  const fetchColleges = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/api/v1/college-management`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+      });
+      // The backend uses 'CollegeInstitution' and 'CollegeTutor' names but the structure is the same.
+      setColleges(response.data);
+    } catch (error) {
+      console.error('Error fetching colleges:', error);
+    }
+  };
+
+  const saveToStorage = async (data: College[]) => {
+    // Legacy function, replaced by direct API calls.
     setColleges(data);
   };
 
   // --- College Actions ---
-  const handleSaveCollege = () => {
+  const handleSaveCollege = async () => {
     if (!collegeNameInput.trim()) return alert("College Name is required!");
     
-    if (editingCollegeId) {
-      saveToStorage(colleges.map(c => 
-        c.id === editingCollegeId ? { ...c, name: collegeNameInput } : c
-      ));
-    } else {
-      saveToStorage([...colleges, { id: "col-" + Date.now(), name: collegeNameInput, tutors: [] }]);
+    try {
+      if (editingCollegeId) {
+        const college = colleges.find(c => c.id === editingCollegeId);
+        if (college) {
+          await axios.put(`${API_URL}/api/v1/college-management/${editingCollegeId}`, {
+            name: collegeNameInput,
+            adminEmail: college.adminEmail,
+            tutors: college.tutors
+          }, {
+            headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+          });
+        }
+      } else {
+        await axios.post(`${API_URL}/api/v1/college-management`, {
+          name: collegeNameInput,
+          tutors: []
+        }, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+        });
+      }
+      fetchColleges();
+      setCollegeNameInput("");
+      setIsCreatingCollege(false);
+      setEditingCollegeId(null);
+    } catch (error) {
+      console.error('Error saving college:', error);
+      alert('Failed to save college');
     }
-    setCollegeNameInput("");
-    setIsCreatingCollege(false);
-    setEditingCollegeId(null);
   };
 
-  const handleDeleteCollege = (id: string) => {
+  const handleDeleteCollege = async (id: string) => {
     if (window.confirm("Are you sure? This will delete the college and all its tutors.")) {
-      saveToStorage(colleges.filter(c => c.id !== id));
-      if (selectedCollegeId === id) setSelectedCollegeId(null);
+      try {
+        await axios.delete(`${API_URL}/api/v1/college-management/${id}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+        });
+        fetchColleges();
+        if (selectedCollegeId === id) setSelectedCollegeId(null);
+      } catch (error) {
+        console.error('Error deleting college:', error);
+        alert('Failed to delete college');
+      }
     }
   };
 
@@ -141,7 +127,7 @@ export default function CollegeManagement() {
     setIsCreatingTutor(false); setEditingTutorId(null);
   };
 
-  const handleSaveTutor = () => {
+  const handleSaveTutor = async () => {
     if (!tutorName.trim()) return alert("Tutor Name is required!");
     if (!tutorEmail.trim()) return alert("Email Address is required!");
     
@@ -155,25 +141,38 @@ export default function CollegeManagement() {
       return alert("This email is already assigned to another tutor! Tutor emails must be unique across all colleges.");
     }
     
+    const college = colleges.find(c => c.id === selectedCollegeId);
+    if (!college) return;
+
     const newTutor: Tutor = {
       id: editingTutorId || "tut-" + Date.now(),
       trainerId: editingTutorId 
-        ? (colleges.find(c => c.id === selectedCollegeId)?.tutors.find(t => t.id === editingTutorId)?.trainerId || `TRN-${Math.floor(100000 + Math.random() * 900000)}`)
+        ? (college.tutors.find(t => t.id === editingTutorId)?.trainerId || `TRN-${Math.floor(100000 + Math.random() * 900000)}`)
         : `TRN-${Math.floor(100000 + Math.random() * 900000)}`,
       name: tutorName, phone: tutorPhone, email: tutorEmail, domain, joiningDate, section: tutorSection
     };
 
-    saveToStorage(colleges.map(c => {
-      if (c.id === selectedCollegeId) {
-        if (editingTutorId) {
-          return { ...c, tutors: c.tutors.map(t => t.id === editingTutorId ? newTutor : t) };
-        } else {
-          return { ...c, tutors: [...c.tutors, newTutor] };
-        }
-      }
-      return c;
-    }));
-    resetTutorForm();
+    let updatedTutors;
+    if (editingTutorId) {
+      updatedTutors = college.tutors.map(t => t.id === editingTutorId ? newTutor : t);
+    } else {
+      updatedTutors = [...college.tutors, newTutor];
+    }
+
+    try {
+      await axios.put(`${API_URL}/api/v1/college-management/${selectedCollegeId}`, {
+        name: college.name,
+        adminEmail: college.adminEmail,
+        tutors: updatedTutors
+      }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+      });
+      fetchColleges();
+      resetTutorForm();
+    } catch (error) {
+      console.error('Error saving tutor:', error);
+      alert('Failed to save tutor');
+    }
   };
 
   const handleEditTutor = (tutor: Tutor) => {
@@ -187,14 +186,20 @@ export default function CollegeManagement() {
     setTutorSection(tutor.section || "");
   };
 
-  const handleDeleteTutor = (tutorId: string) => {
+  const handleDeleteTutor = async (tutorId: string) => {
     if (window.confirm("Delete this tutor?")) {
-      saveToStorage(colleges.map(c => {
-        if (c.id === selectedCollegeId) {
-          return { ...c, tutors: c.tutors.filter(t => t.id !== tutorId) };
-        }
-        return c;
-      }));
+      const college = colleges.find(c => c.id === selectedCollegeId);
+      if (!college) return;
+      
+      try {
+        await axios.delete(`${API_URL}/api/v1/college-management/${selectedCollegeId}/tutors/${tutorId}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+        });
+        fetchColleges();
+      } catch (error: any) {
+        console.error('Error deleting tutor:', error);
+        alert(`Failed to delete tutor: ${error.response?.data?.details || error.message}`);
+      }
     }
   };
 
@@ -255,19 +260,27 @@ export default function CollegeManagement() {
         });
 
         if (newTutors.length > 0) {
-          saveToStorage(colleges.map(c => {
-            if (c.id === selectedCollegeId) {
-              return { ...c, tutors: [...c.tutors, ...newTutors] };
-            }
-            return c;
-          }));
+          const college = colleges.find(c => c.id === selectedCollegeId);
+          if (college) {
+            axios.put(`${API_URL}/api/v1/college-management/${selectedCollegeId}`, {
+              name: college.name,
+              adminEmail: college.adminEmail,
+              tutors: [...college.tutors, ...newTutors]
+            }, {
+              headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+            }).then(() => {
+              fetchColleges();
+              let alertMsg = `Successfully imported ${newTutors.length} instructors!`;
+              if (duplicatesSkipped > 0) {
+                alertMsg += ` Skipped ${duplicatesSkipped} duplicate/invalid emails to maintain uniqueness.`;
+              }
+              alert(alertMsg);
+            }).catch(error => {
+              console.error('Error importing tutors:', error);
+              alert('Failed to import tutors');
+            });
+          }
         }
-        
-        let alertMsg = `Successfully imported ${newTutors.length} instructors!`;
-        if (duplicatesSkipped > 0) {
-          alertMsg += ` Skipped ${duplicatesSkipped} duplicate/invalid emails to maintain uniqueness.`;
-        }
-        alert(alertMsg);
       };
       reader.readAsText(file);
       if (tutorCsvRef.current) tutorCsvRef.current.value = "";
@@ -715,8 +728,23 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
   const generateAggregatedCSV = (targetScores: any[], filename: string) => {
     if (targetScores.length === 0) return;
 
-    // 1. Find all unique test names (columns)
-    const testNames = Array.from(new Set(targetScores.map(s => s.testName))).sort();
+    // 1. Group tests chronologically by testName + date
+    const testEventsMap = new Map<string, any>();
+    targetScores.forEach(s => {
+      const key = `${s.testName}_${s.date}`;
+      if (!testEventsMap.has(key)) {
+        testEventsMap.set(key, { name: s.testName, date: s.date });
+      }
+    });
+
+    const sortedEvents = Array.from(testEventsMap.values()).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    
+    const eventToColumnMap = new Map<string, string>();
+    sortedEvents.forEach((ev, idx) => {
+      eventToColumnMap.set(`${ev.name}_${ev.date}`, `Test${idx + 1}`);
+    });
+
+    const testColumns = Array.from(new Set(eventToColumnMap.values()));
 
     // 2. Group by student (using name + email as unique identifier if email is unknown)
     const studentMap: Record<string, any> = {};
@@ -733,13 +761,16 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
           scores: {}
         };
       }
+      
+      const key = `${s.testName}_${s.date}`;
+      const colName = eventToColumnMap.get(key) as string;
       // Save their score for this test as an integer (just the score) to prevent Excel from converting fractions (e.g. 1/1) into dates (1-Jan)
-      studentMap[identifier].scores[s.testName] = s.score;
+      studentMap[identifier].scores[colName] = s.score;
     });
 
     // 3. Build CSV string
-    // Headers: Name, Email, Reg Number, [Test 1], [Test 2]...
-    const headers = ["Name", "Email", "Reg Number", ...testNames];
+    // Headers: Name, Email, Reg Number, Test1, Test2...
+    const headers = ["Name", "Email", "Reg Number", ...testColumns];
     const rows = [headers.join(",")];
 
     Object.values(studentMap).forEach(student => {
@@ -749,8 +780,8 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
         `"${student.regNumber}"`
       ];
       // Add score for each test column
-      testNames.forEach(test => {
-        row.push(`"${student.scores[test] || "N/A"}"`);
+      testColumns.forEach(test => {
+        row.push(`"${student.scores[test] !== undefined ? student.scores[test] : 0}"`);
       });
       rows.push(row.join(","));
     });

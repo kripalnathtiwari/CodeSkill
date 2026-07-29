@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { Code2, ArrowRight, User, Mail, Phone, Lock } from "lucide-react";
+import { getApiUrl } from "../utils/apiConfig";
+import { Code2, ArrowRight, User, Mail, Phone, Lock, Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
 import { Turnstile } from '@marsidev/react-turnstile';
-import { GoogleLogin } from '@react-oauth/google';
+import { useGoogleLogin } from '@react-oauth/google';
 
 export default function RegisterPage() {
   const [firstName, setFirstName] = useState("");
@@ -16,12 +17,20 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [cfToken, setCfToken] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
 
     if (!cfToken) {
       setError("Please complete the captcha to continue.");
@@ -31,7 +40,7 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      await axios.post("http://localhost:5000/api/v1/auth/register", {
+      await axios.post(getApiUrl("/api/v1/auth/register"), {
         firstName,
         lastName,
         email,
@@ -49,21 +58,25 @@ export default function RegisterPage() {
     }
   };
 
-  const handleGoogleSuccess = async (credentialResponse: any) => {
-    setIsLoading(true);
-    setError("");
-    try {
-      const res = await axios.post("http://localhost:5000/api/v1/auth/google", {
-        token: credentialResponse.credential
-      });
-      // For register, we can automatically log them in or redirect them
-      navigate("/login");
-    } catch (err: any) {
-      setError(err.response?.data?.error || "Google sign-up failed.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setIsLoading(true);
+      setError("");
+      try {
+        const res = await axios.post(getApiUrl("/api/v1/auth/google"), {
+          token: tokenResponse.access_token,
+        });
+        const { accessToken, refreshToken, user } = res.data;
+        login(accessToken, refreshToken, user);
+        navigate("/");
+      } catch (err: any) {
+        setError(err.response?.data?.details || err.response?.data?.error || "Google sign-up failed.");
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    onError: () => setError("Google sign-up failed."),
+  });
 
   return (
     <div className="flex-grow flex items-center justify-center relative overflow-hidden bg-slate-50 dark:bg-slate-950 px-4 py-12">
@@ -83,14 +96,14 @@ export default function RegisterPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="w-full max-w-2xl bg-white/60 dark:bg-slate-900/60 backdrop-blur-2xl rounded-3xl p-8 md:p-10 z-10 border border-slate-200 dark:border-slate-800 shadow-2xl"
+        className="w-full max-w-lg bg-white/60 dark:bg-slate-900/60 backdrop-blur-2xl rounded-2xl p-6 md:p-7 z-10 border border-slate-200 dark:border-slate-800 shadow-xl"
       >
-        <div className="flex flex-col items-center mb-8">
-          <div className="h-14 w-14 bg-gradient-to-tr from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 rounded-2xl flex items-center justify-center text-emerald-500 mb-4 shadow-lg shadow-emerald-500/10">
-            <Code2 className="h-7 w-7" />
+        <div className="flex flex-col items-center mb-6">
+          <div className="h-10 w-10 bg-emerald-600/10 dark:bg-emerald-500/10 border border-emerald-600/30 dark:border-emerald-500/20 rounded-xl flex items-center justify-center text-emerald-700 dark:text-emerald-400">
+            <Code2 className="h-5 w-5" />
           </div>
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Create an Account</h1>
-          <p className="text-slate-500 dark:text-slate-400 text-sm mt-2 font-medium">Join us and start building your profile</p>
+          <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Create an Account</h1>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1 font-medium">Join us and start building your profile</p>
         </div>
 
         {error && (
@@ -105,7 +118,7 @@ export default function RegisterPage() {
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">First Name</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-700 dark:text-slate-400">
                   <User className="h-5 w-5" />
                 </div>
                 <input
@@ -122,7 +135,7 @@ export default function RegisterPage() {
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Last Name</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-700 dark:text-slate-400">
                   <User className="h-5 w-5" />
                 </div>
                 <input
@@ -139,7 +152,7 @@ export default function RegisterPage() {
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Email</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-700 dark:text-slate-400">
                   <Mail className="h-5 w-5" />
                 </div>
                 <input
@@ -156,7 +169,7 @@ export default function RegisterPage() {
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Phone Number <span className="text-slate-400 font-normal">(Optional)</span></label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-700 dark:text-slate-400">
                   <Phone className="h-5 w-5" />
                 </div>
                 <input
@@ -175,18 +188,25 @@ export default function RegisterPage() {
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Password</label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-700 dark:text-slate-400">
                 <Lock className="h-5 w-5" />
               </div>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all placeholder:text-slate-400"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-12 py-3 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all placeholder:text-slate-400"
                 placeholder="••••••••"
                 minLength={6}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg text-black dark:text-white hover:bg-slate-300 dark:hover:bg-slate-700 transition-all z-20 shadow-sm"
+              >
+                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              </button>
             </div>
           </div>
 
@@ -213,21 +233,22 @@ export default function RegisterPage() {
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-slate-200 dark:border-slate-800"></div>
             </div>
-            <div className="relative bg-white/60 dark:bg-slate-900/60 backdrop-blur-md px-4 text-xs font-semibold text-slate-500 uppercase tracking-widest">
+            <div className="relative bg-white/60 dark:bg-slate-900/60 backdrop-blur-md px-4 text-xs font-bold text-slate-900 dark:text-slate-400 uppercase tracking-widest">
               Or sign up with
             </div>
           </div>
-          <GoogleLogin
-            onSuccess={handleGoogleSuccess}
-            onError={() => {
-              setError("Google authentication failed.");
-            }}
-            shape="rectangular"
-            theme="outline"
-            text="signup_with"
-            size="large"
-            width="350"
-          />
+          <button
+            type="button"
+            onClick={() => googleLogin()}
+            className="w-full flex items-center justify-center gap-3 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-semibold py-2.5 px-4 rounded-xl shadow-sm transition-all text-sm cursor-pointer"
+          >
+            <img
+              src="https://www.svgrepo.com/show/475656/google-color.svg"
+              alt="Google"
+              className="w-5 h-5"
+            />
+            <span>Sign up with Google</span>
+          </button>
         </div>
 
         <p className="text-center text-slate-600 dark:text-slate-400 text-sm mt-8 font-medium">

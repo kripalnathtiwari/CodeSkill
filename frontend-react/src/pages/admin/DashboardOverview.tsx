@@ -1,37 +1,81 @@
 import React, { useState, useEffect } from "react";
-import { Users, BookOpen, CreditCard, Activity, TrendingUp, TrendingDown } from "lucide-react";
+import { Users, BookOpen, CreditCard, Activity, TrendingUp, Building2, UserCheck } from "lucide-react";
+import axios from "axios";
+import { getApiUrl } from "../../utils/apiConfig";
+import { motion } from "framer-motion";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
-export default function DashboardOverview() {
-  const [stats, setStats] = useState({ revenue: 0, users: 1254, enrollments: 0, active: 42 });
+const defaultChartData = [
+  { name: 'Jan', revenue: 0 },
+  { name: 'Feb', revenue: 0 },
+  { name: 'Mar', revenue: 0 },
+  { name: 'Apr', revenue: 0 },
+  { name: 'May', revenue: 0 },
+  { name: 'Jun', revenue: 0 },
+  { name: 'Jul', revenue: 0 },
+];
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 }
+  }
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { duration: 0.4 } }
+};
+
+export default function DashboardOverview({ setActiveTab }: { setActiveTab?: (tab: string) => void }) {
+  const [stats, setStats] = useState({ revenue: 0, users: 0, enrollments: 0, active: 0, colleges: 0, instructors: 0 });
+  const [chartData, setChartData] = useState(defaultChartData);
 
   useEffect(() => {
-    // Calculate real stats from localstorage
-    const enrolledStr = localStorage.getItem("enrolledCourses");
-    let totalRevenue = 0;
-    let totalEnrollments = 0;
-    if (enrolledStr) {
+    const fetchStats = async () => {
       try {
-        const parsed = JSON.parse(enrolledStr);
-        totalEnrollments = parsed.length;
-        totalRevenue = parsed.length * 3999; // Mock average price
-      } catch (e) {}
-    }
-    setStats(prev => ({ ...prev, revenue: totalRevenue, enrollments: totalEnrollments }));
+        const res = await axios.get(getApiUrl("/api/v1/admin/dashboard-stats"), {
+          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+        });
+        if (res.data && res.data.success) {
+          setStats({
+            revenue: res.data.data.revenue || 0,
+            users: res.data.data.users || 0,
+            enrollments: res.data.data.enrollments || 0,
+            active: res.data.data.active || 0,
+            colleges: res.data.data.colleges || 0,
+            instructors: res.data.data.instructors || 0
+          });
+          if (res.data.data.chartData && res.data.data.chartData.length > 0) {
+            setChartData(res.data.data.chartData);
+          }
+        }
+      } catch (e) {
+        console.error("Failed to load dashboard stats", e);
+      }
+    };
+    fetchStats();
   }, []);
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <motion.div 
+      className="space-y-8"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
       <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-bold text-white">Platform Overview</h2>
-        <div className="text-sm text-slate-400 bg-slate-800/50 px-4 py-2 rounded-lg border border-slate-700">
+        <motion.h2 variants={itemVariants} className="text-3xl font-bold text-white">Platform Overview</motion.h2>
+        <motion.div variants={itemVariants} className="text-sm text-slate-400 bg-slate-800/50 px-4 py-2 rounded-lg border border-slate-700 backdrop-blur-sm">
           Last updated: Just now
-        </div>
+        </motion.div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-[#111827] p-6 rounded-2xl border border-emerald-500/20 shadow-lg">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <motion.div variants={itemVariants} whileHover={{ y: -5, scale: 1.02 }} className="bg-[#111827] p-6 rounded-2xl border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.05)] hover:border-emerald-500/40 hover:shadow-[0_0_20px_rgba(16,185,129,0.15)] transition-all duration-300 group">
           <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-emerald-500/10 rounded-xl text-emerald-400">
+            <div className="p-3 bg-emerald-500/10 rounded-xl text-emerald-400 group-hover:bg-emerald-500/20 transition-colors">
               <CreditCard className="w-6 h-6" />
             </div>
             <span className="flex items-center text-emerald-400 text-sm font-bold bg-emerald-500/10 px-2 py-1 rounded-md">
@@ -39,12 +83,12 @@ export default function DashboardOverview() {
             </span>
           </div>
           <p className="text-slate-400 text-sm mb-1">Total Revenue</p>
-          <h3 className="text-3xl font-extrabold text-white">₹{stats.revenue.toLocaleString('en-IN')}</h3>
-        </div>
+          <h3 className="text-3xl font-extrabold text-white tracking-tight">₹{stats.revenue.toLocaleString('en-IN')}</h3>
+        </motion.div>
 
-        <div className="bg-[#111827] p-6 rounded-2xl border border-blue-500/20 shadow-lg">
+        <motion.div variants={itemVariants} whileHover={{ y: -5, scale: 1.02 }} className="bg-[#111827] p-6 rounded-2xl border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.05)] hover:border-blue-500/40 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] transition-all duration-300 group">
           <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-blue-500/10 rounded-xl text-blue-400">
+            <div className="p-3 bg-blue-500/10 rounded-xl text-blue-400 group-hover:bg-blue-500/20 transition-colors">
               <BookOpen className="w-6 h-6" />
             </div>
             <span className="flex items-center text-blue-400 text-sm font-bold bg-blue-500/10 px-2 py-1 rounded-md">
@@ -52,12 +96,12 @@ export default function DashboardOverview() {
             </span>
           </div>
           <p className="text-slate-400 text-sm mb-1">Course Enrollments</p>
-          <h3 className="text-3xl font-extrabold text-white">{stats.enrollments}</h3>
-        </div>
+          <h3 className="text-3xl font-extrabold text-white tracking-tight">{stats.enrollments}</h3>
+        </motion.div>
 
-        <div className="bg-[#111827] p-6 rounded-2xl border border-rose-500/20 shadow-lg">
+        <motion.div variants={itemVariants} whileHover={{ y: -5, scale: 1.02 }} className="bg-[#111827] p-6 rounded-2xl border border-rose-500/20 shadow-[0_0_15px_rgba(244,63,94,0.05)] hover:border-rose-500/40 hover:shadow-[0_0_20px_rgba(244,63,94,0.15)] transition-all duration-300 group">
           <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-rose-500/10 rounded-xl text-rose-400">
+            <div className="p-3 bg-rose-500/10 rounded-xl text-rose-400 group-hover:bg-rose-500/20 transition-colors">
               <Users className="w-6 h-6" />
             </div>
             <span className="flex items-center text-rose-400 text-sm font-bold bg-rose-500/10 px-2 py-1 rounded-md">
@@ -65,12 +109,12 @@ export default function DashboardOverview() {
             </span>
           </div>
           <p className="text-slate-400 text-sm mb-1">Registered Users</p>
-          <h3 className="text-3xl font-extrabold text-white">{stats.users.toLocaleString()}</h3>
-        </div>
+          <h3 className="text-3xl font-extrabold text-white tracking-tight">{stats.users.toLocaleString()}</h3>
+        </motion.div>
 
-        <div className="bg-[#111827] p-6 rounded-2xl border border-amber-500/20 shadow-lg">
+        <motion.div variants={itemVariants} whileHover={{ y: -5, scale: 1.02 }} className="bg-[#111827] p-6 rounded-2xl border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.05)] hover:border-amber-500/40 hover:shadow-[0_0_20px_rgba(245,158,11,0.15)] transition-all duration-300 group">
           <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-amber-500/10 rounded-xl text-amber-400">
+            <div className="p-3 bg-amber-500/10 rounded-xl text-amber-400 group-hover:bg-amber-500/20 transition-colors">
               <Activity className="w-6 h-6" />
             </div>
             <span className="flex items-center text-slate-400 text-sm font-bold bg-slate-800 px-2 py-1 rounded-md">
@@ -78,33 +122,107 @@ export default function DashboardOverview() {
             </span>
           </div>
           <p className="text-slate-400 text-sm mb-1">Active Sandbox Sessions</p>
-          <h3 className="text-3xl font-extrabold text-white">{stats.active}</h3>
-        </div>
+          <h3 className="text-3xl font-extrabold text-white tracking-tight">{stats.active}</h3>
+        </motion.div>
+
+        <motion.div 
+          onClick={() => setActiveTab && setActiveTab('colleges')}
+          variants={itemVariants} 
+          whileHover={{ y: -5, scale: 1.02 }} 
+          className="bg-[#111827] p-6 rounded-2xl border border-purple-500/20 shadow-[0_0_15px_rgba(168,85,247,0.05)] hover:border-purple-500/40 hover:shadow-[0_0_20px_rgba(168,85,247,0.15)] transition-all duration-300 group cursor-pointer"
+        >
+          <div className="flex justify-between items-start mb-4">
+            <div className="p-3 bg-purple-500/10 rounded-xl text-purple-400 group-hover:bg-purple-500/20 transition-colors">
+              <Building2 className="w-6 h-6" />
+            </div>
+            <span className="flex items-center text-slate-400 text-sm font-bold bg-slate-800 px-2 py-1 rounded-md">
+              View All
+            </span>
+          </div>
+          <p className="text-slate-400 text-sm mb-1">Total Colleges</p>
+          <h3 className="text-3xl font-extrabold text-white tracking-tight">{stats.colleges}</h3>
+        </motion.div>
+
+        <motion.div 
+          onClick={() => setActiveTab && setActiveTab('users')}
+          variants={itemVariants} 
+          whileHover={{ y: -5, scale: 1.02 }} 
+          className="bg-[#111827] p-6 rounded-2xl border border-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.05)] hover:border-cyan-500/40 hover:shadow-[0_0_20px_rgba(6,182,212,0.15)] transition-all duration-300 group cursor-pointer"
+        >
+          <div className="flex justify-between items-start mb-4">
+            <div className="p-3 bg-cyan-500/10 rounded-xl text-cyan-400 group-hover:bg-cyan-500/20 transition-colors">
+              <UserCheck className="w-6 h-6" />
+            </div>
+            <span className="flex items-center text-slate-400 text-sm font-bold bg-slate-800 px-2 py-1 rounded-md">
+              View All
+            </span>
+          </div>
+          <p className="text-slate-400 text-sm mb-1">Total Instructors</p>
+          <h3 className="text-3xl font-extrabold text-white tracking-tight">{stats.instructors}</h3>
+        </motion.div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-[#111827] p-6 rounded-2xl border border-slate-800 min-h-[300px] flex items-center justify-center relative overflow-hidden">
-           <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5" />
-           <div className="text-center z-10">
-             <h4 className="text-xl font-bold text-white mb-2">Revenue Growth Chart</h4>
-             <p className="text-slate-500">Visualization rendering...</p>
+        <motion.div variants={itemVariants} className="bg-[#111827] p-6 rounded-2xl border border-slate-800 min-h-[350px] relative overflow-hidden group hover:border-slate-700 transition-colors">
+           <h4 className="text-xl font-bold text-white mb-6 flex items-center">
+             Revenue Growth
+             <span className="ml-3 text-xs font-medium bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded-full border border-emerald-500/20">This Year</span>
+           </h4>
+           <div className="h-[250px] w-full">
+             <ResponsiveContainer width="100%" height="100%">
+               <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                 <defs>
+                   <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                     <stop offset="5%" stopColor="#10B981" stopOpacity={0.3}/>
+                     <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
+                   </linearGradient>
+                 </defs>
+                 <CartesianGrid strokeDasharray="3 3" stroke="#1F2937" vertical={false} />
+                 <XAxis dataKey="name" stroke="#6B7280" fontSize={12} tickLine={false} axisLine={false} />
+                 <YAxis stroke="#6B7280" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `₹${value/1000}k`} />
+                 <Tooltip 
+                   contentStyle={{ backgroundColor: '#111827', borderColor: '#374151', borderRadius: '8px', color: '#fff' }}
+                   itemStyle={{ color: '#10B981', fontWeight: 'bold' }}
+                 />
+                 <Area type="monotone" dataKey="revenue" stroke="#10B981" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
+               </AreaChart>
+             </ResponsiveContainer>
            </div>
-        </div>
-        <div className="bg-[#111827] p-6 rounded-2xl border border-slate-800">
-           <h4 className="text-lg font-bold text-white mb-4 border-b border-slate-800 pb-4">Recent System Activity</h4>
-           <div className="space-y-4">
-             {[1, 2, 3, 4].map((i) => (
-               <div key={i} className="flex items-center justify-between text-sm">
-                 <div className="flex items-center space-x-3">
-                   <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                   <span className="text-slate-300">User {Math.floor(Math.random() * 9000) + 1000} enrolled in "System Design Masterclass"</span>
+        </motion.div>
+        
+        <motion.div variants={itemVariants} className="bg-[#111827] p-6 rounded-2xl border border-slate-800 hover:border-slate-700 transition-colors flex flex-col">
+           <h4 className="text-lg font-bold text-white mb-6 flex items-center">
+             Recent System Activity
+             <div className="ml-auto flex items-center space-x-2">
+               <span className="flex h-2 w-2 relative">
+                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+               </span>
+               <span className="text-xs text-slate-400">Live</span>
+             </div>
+           </h4>
+           <div className="space-y-4 overflow-y-auto pr-2 custom-scrollbar flex-1">
+             {[1, 2, 3, 4, 5].map((i) => (
+               <motion.div 
+                 key={i} 
+                 whileHover={{ x: 5, backgroundColor: 'rgba(31, 41, 55, 0.5)' }}
+                 className="flex items-center justify-between text-sm p-3 rounded-xl transition-all cursor-pointer border border-transparent hover:border-slate-800"
+               >
+                 <div className="flex items-center space-x-4">
+                   <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/20">
+                     <Users className="w-4 h-4" />
+                   </div>
+                   <div className="flex flex-col">
+                     <span className="text-slate-200 font-medium">New Enrollment</span>
+                     <span className="text-slate-400 text-xs mt-0.5">User {Math.floor(Math.random() * 9000) + 1000} enrolled in "System Design Masterclass"</span>
+                   </div>
                  </div>
-                 <span className="text-slate-500">{i * 12} mins ago</span>
-               </div>
+                 <span className="text-slate-500 text-xs font-mono bg-slate-800/50 px-2 py-1 rounded-md">{i * 12}m</span>
+               </motion.div>
              ))}
            </div>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }

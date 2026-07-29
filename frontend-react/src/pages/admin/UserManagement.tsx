@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Search, Shield, Ban, CheckCircle, UserX, UserCheck, Loader, Upload, FileText, Trash2, Plus, X, Save, ChevronDown } from "lucide-react";
 import axios from "axios";
+import { getApiUrl } from "../../utils/apiConfig";
 
 export default function UserManagement() {
   const [users, setUsers] = useState<any[]>([]);
@@ -34,7 +35,7 @@ export default function UserManagement() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/v1/auth/users");
+        const res = await axios.get(getApiUrl("/api/v1/auth/users"));
         setUsers(res.data);
       } catch (err) {
         console.error("Failed to fetch users:", err);
@@ -78,7 +79,7 @@ export default function UserManagement() {
     }));
 
     try {
-      await axios.put(`http://localhost:5000/api/v1/auth/users/${id}/role`, { role: newRole });
+      await axios.put(getApiUrl(`/api/v1/auth/users/${id}/role`), { role: newRole });
 
       if (newRole === 'COLLEGE_ADMIN' && updatedEmail) {
         const savedColc = localStorage.getItem("admin_college_collections");
@@ -113,9 +114,17 @@ export default function UserManagement() {
     }
   };
 
-  const deleteUser = (id: string) => {
+  const deleteUser = async (id: string) => {
     if (window.confirm("Are you sure you want to permanently delete this user?")) {
-      setUsers(users.filter(u => u.id !== id));
+      try {
+        await axios.delete(getApiUrl(`/api/v1/auth/users/${id}`), {
+          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+        });
+        setUsers(users.filter(u => u.id !== id));
+      } catch (error) {
+        console.error('Error deleting user:', error);
+        alert('Failed to delete user');
+      }
     }
   };
 

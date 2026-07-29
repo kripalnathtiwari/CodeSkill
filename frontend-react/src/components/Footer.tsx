@@ -5,7 +5,7 @@ import { Code2, MapPin, Globe, Share2, MessageCircle, Video } from "lucide-react
 export default function Footer() {
   const location = useLocation();
   const hideOnPaths = ['/sandbox', '/solve'];
-  
+
   if (hideOnPaths.some(path => location.pathname.startsWith(path))) {
     return null;
   }
@@ -13,7 +13,7 @@ export default function Footer() {
   return (
     <footer className="bg-[#111111] dark:bg-[#0a0a0a] text-slate-300 py-16 px-6 border-t border-slate-800">
       <div className="max-w-[90rem] mx-auto flex flex-col xl:flex-row gap-16 xl:gap-12 justify-between">
-        
+
         {/* Brand & Address Section */}
         <div className="w-full xl:w-1/4 space-y-6">
           <Link to="/" className="flex items-center space-x-2 mb-4">
@@ -21,13 +21,13 @@ export default function Footer() {
               <Code2 className="w-6 h-6 text-white" />
             </div>
             <div>
-              <span className="text-xl font-black tracking-tight text-white">Teach<span className="text-emerald-500">Skill</span></span>
+              <span className="text-xl font-black tracking-tight text-white">Code<span className="text-emerald-500">Skill</span></span>
               <p className="text-[10px] text-slate-500 uppercase tracking-widest leading-none">Education Private Limited</p>
             </div>
           </Link>
 
           <p className="text-sm text-slate-400 leading-relaxed mb-6 pr-4">
-            TeachSkill is an advanced interactive learning platform designed to empower developers. We bridge the gap between academic learning and industry requirements with real-world projects, guided courses, and practical coding challenges.
+            CodeSkill is an advanced interactive learning platform designed to empower developers. We bridge the gap between academic learning and industry requirements with real-world projects, guided courses, and practical coding challenges.
           </p>
 
           <div className="space-y-4">
@@ -40,7 +40,7 @@ export default function Footer() {
                 <p>Karnataka 560100, India</p>
               </div>
             </div>
-            
+
             <div className="flex items-start space-x-3 text-sm">
               <MapPin className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
               <div className="text-slate-400">
@@ -63,7 +63,7 @@ export default function Footer() {
               <li><Link to="#" className="hover:text-white transition-colors">Legal</Link></li>
               <li><Link to="#" className="hover:text-white transition-colors">Privacy Policy</Link></li>
               <li><Link to="#" className="hover:text-white transition-colors">Careers</Link></li>
-              <li><Link to="#" className="hover:text-white transition-colors">Contact Us</Link></li>
+              <li><Link to="/contact" className="hover:text-white transition-colors">Contact Us</Link></li>
               <li><Link to="#" className="hover:text-white transition-colors">Corporate Solution</Link></li>
               <li><Link to="#" className="hover:text-white transition-colors">Campus Training Program</Link></li>
             </ul>

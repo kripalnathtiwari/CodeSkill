@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import { getApiUrl } from "../utils/apiConfig";
 import { Lock, Mail, KeyRound, ArrowRight, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -20,7 +21,7 @@ export default function ChangePassword() {
 
   const navigate = useNavigate();
 
-  const API_BASE = "http://localhost:5000/api/v1/auth";
+  const API_BASE = getApiUrl("/api/v1/auth");
 
   const handleRequestOtp = async (e: React.FormEvent) => {
     e.preventDefault();

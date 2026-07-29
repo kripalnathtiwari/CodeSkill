@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
+import { getApiUrl } from "../utils/apiConfig";
 import { User, Mail, Phone, Save, ShieldAlert } from "lucide-react";
 
 export default function EditProfile() {
@@ -16,7 +17,7 @@ export default function EditProfile() {
     if (user) {
       setFirstName(user.profile?.firstName || "");
       setLastName(user.profile?.lastName || "");
-      setPhoneNumber(user.phoneNumber || "");
+      setPhoneNumber((user as any).phoneNumber || (user.profile as any)?.phoneNumber || "");
     }
   }, [user]);
 
@@ -29,7 +30,7 @@ export default function EditProfile() {
       const token = localStorage.getItem("accessToken");
       
       await axios.put(
-        "http://localhost:5000/api/v1/auth/profile",
+        getApiUrl("/api/v1/auth/profile"),
         { firstName, lastName, phoneNumber },
         { headers: { Authorization: `Bearer ${token}` } }
       );

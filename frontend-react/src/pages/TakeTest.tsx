@@ -3,6 +3,7 @@ import axios from "axios";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { recordContribution } from "../utils/contributions";
+import { getApiUrl } from "../utils/apiConfig";
 import { AlertTriangle, Clock, CheckCircle, ShieldAlert, Award, ChevronLeft, ChevronRight, Trophy, Minus, XCircle } from "lucide-react";
 
 // Mock Python Questions
@@ -81,97 +82,109 @@ export default function TakeTest() {
   useEffect(() => {
     // Only calculate and save if we haven't already!
     if (isFinished && !localStorage.getItem(storageKey)) {
-      // Calculate Score
-      let calculatedScore = 0;
-      testQuestions.forEach((q: any) => {
-        if (selectedAnswers[q.id] === q.answer) calculatedScore += 1;
-      });
-      setScore(calculatedScore);
-      
-      // --- ACTUAL RANK CALCULATION ---
-      const existingScores = JSON.parse(localStorage.getItem("all_student_scores") || "[]");
-      const sameTestScores = existingScores.filter((s: any) => String(s.testId) === String(id));
-      
-      let higherScorers = 0;
-      sameTestScores.forEach((s: any) => {
-        if (s.score > calculatedScore) {
-          higherScorers++;
+      const processSubmission = async () => {
+        // Calculate Score
+        let calculatedScore = 0;
+        testQuestions.forEach((q: any) => {
+          if (selectedAnswers[q.id] === q.answer) calculatedScore += 1;
+        });
+        setScore(calculatedScore);
+        
+        // --- ACTUAL RANK CALCULATION ---
+        const existingScores = JSON.parse(localStorage.getItem("all_student_scores") || "[]");
+        const sameTestScores = existingScores.filter((s: any) => String(s.testId) === String(id));
+        
+        let higherScorers = 0;
+        sameTestScores.forEach((s: any) => {
+          if (s.score > calculatedScore) {
+            higherScorers++;
+          }
+        });
+        
+        const actualRank = higherScorers + 1;
+        setRank(actualRank);
+
+        // Save to localStorage to prevent retakes for this user
+        localStorage.setItem(storageKey, JSON.stringify({
+          score: calculatedScore,
+          rank: actualRank,
+          selectedAnswers
+        }));
+        
+        // Record contribution
+        recordContribution(user?.email);
+
+        // --- ADMIN SCORE TRACKING ---
+        let testName = `Test ${id}`;
+        let testAssignedCollegeId: string | null = null;
+        let testAssignedSection: string | null = null;
+
+        const savedTests = localStorage.getItem("admin_custom_tests");
+        if (savedTests) {
+          const tests = JSON.parse(savedTests);
+          const t = tests.find((x: any) => String(x.id) === String(id));
+          if (t) {
+            if (t.title) testName = t.title;
+            if (t.collegeId) testAssignedCollegeId = t.collegeId;
+            if (t.section) testAssignedSection = t.section;
+          }
         }
-      });
-      
-      const actualRank = higherScorers + 1;
-      setRank(actualRank);
-
-      // Save to localStorage to prevent retakes for this user
-      localStorage.setItem(storageKey, JSON.stringify({
-        score: calculatedScore,
-        rank: actualRank,
-        selectedAnswers
-      }));
-      
-      // Record contribution
-      recordContribution(user?.email);
-
-      // --- ADMIN SCORE TRACKING ---
-      let testName = `Test ${id}`;
-      let testAssignedCollegeId: string | null = null;
-      let testAssignedSection: string | null = null;
-
-      const savedTests = localStorage.getItem("admin_custom_tests");
-      if (savedTests) {
-        const tests = JSON.parse(savedTests);
-        const t = tests.find((x: any) => String(x.id) === String(id));
-        if (t) {
-          if (t.title) testName = t.title;
-          if (t.collegeId) testAssignedCollegeId = t.collegeId;
-          if (t.section) testAssignedSection = t.section;
+        
+        const studentName = user?.profile ? `${user.profile.firstName} ${user.profile.lastName}` : user?.email || "Anonymous Student";
+        
+        // --- RESOLVE COLLEGE AND SECTION ---
+        const passedState = location.state as any || {};
+        let resolvedCollegeName = "Global / Not Selected";
+        let resolvedSection = "N/A";
+        
+        let allColleges: any[] = [];
+        try {
+          const response = await axios.get(getApiUrl("/api/v1/college-management"), {
+            headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+          });
+          allColleges = response.data;
+        } catch (error) {
+          console.error("Failed to fetch colleges for score tracking", error);
         }
-      }
-      
-      const studentName = user?.profile ? `${user.profile.firstName} ${user.profile.lastName}` : user?.email || "Anonymous Student";
-      
-      // --- RESOLVE COLLEGE AND SECTION ---
-      const passedState = location.state as any || {};
-      let resolvedCollegeName = "Global / Not Selected";
-      let resolvedSection = "N/A";
-      
-      const allColleges = JSON.parse(localStorage.getItem("admin_colleges_v2") || "[]");
-      
-      // Prioritize the test's assigned college, fallback to student selection
-      const targetCollegeId = testAssignedCollegeId || (passedState.collegeId !== "all" ? passedState.collegeId : null);
-      if (targetCollegeId) {
-        const found = allColleges.find((c: any) => String(c.id) === String(targetCollegeId));
-        if (found) resolvedCollegeName = found.name;
-      }
+        
+        // Prioritize the test's assigned college, fallback to student selection
+        const targetCollegeId = testAssignedCollegeId || (passedState.collegeId !== "all" ? passedState.collegeId : null);
+        if (targetCollegeId) {
+          const found = allColleges.find((c: any) => String(c.id) === String(targetCollegeId));
+          if (found) resolvedCollegeName = found.name;
+        }
 
-      // Prioritize the test's assigned section, fallback to student selection
-      if (testAssignedSection) {
-        resolvedSection = testAssignedSection;
-      } else if (passedState.section && passedState.section !== "all") {
-        resolvedSection = passedState.section;
-      }
+        // Prioritize the test's assigned section, fallback to student selection
+        if (testAssignedSection) {
+          resolvedSection = testAssignedSection;
+        } else if (passedState.section && passedState.section !== "all") {
+          resolvedSection = passedState.section;
+        }
 
-      const newScoreRecord = {
-        testId: id,
-        testName: testName,
-        studentName: studentName,
-        studentEmail: user?.email || "Unknown",
-        collegeName: resolvedCollegeName,
-        sectionName: resolvedSection,
-        score: calculatedScore,
-        totalQuestions: testQuestions.length,
-        date: new Date().toLocaleString()
+        const newScoreRecord = {
+          testId: id,
+          testName: testName,
+          studentName: studentName,
+          studentEmail: user?.email || "Unknown",
+          collegeName: resolvedCollegeName,
+          sectionName: resolvedSection,
+          score: calculatedScore,
+          totalQuestions: testQuestions.length,
+          date: new Date().toLocaleString()
+        };
+        
+        existingScores.push(newScoreRecord);
+        localStorage.setItem("all_student_scores", JSON.stringify(existingScores));
+
+        // Exit fullscreen if active
+        if (document.fullscreenElement) {
+          document.exitFullscreen().catch(console.error);
+        }
       };
       
-      existingScores.push(newScoreRecord);
-      localStorage.setItem("all_student_scores", JSON.stringify(existingScores));
-
-      // Exit fullscreen if active
-      if (document.fullscreenElement) {
-        document.exitFullscreen().catch(console.error);
-      }
+      processSubmission();
     }
-  }, [isFinished, selectedAnswers, id, testQuestions, user]);
+  }, [isFinished, selectedAnswers, id, testQuestions, user, location.state]);
 
   // Anti-cheat Listeners
   useEffect(() => {
@@ -190,7 +203,7 @@ export default function TakeTest() {
         setShowWarningModal(true);
         if ("Notification" in window && Notification.permission === "granted") {
           try {
-            new Notification("TeachSkill Security Alert", {
+            new Notification("CodeSkill Security Alert", {
               body: `Strike ${newCount}/3! You have left the test environment. Return immediately!`,
             });
           } catch (e) {
@@ -239,7 +252,7 @@ export default function TakeTest() {
 
   // Auto-dismiss warning modal after 5 seconds
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let timer: ReturnType<typeof setInterval>;
     if (showWarningModal) {
       setWarningCountdown(5);
       timer = setInterval(() => {
@@ -315,7 +328,7 @@ export default function TakeTest() {
           
           try {
             await axios.post(
-              "http://localhost:5000/api/v1/tests/snapshots",
+              getApiUrl("/api/v1/tests/snapshots"),
               { testId: id, imageUrl },
               { headers: { Authorization: `Bearer ${token}` } }
             );

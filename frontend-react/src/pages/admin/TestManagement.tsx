@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
+import { getApiUrl } from "../../utils/apiConfig";
 import {
   Plus, Trash2, Save, Award, ShieldAlert, Clock,
   Radio, CalendarClock, ArrowLeft, Timer, Users, Download, Upload, Eye, X, Building2, Video, Loader2
@@ -811,8 +812,21 @@ function SnapshotViewerModal({ testId, studentEmail, studentName, onClose }: { t
 
   useEffect(() => {
     const fetchSnapshots = async () => {
+      if (token === "mock-token-instructor" || token === "mock-token-admin") {
+        // Load dummy snapshots for mock users
+        setTimeout(() => {
+          setSnapshots([
+            { timestamp: new Date(Date.now() - 3600000).toISOString(), imageUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&q=80&w=400&h=300", flagReason: null },
+            { timestamp: new Date(Date.now() - 1800000).toISOString(), imageUrl: "https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&q=80&w=400&h=300", flagReason: "Multiple faces detected" },
+            { timestamp: new Date().toISOString(), imageUrl: "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?auto=format&fit=crop&q=80&w=400&h=300", flagReason: null }
+          ]);
+          setLoading(false);
+        }, 1000);
+        return;
+      }
+
       try {
-        const res = await axios.get(`http://localhost:5000/api/v1/tests/${testId}/snapshots?email=${encodeURIComponent(studentEmail)}`, {
+        const res = await axios.get(getApiUrl(`/api/v1/tests/${testId}/snapshots?email=${encodeURIComponent(studentEmail)}`), {
           headers: { Authorization: `Bearer ${token}` }
         });
         setSnapshots(res.data.snapshots);

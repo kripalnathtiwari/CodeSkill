@@ -18,14 +18,20 @@ export default function CourseRegistration() {
     if (existingStr) {
       try {
         const enrollments = JSON.parse(existingStr);
-        const alreadyEnrolled = enrollments.find((e: any) => e.courseId === (id || "c-1"));
-        if (alreadyEnrolled) {
-          alert("You are already registered for this course! Redirecting to your dashboard...");
-          navigate("/dashboard");
+        if (user && user.email) {
+          const alreadyEnrolled = enrollments.find((e: any) => 
+            e.courseId === (id || "c-1") && 
+            (e.email?.toLowerCase().trim() === user.email?.toLowerCase().trim() || e.accountEmail?.toLowerCase().trim() === user.email?.toLowerCase().trim()) &&
+            ["PAID", "active", "completed", "Success"].includes(e.status)
+          );
+          if (alreadyEnrolled) {
+            alert("You are already registered and paid for this course! Redirecting to your dashboard...");
+            navigate("/dashboard");
+          }
         }
       } catch (e) {}
     }
-  }, [id, navigate]);
+  }, [id, navigate, user]);
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -63,6 +69,7 @@ export default function CourseRegistration() {
       courseName: course?.title || "Generative AI Training Program",
       fullName: formData.fullName,
       email: formData.email,
+      accountEmail: user?.email,
       phone: formData.phone,
       dateRegistered: new Date().toISOString(),
       status: "UNPAID" // Saved as unpaid initially
@@ -77,7 +84,10 @@ export default function CourseRegistration() {
     }
     
     // Safety check against duplicate registration
-    const existingIndex = enrollments.findIndex((e: any) => e.courseId === (id || "c-1") && e.email === formData.email);
+    const existingIndex = enrollments.findIndex((e: any) => 
+      e.courseId === (id || "c-1") && 
+      (e.email?.toLowerCase().trim() === formData.email?.toLowerCase().trim() || e.accountEmail?.toLowerCase().trim() === user?.email?.toLowerCase().trim())
+    );
     if (existingIndex > -1) {
       if (enrollments[existingIndex].status === "PAID" || enrollments[existingIndex].status === "active") {
         alert("You are already registered and paid for this course!");

@@ -47,7 +47,7 @@ export default function Payment() {
   }, [newEnrollment, navigate]);
 
   const applyPromoCode = () => {
-    if (promoCode.toUpperCase() === "TEACHSKILL50") {
+    if (promoCode.toUpperCase() === "CODESKILL50") {
       setDiscount(500);
       setPromoMessage("₹500 discount applied successfully!");
     } else if (promoCode.toUpperCase() === "WELCOME") {
@@ -118,7 +118,7 @@ export default function Payment() {
         } catch (e) {}
       }
       
-      const existingIndex = enrollments.findIndex((e: any) => e.courseId === newEnrollment.courseId && e.email === newEnrollment.email);
+      const existingIndex = enrollments.findIndex((e: any) => e.courseId === newEnrollment.courseId && e.email?.toLowerCase() === newEnrollment.email?.toLowerCase());
       if (existingIndex > -1) {
         enrollments[existingIndex] = { ...enrollments[existingIndex], ...newEnrollment, status: "PAID" };
       } else {
@@ -496,7 +496,7 @@ export default function Payment() {
                   type="text" 
                   value={promoCode}
                   onChange={(e) => setPromoCode(e.target.value)}
-                  placeholder="e.g. TEACHSKILL50"
+                  placeholder="e.g. CODESKILL50"
                   className="flex-1 bg-[#111827] border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500 uppercase transition-colors"
                 />
                 <button 

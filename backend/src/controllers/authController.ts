@@ -13,7 +13,7 @@ import EmailService from "../services/emailService";
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 const REFRESH_SECRET = process.env.REFRESH_SECRET || "superrefreshkey";
 const TURNSTILE_SECRET = process.env.TURNSTILE_SECRET || "1x0000000000000000000000000000000AA";
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "YOUR_GOOGLE_CLIENT_ID";
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "864589755138-jvprisoib74mp9ee9pt7kaqinmtjvm9m.apps.googleusercontent.com";
 const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
 
 async function verifyTurnstile(token: string) {
@@ -33,10 +33,16 @@ async function verifyTurnstile(token: string) {
 
 export class AuthController {
   public static async register(req: Request, res: Response) {
-    const { email, password, firstName, lastName, role, cfToken, phoneNumber } = req.body;
+    const { password, firstName, lastName, role, cfToken, phoneNumber } = req.body;
+    const email = req.body.email?.toLowerCase();
 
     if (!email || !password || !firstName || !lastName) {
       return res.status(400).json({ error: "Missing required profile fields" });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: "Invalid email format" });
     }
 
     const isHuman = await verifyTurnstile(cfToken);
@@ -82,10 +88,16 @@ export class AuthController {
   }
 
   public static async login(req: Request, res: Response) {
-    const { email, password, cfToken } = req.body;
+    const { password, cfToken } = req.body;
+    const email = req.body.email?.toLowerCase();
 
     if (!email || !password) {
       return res.status(400).json({ error: "Missing email or password" });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: "Invalid email format" });
     }
 
     // Note: Mock admin and instructor logins bypass this in frontend, but for real logins we check captcha
@@ -147,7 +159,7 @@ export class AuthController {
       });
     } catch (err: any) {
       logger.error(`Login logic failed: ${err.message}`);
-      return res.status(500).json({ error: "Login internal database issue" });
+      return res.status(500).json({ error: "Login internal database issue", details: err.message || String(err) });
     }
   }
 
@@ -158,19 +170,34 @@ export class AuthController {
     }
 
     try {
-      const ticket = await googleClient.verifyIdToken({
-        idToken: token,
-        audience: GOOGLE_CLIENT_ID,
-      });
-      const payload = ticket.getPayload();
-      
-      if (!payload || !payload.email) {
-        return res.status(400).json({ error: "Invalid Google token payload" });
-      }
+      let email: string;
+      let firstName: string;
+      let lastName: string;
 
-      const email = payload.email;
-      const firstName = payload.given_name || "Google";
-      const lastName = payload.family_name || "User";
+      try {
+        const ticket = await googleClient.verifyIdToken({
+          idToken: token,
+          audience: GOOGLE_CLIENT_ID,
+        });
+        const payload = ticket.getPayload();
+        if (!payload || !payload.email) {
+          return res.status(400).json({ error: "Invalid Google token payload" });
+        }
+        email = payload.email.toLowerCase();
+        firstName = payload.given_name || "Google";
+        lastName = payload.family_name || "User";
+      } catch (idTokenErr) {
+        // Fallback: If token is an OAuth access_token from useGoogleLogin custom button
+        const userInfoRes = await axios.get("https://www.googleapis.com/oauth2/v3/userinfo", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!userInfoRes.data || !userInfoRes.data.email) {
+          throw new Error("Invalid Google access token or ID token");
+        }
+        email = userInfoRes.data.email.toLowerCase();
+        firstName = userInfoRes.data.given_name || "Google";
+        lastName = userInfoRes.data.family_name || "User";
+      }
 
       let user = await prisma.user.findUnique({
         where: { email },
@@ -234,7 +261,7 @@ export class AuthController {
       });
     } catch (err: any) {
       logger.error(`Google auth failed: ${err.message}`);
-      return res.status(500).json({ error: "Google Authentication failed" });
+      return res.status(500).json({ error: "Google Authentication failed", details: err.message || String(err) });
     }
   }
 
@@ -382,8 +409,43 @@ export class AuthController {
       return res.status(500).json({ error: "Failed to update role" });
     }
   }
+
+  public static async deleteUser(req: Request, res: Response) {
+    const { userId } = req.params;
+    const adminId = (req as any).user?.id;
+
+    try {
+      const userToArchive = await prisma.user.findUnique({
+        where: { id: userId },
+        include: { profile: true }
+      });
+
+      if (!userToArchive) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      await prisma.archiveRecord.create({
+        data: {
+          entityType: 'USER',
+          originalId: userToArchive.id,
+          data: JSON.stringify(userToArchive),
+          deletedBy: adminId
+        }
+      });
+
+      await prisma.user.delete({
+        where: { id: userId }
+      });
+
+      return res.status(204).send();
+    } catch (err: any) {
+      logger.error(`Failed to delete user: ${err.message}`);
+      return res.status(500).json({ error: "Failed to delete user", details: err.message || String(err) });
+    }
+  }
+
   public static async requestOtp(req: Request, res: Response) {
-    const { email } = req.body;
+    const email = req.body.email?.toLowerCase();
     if (!email) {
       return res.status(400).json({ error: "Email is required" });
     }
@@ -417,7 +479,8 @@ export class AuthController {
   }
 
   public static async verifyOtp(req: Request, res: Response) {
-    const { email, otp } = req.body;
+    const { otp } = req.body;
+    const email = req.body.email?.toLowerCase();
     if (!email || !otp) {
       return res.status(400).json({ error: "Email and OTP are required" });
     }
@@ -454,7 +517,8 @@ export class AuthController {
   }
 
   public static async resetPassword(req: Request, res: Response) {
-    const { email, resetToken, newPassword } = req.body;
+    const { resetToken, newPassword } = req.body;
+    const email = req.body.email?.toLowerCase();
     if (!email || !resetToken || !newPassword) {
       return res.status(400).json({ error: "Missing required fields" });
     }
@@ -483,5 +547,32 @@ export class AuthController {
       return res.status(500).json({ error: "Failed to reset password" });
     }
   }
+
+  public static async logActivity(req: AuthenticatedRequest, res: Response) {
+    const userId = req.user?.id;
+    const { action } = req.body;
+
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+    if (!action) {
+      return res.status(400).json({ error: "Action is required" });
+    }
+
+    try {
+      await prisma.userActivityLog.create({
+        data: {
+          userId,
+          action,
+          ipAddress: req.ip,
+        }
+      });
+      return res.status(200).json({ success: true });
+    } catch (err: any) {
+      logger.error(`Log activity failed: ${err.message}`);
+      return res.status(500).json({ error: "Failed to log activity" });
+    }
+  }
 }
+
 export default AuthController;

@@ -70,8 +70,15 @@ export class QuestionController {
     const { slug } = req.params;
 
     try {
-      const question = await prisma.question.findUnique({
-        where: { slug },
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(slug);
+      
+      const question = await prisma.question.findFirst({
+        where: isUUID ? {
+          OR: [
+            { slug: slug },
+            { id: slug }
+          ]
+        } : { slug: slug },
         include: {
           testCases: {
             where: { isHidden: false },

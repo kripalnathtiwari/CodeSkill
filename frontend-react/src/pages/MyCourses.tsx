@@ -11,29 +11,63 @@ export default function MyCourses() {
   const [selectedCert, setSelectedCert] = useState<{name: string, course: string, id: string} | null>(null);
   const [generatingCertIdx, setGeneratingCertIdx] = useState<number | null>(null);
   const [certNameInput, setCertNameInput] = useState("");
+  const [courseSettings, setCourseSettings] = useState<Record<string, any>>({});
 
   useEffect(() => {
     // Load enrollments
-    const existingStr = localStorage.getItem("enrolledCourses");
-    if (existingStr && user?.email) {
-      try {
-        const parsed = JSON.parse(existingStr);
-        
-        // Deduplicate by courseId
-        const uniqueEnrollments: any[] = [];
-        const seen = new Set();
-        
-        for (const e of parsed) {
-          if (e.email === user.email && !seen.has(e.courseId)) {
-            seen.add(e.courseId);
-            uniqueEnrollments.push(e);
+    const loadData = () => {
+      const existingStr = localStorage.getItem("enrolledCourses");
+      if (existingStr && user?.email) {
+        try {
+          const parsed = JSON.parse(existingStr);
+          
+          // Deduplicate by courseId, prioritizing PAID status
+          const bestEnrollments = new Map();
+          
+          for (const e of parsed) {
+            const matchEmail = e.email?.toLowerCase().trim() === user.email?.toLowerCase().trim();
+            const matchAccountEmail = e.accountEmail?.toLowerCase().trim() === user.email?.toLowerCase().trim();
+            
+            if (matchEmail || matchAccountEmail) {
+              const existing = bestEnrollments.get(e.courseId);
+              if (!existing) {
+                bestEnrollments.set(e.courseId, e);
+              } else {
+                 const isPaid = (status: string) => ["PAID", "completed", "active", "Success"].includes(status);
+                 const existingPaid = isPaid(existing.status);
+                 const currentPaid = isPaid(e.status);
+                 
+                 // Upgrade to PAID if current is PAID and existing is UNPAID
+                 if (currentPaid && !existingPaid) {
+                   bestEnrollments.set(e.courseId, e);
+                 } else if (currentPaid === existingPaid) {
+                   // If both have the same status priority, keep the latest one
+                   bestEnrollments.set(e.courseId, e);
+                 }
+              }
+            }
           }
-        }
-        
-        setEnrollments(uniqueEnrollments);
-        
-      } catch (e) {}
-    }
+          
+          const sortedEnrollments = Array.from(bestEnrollments.values()).sort((a: any, b: any) => 
+            new Date(b.dateRegistered).getTime() - new Date(a.dateRegistered).getTime()
+          );
+          
+          setEnrollments(sortedEnrollments);
+          
+          const settingsStr = localStorage.getItem("courseSettings");
+          if (settingsStr) {
+            try {
+              setCourseSettings(JSON.parse(settingsStr));
+            } catch (e) {}
+          }
+          
+        } catch (e) {}
+      }
+    };
+
+    loadData();
+    window.addEventListener("storage", loadData);
+    return () => window.removeEventListener("storage", loadData);
   }, [user]);
 
   const markCompleted = (index: number) => {
@@ -45,7 +79,10 @@ export default function MyCourses() {
     const existingStr = localStorage.getItem("enrolledCourses");
     if (existingStr) {
       const parsed = JSON.parse(existingStr);
-      const globalIndex = parsed.findIndex((e: any) => e.courseId === updated[index].courseId && e.email === user?.email);
+      const globalIndex = parsed.findIndex((e: any) => 
+        e.courseId === updated[index].courseId && 
+        (e.email?.toLowerCase().trim() === user?.email?.toLowerCase().trim() || e.accountEmail?.toLowerCase().trim() === user?.email?.toLowerCase().trim())
+      );
       if (globalIndex > -1) {
         parsed[globalIndex].status = "completed";
         localStorage.setItem("enrolledCourses", JSON.stringify(parsed));
@@ -63,7 +100,10 @@ export default function MyCourses() {
       const existingStr = localStorage.getItem("enrolledCourses");
       if (existingStr) {
         const parsed = JSON.parse(existingStr);
-        const newParsed = parsed.filter((e: any) => !(e.courseId === canceled.courseId && e.email === user?.email));
+        const newParsed = parsed.filter((e: any) => 
+          !(e.courseId === canceled.courseId && 
+           (e.email?.toLowerCase().trim() === user?.email?.toLowerCase().trim() || e.accountEmail?.toLowerCase().trim() === user?.email?.toLowerCase().trim()))
+        );
         localStorage.setItem("enrolledCourses", JSON.stringify(newParsed));
       }
     }
@@ -88,7 +128,10 @@ export default function MyCourses() {
     const existingStr = localStorage.getItem("enrolledCourses");
     if (existingStr) {
       const parsed = JSON.parse(existingStr);
-      const globalIndex = parsed.findIndex((e: any) => e.courseId === updated[idx].courseId && e.email === user?.email);
+      const globalIndex = parsed.findIndex((e: any) => 
+        e.courseId === updated[idx].courseId && 
+        (e.email?.toLowerCase().trim() === user?.email?.toLowerCase().trim() || e.accountEmail?.toLowerCase().trim() === user?.email?.toLowerCase().trim())
+      );
       if (globalIndex > -1) {
         parsed[globalIndex].certificateName = certNameInput;
         parsed[globalIndex].certificateId = newCertId;
@@ -108,7 +151,7 @@ export default function MyCourses() {
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
   };
 
   return (
@@ -149,20 +192,20 @@ export default function MyCourses() {
                     <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Student: <span className="font-semibold text-slate-700 dark:text-slate-300">{course.fullName}</span></p>
                   </div>
                   <span className={`px-3 py-1 text-xs font-bold rounded-full ${
-                    course.status === 'completed' 
+                    (course.status === 'completed' || courseSettings[course.courseName]?.certificatePublished) 
                       ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' 
                       : course.status === 'UNPAID'
                         ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
                         : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
                   }`}>
-                    {course.status === 'completed' ? 'Completed' : course.status === 'UNPAID' ? 'Pending Payment' : 'In Progress'}
+                    {(course.status === 'completed' || courseSettings[course.courseName]?.certificatePublished) ? 'Completed' : course.status === 'UNPAID' ? 'Pending Payment' : 'In Progress'}
                   </span>
                 </div>
 
                 <div className="flex-1"></div>
 
                 <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800 flex justify-end space-x-3">
-                  {course.status === 'completed' ? (
+                  {(course.status === 'completed' || courseSettings[course.courseName]?.certificatePublished) ? (
                     <>
                       <Link to={`/course/${course.courseId}`} className="mr-2">
                         <button className="flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg transition-colors shadow-lg">
@@ -203,20 +246,12 @@ export default function MyCourses() {
                       </Link>
                     </>
                   ) : (
-                    <>
                       <Link to={`/course/${course.courseId}`} className="mr-2">
                         <button className="flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg transition-colors shadow-lg">
                           <PlayCircle className="w-4 h-4 mr-2" />
                           Go to Course
                         </button>
                       </Link>
-                      <button 
-                        onClick={() => markCompleted(idx)}
-                        className="flex items-center px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold rounded-lg hover:bg-emerald-600 dark:hover:bg-emerald-500 hover:text-white transition-colors"
-                      >
-                        Complete Course
-                      </button>
-                    </>
                   )}
                 </div>
               </div>
@@ -231,6 +266,7 @@ export default function MyCourses() {
           studentName={selectedCert.name} 
           courseName={selectedCert.course} 
           certificateId={selectedCert.id}
+          templateImage={courseSettings[selectedCert.course]?.templateImage}
           onClose={() => setSelectedCert(null)} 
         />
       )}

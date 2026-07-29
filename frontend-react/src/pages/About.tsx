@@ -1,49 +1,145 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Search } from 'lucide-react';
 
 export default function About() {
   return (
-    <div className="min-h-screen bg-white dark:bg-[#0a0a0a] text-slate-900 dark:text-slate-200 p-8 md:p-12 lg:p-24">
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-4xl mx-auto space-y-12"
-      >
-        <div className="space-y-4">
-          <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight">
-            About us
-          </h1>
+    <div className="min-h-screen bg-[#0B1121] text-white">
+      {/* Hero Section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="space-y-6"
+          >
+            <div className="w-12 h-1 bg-slate-600 mb-8"></div>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
+              About Us
+            </h1>
+            <p className="text-lg text-slate-300 leading-relaxed max-w-xl">
+              CodeSkill is a bootstrapped educational video streaming platform in India that is connecting passionate unskilled students to skilled Industry experts to fulfill their career dreams.
+            </p>
+          </motion.div>
+          
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="bg-[#FBA718] p-8 md:p-12 lg:p-16 shadow-xl grid grid-cols-2 gap-y-12 gap-x-8"
+          >
+            <div className="text-center space-y-2">
+              <div className="text-4xl md:text-5xl font-bold text-white">30K+</div>
+              <div className="text-sm font-medium text-white/90">Students</div>
+            </div>
+            <div className="text-center space-y-2">
+              <div className="text-4xl md:text-5xl font-bold text-white">25K+</div>
+              <div className="text-sm font-medium text-white/90">Certificate<br/>Delivered</div>
+            </div>
+            <div className="text-center space-y-2">
+              <div className="text-4xl md:text-5xl font-bold text-white">450K+</div>
+              <div className="text-sm font-medium text-white/90">Streamed<br/>Minutes</div>
+            </div>
+            <div className="text-center space-y-2">
+              <div className="text-4xl md:text-5xl font-bold text-white">50K+</div>
+              <div className="text-sm font-medium text-white/90">Creators</div>
+            </div>
+          </motion.div>
         </div>
+      </section>
 
-        <div className="space-y-8">
-          <div className="space-y-4">
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-slate-100">
-              About TeachSkill:
+      {/* Team Section */}
+      <section className="relative w-full h-[400px] md:h-[500px]">
+        {/* Background Image with Overlay */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2850&q=80')" }}
+        >
+          <div className="absolute inset-0 bg-black/50"></div>
+        </div>
+        
+        {/* Content Box */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="bg-[#0B1121] px-12 py-16 text-center flex flex-col items-center justify-center max-w-lg w-full"
+          >
+            <p className="text-[#FBA718] font-bold text-sm uppercase tracking-wider mb-4">
+              KNOW ABOUT US &
+            </p>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-10 tracking-tight">
+              OUR TEAM
             </h2>
-            <h3 className="text-lg md:text-xl font-semibold text-emerald-600 dark:text-emerald-500">
-              1. Company Profile and Brand:
-            </h3>
-          </div>
-
-          <div className="space-y-6 text-base md:text-lg text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
-            <p>
-              TeachSkill is a comprehensive educational platform that empowers learners across domains—spanning computer science, essential software engineering tools, and providing them with top-notch interview preparation services. With a mission to bridge the gap between academic learning and industry demands, TeachSkill provides a vast and growing collection of coding challenges, practice problems, real-world projects, and structured courses, catering to both academic and professional needs.
-            </p>
-
-            <p>
-              We're especially known for our in-depth resources on interview preparation, helping thousands land roles at top tech companies with our curated content, real-world scenarios, and company-wise problem sets.
-            </p>
-
-            <p>
-              Our courses and learning paths for high-demand technologies like DSA, System Design, Web Development, and Machine Learning are ideal for professionals aiming to level up or switch domains. Our official certifications ensure to add credibility and enhance our learners' career prospects.
-            </p>
-
-            <p>
-              Our content is created and curated by top mentors from renowned institutions and tech organizations, ensuring quality and relevance. With a focus on clarity, accessibility, and impact, we help students and professionals alike turn curiosity into expertise. TeachSkill has become a trusted name in tech education—offering well-structured tutorials, hands-on practice problems, and guided project-based courses.
-            </p>
-          </div>
+            <button className="bg-white text-[#FBA718] font-bold px-8 py-3 rounded-full flex items-center gap-2 hover:bg-slate-100 transition-colors shadow-lg">
+              CODESKILL <Search size={20} className="text-blue-500 stroke-[3]" />
+            </button>
+          </motion.div>
         </div>
-      </motion.div>
+      </section>
+
+      {/* Vision Section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="rounded-2xl overflow-hidden shadow-2xl h-[400px]"
+          >
+            <img 
+              src="https://images.unsplash.com/photo-1531482615713-2afd69097998?ixlib=rb-4.0.3&auto=format&fit=crop&w=1740&q=80" 
+              alt="Our Vision" 
+              className="w-full h-full object-cover"
+            />
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="space-y-6"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
+              Our Vision
+            </h2>
+            <p className="text-lg text-slate-300 leading-relaxed max-w-xl">
+              Envision a world where high-quality online learning is readily accessible to everyone, regardless of their location. At our core, we aspire to transform this vision into a tangible reality by becoming the go-to platform for anyone seeking online learning experiences.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Mission Section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 lg:pb-32">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="space-y-6 lg:order-1 order-2"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
+              Our Mission
+            </h2>
+            <p className="text-lg text-slate-300 leading-relaxed max-w-xl">
+              To empower individuals by providing affordable, accessible, and high-quality technical education. We aim to bridge the gap between academic learning and industry requirements, ensuring our students are job-ready from day one.
+            </p>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="rounded-2xl overflow-hidden shadow-2xl h-[400px] lg:order-2 order-1"
+          >
+            <img 
+              src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1741&q=80" 
+              alt="Our Mission" 
+              loading="lazy"
+              className="w-full h-full object-cover"
+            />
+          </motion.div>
+        </div>
+      </section>
     </div>
   );
 }

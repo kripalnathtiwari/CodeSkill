@@ -3,16 +3,18 @@ import Editor from "@monaco-editor/react";
 import { Play, Terminal, Loader2, AlertTriangle, CheckCircle, Clock, Cpu, Maximize2, Minimize2, Sun, Moon } from "lucide-react";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
+import { getApiUrl } from "../utils/apiConfig";
+import PracticeTimer from "../components/PracticeTimer";
 
 const LANGUAGES = [
-  { id: "python", name: "Python", defaultCode: "print('Hello, TeachSkill!')" },
-  { id: "javascript", name: "JavaScript", defaultCode: "console.log('Hello, TeachSkill!');" },
-  { id: "typescript", name: "TypeScript", defaultCode: "const msg: string = 'Hello, TeachSkill!';\nconsole.log(msg);" },
-  { id: "java", name: "Java", defaultCode: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, TeachSkill!");\n    }\n}' },
-  { id: "cpp", name: "C++", defaultCode: '#include <iostream>\n\nint main() {\n    std::cout << "Hello, TeachSkill!" << std::endl;\n    return 0;\n}' },
-  { id: "c", name: "C", defaultCode: '#include <stdio.h>\n\nint main() {\n    printf("Hello, TeachSkill!\\n");\n    return 0;\n}' },
-  { id: "go", name: "Go", defaultCode: 'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hello, TeachSkill!")\n}' },
-  { id: "rust", name: "Rust", defaultCode: 'fn main() {\n    println!("Hello, TeachSkill!");\n}' },
+  { id: "python", name: "Python", defaultCode: "print('Hello, CodeSkill!')" },
+  { id: "javascript", name: "JavaScript", defaultCode: "console.log('Hello, CodeSkill!');" },
+  { id: "typescript", name: "TypeScript", defaultCode: "const msg: string = 'Hello, CodeSkill!';\nconsole.log(msg);" },
+  { id: "java", name: "Java", defaultCode: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, CodeSkill!");\n    }\n}' },
+  { id: "cpp", name: "C++", defaultCode: '#include <iostream>\n\nint main() {\n    std::cout << "Hello, CodeSkill!" << std::endl;\n    return 0;\n}' },
+  { id: "c", name: "C", defaultCode: '#include <stdio.h>\n\nint main() {\n    printf("Hello, CodeSkill!\\n");\n    return 0;\n}' },
+  { id: "go", name: "Go", defaultCode: 'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hello, CodeSkill!")\n}' },
+  { id: "rust", name: "Rust", defaultCode: 'fn main() {\n    println!("Hello, CodeSkill!");\n}' },
 ];
 
 export default function SandboxPage() {
@@ -51,7 +53,7 @@ export default function SandboxPage() {
     try {
       const headers = user ? { Authorization: `Bearer ${localStorage.getItem("accessToken")}` } : {};
       
-      const res = await axios.post("http://localhost:5000/api/v1/submissions/run", {
+      const res = await axios.post(getApiUrl("/api/v1/submissions/run"), {
         code,
         language: language.id,
         input,
@@ -79,10 +81,12 @@ export default function SandboxPage() {
       {/* Header Controls */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center glass-card p-4 rounded-xl border border-slate-200 dark:border-slate-800/60 shadow-lg">
         <div>
-          <h1 className="text-2xl font-bold text-slate-950 dark:text-slate-50 flex items-center">
-            <Terminal className="mr-2 text-emerald-400 h-6 w-6" />
-            TeachSkill Compiler
-          </h1>
+          <div className="flex items-center gap-2">
+            <Terminal className="w-5 h-5 text-emerald-500" />
+            <h1 className="text-xl font-bold text-slate-950 dark:text-white tracking-tight">
+              CodeSkill Compiler
+            </h1>
+          </div>
           <p className="text-slate-700 dark:text-slate-400 text-sm mt-1">Write, compile, and run your code instantly.</p>
         </div>
         
@@ -96,6 +100,8 @@ export default function SandboxPage() {
               <option key={lang.id} value={lang.id}>{lang.name}</option>
             ))}
           </select>
+
+          <PracticeTimer storageKey="sandbox_general" defaultMode="stopwatch" />
 
           <button
             onClick={handleRunCode}
@@ -120,7 +126,7 @@ export default function SandboxPage() {
       }>
         
         {/* Editor Pane (Resizable) */}
-        <div className="flex-[2] glass-card rounded-xl border border-slate-200 dark:border-slate-800/60 overflow-hidden flex flex-col resize-x min-w-[300px] max-w-[80vw]">
+        <div className="flex-[2] glass-card rounded-xl border border-slate-200 dark:border-slate-800/60 overflow-hidden flex flex-col lg:resize-x h-[500px] lg:h-auto min-w-[300px] lg:max-w-[80vw] w-full">
           <div className="bg-white dark:bg-slate-900/80 px-4 py-2 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center text-xs text-slate-700 dark:text-slate-400 font-mono">
             <div className="flex items-center space-x-4">
               <span>main.{language.id === "javascript" ? "js" : language.id === "typescript" ? "ts" : language.id}</span>
@@ -192,7 +198,7 @@ export default function SandboxPage() {
         </div>
 
         {/* Input/Output Pane (Tabbed) */}
-        <div className="flex-1 flex flex-col min-w-[300px] glass-card rounded-xl border border-slate-200 dark:border-slate-800/60 overflow-hidden relative">
+        <div className="flex-1 flex flex-col h-[400px] lg:h-auto min-w-[300px] glass-card rounded-xl border border-slate-200 dark:border-slate-800/60 overflow-hidden relative">
           <div className="bg-white dark:bg-slate-900/80 px-4 pt-2 border-b border-slate-200 dark:border-slate-800 flex justify-between items-end text-xs font-mono">
             <div className="flex space-x-6">
               <button 

@@ -22,7 +22,7 @@ type Collection = {
 export default function CollegeCollection({ targetCollegeName, targetCollegeEmail }: { targetCollegeName?: string, targetCollegeEmail?: string }) {
   const { user } = useAuth();
   const [collections, setCollections] = useState<Collection[]>([]);
-  
+
   // UI State
   const [isUploading, setIsUploading] = useState(false);
   const [isAddingManually, setIsAddingManually] = useState(false);
@@ -69,7 +69,7 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
     reader.onload = (event) => {
       const text = event.target?.result as string;
       if (!text) return;
-      
+
       const lines = text.split('\n').filter(line => line.trim() !== '');
       if (lines.length < 2) {
         alert("CSV file seems empty or missing data.");
@@ -89,7 +89,7 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
       }
 
       const newStudents: StudentData[] = [];
-      
+
       lines.slice(1).forEach((line, idx) => {
         // Handle basic CSV parsing (ignoring commas inside quotes for MVP)
         const cols = line.split(',').map(c => c.trim().replace(/["']/g, ''));
@@ -107,7 +107,7 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
       if (newStudents.length > 0) {
         // Check if category already exists for this college, if so update it, else create new
         const existingIdx = collections.findIndex(c => c.category.toLowerCase() === categoryInput.toLowerCase() && c.collegeEmail === user?.email);
-        
+
         let updatedCollections = [...collections];
         if (existingIdx >= 0) {
           if (window.confirm(`A collection for category "${categoryInput}" already exists. Do you want to OVERWRITE it with this new file?`)) {
@@ -121,7 +121,7 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
           updatedCollections.push({
             id: `colc-${Date.now()}`,
             collegeEmail: user?.email || "unknown@college.com",
-            collegeName: targetCollegeName || user?.name || "Unknown College",
+            collegeName: targetCollegeName || (user as any)?.name || "Unknown College",
             category: categoryInput.trim(),
             uploadedAt: new Date().toISOString(),
             students: newStudents
@@ -235,7 +235,7 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    const fileName = targetCollegeName 
+    const fileName = targetCollegeName
       ? `${targetCollegeName.replace(/\s+/g, '_')}_All_Students.csv`
       : `All_Colleges_Students.csv`;
     link.setAttribute("download", fileName);
@@ -245,13 +245,13 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
   };
 
   // Visibility logic: Global Admin sees everything, College Admin sees only their own
-  let visibleCollections = user?.role === "ADMIN" 
-    ? collections 
-    : collections.filter(c => c.collegeEmail === user?.email || (c.collegeName && c.collegeName === user?.name));
-    
+  let visibleCollections = user?.role === "ADMIN"
+    ? collections
+    : collections.filter(c => c.collegeEmail === user?.email || (c.collegeName && c.collegeName === (user as any)?.name));
+
   if (targetCollegeName) {
-    visibleCollections = visibleCollections.filter(c => 
-      c.collegeName === targetCollegeName || 
+    visibleCollections = visibleCollections.filter(c =>
+      c.collegeName === targetCollegeName ||
       c.category === targetCollegeName ||
       (targetCollegeEmail && c.collegeEmail === targetCollegeEmail)
     );
@@ -268,17 +268,17 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
               College Student Collections
             </h2>
             <p className="text-slate-400">
-              {user?.role === "ADMIN" 
+              {user?.role === "ADMIN"
                 ? "View and manage all student data imported by partner colleges."
                 : "Upload and manage your student lists, grouped by course category."}
             </p>
           </div>
-          
+
           <div className="flex items-center space-x-3">
             {!isUploading && !isAddingManually && (
               <>
                 {user?.role === "ADMIN" && (
-                  <button 
+                  <button
                     onClick={handleDownloadAllCSV}
                     className="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 transition-colors whitespace-nowrap"
                   >
@@ -286,14 +286,14 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
                     <span className="hidden sm:inline">Download All</span>
                   </button>
                 )}
-                <button 
+                <button
                   onClick={() => setIsAddingManually(true)}
                   className="bg-slate-800 hover:bg-slate-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 transition-colors whitespace-nowrap"
                 >
                   <Edit2 className="w-5 h-5" />
                   <span className="hidden sm:inline">Add Manually</span>
                 </button>
-                <button 
+                <button
                   onClick={() => setIsUploading(true)}
                   className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 shadow-lg transition-colors whitespace-nowrap"
                 >
@@ -305,32 +305,32 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
           </div>
         </div>
       )}
-      
+
       {targetCollegeName && !isUploading && !isAddingManually && (
         <div className="flex justify-end space-x-3">
-           {user?.role === "ADMIN" && (
-             <button 
-               onClick={handleDownloadAllCSV}
-               className="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 transition-colors whitespace-nowrap"
-             >
-               <Download className="w-5 h-5" />
-               <span className="hidden sm:inline">Download All</span>
-             </button>
-           )}
-           <button 
-             onClick={() => setIsAddingManually(true)}
-             className="bg-slate-800 hover:bg-slate-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 transition-colors whitespace-nowrap"
-           >
-             <Edit2 className="w-5 h-5" />
-             <span className="hidden sm:inline">Add Manual Collection</span>
-           </button>
-           <button 
-             onClick={() => setIsUploading(true)}
-             className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 shadow-lg transition-colors whitespace-nowrap"
-           >
-             <Upload className="w-5 h-5" />
-             <span>Upload CSV List</span>
-           </button>
+          {user?.role === "ADMIN" && (
+            <button
+              onClick={handleDownloadAllCSV}
+              className="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 transition-colors whitespace-nowrap"
+            >
+              <Download className="w-5 h-5" />
+              <span className="hidden sm:inline">Download All</span>
+            </button>
+          )}
+          <button
+            onClick={() => setIsAddingManually(true)}
+            className="bg-slate-800 hover:bg-slate-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 transition-colors whitespace-nowrap"
+          >
+            <Edit2 className="w-5 h-5" />
+            <span className="hidden sm:inline">Add Manual Collection</span>
+          </button>
+          <button
+            onClick={() => setIsUploading(true)}
+            className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 shadow-lg transition-colors whitespace-nowrap"
+          >
+            <Upload className="w-5 h-5" />
+            <span>Upload CSV List</span>
+          </button>
         </div>
       )}
 
@@ -342,17 +342,17 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
               <FileText className="w-5 h-5 mr-2 text-indigo-400" />
               Upload Student Collection
             </h3>
-            <button onClick={() => {setIsUploading(false); setSelectedFile(null); setCategoryInput("");}} className="text-slate-500 hover:text-white transition-colors">
+            <button onClick={() => { setIsUploading(false); setSelectedFile(null); setCategoryInput(""); }} className="text-slate-500 hover:text-white transition-colors">
               <X className="w-5 h-5" />
             </button>
           </div>
-          
+
           <div className="space-y-4">
             <div>
               <label className="text-sm font-bold text-slate-400 block mb-1">Course Category *</label>
-              <input 
-                type="text" 
-                value={categoryInput} 
+              <input
+                type="text"
+                value={categoryInput}
                 onChange={e => setCategoryInput(e.target.value)}
                 placeholder="e.g., B.Tech CSE, MCA, Full Stack Batch 1"
                 className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500"
@@ -360,12 +360,12 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
               />
               <p className="text-xs text-slate-500 mt-1">This will group the students under this category. Re-uploading with the same category will overwrite it.</p>
             </div>
-            
+
             <div>
               <label className="text-sm font-bold text-slate-400 block mb-1">CSV File *</label>
               <div className="flex items-center space-x-3">
-                <input 
-                  type="file" 
+                <input
+                  type="file"
                   accept=".csv"
                   onChange={handleFileUpload}
                   ref={fileInputRef}
@@ -393,18 +393,18 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
               <Edit2 className="w-5 h-5 mr-2 text-indigo-400" />
               Create Collection Manually
             </h3>
-            <button onClick={() => {setIsAddingManually(false); setCategoryInput(""); setAdminCollegeEmailInput("");}} className="text-slate-500 hover:text-white transition-colors">
+            <button onClick={() => { setIsAddingManually(false); setCategoryInput(""); setAdminCollegeEmailInput(""); }} className="text-slate-500 hover:text-white transition-colors">
               <X className="w-5 h-5" />
             </button>
           </div>
-          
+
           <div className="space-y-4">
             {user?.role === "ADMIN" && !targetCollegeName && (
               <div>
                 <label className="text-sm font-bold text-slate-400 block mb-1">Target College Email *</label>
-                <input 
-                  type="email" 
-                  value={adminCollegeEmailInput} 
+                <input
+                  type="email"
+                  value={adminCollegeEmailInput}
                   onChange={e => setAdminCollegeEmailInput(e.target.value)}
                   placeholder="e.g., admin@college.edu"
                   className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500"
@@ -413,16 +413,16 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
             )}
             <div>
               <label className="text-sm font-bold text-slate-400 block mb-1">Course Category *</label>
-              <input 
-                type="text" 
-                value={categoryInput} 
+              <input
+                type="text"
+                value={categoryInput}
                 onChange={e => setCategoryInput(e.target.value)}
                 placeholder="e.g., B.Tech CSE"
                 className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500"
                 autoFocus
               />
             </div>
-            
+
             <div className="pt-4 flex justify-end">
               <button onClick={handleCreateManualCollection} className="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2.5 rounded-xl font-bold flex items-center shadow-lg transition-colors">
                 <Save className="w-5 h-5 mr-2" />
@@ -444,7 +444,7 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
           visibleCollections.map(collection => (
             <div key={collection.id} className="bg-[#111827] rounded-2xl border border-slate-800 shadow-lg overflow-hidden transition-all">
               {/* Collection Header */}
-              <div 
+              <div
                 className="p-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/30 transition-colors"
                 onClick={() => setExpandedId(expandedId === collection.id ? null : collection.id)}
               >
@@ -467,16 +467,16 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center space-x-2">
-                  <button 
+                  <button
                     onClick={(e) => { e.stopPropagation(); handleDownloadCSV(collection); }}
                     className="p-2 text-indigo-400 hover:bg-indigo-500/10 rounded-lg transition-colors"
                     title="Download CSV"
                   >
                     <Download className="w-5 h-5" />
                   </button>
-                  <button 
+                  <button
                     onClick={(e) => { e.stopPropagation(); handleDeleteCollection(collection.id); }}
                     className="p-2 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors"
                     title="Delete Collection"
@@ -505,7 +505,7 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
                       </thead>
                       <tbody>
                         {collection.students.length === 0 && !isAddingStudentTo && (
-                           <tr><td colSpan={5} className="px-4 py-4 text-center">No students added yet.</td></tr>
+                          <tr><td colSpan={5} className="px-4 py-4 text-center">No students added yet.</td></tr>
                         )}
                         {collection.students.map((student, idx) => (
                           <tr key={student.id} className="border-b border-slate-800/50 hover:bg-slate-800/20">
@@ -525,10 +525,10 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
                     {isAddingStudentTo === collection.id ? (
                       <div className="bg-[#1a2333] p-4 rounded-xl border border-slate-700">
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
-                          <input type="text" placeholder="Name *" value={newStudent.name} onChange={e => setNewStudent({...newStudent, name: e.target.value})} className="bg-[#0a1128] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white" />
-                          <input type="email" placeholder="Email *" value={newStudent.email} onChange={e => setNewStudent({...newStudent, email: e.target.value})} className="bg-[#0a1128] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white" />
-                          <input type="text" placeholder="Reg Num" value={newStudent.regNum} onChange={e => setNewStudent({...newStudent, regNum: e.target.value})} className="bg-[#0a1128] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white" />
-                          <input type="text" placeholder="Phone" value={newStudent.phone} onChange={e => setNewStudent({...newStudent, phone: e.target.value})} className="bg-[#0a1128] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white" />
+                          <input type="text" placeholder="Name *" value={newStudent.name} onChange={e => setNewStudent({ ...newStudent, name: e.target.value })} className="bg-[#0a1128] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white" />
+                          <input type="email" placeholder="Email *" value={newStudent.email} onChange={e => setNewStudent({ ...newStudent, email: e.target.value })} className="bg-[#0a1128] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white" />
+                          <input type="text" placeholder="Reg Num" value={newStudent.regNum} onChange={e => setNewStudent({ ...newStudent, regNum: e.target.value })} className="bg-[#0a1128] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white" />
+                          <input type="text" placeholder="Phone" value={newStudent.phone} onChange={e => setNewStudent({ ...newStudent, phone: e.target.value })} className="bg-[#0a1128] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white" />
                         </div>
                         <div className="flex justify-end space-x-2">
                           <button onClick={() => setIsAddingStudentTo(null)} className="px-4 py-1.5 text-sm text-slate-400 hover:text-white border border-slate-700 rounded-lg">Cancel</button>
@@ -536,7 +536,7 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
                         </div>
                       </div>
                     ) : (
-                      <button 
+                      <button
                         onClick={() => setIsAddingStudentTo(collection.id)}
                         className="text-sm font-bold text-indigo-400 hover:text-indigo-300 flex items-center"
                       >

@@ -1,0 +1,11 @@
+node_modules
+dist
+pgsql
+.vercel
+.git
+logs
+*.log
+tmp
+coverage
+*.db
+*.sqlite

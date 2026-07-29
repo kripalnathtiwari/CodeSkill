@@ -5,3 +5,7 @@ build/
 coverage/
 .DS_Store
 npm-debug.log
+*.log
+*.backup
+tmp/
+.vercel/

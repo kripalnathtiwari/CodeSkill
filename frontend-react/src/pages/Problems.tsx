@@ -2,10 +2,9 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { getApiUrl } from "../utils/apiConfig";
-import { Search, Bookmark, ChevronDown, ListFilter, Check, Lock, BrainCircuit, Code2, Building2 } from "lucide-react";
+import { Search, Bookmark, ChevronDown, ListFilter, Check, Lock, Code2, Building2 } from "lucide-react";
 import Fuse from "fuse.js";
 import { useAuth } from "../context/AuthContext";
-import PracticeTimer from "../components/PracticeTimer";
 
 const TOPICS = [
   { id: "Array", label: "Arrays" },
@@ -458,27 +457,6 @@ export default function ProblemsPage() {
           <Link to="/company-problems" className="shrink-0 bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-md">
             Start Preparing
           </Link>
-        </div>
-
-        {/* Timed Practice Section for All Sections */}
-        <div className="bg-gradient-to-r from-purple-500/10 via-slate-900/40 to-emerald-500/10 border border-purple-500/20 dark:border-purple-500/30 rounded-2xl p-5 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm">
-          <div className="flex items-center space-x-4">
-            <div className="bg-purple-500/20 p-3 rounded-xl">
-              <BrainCircuit className="w-7 h-7 text-purple-400" />
-            </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Timed Practice Section</h2>
-                <span className="px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider bg-purple-500/20 text-purple-400 rounded-md">All Sections</span>
-              </div>
-              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                Time your problem-solving across any section (Arrays, Dynamic Programming, SQL, etc.) to practice under interview conditions.
-              </p>
-            </div>
-          </div>
-          <div className="shrink-0 flex items-center space-x-3">
-            <PracticeTimer storageKey="all_sections_practice" defaultMode="countdown" defaultMinutes={45} />
-          </div>
         </div>
 
         {/* Header Area */}

@@ -1,8 +1,54 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Printer, User, Briefcase, GraduationCap, Award, Settings, Code, FileText } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Printer, User, Briefcase, GraduationCap, Award, Settings, Code, FileText, Sparkles, Download, X, Plus, Check, Layers } from 'lucide-react';
+import axios from 'axios';
+import { getApiUrl } from '../utils/apiConfig';
+
+interface SampleCV {
+  id: string;
+  title: string;
+  description: string | null;
+  fileUrl: string;
+  category: string | null;
+  createdAt: string;
+}
+
+interface JobSkillMap {
+  id: string;
+  jobRole: string;
+  skills: string[];
+  createdAt: string;
+}
 
 export default function CVBuilder() {
+  const [samples, setSamples] = useState<SampleCV[]>([]);
+  const [jobSkills, setJobSkills] = useState<JobSkillMap[]>([]);
+  const [selectedRole, setSelectedRole] = useState<string>('');
+  const [showSamplesModal, setShowSamplesModal] = useState<boolean>(false);
+
+  useEffect(() => {
+    fetchSamplesAndSkills();
+  }, []);
+
+  const fetchSamplesAndSkills = async () => {
+    try {
+      const [samplesRes, skillsRes] = await Promise.all([
+        axios.get(getApiUrl('/api/v1/admin/cv/samples')),
+        axios.get(getApiUrl('/api/v1/admin/cv/skills'))
+      ]);
+      setSamples(samplesRes.data || []);
+      setJobSkills(skillsRes.data || []);
+    } catch (error) {
+      console.error('Error fetching CV samples and skills:', error);
+    }
+  };
+
+  const resolveFileUrl = (url: string) => {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+    return getApiUrl(url);
+  };
+
   const [data, setData] = useState({
     name: 'John Doe',
     title: 'Senior Software Engineer',
@@ -53,19 +99,57 @@ export default function CVBuilder() {
       
       {/* LEFT PANEL - FORM CONTROLS (Hidden on Print) */}
       <div className="w-full lg:w-[45%] h-full lg:h-[calc(100vh-80px)] overflow-y-auto p-6 lg:p-8 border-r border-slate-200 dark:border-slate-800 print:hidden scrollbar-thin">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold flex items-center gap-3">
             <FileText className="text-emerald-500" /> 
             CV Builder
           </h1>
-          <button 
-            onClick={handlePrint}
-            className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-          >
-            <Printer className="w-4 h-4" />
-            Download PDF
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowSamplesModal(true)}
+              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm text-sm"
+            >
+              <Layers className="w-4 h-4" />
+              CV Formats {samples.length > 0 && `(${samples.length})`}
+            </button>
+            <button 
+              onClick={handlePrint}
+              className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm text-sm"
+            >
+              <Printer className="w-4 h-4" />
+              Download PDF
+            </button>
+          </div>
         </div>
+
+        {/* Sample CV Formats Banner */}
+        {samples.length > 0 && (
+          <div className="mb-6 bg-gradient-to-r from-emerald-500/10 via-indigo-500/10 to-purple-500/10 border border-emerald-500/20 dark:border-emerald-500/30 rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+            <div className="flex items-center space-x-4">
+              <div className="bg-emerald-500/20 p-3 rounded-xl shrink-0">
+                <Sparkles className="w-6 h-6 text-emerald-500" />
+              </div>
+              <div>
+                <div className="flex items-center space-x-2">
+                  <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">Admin Sample CV Formats Available</h3>
+                  <span className="px-2 py-0.5 text-xs font-bold bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full">
+                    {samples.length} {samples.length === 1 ? 'Format' : 'Formats'}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                  Download professional CV templates & format guidelines uploaded by administrators to structure your resume.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowSamplesModal(true)}
+              className="shrink-0 flex items-center gap-2 bg-slate-900 hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white px-4 py-2.5 rounded-xl text-sm font-bold transition-all shadow-md"
+            >
+              <Layers className="w-4 h-4" />
+              View CV Formats
+            </button>
+          </div>
+        )}
 
         <div className="space-y-8">
           {/* Personal Details */}
@@ -172,6 +256,103 @@ export default function CVBuilder() {
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">
               <Code className="w-5 h-5 text-indigo-400" /> Technical Skills
             </h2>
+
+            {/* Admin Job Skills Suggestions */}
+            {jobSkills.length > 0 && (
+              <div className="mb-4 p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                  <label className="text-xs font-bold uppercase tracking-wider text-indigo-400 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5" /> Admin Recommended Skills by Job Role
+                  </label>
+                  <select
+                    value={selectedRole}
+                    onChange={(e) => setSelectedRole(e.target.value)}
+                    className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-200"
+                  >
+                    <option value="">-- Select a Job Role --</option>
+                    {jobSkills.map((js) => (
+                      <option key={js.id} value={js.jobRole}>
+                        {js.jobRole}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {selectedRole && (
+                  <div>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {jobSkills
+                        .find((js) => js.jobRole === selectedRole)
+                        ?.skills.map((skill, idx) => {
+                          const isAlreadyAdded = data.skills
+                            .split(',')
+                            .map((s) => s.trim().toLowerCase())
+                            .includes(skill.toLowerCase());
+
+                          return (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => {
+                                if (!isAlreadyAdded) {
+                                  const current = data.skills.trim();
+                                  const newSkills = current
+                                    ? `${current}, ${skill}`
+                                    : skill;
+                                  setData({ ...data, skills: newSkills });
+                                }
+                              }}
+                              disabled={isAlreadyAdded}
+                              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium transition-all ${
+                                isAlreadyAdded
+                                  ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 cursor-default opacity-75'
+                                  : 'bg-white dark:bg-slate-800 border border-indigo-500/30 hover:border-indigo-500 text-slate-700 dark:text-slate-200 hover:bg-indigo-500/10'
+                              }`}
+                            >
+                              {isAlreadyAdded ? (
+                                <Check className="w-3 h-3 text-emerald-500" />
+                              ) : (
+                                <Plus className="w-3 h-3 text-indigo-400" />
+                              )}
+                              {skill}
+                            </button>
+                          );
+                        })}
+                    </div>
+                    <div className="mt-3 flex justify-end">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const roleSkills =
+                            jobSkills.find((js) => js.jobRole === selectedRole)
+                              ?.skills || [];
+                          const currentList = data.skills
+                            .split(',')
+                            .map((s) => s.trim())
+                            .filter(Boolean);
+                          const currentLower = new Set(
+                            currentList.map((s) => s.toLowerCase())
+                          );
+                          const added = roleSkills.filter(
+                            (s) => !currentLower.has(s.toLowerCase())
+                          );
+                          if (added.length > 0) {
+                            setData({
+                              ...data,
+                              skills: [...currentList, ...added].join(', '),
+                            });
+                          }
+                        }}
+                        className="text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
+                      >
+                        + Add All Remaining Suggested Skills
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             <textarea name="skills" value={data.skills} onChange={handleInputChange} rows={3} placeholder="Comma separated skills..." className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2 outline-none focus:border-emerald-500 transition-colors resize-none"></textarea>
           </section>
         </div>
@@ -296,6 +477,101 @@ export default function CVBuilder() {
           }
         }
       `}</style>
+
+      {/* Sample CV Formats Modal */}
+      <AnimatePresence>
+        {showSamplesModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm print:hidden">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl w-full max-w-3xl max-h-[85vh] overflow-hidden shadow-2xl flex flex-col"
+            >
+              {/* Modal Header */}
+              <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-800">
+                <div className="flex items-center gap-3">
+                  <div className="bg-emerald-500/10 p-2.5 rounded-xl">
+                    <FileText className="w-6 h-6 text-emerald-500" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">Sample CV Formats & Templates</h2>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Verified CV structures uploaded by admin</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowSamplesModal(false)}
+                  className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-2 rounded-lg transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <div className="p-6 overflow-y-auto space-y-4 max-h-[60vh] scrollbar-thin">
+                {samples.length === 0 ? (
+                  <div className="text-center py-12 text-slate-500 dark:text-slate-400">
+                    <FileText className="w-12 h-12 mx-auto mb-3 opacity-40" />
+                    <p className="text-base font-semibold">No CV formats uploaded yet</p>
+                    <p className="text-xs mt-1">Check back soon for sample CV templates from admin.</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {samples.map((sample) => (
+                      <div
+                        key={sample.id}
+                        className="p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 hover:border-emerald-500/50 transition-all flex flex-col justify-between"
+                      >
+                        <div>
+                          <div className="flex items-start justify-between gap-2 mb-2">
+                            <h3 className="font-bold text-slate-900 dark:text-slate-100 text-base line-clamp-1">
+                              {sample.title}
+                            </h3>
+                            {sample.category && (
+                              <span className="px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-md shrink-0">
+                                {sample.category}
+                              </span>
+                            )}
+                          </div>
+                          {sample.description && (
+                            <p className="text-xs text-slate-600 dark:text-slate-400 mb-4 line-clamp-2">
+                              {sample.description}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex items-center justify-between pt-3 border-t border-slate-200 dark:border-slate-800/80 mt-2">
+                          <span className="text-[11px] text-slate-400">
+                            {new Date(sample.createdAt).toLocaleDateString()}
+                          </span>
+                          <a
+                            href={resolveFileUrl(sample.fileUrl)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shadow-sm"
+                          >
+                            <Download className="w-3.5 h-3.5" />
+                            Download / View Format
+                          </a>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Modal Footer */}
+              <div className="p-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800 flex justify-end">
+                <button
+                  onClick={() => setShowSamplesModal(false)}
+                  className="px-5 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm font-semibold transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

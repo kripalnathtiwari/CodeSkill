@@ -32,12 +32,22 @@ export default function CVBuilder() {
 
   const fetchSamplesAndSkills = async () => {
     try {
-      const [samplesRes, skillsRes] = await Promise.all([
-        axios.get(getApiUrl('/api/v1/admin/cv/samples')),
-        axios.get(getApiUrl('/api/v1/admin/cv/skills'))
+      const fetchEndpoint = async (url: string, fallbackUrl: string) => {
+        try {
+          const res = await axios.get(getApiUrl(url));
+          return res.data || [];
+        } catch {
+          const res = await axios.get(getApiUrl(fallbackUrl));
+          return res.data || [];
+        }
+      };
+
+      const [samplesData, skillsData] = await Promise.all([
+        fetchEndpoint('/api/v1/admin/cv/samples', '/api/v1/cv/samples'),
+        fetchEndpoint('/api/v1/admin/cv/skills', '/api/v1/cv/skills')
       ]);
-      setSamples(samplesRes.data || []);
-      setJobSkills(skillsRes.data || []);
+      setSamples(samplesData);
+      setJobSkills(skillsData);
     } catch (error) {
       console.error('Error fetching CV samples and skills:', error);
     }

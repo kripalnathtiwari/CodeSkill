@@ -6,14 +6,14 @@
   --text-xs: 0.75rem;
   --text-xs--line-height: 1rem;
   
-  --text-sm: 0.875rem;
+  --text-sm: 0.85rem;
   --text-sm--line-height: 1.25rem;
   
-  --text-base: 0.95rem;
+  --text-base: 0.925rem;
   --text-base--line-height: 1.4rem;
 
-  --text-lg: 1.125rem;
-  --text-lg--line-height: 1.75rem;
+  --text-lg: 1.05rem;
+  --text-lg--line-height: 1.6rem;
 }
 
 @layer base {
@@ -31,6 +31,19 @@
 
     --muted: 0 0% 15%;
     --primary: 142.1 70.6% 45.3%;
+  }
+
+  html {
+    font-size: 14px; /* Default desktop/laptop scale for sleek SaaS proportions */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  @media (min-width: 1920px) {
+    html {
+      font-size: 15px;
+    }
   }
 }
 

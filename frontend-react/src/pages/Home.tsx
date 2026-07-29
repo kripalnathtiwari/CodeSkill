@@ -316,55 +316,47 @@ export default function Home() {
               hidden: { opacity: 0 },
               show: {
                 opacity: 1,
-                transition: { staggerChildren: 0.15 }
+                transition: { staggerChildren: 0.1 }
               }
             }}
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: "-50px" }}
-            className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-2 lg:gap-4 w-full px-4 overflow-x-auto pb-4"
+            className="grid grid-cols-2 sm:grid-cols-3 lg:flex lg:flex-row items-center justify-between gap-3 lg:gap-2 xl:gap-3 w-full max-w-6xl mx-auto px-2"
           >
             {[
-              { icon: <ClipboardCheck className="w-6 h-6 text-emerald-600 dark:text-emerald-500" />, title: "Pre-Assessment" },
-              { icon: <LayoutGrid className="w-6 h-6 text-emerald-600 dark:text-emerald-500" />, title: "Foundation Building" },
-              { icon: <BarChart2 className="w-6 h-6 text-emerald-600 dark:text-emerald-500" />, title: "Regular Assessments" },
-              { icon: <Zap className="w-6 h-6 text-emerald-600 dark:text-emerald-500" />, title: "Advanced Concepts" },
-              { icon: <Briefcase className="w-6 h-6 text-emerald-600 dark:text-emerald-500" />, title: "Projects & Internships" },
-              { icon: <Award className="w-6 h-6 text-emerald-600 dark:text-emerald-500" />, title: "Placement" },
+              { icon: <ClipboardCheck className="w-5 h-5 text-emerald-500" />, title: "Pre-Assessment" },
+              { icon: <LayoutGrid className="w-5 h-5 text-emerald-500" />, title: "Foundation Building" },
+              { icon: <BarChart2 className="w-5 h-5 text-emerald-500" />, title: "Regular Assessments" },
+              { icon: <Zap className="w-5 h-5 text-emerald-500" />, title: "Advanced Concepts" },
+              { icon: <Briefcase className="w-5 h-5 text-emerald-500" />, title: "Projects & Internships" },
+              { icon: <Award className="w-5 h-5 text-emerald-500" />, title: "Placement" },
             ].map((step, idx, arr) => (
               <React.Fragment key={idx}>
                 <motion.div 
                   variants={{
-                    hidden: { opacity: 0, scale: 0.9, y: 20 },
-                    show: { opacity: 1, scale: 1, y: 0, transition: { type: "spring", stiffness: 100 } }
+                    hidden: { opacity: 0, scale: 0.95, y: 15 },
+                    show: { opacity: 1, scale: 1, y: 0, transition: { type: "spring", stiffness: 120 } }
                   }}
-                  whileHover={{ y: -5, transition: { duration: 0.2 } }}
-                  className="flex flex-col items-center justify-center w-full md:w-32 lg:w-40 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl py-6 px-2 shadow-sm hover:shadow-md transition-all shrink-0 cursor-default"
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                  className="flex flex-col items-center justify-center w-full lg:flex-1 min-w-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 rounded-xl py-4 px-2.5 shadow-sm hover:shadow-emerald-500/10 hover:border-emerald-500/40 transition-all cursor-default group"
                 >
-                  <div className="w-12 h-12 bg-emerald-50 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mb-3">
+                  <div className="w-10 h-10 bg-emerald-500/10 dark:bg-emerald-500/15 group-hover:bg-emerald-500/20 rounded-full flex items-center justify-center mb-2.5 transition-colors">
                     {step.icon}
                   </div>
-                  <h4 className="text-slate-800 dark:text-slate-200 font-bold text-xs lg:text-sm text-center px-1">
+                  <h4 className="text-slate-800 dark:text-slate-200 font-semibold text-xs sm:text-sm text-center leading-snug">
                     {step.title}
                   </h4>
                 </motion.div>
                 {idx < arr.length - 1 && (
                   <motion.div 
                     variants={{
-                      hidden: { opacity: 0, x: -10 },
-                      show: { opacity: 0.6, x: 0, transition: { duration: 0.3 } }
+                      hidden: { opacity: 0 },
+                      show: { opacity: 0.6, transition: { duration: 0.3 } }
                     }}
-                    className="hidden md:flex items-center justify-center w-8 lg:w-12 shrink-0"
+                    className="hidden lg:flex items-center justify-center w-3 xl:w-5 shrink-0 text-emerald-500/70"
                   >
-                    <div className="w-full h-0 border-t-2 border-dashed border-emerald-400 dark:border-emerald-500 relative flex items-center justify-end">
-                       <motion.div
-                         animate={{ x: [0, 4, 0] }}
-                         transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-                         className="absolute -right-2 bg-slate-50 dark:bg-slate-950"
-                       >
-                         <ArrowRight className="text-emerald-500 w-5 h-5" />
-                       </motion.div>
-                    </div>
+                    <ArrowRight className="w-4 h-4 xl:w-5 xl:h-5" />
                   </motion.div>
                 )}
               </React.Fragment>

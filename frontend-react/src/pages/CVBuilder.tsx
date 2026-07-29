@@ -55,7 +55,7 @@ export default function CVBuilder() {
 
   const resolveFileUrl = (url: string) => {
     if (!url) return '';
-    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) return url;
     return getApiUrl(url);
   };
 
@@ -555,6 +555,7 @@ export default function CVBuilder() {
                           </span>
                           <a
                             href={resolveFileUrl(sample.fileUrl)}
+                            download={`${sample.title || 'sample-cv'}.pdf`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shadow-sm"

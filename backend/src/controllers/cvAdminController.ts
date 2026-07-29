@@ -19,8 +19,15 @@ export const uploadSampleCv = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Title is required' });
     }
 
-    // Convert file path to a URL-friendly format
-    const fileUrl = `/uploads/cv_samples/${file.filename}`;
+    // Convert file to base64 Data URL so it is stored permanently in PostgreSQL database (Vercel serverless-proof)
+    let fileUrl = `/uploads/cv_samples/${file.filename}`;
+    try {
+      const fileBuffer = fs.readFileSync(file.path);
+      const base64Data = fileBuffer.toString('base64');
+      fileUrl = `data:${file.mimetype || 'application/pdf'};base64,${base64Data}`;
+    } catch (readErr) {
+      console.warn('Could not convert file to base64, using local path:', readErr);
+    }
 
     const sampleCv = await prisma.sampleCvTemplate.create({
       data: {

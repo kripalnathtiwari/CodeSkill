@@ -54,16 +54,17 @@ export default function CVBuilder() {
     setLoading(true);
     try {
       const fetchEndpoint = async (url: string, fallbackUrl: string) => {
+        const token = localStorage.getItem('accessToken');
+        const config = {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+          validateStatus: (status: number) => status < 500
+        };
         try {
-          const res = await axios.get(getApiUrl(url), {
-            validateStatus: (status) => status < 500
-          });
+          const res = await axios.get(getApiUrl(url), config);
           if (res.status === 200 && Array.isArray(res.data)) {
             return res.data;
           }
-          const fallbackRes = await axios.get(getApiUrl(fallbackUrl), {
-            validateStatus: (status) => status < 500
-          });
+          const fallbackRes = await axios.get(getApiUrl(fallbackUrl), config);
           if (fallbackRes.status === 200 && Array.isArray(fallbackRes.data)) {
             return fallbackRes.data;
           }

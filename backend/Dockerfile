@@ -10,7 +10,8 @@ RUN npm ci
 # Copy application source
 COPY . .
 
-# Build TypeScript to JavaScript
+# Generate Prisma Client & build TypeScript to JavaScript
+RUN npx prisma generate
 RUN npm run build
 
 # Production stage
@@ -18,16 +19,15 @@ FROM node:20-alpine
 
 WORKDIR /usr/src/app
 
-# Install production dependencies only
+# Install production dependencies only (--omit=dev replaces deprecated --only=production)
 COPY package*.json ./
-RUN npm ci --only=production && npm cache clean --force
+RUN npm ci --omit=dev && npm cache clean --force
 
-# Copy compiled JavaScript from builder
+# Copy compiled JavaScript & Prisma client from builder
 COPY --from=builder /usr/src/app/dist ./dist
 COPY --from=builder /usr/src/app/prisma ./prisma
-
-# Generate Prisma Client in production image
-RUN npx prisma generate
+COPY --from=builder /usr/src/app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /usr/src/app/node_modules/@prisma ./node_modules/@prisma
 
 EXPOSE 5000
 

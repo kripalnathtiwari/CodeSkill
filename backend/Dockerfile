@@ -5,7 +5,7 @@ WORKDIR /usr/src/app
 # Install dependencies first for Docker caching
 COPY package*.json ./
 COPY tsconfig.json ./
-RUN npm ci
+RUN npm install
 
 # Copy application source
 COPY . .
@@ -21,7 +21,7 @@ WORKDIR /usr/src/app
 
 # Install production dependencies only (--omit=dev replaces deprecated --only=production)
 COPY package*.json ./
-RUN npm ci --omit=dev && npm cache clean --force
+RUN npm install --omit=dev && npm cache clean --force
 
 # Copy compiled JavaScript & Prisma client from builder
 COPY --from=builder /usr/src/app/dist ./dist

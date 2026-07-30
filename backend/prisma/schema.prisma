@@ -676,6 +676,7 @@ model SampleCvTemplate {
   description  String?
   fileUrl      String
   category     String?
+  previewUrl   String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }

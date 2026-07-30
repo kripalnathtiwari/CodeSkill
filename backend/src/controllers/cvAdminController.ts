@@ -9,7 +9,7 @@ import prisma from '../config/db';
 
 export const uploadSampleCv = async (req: Request, res: Response) => {
   try {
-    const { title, description, category } = req.body;
+    const { title, description, category, previewUrl } = req.body;
     const file = req.file;
 
     if (!file) {
@@ -35,6 +35,7 @@ export const uploadSampleCv = async (req: Request, res: Response) => {
         description,
         category,
         fileUrl,
+        previewUrl: previewUrl || null,
       },
     });
 

@@ -26,6 +26,7 @@ interface SampleCV {
   description: string | null;
   fileUrl: string;
   category: string | null;
+  previewUrl?: string | null;
   createdAt: string;
 }
 
@@ -95,6 +96,18 @@ export default function CVBuilder() {
     if (!url) return '';
     if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) return url;
     return getApiUrl(url);
+  };
+
+  const getPreviewIframeUrl = (sample: SampleCV) => {
+    if (sample.previewUrl) {
+      if (sample.previewUrl.includes('drive.google.com/file/d/')) {
+        return sample.previewUrl.replace(/\/view.*$/, '/preview').replace(/\/edit.*$/, '/preview');
+      }
+      return sample.previewUrl;
+    }
+    const url = resolveFileUrl(sample.fileUrl);
+    if (url.startsWith('data:')) return url;
+    return `https://docs.google.com/gview?url=${encodeURIComponent(url)}&embedded=true`;
   };
 
   const categories = ['ALL', ...Array.from(new Set(samples.map((s) => (s.category || 'Standard').toUpperCase())))];
@@ -431,22 +444,31 @@ export default function CVBuilder() {
                       Previewing {previewSample.title}. If your browser blocks inline previewing, open or download it directly.
                     </span>
                   </div>
-                  <a
-                    href={resolveFileUrl(previewSample.fileUrl)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition-colors shadow-sm whitespace-nowrap"
-                  >
-                    Open in New Tab
-                  </a>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {previewSample.previewUrl && (
+                      <a
+                        href={previewSample.previewUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition-colors shadow-sm whitespace-nowrap flex items-center gap-1.5"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                        Google Drive Link
+                      </a>
+                    )}
+                    <a
+                      href={resolveFileUrl(previewSample.fileUrl)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition-colors shadow-sm whitespace-nowrap"
+                    >
+                      Open in New Tab
+                    </a>
+                  </div>
                 </div>
 
                 <iframe
-                  src={
-                    resolveFileUrl(previewSample.fileUrl).startsWith('data:')
-                      ? resolveFileUrl(previewSample.fileUrl)
-                      : `https://docs.google.com/gview?url=${encodeURIComponent(resolveFileUrl(previewSample.fileUrl))}&embedded=true`
-                  }
+                  src={getPreviewIframeUrl(previewSample)}
                   className="w-full h-[650px] bg-white rounded-xl shadow-lg border border-slate-200 dark:border-slate-800"
                   title={previewSample.title}
                 ></iframe>

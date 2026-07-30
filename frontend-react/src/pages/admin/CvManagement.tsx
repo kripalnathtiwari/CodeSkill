@@ -9,6 +9,7 @@ interface SampleCV {
   description: string | null;
   fileUrl: string;
   category: string | null;
+  previewUrl?: string | null;
   createdAt: string;
 }
 
@@ -27,6 +28,7 @@ export default function CvManagement() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
+  const [previewUrl, setPreviewUrl] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -73,6 +75,7 @@ export default function CvManagement() {
     formData.append('title', title);
     formData.append('description', description);
     formData.append('category', category);
+    formData.append('previewUrl', previewUrl);
     formData.append('file', file);
 
     try {
@@ -86,6 +89,7 @@ export default function CvManagement() {
       setTitle('');
       setDescription('');
       setCategory('');
+      setPreviewUrl('');
       setFile(null);
       fetchSamples();
     } catch (error: any) {
@@ -229,6 +233,16 @@ export default function CvManagement() {
                 />
               </div>
               <div>
+                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Drive Link / Preview URL (Optional)</label>
+                <input
+                  type="url"
+                  value={previewUrl}
+                  onChange={e => setPreviewUrl(e.target.value)}
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500"
+                  placeholder="e.g. Google Drive link (https://drive.google.com/file/d/...)"
+                />
+              </div>
+              <div>
                 <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">File (PDF/DOCX)</label>
                 <input
                   type="file"
@@ -268,9 +282,16 @@ export default function CvManagement() {
                     </div>
                   </div>
                   <div className="mt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 pt-4">
-                    <a href={`${API_URL}/public${sample.fileUrl}`} target="_blank" rel="noreferrer" className="text-indigo-600 hover:text-indigo-500 text-sm font-bold flex items-center">
-                      <LinkIcon className="w-4 h-4 mr-1" /> View File
-                    </a>
+                    <div className="flex items-center space-x-4">
+                      <a href={`${API_URL}/public${sample.fileUrl}`} target="_blank" rel="noreferrer" className="text-indigo-600 hover:text-indigo-500 text-sm font-bold flex items-center">
+                        <LinkIcon className="w-4 h-4 mr-1" /> View File
+                      </a>
+                      {sample.previewUrl && (
+                        <a href={sample.previewUrl} target="_blank" rel="noreferrer" className="text-emerald-600 hover:text-emerald-500 text-sm font-bold flex items-center">
+                          <LinkIcon className="w-4 h-4 mr-1" /> Drive Preview
+                        </a>
+                      )}
+                    </div>
                     <button onClick={() => deleteSample(sample.id)} className="text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 p-2 rounded-lg transition-colors">
                       <Trash2 className="w-4 h-4" />
                     </button>

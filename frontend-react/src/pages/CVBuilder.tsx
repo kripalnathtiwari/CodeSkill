@@ -272,7 +272,7 @@ export default function CVBuilder() {
                       'Verified CV template structured by industry administrators. Ideal for modern job applications and applicant tracking systems.'}
                   </p>
 
-                  <div className="flex items-center gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                  <div className="flex items-center gap-2 pt-4 border-t border-slate-100 dark:border-slate-800">
                     <a
                       href={resolveFileUrl(sample.fileUrl)}
                       download={`${sample.title || 'cv-template'}.pdf`}
@@ -281,8 +281,20 @@ export default function CVBuilder() {
                       className="flex-1 inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-emerald-600/20 transition-all text-xs uppercase tracking-wide"
                     >
                       <Download className="w-4 h-4" />
-                      Download CV Format
+                      Download CV
                     </a>
+                    {sample.previewUrl && (
+                      <a
+                        href={sample.previewUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-3.5 rounded-xl transition-all text-xs shadow-md shadow-indigo-600/20"
+                        title="Open in Google Drive"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                        Drive
+                      </a>
+                    )}
                     <button
                       type="button"
                       onClick={() => setPreviewSample(sample)}
@@ -435,49 +447,60 @@ export default function CVBuilder() {
                 </div>
               </div>
 
-              {/* Modal Body - Document Preview */}
-              <div className="flex-1 bg-slate-100 dark:bg-slate-950 p-4 sm:p-6 overflow-y-auto flex flex-col items-center justify-center min-h-[500px]">
-                <div className="w-full mb-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <FileText className="w-5 h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
-                    <span className="text-xs font-semibold text-emerald-900 dark:text-emerald-200">
-                      Previewing {previewSample.title}. If your browser blocks inline previewing, open or download it directly.
-                    </span>
+              {/* Modal Body - Google Drive & Document Preview */}
+              <div className="flex-1 bg-slate-100 dark:bg-slate-950 p-6 sm:p-10 overflow-y-auto flex flex-col items-center justify-center min-h-[500px]">
+                <div className="w-full max-w-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 sm:p-12 shadow-2xl flex flex-col items-center text-center relative overflow-hidden my-auto">
+                  {/* Glowing ambient background accents */}
+                  <div className="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500/10 dark:bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
+                  <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-indigo-500/10 dark:bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+                  {/* Icon Badge */}
+                  <div className="w-20 h-20 rounded-3xl bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500/20 flex items-center justify-center mb-6 shadow-lg shadow-emerald-500/10">
+                    <FileText className="w-10 h-10 text-emerald-600 dark:text-emerald-400" />
                   </div>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    {previewSample.previewUrl && (
-                      <a
-                        href={previewSample.previewUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition-colors shadow-sm whitespace-nowrap flex items-center gap-1.5"
-                      >
-                        <ExternalLink className="w-3.5 h-3.5" />
-                        Google Drive Link
-                      </a>
-                    )}
+
+                  <span className="px-3.5 py-1.5 bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-xs font-black uppercase tracking-wider rounded-full mb-4 border border-emerald-200 dark:border-emerald-800">
+                    {previewSample.category || 'Tech'} Format • Google Drive Ready
+                  </span>
+
+                  <h3 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mb-3">
+                    {previewSample.title}
+                  </h3>
+
+                  <p className="text-sm text-slate-600 dark:text-slate-400 max-w-md mb-8 leading-relaxed">
+                    {previewSample.description ||
+                      'Verified ATS-optimized CV template structured by industry administrators. Click below to open directly in Google Drive or download to your device.'}
+                  </p>
+
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-sm">
                     <a
-                      href={resolveFileUrl(previewSample.fileUrl)}
+                      href={previewSample.previewUrl || resolveFileUrl(previewSample.fileUrl)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition-colors shadow-sm whitespace-nowrap"
+                      className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black py-4 px-6 rounded-2xl shadow-xl shadow-emerald-600/20 hover:shadow-emerald-600/30 transition-all text-sm uppercase tracking-wide transform hover:-translate-y-0.5"
                     >
-                      Open in New Tab
+                      <ExternalLink className="w-5 h-5" />
+                      Open in Drive
+                    </a>
+
+                    <a
+                      href={resolveFileUrl(previewSample.fileUrl)}
+                      download={`${previewSample.title || 'cv-template'}.pdf`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold py-4 px-6 rounded-2xl border border-slate-200 dark:border-slate-700 transition-all text-sm"
+                    >
+                      <Download className="w-4 h-4" />
+                      Download File
                     </a>
                   </div>
                 </div>
-
-                <iframe
-                  src={getPreviewIframeUrl(previewSample)}
-                  className="w-full h-[650px] bg-white rounded-xl shadow-lg border border-slate-200 dark:border-slate-800"
-                  title={previewSample.title}
-                ></iframe>
               </div>
 
               {/* Modal Footer */}
               <div className="p-4 bg-slate-50 dark:bg-slate-900/60 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
                 <span>
-                  Tip: If your browser does not render the document inline, click the Download File button above.
+                  Tip: Click Open in Drive to view the CV format uploaded by your administrator.
                 </span>
                 <button
                   onClick={() => setPreviewSample(null)}

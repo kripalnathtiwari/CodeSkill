@@ -55,11 +55,21 @@ export default function CVBuilder() {
     try {
       const fetchEndpoint = async (url: string, fallbackUrl: string) => {
         try {
-          const res = await axios.get(getApiUrl(url));
-          return res.data || [];
+          const res = await axios.get(getApiUrl(url), {
+            validateStatus: (status) => status < 500
+          });
+          if (res.status === 200 && Array.isArray(res.data)) {
+            return res.data;
+          }
+          const fallbackRes = await axios.get(getApiUrl(fallbackUrl), {
+            validateStatus: (status) => status < 500
+          });
+          if (fallbackRes.status === 200 && Array.isArray(fallbackRes.data)) {
+            return fallbackRes.data;
+          }
+          return [];
         } catch {
-          const res = await axios.get(getApiUrl(fallbackUrl));
-          return res.data || [];
+          return [];
         }
       };
 

@@ -25,6 +25,7 @@ export default function CVBuilder() {
   const [jobSkills, setJobSkills] = useState<JobSkillMap[]>([]);
   const [selectedRole, setSelectedRole] = useState<string>('');
   const [showSamplesModal, setShowSamplesModal] = useState<boolean>(false);
+  const [selectedSampleId, setSelectedSampleId] = useState<string>('');
 
   useEffect(() => {
     fetchSamplesAndSkills();
@@ -48,6 +49,9 @@ export default function CVBuilder() {
       ]);
       setSamples(samplesData);
       setJobSkills(skillsData);
+      if (samplesData && samplesData.length > 0) {
+        setSelectedSampleId(samplesData[0].id);
+      }
     } catch (error) {
       console.error('Error fetching CV samples and skills:', error);
     }
@@ -57,6 +61,39 @@ export default function CVBuilder() {
     if (!url) return '';
     if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) return url;
     return getApiUrl(url);
+  };
+
+  const activeSample = samples.find((s) => s.id === selectedSampleId) || (samples.length > 0 ? samples[0] : null);
+
+  const getThemeClass = () => {
+    if (!activeSample) return 'tech';
+    const cat = (activeSample.category || '').toLowerCase();
+    const title = (activeSample.title || '').toLowerCase();
+    if (cat.includes('academic') || title.includes('harvard') || title.includes('minimal')) {
+      return 'academic';
+    }
+    if (cat.includes('business') || cat.includes('exec') || title.includes('executive')) {
+      return 'executive';
+    }
+    if (cat.includes('creative') || title.includes('creative') || title.includes('design')) {
+      return 'creative';
+    }
+    return 'tech';
+  };
+
+  const activeTheme = getThemeClass();
+
+  const applyAdminTemplateStructure = () => {
+    if (!activeSample) return;
+    const isAcademic = activeTheme === 'academic';
+    const isExecutive = activeTheme === 'executive';
+
+    setData((prev) => ({
+      ...prev,
+      title: prev.title || (isExecutive ? 'Chief Technical Executive' : isAcademic ? 'Computer Science & Engineering Graduate' : 'Senior Software Engineer'),
+      summary: prev.summary || `Professional resume formatted according to the admin-approved ${activeSample.title} template (${activeSample.category || 'Standard'}). Experienced in designing scalable systems, collaborating with cross-functional teams, and delivering high-impact engineering results.`,
+      skills: prev.skills || 'React, TypeScript, Node.js, System Architecture, Cloud Computing, PostgreSQL, UI/UX Design, Leadership'
+    }));
   };
 
   const [data, setData] = useState({
@@ -147,17 +184,52 @@ export default function CVBuilder() {
                   </span>
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                  Download professional CV templates & format guidelines uploaded by administrators to structure your resume.
+                  Your CV preview on the right renders using the selected Admin template.
                 </p>
+                <div className="flex flex-wrap items-center gap-2 mt-2.5">
+                  <span className="text-xs font-semibold text-slate-500">Active Format:</span>
+                  <select
+                    value={selectedSampleId}
+                    onChange={(e) => setSelectedSampleId(e.target.value)}
+                    className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-400 outline-none focus:border-emerald-500 shadow-sm"
+                  >
+                    {samples.map((sample) => (
+                      <option key={sample.id} value={sample.id}>
+                        {sample.title} ({sample.category || 'Standard'})
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={applyAdminTemplateStructure}
+                    className="text-xs font-semibold bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-700 dark:text-emerald-400 px-2.5 py-1 rounded-lg transition-colors"
+                  >
+                    ✨ Apply Format Structure
+                  </button>
+                </div>
               </div>
             </div>
-            <button
-              onClick={() => setShowSamplesModal(true)}
-              className="shrink-0 flex items-center gap-2 bg-slate-900 hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white px-4 py-2.5 rounded-xl text-sm font-bold transition-all shadow-md"
-            >
-              <Layers className="w-4 h-4" />
-              View CV Formats
-            </button>
+            <div className="flex flex-col sm:flex-row items-center gap-2 shrink-0">
+              {activeSample && (
+                <a
+                  href={resolveFileUrl(activeSample.fileUrl)}
+                  download={`${activeSample.title || 'admin-cv-sample'}.pdf`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto flex items-center justify-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-sm"
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  View Admin PDF
+                </a>
+              )}
+              <button
+                onClick={() => setShowSamplesModal(true)}
+                className="w-full sm:w-auto flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-md"
+              >
+                <Layers className="w-3.5 h-3.5" />
+                All Formats
+              </button>
+            </div>
           </div>
         )}
 
@@ -369,96 +441,356 @@ export default function CVBuilder() {
       </div>
 
       {/* RIGHT PANEL - A4 PREVIEW */}
-      <div className="w-full lg:w-[55%] bg-slate-200 dark:bg-slate-900 p-8 flex justify-center items-start overflow-y-auto print:w-full print:bg-white print:p-0 print:overflow-visible">
+      <div className="w-full lg:w-[55%] bg-slate-200 dark:bg-slate-900 p-8 flex flex-col items-center overflow-y-auto print:w-full print:bg-white print:p-0 print:overflow-visible">
         
+        {/* Admin Template Selector Bar (Above A4 Sheet) */}
+        <div className="w-full max-w-[210mm] mb-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 shadow-md flex flex-wrap items-center justify-between gap-3 print:hidden">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 px-2.5 py-1 rounded-md flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5" /> Admin Format:
+            </span>
+            <select
+              value={selectedSampleId}
+              onChange={(e) => setSelectedSampleId(e.target.value)}
+              className="bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-1 text-xs font-semibold text-slate-800 dark:text-slate-200 outline-none focus:border-emerald-500 transition-colors"
+            >
+              {samples.length > 0 ? (
+                samples.map((sample) => (
+                  <option key={sample.id} value={sample.id}>
+                    {sample.title} ({sample.category || 'Standard'})
+                  </option>
+                ))
+              ) : (
+                <option value="">Default Professional Format</option>
+              )}
+            </select>
+          </div>
+          <div className="flex items-center gap-2">
+            {activeSample && (
+              <a
+                href={resolveFileUrl(activeSample.fileUrl)}
+                download={`${activeSample.title || 'admin-cv-template'}.pdf`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shadow-sm"
+              >
+                <FileText className="w-3.5 h-3.5" />
+                View Admin PDF
+              </a>
+            )}
+            <button
+              type="button"
+              onClick={applyAdminTemplateStructure}
+              className="inline-flex items-center gap-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all"
+            >
+              ✨ Apply Format Structure
+            </button>
+            <button
+              type="button"
+              onClick={handlePrint}
+              className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shadow-sm"
+            >
+              <Printer className="w-3.5 h-3.5" />
+              Print / Save PDF
+            </button>
+          </div>
+        </div>
+
         {/* A4 Document Container */}
-        <div className="bg-white text-slate-900 w-full max-w-[210mm] min-h-[297mm] shadow-2xl print:shadow-none print:w-full print:max-w-none print:h-auto print:min-h-0 mx-auto rounded-sm">
+        <div className="bg-white text-slate-900 w-full max-w-[210mm] min-h-[297mm] shadow-2xl print:shadow-none print:w-full print:max-w-none print:h-auto print:min-h-0 mx-auto rounded-sm relative">
           
-          {/* Header */}
-          <div className="bg-slate-900 text-white px-10 py-12 print:bg-[#1a202c] print:text-white" style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
-            <h1 className="text-4xl font-bold uppercase tracking-wider mb-2">{data.name || 'Your Name'}</h1>
-            <h2 className="text-xl text-emerald-400 font-medium mb-6">{data.title || 'Professional Title'}</h2>
-            
-            <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-300">
-              <span className="flex items-center gap-2">
-                <span className="w-1 h-1 rounded-full bg-emerald-500"></span>
-                {data.email}
-              </span>
-              <span className="flex items-center gap-2">
-                <span className="w-1 h-1 rounded-full bg-emerald-500"></span>
-                {data.phone}
-              </span>
-              <span className="flex items-center gap-2">
-                <span className="w-1 h-1 rounded-full bg-emerald-500"></span>
-                {data.linkedin}
-              </span>
-            </div>
+          {/* Admin Template Watermark Header Badge */}
+          <div className="bg-emerald-500/10 border-b border-emerald-500/20 px-6 py-1.5 text-center text-[11px] font-bold text-emerald-800 uppercase tracking-widest print:hidden">
+            ✨ Formatted Using Admin Template: {activeSample?.title || 'Sample CV'} ({activeSample?.category || 'Tech'}) — Approved Standard
           </div>
 
-          <div className="p-10">
-            {/* Summary */}
-            {data.summary && (
-              <div className="mb-8">
-                <h3 className="text-lg font-bold text-slate-900 uppercase tracking-widest border-b-2 border-emerald-500 inline-block pb-1 mb-4">Summary</h3>
-                <p className="text-sm text-slate-700 leading-relaxed">
-                  {data.summary}
-                </p>
+          {/* THEME 1: ACADEMIC / HARVARD / MINIMALIST */}
+          {activeTheme === 'academic' && (
+            <div className="p-12 font-serif text-slate-900">
+              <div className="text-center border-b-2 border-slate-900 pb-6 mb-6">
+                <h1 className="text-3xl font-bold uppercase tracking-wider mb-2">{data.name || 'Your Name'}</h1>
+                <h2 className="text-base text-slate-700 font-semibold mb-3">{data.title || 'Professional Title'}</h2>
+                <div className="flex flex-wrap justify-center gap-4 text-xs text-slate-600">
+                  <span>{data.email}</span>
+                  <span>•</span>
+                  <span>{data.phone}</span>
+                  <span>•</span>
+                  <span>{data.linkedin}</span>
+                </div>
               </div>
-            )}
 
-            {/* Experience */}
-            <div className="mb-8">
-              <h3 className="text-lg font-bold text-slate-900 uppercase tracking-widest border-b-2 border-emerald-500 inline-block pb-1 mb-6">Experience</h3>
-              <div className="space-y-6">
-                {data.experience.map((exp, index) => (
-                  <div key={index}>
-                    <div className="flex justify-between items-baseline mb-1">
-                      <h4 className="font-bold text-slate-800">{exp.role}</h4>
-                      <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded" style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>{exp.duration}</span>
+              {data.summary && (
+                <div className="mb-6">
+                  <h3 className="text-sm font-bold uppercase tracking-widest border-b border-slate-400 pb-1 mb-2">Professional Summary</h3>
+                  <p className="text-xs leading-relaxed text-slate-800">{data.summary}</p>
+                </div>
+              )}
+
+              <div className="mb-6">
+                <h3 className="text-sm font-bold uppercase tracking-widest border-b border-slate-400 pb-1 mb-3">Work Experience</h3>
+                <div className="space-y-4">
+                  {data.experience.map((exp, index) => (
+                    <div key={index}>
+                      <div className="flex justify-between items-baseline">
+                        <h4 className="font-bold text-xs text-slate-900">{exp.role} — <span className="font-normal italic">{exp.company}</span></h4>
+                        <span className="text-xs text-slate-600">{exp.duration}</span>
+                      </div>
+                      <p className="text-xs text-slate-800 mt-1 leading-relaxed">{exp.description}</p>
                     </div>
-                    <div className="text-sm font-semibold text-slate-600 mb-2">{exp.company}</div>
-                    <p className="text-sm text-slate-700 leading-relaxed">
-                      {exp.description}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Education & Skills Split */}
-            <div className="grid grid-cols-2 gap-8">
-              
-              {/* Education */}
-              <div>
-                <h3 className="text-lg font-bold text-slate-900 uppercase tracking-widest border-b-2 border-emerald-500 inline-block pb-1 mb-4">Education</h3>
-                {data.education.map((edu, index) => (
-                  <div key={index} className="mb-4">
-                    <div className="font-bold text-slate-800 text-sm mb-1">{edu.degree}</div>
-                    <div className="text-sm text-slate-600 font-medium">{edu.institution}</div>
-                    <div className="text-xs text-slate-500 mt-1">{edu.year}</div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Skills */}
-              <div>
-                <h3 className="text-lg font-bold text-slate-900 uppercase tracking-widest border-b-2 border-emerald-500 inline-block pb-1 mb-4">Core Skills</h3>
-                <div className="flex flex-wrap gap-2">
-                  {data.skills.split(',').map((skill, index) => (
-                    <span 
-                      key={index} 
-                      className="bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold px-2.5 py-1 rounded-md"
-                      style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}
-                    >
-                      {skill.trim()}
-                    </span>
                   ))}
                 </div>
               </div>
-              
-            </div>
 
-          </div>
+              <div className="mb-6">
+                <h3 className="text-sm font-bold uppercase tracking-widest border-b border-slate-400 pb-1 mb-3">Education</h3>
+                {data.education.map((edu, index) => (
+                  <div key={index} className="flex justify-between items-baseline mb-2">
+                    <div>
+                      <span className="font-bold text-xs">{edu.degree}</span>
+                      <span className="text-xs text-slate-700">, {edu.institution}</span>
+                    </div>
+                    <span className="text-xs text-slate-600">{edu.year}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div>
+                <h3 className="text-sm font-bold uppercase tracking-widest border-b border-slate-400 pb-1 mb-2">Technical Skills</h3>
+                <p className="text-xs text-slate-800 leading-relaxed">{data.skills}</p>
+              </div>
+            </div>
+          )}
+
+          {/* THEME 2: EXECUTIVE / BUSINESS */}
+          {activeTheme === 'executive' && (
+            <div>
+              <div className="bg-[#1e293b] text-white px-10 py-10 border-b-4 border-amber-500" style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
+                <h1 className="text-4xl font-bold tracking-tight mb-1">{data.name || 'Your Name'}</h1>
+                <h2 className="text-lg text-amber-400 font-medium mb-4">{data.title || 'Professional Title'}</h2>
+                <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-slate-300">
+                  <span>{data.email}</span>
+                  <span>|</span>
+                  <span>{data.phone}</span>
+                  <span>|</span>
+                  <span>{data.linkedin}</span>
+                </div>
+              </div>
+
+              <div className="p-10">
+                {data.summary && (
+                  <div className="mb-8">
+                    <h3 className="text-base font-bold text-slate-900 uppercase tracking-wider border-l-4 border-amber-500 pl-3 mb-3">Executive Summary</h3>
+                    <p className="text-sm text-slate-700 leading-relaxed">{data.summary}</p>
+                  </div>
+                )}
+
+                <div className="mb-8">
+                  <h3 className="text-base font-bold text-slate-900 uppercase tracking-wider border-l-4 border-amber-500 pl-3 mb-4">Leadership & Experience</h3>
+                  <div className="space-y-6">
+                    {data.experience.map((exp, index) => (
+                      <div key={index}>
+                        <div className="flex justify-between items-baseline">
+                          <h4 className="font-bold text-slate-900">{exp.role}</h4>
+                          <span className="text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded" style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>{exp.duration}</span>
+                        </div>
+                        <div className="text-sm font-semibold text-slate-600 mb-1">{exp.company}</div>
+                        <p className="text-sm text-slate-700 leading-relaxed">{exp.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-8">
+                  <div>
+                    <h3 className="text-base font-bold text-slate-900 uppercase tracking-wider border-l-4 border-amber-500 pl-3 mb-3">Education</h3>
+                    {data.education.map((edu, index) => (
+                      <div key={index} className="mb-3">
+                        <div className="font-bold text-slate-800 text-sm">{edu.degree}</div>
+                        <div className="text-sm text-slate-600">{edu.institution}</div>
+                        <div className="text-xs text-slate-400">{edu.year}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-slate-900 uppercase tracking-wider border-l-4 border-amber-500 pl-3 mb-3">Core Competencies</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {data.skills.split(',').map((skill, index) => (
+                        <span key={index} className="bg-slate-100 border border-slate-300 text-slate-800 text-xs font-semibold px-2.5 py-1 rounded" style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
+                          {skill.trim()}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* THEME 3: CREATIVE / SIDEBAR */}
+          {activeTheme === 'creative' && (
+            <div className="flex min-h-[297mm]">
+              <div className="w-[35%] bg-slate-900 text-white p-8 flex flex-col justify-between" style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
+                <div>
+                  <h1 className="text-2xl font-bold uppercase tracking-wider leading-tight mb-2">{data.name || 'Your Name'}</h1>
+                  <h2 className="text-sm text-emerald-400 font-medium mb-8">{data.title || 'Professional Title'}</h2>
+
+                  <div className="mb-8 space-y-3 text-xs text-slate-300">
+                    <div>
+                      <span className="text-[10px] uppercase tracking-wider text-slate-500 block mb-0.5">Email</span>
+                      {data.email}
+                    </div>
+                    <div>
+                      <span className="text-[10px] uppercase tracking-wider text-slate-500 block mb-0.5">Phone</span>
+                      {data.phone}
+                    </div>
+                    <div>
+                      <span className="text-[10px] uppercase tracking-wider text-slate-500 block mb-0.5">LinkedIn</span>
+                      {data.linkedin}
+                    </div>
+                  </div>
+
+                  <div className="mb-8">
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-emerald-400 border-b border-slate-700 pb-1 mb-3">Education</h3>
+                    {data.education.map((edu, index) => (
+                      <div key={index} className="mb-4 text-xs">
+                        <div className="font-bold text-white">{edu.degree}</div>
+                        <div className="text-slate-400">{edu.institution}</div>
+                        <div className="text-[10px] text-slate-500 mt-0.5">{edu.year}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div>
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-emerald-400 border-b border-slate-700 pb-1 mb-3">Skills</h3>
+                    <div className="flex flex-wrap gap-1.5">
+                      {data.skills.split(',').map((skill, index) => (
+                        <span key={index} className="bg-slate-800 text-slate-200 text-[11px] font-medium px-2 py-0.5 rounded" style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
+                          {skill.trim()}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="w-[65%] p-10 bg-white">
+                {data.summary && (
+                  <div className="mb-8">
+                    <h3 className="text-base font-bold text-slate-900 uppercase tracking-wider border-b-2 border-emerald-500 inline-block pb-1 mb-3">Profile</h3>
+                    <p className="text-sm text-slate-700 leading-relaxed">{data.summary}</p>
+                  </div>
+                )}
+
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 uppercase tracking-wider border-b-2 border-emerald-500 inline-block pb-1 mb-5">Experience</h3>
+                  <div className="space-y-6">
+                    {data.experience.map((exp, index) => (
+                      <div key={index}>
+                        <div className="flex justify-between items-baseline">
+                          <h4 className="font-bold text-slate-900">{exp.role}</h4>
+                          <span className="text-xs font-semibold text-emerald-600">{exp.duration}</span>
+                        </div>
+                        <div className="text-sm font-semibold text-slate-600 mb-2">{exp.company}</div>
+                        <p className="text-sm text-slate-700 leading-relaxed">{exp.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* THEME 4: TECH / MODERN (DEFAULT / "Sample CV") */}
+          {activeTheme === 'tech' && (
+            <div>
+              {/* Header */}
+              <div className="bg-slate-900 text-white px-10 py-12 print:bg-[#1a202c] print:text-white" style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
+                <h1 className="text-4xl font-bold uppercase tracking-wider mb-2">{data.name || 'Your Name'}</h1>
+                <h2 className="text-xl text-emerald-400 font-medium mb-6">{data.title || 'Professional Title'}</h2>
+                
+                <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-300">
+                  <span className="flex items-center gap-2">
+                    <span className="w-1 h-1 rounded-full bg-emerald-500"></span>
+                    {data.email}
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <span className="w-1 h-1 rounded-full bg-emerald-500"></span>
+                    {data.phone}
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <span className="w-1 h-1 rounded-full bg-emerald-500"></span>
+                    {data.linkedin}
+                  </span>
+                </div>
+              </div>
+
+              <div className="p-10">
+                {/* Summary */}
+                {data.summary && (
+                  <div className="mb-8">
+                    <h3 className="text-lg font-bold text-slate-900 uppercase tracking-widest border-b-2 border-emerald-500 inline-block pb-1 mb-4">Summary</h3>
+                    <p className="text-sm text-slate-700 leading-relaxed">
+                      {data.summary}
+                    </p>
+                  </div>
+                )}
+
+                {/* Experience */}
+                <div className="mb-8">
+                  <h3 className="text-lg font-bold text-slate-900 uppercase tracking-widest border-b-2 border-emerald-500 inline-block pb-1 mb-6">Experience</h3>
+                  <div className="space-y-6">
+                    {data.experience.map((exp, index) => (
+                      <div key={index}>
+                        <div className="flex justify-between items-baseline mb-1">
+                          <h4 className="font-bold text-slate-800">{exp.role}</h4>
+                          <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded" style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>{exp.duration}</span>
+                        </div>
+                        <div className="text-sm font-semibold text-slate-600 mb-2">{exp.company}</div>
+                        <p className="text-sm text-slate-700 leading-relaxed">
+                          {exp.description}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Education & Skills Split */}
+                <div className="grid grid-cols-2 gap-8">
+                  
+                  {/* Education */}
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-900 uppercase tracking-widest border-b-2 border-emerald-500 inline-block pb-1 mb-4">Education</h3>
+                    {data.education.map((edu, index) => (
+                      <div key={index} className="mb-4">
+                        <div className="font-bold text-slate-800 text-sm mb-1">{edu.degree}</div>
+                        <div className="text-sm text-slate-600 font-medium">{edu.institution}</div>
+                        <div className="text-xs text-slate-500 mt-1">{edu.year}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Skills */}
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-900 uppercase tracking-widest border-b-2 border-emerald-500 inline-block pb-1 mb-4">Core Skills</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {data.skills.split(',').map((skill, index) => (
+                        <span 
+                          key={index} 
+                          className="bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold px-2.5 py-1 rounded-md"
+                          style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}
+                        >
+                          {skill.trim()}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  
+                </div>
+
+              </div>
+            </div>
+          )}
+
         </div>
       </div>
       

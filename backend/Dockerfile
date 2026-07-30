@@ -31,4 +31,4 @@ RUN npx prisma generate
 
 EXPOSE 5000
 
-CMD ["node", "dist/app.js"]
+CMD ["node", "dist/src/app.js"]

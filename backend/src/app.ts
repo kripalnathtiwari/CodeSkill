@@ -61,9 +61,13 @@ app.use((req, res, next) => {
   next();
 });
 
-// Serve public static files for uploads
-app.use("/public", express.static(path.join(__dirname, "../public")));
-app.use("/uploads", express.static(path.join(__dirname, "../public/uploads")));
+// Serve public static files for uploads from both project root and dist
+const publicRootPath = path.join(process.cwd(), "public");
+const publicDistPath = path.join(__dirname, "../public");
+app.use("/public", express.static(publicRootPath));
+app.use("/public", express.static(publicDistPath));
+app.use("/uploads", express.static(path.join(publicRootPath, "uploads")));
+app.use("/uploads", express.static(path.join(publicDistPath, "uploads")));
 
 // Bind HTTP access log using Morgan and Winston
 const morganFormat = process.env.NODE_ENV === "production" ? "combined" : "dev";

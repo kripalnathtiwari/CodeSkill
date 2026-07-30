@@ -51,7 +51,22 @@ export const getSampleCvs = async (req: Request, res: Response) => {
     const templates = await prisma.sampleCvTemplate.findMany({
       orderBy: { createdAt: 'desc' },
     });
-    res.status(200).json(templates);
+    const validTemplates = templates.filter(t => {
+      if (!t.fileUrl && !t.previewUrl) return false;
+      if (t.fileUrl && (t.fileUrl.startsWith('data:') || t.fileUrl.startsWith('http'))) return true;
+      if (t.previewUrl) return true;
+      if (t.fileUrl) {
+        const filePath = path.join(process.cwd(), 'public', t.fileUrl);
+        const filePathDist = path.join(__dirname, '../../public', t.fileUrl);
+        const exists = fs.existsSync(filePath) || fs.existsSync(filePathDist);
+        if (!exists) {
+          prisma.sampleCvTemplate.delete({ where: { id: t.id } }).catch(err => console.warn('Cleaned up broken template:', err));
+          return false;
+        }
+      }
+      return true;
+    });
+    res.status(200).json(validTemplates);
   } catch (error) {
     console.error('Error fetching sample CVs:', error);
     res.status(500).json({ error: 'Failed to fetch sample CVs' });

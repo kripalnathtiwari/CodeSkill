@@ -1,6 +1,8 @@
-FROM node:20-alpine AS builder
+FROM node:20-slim AS builder
 
 WORKDIR /usr/src/app
+
+RUN apt-get update -y && apt-get install -y openssl ca-certificates && rm -rf /var/lib/apt/lists/*
 
 # Install dependencies first for Docker caching
 COPY package*.json ./
@@ -16,20 +18,20 @@ RUN npx prisma generate
 RUN npm run build
 
 # Production stage
-FROM node:20-alpine
+FROM node:20-slim
 
 WORKDIR /usr/src/app
+
+RUN apt-get update -y && apt-get install -y openssl ca-certificates && rm -rf /var/lib/apt/lists/*
 
 # Install production dependencies only (--omit=dev replaces deprecated --only=production)
 COPY package*.json ./
 COPY prisma ./prisma
 RUN npm install --omit=dev && npm cache clean --force
+RUN npx prisma generate
 
-# Copy compiled JavaScript & Prisma client from builder
+# Copy compiled JavaScript from builder
 COPY --from=builder /usr/src/app/dist ./dist
-COPY --from=builder /usr/src/app/prisma ./prisma
-COPY --from=builder /usr/src/app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /usr/src/app/node_modules/@prisma ./node_modules/@prisma
 
 EXPOSE 5000
 

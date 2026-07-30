@@ -424,8 +424,29 @@ export default function CVBuilder() {
 
               {/* Modal Body - Document Preview */}
               <div className="flex-1 bg-slate-100 dark:bg-slate-950 p-4 sm:p-6 overflow-y-auto flex flex-col items-center justify-center min-h-[500px]">
+                <div className="w-full mb-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <FileText className="w-5 h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                    <span className="text-xs font-semibold text-emerald-900 dark:text-emerald-200">
+                      Previewing {previewSample.title}. If your browser blocks inline previewing, open or download it directly.
+                    </span>
+                  </div>
+                  <a
+                    href={resolveFileUrl(previewSample.fileUrl)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition-colors shadow-sm whitespace-nowrap"
+                  >
+                    Open in New Tab
+                  </a>
+                </div>
+
                 <iframe
-                  src={resolveFileUrl(previewSample.fileUrl)}
+                  src={
+                    resolveFileUrl(previewSample.fileUrl).startsWith('data:')
+                      ? resolveFileUrl(previewSample.fileUrl)
+                      : `https://docs.google.com/gview?url=${encodeURIComponent(resolveFileUrl(previewSample.fileUrl))}&embedded=true`
+                  }
                   className="w-full h-[650px] bg-white rounded-xl shadow-lg border border-slate-200 dark:border-slate-800"
                   title={previewSample.title}
                 ></iframe>

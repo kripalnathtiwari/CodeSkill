@@ -40,7 +40,13 @@ const server = http.createServer(app);
 initSocketServer(server);
 
 // Security and Logging middleware
-app.use(helmet());
+app.use(
+  helmet({
+    frameguard: false,
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    contentSecurityPolicy: false,
+  })
+);
 app.use(cors({ origin: "*" })); // Adjust origin dynamically in prod config
 app.use(express.json());
 app.use(compression());

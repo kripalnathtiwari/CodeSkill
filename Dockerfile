@@ -1,28 +1,32 @@
-FROM node:20-alpine AS builder
+FROM node:20-slim AS builder
 
 WORKDIR /usr/src/app
+
+RUN apt-get update -y && apt-get install -y openssl ca-certificates && rm -rf /var/lib/apt/lists/*
 
 COPY package*.json ./
 COPY backend/package*.json ./backend/
 COPY backend/tsconfig.json ./backend/
-RUN npm ci
+COPY backend/prisma ./backend/prisma
+RUN npm install
 
 COPY . .
 RUN npm run prisma:generate
 RUN npm run build:backend
 
-FROM node:20-alpine
+FROM node:20-slim
 
 WORKDIR /usr/src/app
 
+RUN apt-get update -y && apt-get install -y openssl ca-certificates && rm -rf /var/lib/apt/lists/*
+
 COPY package*.json ./
 COPY backend/package*.json ./backend/
-RUN npm ci --omit=dev && npm cache clean --force
+COPY backend/prisma ./backend/prisma
+RUN npm install --omit=dev && npm cache clean --force
+RUN npm run prisma:generate
 
 COPY --from=builder /usr/src/app/backend/dist ./backend/dist
-COPY --from=builder /usr/src/app/backend/prisma ./backend/prisma
-COPY --from=builder /usr/src/app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /usr/src/app/node_modules/@prisma ./node_modules/@prisma
 
 EXPOSE 5000
 

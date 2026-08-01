@@ -13,9 +13,6 @@
     "build:backend": "npm run build --workspace=backend",
     "build:frontend": "npm run build --workspace=frontend",
     "prisma:generate": "npm run prisma:generate --workspace=backend",
-    "prisma:migrate": "npm run prisma:migrate --workspace=backend",
-    "postinstall": "npm run prisma:generate",
-    "build": "npm run build:backend",
-    "start": "node backend/dist/src/app.js"
+    "prisma:migrate": "npm run prisma:migrate --workspace=backend"
   }
 }

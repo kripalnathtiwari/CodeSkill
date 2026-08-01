@@ -9,33 +9,29 @@ import prisma from '../config/db';
 
 export const uploadSampleCv = async (req: Request, res: Response) => {
   try {
-    const { title, description, category, previewUrl } = req.body;
+    const { title, description, category, imageUrl: bodyImageUrl, redirectUrl, previewUrl: bodyPreviewUrl, fileUrl: bodyFileUrl } = req.body;
     const file = req.file;
+    const providedUrl = bodyImageUrl || bodyPreviewUrl || bodyFileUrl;
 
-    if (!file) {
-      return res.status(400).json({ error: 'No file uploaded' });
+    if (!file && !providedUrl) {
+      return res.status(400).json({ error: 'Please upload an image/file or provide an Image URL' });
     }
     if (!title) {
       return res.status(400).json({ error: 'Title is required' });
     }
 
-    // Convert file to base64 Data URL so it is stored permanently in PostgreSQL database (Vercel serverless-proof)
-    let fileUrl = `/uploads/cv_samples/${file.filename}`;
-    try {
-      const fileBuffer = fs.readFileSync(file.path);
-      const base64Data = fileBuffer.toString('base64');
-      fileUrl = `data:${file.mimetype || 'application/pdf'};base64,${base64Data}`;
-    } catch (readErr) {
-      console.warn('Could not convert file to base64, using local path:', readErr);
-    }
+    const fileUrl = file ? `/uploads/cv_samples/${file.filename}` : providedUrl;
+    const imageUrl = providedUrl || fileUrl;
 
     const sampleCv = await prisma.sampleCvTemplate.create({
       data: {
         title,
-        description,
-        category,
+        description: description || null,
+        category: category || null,
         fileUrl,
-        previewUrl: previewUrl || null,
+        imageUrl,
+        redirectUrl: redirectUrl || null,
+        previewUrl: imageUrl || null,
       },
     });
 
@@ -51,32 +47,22 @@ export const getSampleCvs = async (req: Request, res: Response) => {
     const templates = await prisma.sampleCvTemplate.findMany({
       orderBy: { createdAt: 'desc' },
     });
-    const validTemplates = templates.filter(t => {
-      if (!t.fileUrl && !t.previewUrl) return false;
-      if (t.fileUrl && (t.fileUrl.startsWith('data:') || t.fileUrl.startsWith('http'))) return true;
-      if (t.previewUrl) return true;
-      if (t.fileUrl) {
-        const filePath = path.join(process.cwd(), 'public', t.fileUrl);
-        const filePathDist = path.join(__dirname, '../../public', t.fileUrl);
-        const exists = fs.existsSync(filePath) || fs.existsSync(filePathDist);
-        if (!exists) {
-          prisma.sampleCvTemplate.delete({ where: { id: t.id } }).catch(err => console.warn('Cleaned up broken template:', err));
-          return false;
-        }
-      }
-      return true;
-    });
-    res.status(200).json(validTemplates);
+    res.status(200).json(templates);
   } catch (error) {
     console.error('Error fetching sample CVs:', error);
-    res.status(500).json({ error: 'Failed to fetch sample CVs' });
+    try {
+      const rawTemplates: any = await prisma.$queryRaw`SELECT * FROM "SampleCvTemplate" ORDER BY "createdAt" DESC`;
+      res.status(200).json(rawTemplates || []);
+    } catch (fallbackError) {
+      res.status(200).json([]);
+    }
   }
 };
 
 export const deleteSampleCv = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    
+
     const template = await prisma.sampleCvTemplate.findUnique({ where: { id } });
     if (!template) {
       return res.status(404).json({ error: 'Template not found' });
@@ -118,7 +104,7 @@ export const addJobSkill = async (req: Request, res: Response) => {
     if (existing) {
       // Update existing mapping
       const currentSkills = Array.isArray(existing.skills) ? existing.skills : [];
-      
+
       // Merge unique skills
       const updatedSkills = Array.from(new Set([...currentSkills, ...skills]));
 
@@ -144,31 +130,31 @@ export const addJobSkill = async (req: Request, res: Response) => {
 };
 
 export const removeJobSkill = async (req: Request, res: Response) => {
-    try {
-      const { id } = req.params;
-      const { skill } = req.body;
-      
-      const existing = await prisma.jobSkillMap.findUnique({ where: { id } });
-      if(!existing) return res.status(404).json({ error: 'Mapping not found' });
+  try {
+    const { id } = req.params;
+    const { skill } = req.body;
 
-      const currentSkills = Array.isArray(existing.skills) ? existing.skills : [];
-      const updatedSkills = currentSkills.filter((s: string) => s !== skill);
+    const existing = await prisma.jobSkillMap.findUnique({ where: { id } });
+    if (!existing) return res.status(404).json({ error: 'Mapping not found' });
 
-      const jobSkillMap = await prisma.jobSkillMap.update({
-          where: { id },
-          data: { skills: updatedSkills }
-      });
-      res.status(200).json({ message: 'Skill removed successfully', data: jobSkillMap });
-    } catch (error) {
-      console.error('Error removing job skill:', error);
-      res.status(500).json({ error: 'Failed to remove job skill' });
-    }
+    const currentSkills = Array.isArray(existing.skills) ? existing.skills : [];
+    const updatedSkills = currentSkills.filter((s: string) => s !== skill);
+
+    const jobSkillMap = await prisma.jobSkillMap.update({
+      where: { id },
+      data: { skills: updatedSkills }
+    });
+    res.status(200).json({ message: 'Skill removed successfully', data: jobSkillMap });
+  } catch (error) {
+    console.error('Error removing job skill:', error);
+    res.status(500).json({ error: 'Failed to remove job skill' });
+  }
 }
 
 export const getJobSkills = async (req: Request, res: Response) => {
   try {
     const { role } = req.query;
-    
+
     if (role && typeof role === 'string') {
       const jobSkillMap = await prisma.jobSkillMap.findUnique({
         where: { jobRole: role }
@@ -189,7 +175,7 @@ export const getJobSkills = async (req: Request, res: Response) => {
 export const deleteJobSkillMap = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    
+
     await prisma.jobSkillMap.delete({ where: { id } });
 
     res.status(200).json({ message: 'Job skills mapping deleted successfully' });

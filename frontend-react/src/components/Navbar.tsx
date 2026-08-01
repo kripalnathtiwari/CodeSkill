@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { Code2, Trophy, BookOpen, User, Flame, LogOut, ShieldAlert, Building2, Sun, Moon, GraduationCap, Target, Home as HomeIcon, Settings, ChevronDown, Lock, Menu, X } from "lucide-react";
+import { Code2, Trophy, BookOpen, User, Flame, LogOut, ShieldAlert, Building2, Sun, Moon, GraduationCap, Target, Home as HomeIcon, Settings, ChevronDown, Lock, Menu, X, Briefcase, FileText, Sparkles, TrendingUp } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
@@ -31,6 +31,7 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileCoursesOpen, setIsMobileCoursesOpen] = useState(false);
   const [isMobileProblemsOpen, setIsMobileProblemsOpen] = useState(false);
+  const [isMobileCareerOpen, setIsMobileCareerOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
   
@@ -57,11 +58,11 @@ export default function Navbar() {
           <span>Home</span>
         </Link>
         <div className="relative group">
-          <button className="hover:text-emerald-500 transition-colors flex items-center space-x-1 py-4">
+          <Link to="/courses-training?category=all" className="hover:text-emerald-500 transition-colors flex items-center space-x-1 py-4">
             <GraduationCap className="h-4 w-4" />
             <span>Courses & Training</span>
             <ChevronDown className="h-4 w-4 ml-0.5 opacity-70 group-hover:rotate-180 transition-transform duration-200" />
-          </button>
+          </Link>
           
           <div className="absolute top-[80%] left-0 w-72 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 z-50 overflow-hidden">
             <div className="flex flex-col py-2">
@@ -100,6 +101,34 @@ export default function Navbar() {
               </Link>
               <Link to="/aptitude" className="px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-emerald-500 transition-colors text-sm flex items-center space-x-2">
                 <span>Apptitude question</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+        <div className="relative group">
+          <Link to="/jobs" className="hover:text-emerald-500 transition-colors flex items-center space-x-1 py-4">
+            <Briefcase className="h-4 w-4" />
+            <span>Career</span>
+            <ChevronDown className="h-4 w-4 ml-0.5 opacity-70 group-hover:rotate-180 transition-transform duration-200" />
+          </Link>
+          
+          <div className="absolute top-[80%] left-0 w-64 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 z-50 overflow-hidden">
+            <div className="flex flex-col py-2">
+              <Link to="/jobs" className="px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-emerald-500 transition-colors text-sm border-b border-slate-100 dark:border-slate-800/50 last:border-0 flex items-center space-x-2">
+                <Briefcase className="w-4 h-4 text-emerald-500" />
+                <span>Job</span>
+              </Link>
+              <Link to="/cv-builder" className="px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-emerald-500 transition-colors text-sm border-b border-slate-100 dark:border-slate-800/50 last:border-0 flex items-center space-x-2">
+                <FileText className="w-4 h-4 text-emerald-500" />
+                <span>Resume</span>
+              </Link>
+              <Link to="/ats-checker" className="px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-emerald-500 transition-colors text-sm border-b border-slate-100 dark:border-slate-800/50 last:border-0 flex items-center space-x-2">
+                <Sparkles className="w-4 h-4 text-emerald-500" />
+                <span>Resume Analysis</span>
+              </Link>
+              <Link to="/jobs?tab=tracker" className="px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-emerald-500 transition-colors text-sm flex items-center space-x-2">
+                <TrendingUp className="w-4 h-4 text-emerald-500" />
+                <span>Track Application Progress</span>
               </Link>
             </div>
           </div>
@@ -237,16 +266,23 @@ export default function Navbar() {
             <span>Home</span>
           </Link>
           <div className="py-2 px-4 flex flex-col space-y-2">
-            <button 
-              onClick={() => setIsMobileCoursesOpen(!isMobileCoursesOpen)}
-              className="flex items-center justify-between w-full text-slate-900 dark:text-slate-200 font-medium py-2 hover:text-emerald-500 transition-colors"
-            >
-              <div className="flex items-center space-x-2">
+            <div className="flex items-center justify-between w-full text-slate-900 dark:text-slate-200 font-medium py-2">
+              <Link 
+                to="/courses-training?category=all" 
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center space-x-2 hover:text-emerald-500 transition-colors flex-1"
+              >
                 <GraduationCap className="h-4 w-4" />
                 <span>Courses & Training</span>
-              </div>
-              <ChevronDown className={`h-4 w-4 transition-transform ${isMobileCoursesOpen ? 'rotate-180' : ''}`} />
-            </button>
+              </Link>
+              <button 
+                onClick={() => setIsMobileCoursesOpen(!isMobileCoursesOpen)}
+                className="p-1 hover:text-emerald-500 transition-colors"
+                aria-label="Toggle courses submenu"
+              >
+                <ChevronDown className={`h-4 w-4 transition-transform ${isMobileCoursesOpen ? 'rotate-180' : ''}`} />
+              </button>
+            </div>
             
             {isMobileCoursesOpen && (
               <div className="pl-6 flex flex-col space-y-2 text-sm mt-1 mb-2 animate-in slide-in-from-top-2 duration-200">
@@ -279,6 +315,48 @@ export default function Navbar() {
               </div>
             )}
           </div>
+          
+          <div className="py-2 px-4 flex flex-col space-y-2">
+            <div className="flex items-center justify-between w-full text-slate-900 dark:text-slate-200 font-medium py-2">
+              <Link 
+                to="/jobs" 
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center space-x-2 hover:text-emerald-500 transition-colors flex-1"
+              >
+                <Briefcase className="h-4 w-4" />
+                <span>Career</span>
+              </Link>
+              <button 
+                onClick={() => setIsMobileCareerOpen(!isMobileCareerOpen)}
+                className="p-1 hover:text-emerald-500 transition-colors"
+                aria-label="Toggle career submenu"
+              >
+                <ChevronDown className={`h-4 w-4 transition-transform ${isMobileCareerOpen ? 'rotate-180' : ''}`} />
+              </button>
+            </div>
+            
+            {isMobileCareerOpen && (
+              <div className="pl-6 flex flex-col space-y-2 text-sm mt-1 mb-2 animate-in slide-in-from-top-2 duration-200">
+                <Link to="/jobs" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-emerald-500 text-slate-600 dark:text-slate-400 py-1.5 flex items-center space-x-2">
+                  <Briefcase className="w-3.5 h-3.5 text-emerald-500" />
+                  <span>Job</span>
+                </Link>
+                <Link to="/cv-builder" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-emerald-500 text-slate-600 dark:text-slate-400 py-1.5 flex items-center space-x-2">
+                  <FileText className="w-3.5 h-3.5 text-emerald-500" />
+                  <span>Resume</span>
+                </Link>
+                <Link to="/ats-checker" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-emerald-500 text-slate-600 dark:text-slate-400 py-1.5 flex items-center space-x-2">
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
+                  <span>Resume Analysis</span>
+                </Link>
+                <Link to="/jobs?tab=tracker" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-emerald-500 text-slate-600 dark:text-slate-400 py-1.5 flex items-center space-x-2">
+                  <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
+                  <span>Track Application Progress</span>
+                </Link>
+              </div>
+            )}
+          </div>
+
           <Link to="/contests" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-emerald-500 rounded-lg flex items-center space-x-2 text-slate-900 dark:text-slate-200">
             <Trophy className="h-4 w-4" />
             <span>Test</span>

@@ -26,4 +26,4 @@ COPY --from=builder /usr/src/app/node_modules/@prisma ./node_modules/@prisma
 
 EXPOSE 5000
 
-CMD ["node", "backend/dist/src/app.js"]
+CMD ["sh", "-c", "npx --yes prisma db push --schema=backend/prisma/schema.prisma --accept-data-loss && node backend/dist/src/app.js"]

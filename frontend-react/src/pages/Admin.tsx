@@ -16,7 +16,9 @@ import {
   BrainCircuit,
   Database,
   TrendingUp,
-  FileText
+  FileText,
+  Briefcase,
+  Megaphone
 } from "lucide-react";
 
 import DashboardOverview from "./admin/DashboardOverview";
@@ -33,6 +35,7 @@ import AptitudeManagement from "./admin/AptitudeManagement";
 import DatabaseManagement from "./admin/DatabaseManagement";
 import CvManagement from "./admin/CvManagement";
 import UserActivityManagement from "./admin/UserActivityManagement";
+import JobPublishingManagement from "./admin/JobPublishingManagement";
 
 export default function AdminDashboard() {
   const { user, isLoading, logout } = useAuth();
@@ -52,6 +55,7 @@ export default function AdminDashboard() {
     { id: "colleges", label: "Colleges", icon: Building2, roles: ["ADMIN"] },
     { id: "college_collection", label: "College Collection", icon: Users, roles: ["COLLEGE_ADMIN"] },
     { id: "cv_management", label: "CV Management", icon: FileText, roles: ["ADMIN"] },
+    { id: "publish_job", label: "Publish Jobs", icon: Megaphone, roles: ["ADMIN"] },
     { id: "user_activity", label: "User Activity", icon: TrendingUp, roles: ["ADMIN"] },
     { id: "activity", label: "Activity Logs", icon: Activity, roles: ["ADMIN"] },
     { id: "database", label: "Database", icon: Database, roles: ["ADMIN"] },
@@ -123,6 +127,7 @@ export default function AdminDashboard() {
         { activeTab === "colleges" && <CollegeManagement /> }
         { activeTab === "college_collection" && <CollegeCollection /> }
         { activeTab === "cv_management" && <CvManagement /> }
+        { activeTab === "publish_job" && <JobPublishingManagement /> }
         { activeTab === "user_activity" && <UserActivityManagement /> }
         { activeTab === "activity" && <ActivityLogs /> }
         { activeTab === "database" && <DatabaseManagement />}

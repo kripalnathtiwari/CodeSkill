@@ -94,7 +94,7 @@ export default function Home() {
             </p>
           </div>
 
-          <motion.div 
+          <motion.div
             variants={{
               hidden: { opacity: 0 },
               visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
@@ -206,15 +206,15 @@ export default function Home() {
             <div className="inline-block px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-widest rounded-full">
               Campus Drives & Workshops
             </div>
-            
+
             <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight">
               Colleges: Elevate Student Readiness with Custom Trainer Bookings
             </h2>
-            
+
             <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
               Bring industry subject-matter experts to your campus. Schedule interactive bootcamps, hands-on hackathons, or custom placement training modules tailored to your engineering curriculum.
             </p>
-            
+
             <ul className="space-y-4 pt-2 pb-4">
               {[
                 "Vetted corporate trainers with 5+ years of active field experience",
@@ -227,22 +227,22 @@ export default function Home() {
                 </li>
               ))}
             </ul>
-            
+
             <Link to="/contact">
               <button className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-[0_0_15px_rgba(16,185,129,0.4)] hover:shadow-[0_0_25px_rgba(16,185,129,0.6)]">
                 Request Session Now
               </button>
             </Link>
           </div>
-          
+
           {/* Right Side Workflow Card */}
           <div className="relative">
             {/* Green border accent on the left */}
             <div className="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500 rounded-l-2xl z-20 shadow-[0_0_15px_rgba(16,185,129,0.5)]"></div>
-            
+
             <div className="bg-[#111827] border border-slate-700/50 rounded-2xl p-8 md:p-10 shadow-2xl relative z-10 overflow-hidden">
               <h3 className="text-2xl font-bold text-white mb-8">Trainer Allocation Workflow</h3>
-              
+
               <div className="space-y-8">
                 {[
                   {
@@ -297,13 +297,13 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col items-center justify-center mb-16">
-            <motion.div 
+            <motion.div
               animate={{ y: [0, -10, 0] }}
               transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
               className="w-24 h-24 bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-3xl flex items-center justify-center shadow-xl mb-6 shadow-emerald-500/10"
             >
               <div className="bg-emerald-600 w-20 h-20 rounded-2xl flex items-center justify-center shadow-inner">
-                 <UserCog className="w-10 h-10 text-white" />
+                <UserCog className="w-10 h-10 text-white" />
               </div>
             </motion.div>
             <h3 className="text-emerald-700 dark:text-emerald-500 font-bold uppercase tracking-[0.2em] text-sm md:text-base">
@@ -311,7 +311,7 @@ export default function Home() {
             </h3>
           </div>
 
-          <motion.div 
+          <motion.div
             variants={{
               hidden: { opacity: 0 },
               show: {
@@ -333,7 +333,7 @@ export default function Home() {
               { icon: <Award className="w-5 h-5 text-emerald-500" />, title: "Placement" },
             ].map((step, idx, arr) => (
               <React.Fragment key={idx}>
-                <motion.div 
+                <motion.div
                   variants={{
                     hidden: { opacity: 0, scale: 0.95, y: 15 },
                     show: { opacity: 1, scale: 1, y: 0, transition: { type: "spring", stiffness: 120 } }
@@ -349,7 +349,7 @@ export default function Home() {
                   </h4>
                 </motion.div>
                 {idx < arr.length - 1 && (
-                  <motion.div 
+                  <motion.div
                     variants={{
                       hidden: { opacity: 0 },
                       show: { opacity: 0.6, transition: { duration: 0.3 } }
@@ -383,7 +383,7 @@ export default function Home() {
             </p>
           </div>
 
-          <motion.div 
+          <motion.div
             variants={{
               hidden: { opacity: 0 },
               visible: { opacity: 1, transition: { staggerChildren: 0.2 } }
@@ -416,7 +416,7 @@ export default function Home() {
                 initial: "A"
               }
             ].map((review, idx) => (
-              <motion.div 
+              <motion.div
                 key={idx}
                 variants={{
                   hidden: { opacity: 0, scale: 0.9, y: 30 },
@@ -437,7 +437,7 @@ export default function Home() {
                     "{review.quote}"
                   </p>
                 </div>
-                
+
                 <div className="flex items-center pt-6 border-t border-slate-100 dark:border-slate-800/80">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold text-lg mr-4 flex-shrink-0 shadow-md">
                     {review.initial}
@@ -472,37 +472,37 @@ export default function Home() {
               <div className="inline-block px-3 py-1 bg-emerald-100 dark:bg-emerald-500/20 border border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300 text-xs font-bold uppercase tracking-widest rounded-full">
                 Career Tools
               </div>
-              
+
               <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight">
-                Optimize Your CV for <br/>
+                Optimize Your CV for <br />
                 <span className="bg-gradient-to-r from-emerald-600 to-teal-500 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent">
                   Top Tech Companies
                 </span>
               </h2>
-              
+
               <p className="text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-xl">
                 Don't let the Applicant Tracking System (ATS) reject your hard work. Use our AI-powered tools to build a standout resume and check your ATS score instantly.
               </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Link to="/cv-builder" className="w-full sm:w-auto">
+
+              <div className="flex flex-wrap items-center gap-4 pt-4">
+                <Link to="/cv-builder" className="inline-block w-full sm:w-auto">
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-8 py-4 rounded-xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.2)] dark:shadow-[0_0_20px_rgba(16,185,129,0.4)] w-full"
+                    className="flex items-center justify-center space-x-2 bg-gradient-to-r from-emerald-500 via-emerald-600 to-emerald-500 hover:from-emerald-400 hover:to-emerald-600 text-white font-extrabold px-8 py-4 rounded-xl border-2 border-white/90 transition-all shadow-[0_0_25px_rgba(16,185,129,0.4)] w-full sm:w-auto text-base sm:text-lg tracking-wide"
                   >
                     <FileText className="w-5 h-5" />
-                    <span>Build Your CV</span>
+                    <span>Make your CV</span>
                   </motion.button>
                 </Link>
-                
-                <Link to="/ats-checker" className="w-full sm:w-auto">
+
+                <Link to="/ats-checker" className="inline-block w-full sm:w-auto">
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="flex items-center justify-center space-x-2 bg-white dark:bg-white/10 hover:bg-slate-50 dark:hover:bg-white/20 backdrop-blur-md border border-slate-200 dark:border-white/20 text-emerald-700 dark:text-white font-bold px-8 py-4 rounded-xl transition-all w-full shadow-sm dark:shadow-none"
+                    className="flex items-center justify-center space-x-2 bg-white dark:bg-slate-800/90 hover:bg-emerald-50 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-extrabold px-8 py-4 rounded-xl border-2 border-emerald-500/50 hover:border-emerald-500 transition-all shadow-lg w-full sm:w-auto text-base sm:text-lg tracking-wide"
                   >
-                    <ShieldCheck className="w-5 h-5" />
+                    <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                     <span>Check ATS Score</span>
                   </motion.button>
                 </Link>
@@ -511,39 +511,49 @@ export default function Home() {
 
             {/* Visual/Cards for ATS & CV */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 relative">
-              <motion.div 
-                whileHover={{ y: -5 }}
-                className="bg-white dark:bg-[#0f172a]/80 backdrop-blur-sm border border-slate-100 dark:border-emerald-500/20 p-6 rounded-2xl shadow-lg dark:shadow-xl"
-              >
-                <motion.div 
-                  animate={{ rotate: [-3, 3, -3] }} 
-                  transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                  className="w-12 h-12 bg-emerald-50 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center justify-center mb-4"
+              <Link to="/ats-checker" className="block">
+                <motion.div
+                  whileHover={{ y: -5 }}
+                  className="bg-white dark:bg-[#0f172a]/80 backdrop-blur-sm border border-slate-100 dark:border-emerald-500/20 hover:border-emerald-500/50 p-6 rounded-2xl shadow-lg dark:shadow-xl h-full cursor-pointer transition-all"
                 >
-                  <BarChart3 className="w-6 h-6" />
+                  <motion.div
+                    animate={{ rotate: [-3, 3, -3] }}
+                    transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                    className="w-12 h-12 bg-emerald-50 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center justify-center mb-4"
+                  >
+                    <BarChart3 className="w-6 h-6" />
+                  </motion.div>
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 flex items-center justify-between">
+                    <span>Smart ATS Scoring</span>
+                    <span className="text-xs font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">Try Free</span>
+                  </h3>
+                  <p className="text-slate-600 dark:text-slate-400 text-sm">
+                    Get instant feedback on keyword matching, formatting, and readability to ensure your CV passes the bot screens.
+                  </p>
                 </motion.div>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Smart ATS Scoring</h3>
-                <p className="text-slate-600 dark:text-slate-400 text-sm">
-                  Get instant feedback on keyword matching, formatting, and readability to ensure your CV passes the bot screens.
-                </p>
-              </motion.div>
+              </Link>
 
-              <motion.div 
-                whileHover={{ y: -5 }}
-                className="bg-white dark:bg-[#0f172a]/80 backdrop-blur-sm border border-slate-100 dark:border-teal-500/20 p-6 rounded-2xl shadow-lg dark:shadow-xl mt-0 sm:mt-12"
-              >
-                <motion.div 
-                  animate={{ rotate: [3, -3, 3] }} 
-                  transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
-                  className="w-12 h-12 bg-teal-50 dark:bg-teal-500/20 text-teal-600 dark:text-teal-400 rounded-xl flex items-center justify-center mb-4"
+              <Link to="/cv-builder" className="block mt-0 sm:mt-12">
+                <motion.div
+                  whileHover={{ y: -5 }}
+                  className="bg-white dark:bg-[#0f172a]/80 backdrop-blur-sm border border-slate-100 dark:border-teal-500/20 hover:border-teal-500/50 p-6 rounded-2xl shadow-lg dark:shadow-xl h-full cursor-pointer transition-all"
                 >
-                  <PenTool className="w-6 h-6" />
+                  <motion.div
+                    animate={{ rotate: [3, -3, 3] }}
+                    transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
+                    className="w-12 h-12 bg-teal-50 dark:bg-teal-500/20 text-teal-600 dark:text-teal-400 rounded-xl flex items-center justify-center mb-4"
+                  >
+                    <PenTool className="w-6 h-6" />
+                  </motion.div>
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 flex items-center justify-between">
+                    <span>Modern Templates</span>
+                    <span className="text-xs font-bold px-2 py-0.5 rounded bg-teal-500/20 text-teal-600 dark:text-teal-400">Try Free</span>
+                  </h3>
+                  <p className="text-slate-600 dark:text-slate-400 text-sm">
+                    Choose from a variety of professionally designed, recruiter-approved templates tailored for software engineering roles.
+                  </p>
                 </motion.div>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Modern Templates</h3>
-                <p className="text-slate-600 dark:text-slate-400 text-sm">
-                  Choose from a variety of professionally designed, recruiter-approved templates tailored for software engineering roles.
-                </p>
-              </motion.div>
+              </Link>
             </div>
           </div>
         </motion.div>
@@ -561,7 +571,7 @@ export default function Home() {
             Engineered for Enterprise Assessment Scaling
           </h2>
 
-          <motion.div 
+          <motion.div
             variants={{
               hidden: { opacity: 0 },
               visible: { opacity: 1, transition: { staggerChildren: 0.2 } }
@@ -585,8 +595,8 @@ export default function Home() {
                 whileHover={{ y: -10, scale: 1.02 }}
                 className="bg-white dark:bg-slate-900/50 backdrop-blur-md rounded-3xl p-8 border border-slate-200 dark:border-slate-800 space-y-5 shadow-lg hover:shadow-2xl hover:shadow-emerald-500/10 transition-all duration-300 h-full"
               >
-                <motion.div 
-                  animate={{ rotate: [-2, 2, -2] }} 
+                <motion.div
+                  animate={{ rotate: [-2, 2, -2] }}
                   transition={{ repeat: Infinity, duration: 3, ease: "easeInOut", delay: idx * 0.5 }}
                   className={`h-16 w-16 rounded-2xl flex items-center justify-center mb-6 border ${feature.bgClass} ${feature.borderClass} ${feature.textClass}`}
                 >
@@ -604,7 +614,7 @@ export default function Home() {
 
       {/* Floating Chat Button */}
       <Link to="/contact">
-        <motion.div 
+        <motion.div
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           className="fixed bottom-8 right-8 z-50 bg-emerald-500 text-white p-4 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.4)] cursor-pointer flex items-center justify-center group"

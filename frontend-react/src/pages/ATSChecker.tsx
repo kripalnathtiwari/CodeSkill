@@ -10,6 +10,7 @@ import {
 } from 'recharts';
 import axios from 'axios';
 import { getApiUrl } from '../utils/apiConfig';
+import { extractTextFromFile, parseResumeContent } from '../utils/cvParser';
 
 const API_URL = getApiUrl('/api/v1/ats');
 
@@ -23,13 +24,107 @@ export default function ATSChecker() {
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setResumeFile(file);
     // Reset previous results if uploading new file
     setResults(null); 
     setAnalysisId(null);
+
+    try {
+      const textContent = await extractTextFromFile(file);
+      const fileDataUrl = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string || '');
+        reader.onerror = () => resolve('');
+        reader.readAsDataURL(file);
+      });
+
+      let parsedJson = null;
+      try {
+        if (file.name.endsWith('.json') || textContent.trim().startsWith('{')) {
+          parsedJson = JSON.parse(textContent);
+        }
+      } catch (err) {
+        // Not valid JSON
+      }
+
+      const storedCvs = localStorage.getItem('codeskill_user_cvs');
+      const parsedCvs = storedCvs ? JSON.parse(storedCvs) : [];
+      const candidateEmail = localStorage.getItem('user_email') || 'candidate@codeskill.dev';
+      const candidateName = (() => {
+        try {
+          const uStr = localStorage.getItem('user');
+          if (uStr) {
+            const u = JSON.parse(uStr);
+            if (u.profile?.firstName || u.profile?.lastName) {
+              const full = `${u.profile.firstName || ''} ${u.profile.lastName || ''}`.trim();
+              if (full) return full;
+            }
+            if (u.firstName || u.lastName) {
+              const full = `${u.firstName || ''} ${u.lastName || ''}`.trim();
+              if (full) return full;
+            }
+            if (u.name) return u.name;
+            if (u.fullName) return u.fullName;
+          }
+        } catch (e) {}
+        if (candidateEmail) {
+          const prefix = candidateEmail.split('@')[0];
+          const cleaned = prefix.replace(/[0-9]+$/, '').replace(/[._-]+/g, ' ').trim();
+          if (cleaned) {
+            return cleaned.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+          }
+          return prefix.charAt(0).toUpperCase() + prefix.slice(1);
+        }
+        return localStorage.getItem('user_name') || 'Candidate';
+      })();
+      const sizeKB = (file.size / 1024).toFixed(2);
+
+      let resumeData: any;
+      if (parsedJson) {
+        resumeData = {
+          name: parsedJson.name || parsedJson.candidateName || candidateName,
+          email: parsedJson.email || parsedJson.candidateEmail || candidateEmail,
+          phone: parsedJson.phone || '+91 98111 22334',
+          summary: parsedJson.summary || parsedJson.objective || '',
+          skills: Array.isArray(parsedJson.skills) ? parsedJson.skills : ['React', 'TypeScript', 'Node.js'],
+          education: Array.isArray(parsedJson.education) ? parsedJson.education : [],
+          experience: Array.isArray(parsedJson.experience) ? parsedJson.experience : [],
+          projects: Array.isArray(parsedJson.projects) ? parsedJson.projects : []
+        };
+      } else {
+        resumeData = parseResumeContent(textContent, {
+          fileName: file.name,
+          fallbackName: candidateName,
+          fallbackEmail: candidateEmail,
+          jobRole: 'ATS Scanner Resume Upload',
+          jobCompany: 'CodeSkill Candidates'
+        });
+      }
+
+      const newJsonCv = {
+        id: `user-cv-${Date.now()}`,
+        candidateName: resumeData.name || candidateName,
+        candidateEmail: resumeData.email || candidateEmail,
+        phone: resumeData.phone || '+91 98111 22334',
+        appliedRole: 'ATS Scanner Resume Upload',
+        company: 'CodeSkill Candidates',
+        appliedDate: 'Just now',
+        resumeFileName: file.name.replace(/\.[^/.]+$/, '') + '.pdf',
+        storageFormat: 'PDF' as const,
+        storageSizeKB: Number(sizeKB),
+        fileDataUrl,
+        resumeData
+      };
+
+      const updatedCvs = [newJsonCv, ...parsedCvs.filter((c: any) => c.resumeFileName !== file.name)];
+      localStorage.setItem('codeskill_user_cvs', JSON.stringify(updatedCvs));
+      window.dispatchEvent(new Event('user_cvs_updated'));
+    } catch (err) {
+      console.error('Error saving CV to Admin pool:', err);
+    }
   };
 
   const handleAnalyze = async () => {

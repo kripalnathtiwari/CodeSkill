@@ -1,11 +1,10 @@
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import { AuthProvider } from './context/AuthContext';
 import GlobalLoader from './components/GlobalLoader';
 import NetworkStatus from './components/NetworkStatus';
 import ProtectedRoute from './components/ProtectedRoute';
-import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 
 const Home = lazy(() => import('./pages/Home'));
@@ -34,12 +33,9 @@ const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
 const CVBuilder = lazy(() => import('./pages/CVBuilder'));
 const ATSChecker = lazy(() => import('./pages/ATSChecker'));
+const Jobs = lazy(() => import('./pages/Jobs'));
 
 function AppContent() {
-  const location = useLocation();
-  const hideFooterPaths = ['/login', '/register', '/change-password'];
-  const showFooter = !hideFooterPaths.includes(location.pathname);
-
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-950 dark:text-slate-100">
       <Navbar />
@@ -72,10 +68,10 @@ function AppContent() {
             <Route path="/verify" element={<VerifyCertificate />} />
             <Route path="/cv-builder" element={<CVBuilder />} />
             <Route path="/ats-checker" element={<ATSChecker />} />
+            <Route path="/jobs" element={<Jobs />} />
           </Routes>
         </Suspense>
       </main>
-      {showFooter && <Footer />}
     </div>
   );
 }

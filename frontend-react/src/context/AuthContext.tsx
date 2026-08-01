@@ -60,17 +60,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       (response) => response,
       (error) => {
         if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-          // Only auto-logout if the request was explicitly authenticated using a Bearer token
-          const authHeader = error.config?.headers?.Authorization || error.config?.headers?.authorization;
-          const isAuthRequest = authHeader && String(authHeader).startsWith("Bearer ");
-          if (isAuthRequest) {
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
-            localStorage.removeItem("user");
-            setToken(null);
-            setUser(null);
-            navigate("/login");
-          }
+          // Token expired or invalid, auto logout
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          localStorage.removeItem("user");
+          setToken(null);
+          setUser(null);
+          navigate("/login");
         }
         return Promise.reject(error);
       }

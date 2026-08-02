@@ -247,10 +247,17 @@ export default function CVBuilder() {
       return;
     }
 
-    const printWindow = window.open('', '_blank', 'width=850,height=1150');
-    if (!printWindow) {
-      window.print();
-      return;
+    let iframe = document.getElementById('cv-print-iframe') as HTMLIFrameElement;
+    if (!iframe) {
+      iframe = document.createElement('iframe');
+      iframe.id = 'cv-print-iframe';
+      iframe.style.position = 'fixed';
+      iframe.style.right = '0';
+      iframe.style.bottom = '0';
+      iframe.style.width = '0px';
+      iframe.style.height = '0px';
+      iframe.style.border = '0';
+      document.body.appendChild(iframe);
     }
 
     const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
@@ -280,47 +287,16 @@ export default function CVBuilder() {
               color: #000000 !important;
               width: 210mm !important;
               height: 297mm !important;
-              overflow: hidden !important;
-            }
-            body {
-              display: flex !important;
-              justify-content: center !important;
-              align-items: flex-start !important;
             }
             .cv-print-sheet {
               width: 210mm !important;
               height: 297mm !important;
-              max-height: 297mm !important;
-              padding: 14mm 16mm !important;
+              padding: 12mm 14mm !important;
               margin: 0 !important;
               background: #ffffff !important;
               color: #000000 !important;
               box-sizing: border-box !important;
-              border: none !important;
-              box-shadow: none !important;
               overflow: hidden !important;
-              page-break-before: avoid !important;
-              page-break-after: avoid !important;
-              page-break-inside: avoid !important;
-              break-before: avoid !important;
-              break-after: avoid !important;
-              break-inside: avoid !important;
-            }
-            .cv-print-sheet * {
-              overflow: visible !important;
-              max-height: none !important;
-            }
-            .no-print {
-              display: none !important;
-            }
-            @media print {
-              html, body, .cv-print-sheet {
-                width: 210mm !important;
-                height: 297mm !important;
-                margin: 0 !important;
-                box-shadow: none !important;
-                border: none !important;
-              }
             }
           </style>
         </head>
@@ -332,14 +308,18 @@ export default function CVBuilder() {
       </html>
     `;
 
-    printWindow.document.open();
-    printWindow.document.write(htmlContent);
-    printWindow.document.close();
-    printWindow.focus();
-    setTimeout(() => {
-      printWindow.print();
-      printWindow.close();
-    }, 400);
+    const doc = iframe.contentWindow?.document || iframe.contentDocument;
+    if (doc) {
+      doc.open();
+      doc.write(htmlContent);
+      doc.close();
+      setTimeout(() => {
+        iframe.contentWindow?.focus();
+        iframe.contentWindow?.print();
+      }, 300);
+    } else {
+      window.print();
+    }
   };
 
   if (view === 'editor') {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import {
   Briefcase,
@@ -27,7 +28,9 @@ import {
   Trash2,
   Megaphone,
   Plus,
-  X
+  X,
+  LockKeyhole,
+  LogIn
 } from 'lucide-react';
 import { extractTextFromFile, parseResumeContent } from '../utils/cvParser';
 
@@ -285,6 +288,8 @@ export default function Jobs() {
   const [selectedExperience, setSelectedExperience] = useState<string>('All');
   const [trackedApplications, setTrackedApplications] = useState<TrackedApplication[]>(INITIAL_TRACKED);
   const [activeModalJob, setActiveModalJob] = useState<JobOpportunity | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [pendingJob, setPendingJob] = useState<JobOpportunity | null>(null);
   const [uploadedCV, setUploadedCV] = useState<{
     name: string;
     size: string;
@@ -395,8 +400,9 @@ export default function Jobs() {
   const handleApply = (job: JobOpportunity) => {
     if (!user) {
       sessionStorage.setItem('pending_job_apply', job.id);
+      setPendingJob(job);
       setActiveModalJob(null);
-      navigate('/login', { state: { from: `/jobs?autoApply=${job.id}` } });
+      setShowAuthModal(true);
       return;
     }
     // Add to tracked applications if not already present
@@ -1168,6 +1174,46 @@ export default function Jobs() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Login Required Modal for Job Applications */}
+      {showAuthModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl relative overflow-hidden text-white"
+          >
+            <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mx-auto mb-5 border border-emerald-500/20">
+              <LockKeyhole className="w-8 h-8 text-emerald-400" />
+            </div>
+            <h2 className="text-2xl font-black text-white mb-2">Login Required to Apply</h2>
+            <p className="text-slate-300 text-sm mb-6 leading-relaxed">
+              Please log in or create a free account to submit your application for <span className="text-emerald-400 font-bold">{pendingJob?.title || 'this position'}</span> at <span className="text-emerald-400 font-bold">{pendingJob?.company || 'the company'}</span>.
+            </p>
+            <div className="space-y-3">
+              <button
+                onClick={() => navigate('/login', { state: { from: `/jobs?autoApply=${pendingJob?.id || ''}` } })}
+                className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-base shadow-lg transition-all flex items-center justify-center gap-2"
+              >
+                <LogIn className="w-5 h-5" />
+                <span>Log In & Apply</span>
+              </button>
+              <button
+                onClick={() => navigate('/register', { state: { from: `/jobs?autoApply=${pendingJob?.id || ''}` } })}
+                className="w-full py-3 px-6 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm transition-all"
+              >
+                Create Free Account
+              </button>
+              <button
+                onClick={() => setShowAuthModal(false)}
+                className="w-full py-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors"
+              >
+                Continue Browsing
+              </button>
+            </div>
+          </motion.div>
         </div>
       )}
     </div>

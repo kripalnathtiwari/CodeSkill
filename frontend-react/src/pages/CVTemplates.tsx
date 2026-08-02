@@ -18,6 +18,7 @@ import {
 import axios from 'axios';
 import { API_BASE_URL as API_URL } from '../utils/apiConfig';
 import DriveImage, { extractDriveId } from '../components/DriveImage';
+import { useAuth } from '../context/AuthContext';
 
 interface SampleCv {
   id: string;
@@ -43,30 +44,34 @@ function getEmbedPreviewUrl(sample: SampleCv | null, apiUrl: string): { type: 'i
     };
   }
 
-  const fullUrl = rawUrl.startsWith('http://') || rawUrl.startsWith('https://')
-    ? rawUrl
-    : `${apiUrl}/public${rawUrl.startsWith('/') ? '' : '/'}${rawUrl}`;
-
-  if (rawUrl.match(/\.(pdf)$/i) || fullUrl.includes('.pdf')) {
+  if (rawUrl.toLowerCase().endsWith('.pdf') || rawUrl.includes('/pdf/')) {
     return {
       type: 'iframe',
-      url: fullUrl
+      url: rawUrl.startsWith('http') ? rawUrl : `${apiUrl}${rawUrl}`
     };
   }
 
   return {
     type: 'image',
-    url: fullUrl
+    url: rawUrl.startsWith('http') ? rawUrl : `${apiUrl}${rawUrl}`
   };
 }
 
 export default function CVTemplates() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [samples, setSamples] = useState<SampleCv[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedPreview, setSelectedPreview] = useState<SampleCv | null>(null);
+
+  const handleStartBuilder = (e: React.MouseEvent) => {
+    if (!user) {
+      e.preventDefault();
+      navigate('/login', { state: { from: '/cv-builder?view=editor' } });
+    }
+  };
 
   useEffect(() => {
     fetchSamples();
@@ -121,6 +126,7 @@ export default function CVTemplates() {
           <div className="flex items-center gap-3">
             <Link
               to="/cv-builder?view=editor"
+              onClick={handleStartBuilder}
               className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold text-sm shadow-md transition-all flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
@@ -326,6 +332,7 @@ export default function CVTemplates() {
               )}
               <Link
                 to="/cv-builder?view=editor"
+                onClick={handleStartBuilder}
                 className="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold text-sm transition-all shadow-lg shadow-emerald-500/20"
               >
                 Go to Resume Editor
@@ -352,6 +359,7 @@ export default function CVTemplates() {
             </div>
             <Link
               to="/cv-builder?view=editor"
+              onClick={handleStartBuilder}
               className="px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-base shadow-xl transition-all whitespace-nowrap"
             >
               Start Resume Builder
@@ -397,6 +405,11 @@ export default function CVTemplates() {
                   <div className="flex items-center gap-3 shrink-0">
                     <button
                       onClick={() => {
+                        if (!user) {
+                          setSelectedPreview(null);
+                          navigate('/login', { state: { from: '/cv-builder?view=editor' } });
+                          return;
+                        }
                         const dest = selectedPreview.redirectUrl || '/cv-builder?view=editor';
                         if (!selectedPreview.redirectUrl || selectedPreview.redirectUrl === '/cv-builder') {
                           setSelectedPreview(null);

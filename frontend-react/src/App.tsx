@@ -67,10 +67,10 @@ function AppContent() {
             <Route path="/solve/:id" element={<ProtectedRoute><SolveProblem /></ProtectedRoute>} />
             <Route path="/aptitude/:id" element={<ProtectedRoute><SolveAptitude /></ProtectedRoute>} />
             <Route path="/verify" element={<VerifyCertificate />} />
-            <Route path="/cv-builder" element={<CVBuilder />} />
-            <Route path="/cv-templates" element={<CVTemplates />} />
-            <Route path="/ats-checker" element={<ATSChecker />} />
-            <Route path="/jobs" element={<Jobs />} />
+            <Route path="/cv-builder" element={<ProtectedRoute><CVBuilder /></ProtectedRoute>} />
+            <Route path="/cv-templates" element={<ProtectedRoute><CVTemplates /></ProtectedRoute>} />
+            <Route path="/ats-checker" element={<ProtectedRoute><ATSChecker /></ProtectedRoute>} />
+            <Route path="/jobs" element={<ProtectedRoute><Jobs /></ProtectedRoute>} />
           </Routes>
         </Suspense>
       </main>

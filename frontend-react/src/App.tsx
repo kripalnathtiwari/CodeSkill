@@ -32,6 +32,7 @@ const VerifyCertificate = lazy(() => import('./pages/VerifyCertificate'));
 const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
 const CVBuilder = lazy(() => import('./pages/CVBuilder'));
+const CVTemplates = lazy(() => import('./pages/CVTemplates'));
 const ATSChecker = lazy(() => import('./pages/ATSChecker'));
 const Jobs = lazy(() => import('./pages/Jobs'));
 
@@ -67,6 +68,7 @@ function AppContent() {
             <Route path="/aptitude/:id" element={<ProtectedRoute><SolveAptitude /></ProtectedRoute>} />
             <Route path="/verify" element={<VerifyCertificate />} />
             <Route path="/cv-builder" element={<CVBuilder />} />
+            <Route path="/cv-templates" element={<CVTemplates />} />
             <Route path="/ats-checker" element={<ATSChecker />} />
             <Route path="/jobs" element={<Jobs />} />
           </Routes>

@@ -575,7 +575,7 @@ export default function Jobs() {
 
           {/* Box 3: Resume Builder (renamed from iResume) */}
           <Link
-            to="/cv-builder"
+            to="/cv-builder?view=editor"
             className="group relative overflow-hidden rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 p-5 hover:border-emerald-500/60 transition-all duration-300 flex flex-col justify-between shadow-md hover:shadow-lg"
           >
             <div className="space-y-3">

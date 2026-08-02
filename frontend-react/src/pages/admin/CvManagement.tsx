@@ -23,6 +23,7 @@ import {
 import axios from 'axios';
 import { API_BASE_URL as API_URL } from '../../utils/apiConfig';
 import { sanitizeStoredCv } from '../../utils/cvParser';
+import DriveImage from '../../components/DriveImage';
 
 interface SampleCV {
   id: string;
@@ -615,16 +616,12 @@ export default function CvManagement() {
           <div className="lg:col-span-2">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {samples.map(sample => {
-                const isImage = sample.imageUrl || sample.fileUrl?.match(/\.(png|jpe?g|webp|gif)$/i);
-                const displayImg = sample.imageUrl || (isImage ? `${sample.fileUrl?.startsWith('http') ? '' : `${API_URL}/public`}${sample.fileUrl}` : null);
                 return (
                   <div key={sample.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 relative group flex flex-col justify-between">
                     <div>
-                      {displayImg && (
-                        <div className="mb-4 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 h-44 flex items-center justify-center border border-slate-200 dark:border-slate-700">
-                          <img src={displayImg} alt={sample.title} className="w-full h-full object-cover" />
-                        </div>
-                      )}
+                      <div className="mb-4 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 h-44 flex items-center justify-center border border-slate-200 dark:border-slate-700">
+                        <DriveImage sample={sample} apiUrl={API_URL} />
+                      </div>
                       <div className="flex items-center space-x-2 mb-2">
                         <FileText className="w-5 h-5 text-indigo-500 shrink-0" />
                         <h3 className="font-bold text-lg text-slate-900 dark:text-white">{sample.title}</h3>

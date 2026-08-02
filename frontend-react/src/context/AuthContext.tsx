@@ -59,7 +59,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const interceptor = axios.interceptors.response.use(
       (response) => response,
       (error) => {
-        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+        if (
+          error.response &&
+          (error.response.status === 401 ||
+            (error.response.status === 403 &&
+              error.response.data?.error === "Invalid or expired access token"))
+        ) {
           // Token expired or invalid, auto logout
           localStorage.removeItem("accessToken");
           localStorage.removeItem("refreshToken");

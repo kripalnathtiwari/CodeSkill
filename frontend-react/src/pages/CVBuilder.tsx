@@ -1,32 +1,312 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { UserCog, Users, FileText, Sparkles, Plus, Download, Trash2, ShieldCheck, Check, Edit3, ArrowRight } from 'lucide-react';
+import { UserCog, Users, FileText, Sparkles, Plus, Download, Trash2, ShieldCheck, Check, Edit3, ArrowRight, Calendar, ChevronUp, ChevronDown } from 'lucide-react';
 import axios from 'axios';
 import { API_BASE_URL as API_URL } from '../utils/apiConfig';
 
+interface EducationItem {
+  id: string;
+  instituteName: string;
+  location: string;
+  degreeType: string;
+  fieldOfStudy: string;
+  startYear: string;
+  gradYear: string;
+  scoreType: string;
+  score: string;
+}
+
+interface ProjectItem {
+  id: string;
+  projectTitle: string;
+  role?: string;
+  startDate: string;
+  endDate: string;
+  currentlyWorking: boolean;
+  projectLink: string;
+  projectLabel?: string;
+  githubLink: string;
+  githubLabel?: string;
+  description: string;
+}
+
+interface TechnicalSkill {
+  id: string;
+  category: string;
+  skills: string;
+}
+
+interface CertificationItem {
+  id: string;
+  certificateTitle: string;
+  certificateLink?: string;
+  certificateLabel?: string;
+  certificateUrl?: string;
+  urlLabel?: string;
+  issuedBy: string;
+  issueDate?: string;
+  description?: string;
+}
+
 export default function CVBuilder() {
-  const [view, setView] = useState<'landing' | 'editor' | 'my-resumes'>('landing');
-  const [samples, setSamples] = useState<any[]>([]);
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const routerLocation = useLocation();
+  const initialView = (searchParams.get('view') === 'editor' || routerLocation.hash === '#editor' || routerLocation.state?.view === 'editor')
+    ? 'editor'
+    : 'landing';
+  const [view, setView] = useState<'landing' | 'editor' | 'my-resumes'>(initialView);
 
   useEffect(() => {
-    fetchSamples();
-  }, []);
-
-  const fetchSamples = async () => {
-    try {
-      const res = await axios.get(`${API_URL}/api/v1/admin/cv/samples`);
-      setSamples(res.data);
-    } catch (error) {
-      console.error('Failed to fetch sample templates:', error);
+    if (searchParams.get('view') === 'editor' || routerLocation.hash === '#editor' || routerLocation.state?.view === 'editor') {
+      setView('editor');
     }
+  }, [searchParams, routerLocation]);
+
+  // Personal Information State (matching comprehensive 2-column form layout)
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [location, setLocation] = useState('');
+  const [phone, setPhone] = useState('');
+  const [github, setGithub] = useState('');
+  const [linkedin, setLinkedin] = useState('');
+  const [portfolio, setPortfolio] = useState('');
+  const [summary, setSummary] = useState('');
+
+  const fullName = [firstName, lastName].filter(Boolean).join(' ');
+
+  // Education List State
+  const [educationList, setEducationList] = useState<EducationItem[]>([
+    {
+      id: '1',
+      instituteName: '',
+      location: '',
+      degreeType: '',
+      fieldOfStudy: '',
+      startYear: '',
+      gradYear: '',
+      scoreType: 'CGPA',
+      score: ''
+    }
+  ]);
+
+  const addEducation = () => {
+    setEducationList([
+      ...educationList,
+      {
+        id: Date.now().toString(),
+        instituteName: '',
+        location: '',
+        degreeType: '',
+        fieldOfStudy: '',
+        startYear: '',
+        gradYear: '',
+        scoreType: 'CGPA',
+        score: ''
+      }
+    ]);
   };
 
-  // Simple clean state for when user clicks "Build new Resume"
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [summary, setSummary] = useState('');
+  const removeEducation = (id: string) => {
+    setEducationList(educationList.filter(item => item.id !== id));
+  };
+
+  const updateEducation = (id: string, field: keyof EducationItem, value: string) => {
+    setEducationList(
+      educationList.map(item => (item.id === id ? { ...item, [field]: value } : item))
+    );
+  };
+
+  // Skillsets State (matching screenshot)
+  const [techSkillsOpen, setTechSkillsOpen] = useState(true);
+  const [progLanguages, setProgLanguages] = useState('');
+  const [libraries, setLibraries] = useState('');
+  const [toolsPlatforms, setToolsPlatforms] = useState('');
+  const [databases, setDatabases] = useState('');
+
+  // Projects List State (matching screenshot)
+  const [projectList, setProjectList] = useState<ProjectItem[]>([
+    {
+      id: '1',
+      projectTitle: '',
+      githubLink: '',
+      projectLink: '',
+      startDate: '',
+      endDate: '',
+      currentlyWorking: false,
+      description: ''
+    }
+  ]);
+
+  const addProject = () => {
+    setProjectList([
+      ...projectList,
+      {
+        id: Date.now().toString(),
+        projectTitle: '',
+        githubLink: '',
+        projectLink: '',
+        startDate: '',
+        endDate: '',
+        currentlyWorking: false,
+        description: ''
+      }
+    ]);
+  };
+
+  const removeProject = (id: string) => {
+    setProjectList(projectList.filter(item => item.id !== id));
+  };
+
+  const updateProject = (
+    id: string,
+    field: keyof ProjectItem,
+    value: string | boolean
+  ) => {
+    setProjectList(
+      projectList.map(item => (item.id === id ? { ...item, [field]: value } : item))
+    );
+  };
+
+  // Certifications List State (matching screenshot)
+  const [certificationList, setCertificationList] = useState<CertificationItem[]>([
+    {
+      id: '1',
+      certificateTitle: '',
+      certificateLink: '',
+      issuedBy: ''
+    }
+  ]);
+
+  const addCertification = () => {
+    setCertificationList([
+      ...certificationList,
+      {
+        id: Date.now().toString(),
+        certificateTitle: '',
+        certificateLink: '',
+        issuedBy: ''
+      }
+    ]);
+  };
+
+  const removeCertification = (id: string) => {
+    setCertificationList(certificationList.filter(item => item.id !== id));
+  };
+
+  const updateCertification = (
+    id: string,
+    field: keyof CertificationItem,
+    value: string
+  ) => {
+    setCertificationList(
+      certificationList.map(item => (item.id === id ? { ...item, [field]: value } : item))
+    );
+  };
+
+  const handlePrintCV = () => {
+    const previewElement = document.getElementById('cv-preview-sheet');
+    if (!previewElement) {
+      window.print();
+      return;
+    }
+
+    const printWindow = window.open('', '_blank', 'width=850,height=1150');
+    if (!printWindow) {
+      window.print();
+      return;
+    }
+
+    const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
+      .map((style) => style.outerHTML)
+      .join('\n');
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>${fullName || 'ATS_Resume'}</title>
+          ${styles}
+          <style>
+            @page {
+              size: A4 portrait;
+              margin: 0mm !important;
+            }
+            * {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+            html, body {
+              margin: 0 !important;
+              padding: 0 !important;
+              background: #ffffff !important;
+              color: #000000 !important;
+              width: 210mm !important;
+              height: 297mm !important;
+              overflow: hidden !important;
+            }
+            body {
+              display: flex !important;
+              justify-content: center !important;
+              align-items: flex-start !important;
+            }
+            .cv-print-sheet {
+              width: 210mm !important;
+              height: 297mm !important;
+              max-height: 297mm !important;
+              padding: 14mm 16mm !important;
+              margin: 0 !important;
+              background: #ffffff !important;
+              color: #000000 !important;
+              box-sizing: border-box !important;
+              border: none !important;
+              box-shadow: none !important;
+              overflow: hidden !important;
+              page-break-before: avoid !important;
+              page-break-after: avoid !important;
+              page-break-inside: avoid !important;
+              break-before: avoid !important;
+              break-after: avoid !important;
+              break-inside: avoid !important;
+            }
+            .cv-print-sheet * {
+              overflow: visible !important;
+              max-height: none !important;
+            }
+            .no-print {
+              display: none !important;
+            }
+            @media print {
+              html, body, .cv-print-sheet {
+                width: 210mm !important;
+                height: 297mm !important;
+                margin: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+              }
+            }
+          </style>
+        </head>
+        <body class="bg-white text-slate-900">
+          <div class="cv-print-sheet">
+            ${previewElement.innerHTML}
+          </div>
+        </body>
+      </html>
+    `;
+
+    printWindow.document.open();
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 400);
+  };
 
   if (view === 'editor') {
     return (
@@ -45,7 +325,7 @@ export default function CVBuilder() {
                 Back to Landing
               </button>
               <button
-                onClick={() => window.print()}
+                onClick={handlePrintCV}
                 className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 via-emerald-600 to-emerald-500 hover:from-emerald-400 hover:to-emerald-600 text-white font-bold text-sm flex items-center gap-2 border border-white/40 shadow-lg shadow-emerald-500/20 transition-all"
               >
                 <Download className="w-4 h-4" />
@@ -55,75 +335,894 @@ export default function CVBuilder() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* Form */}
-            <div className="lg:col-span-6 space-y-6 bg-slate-900/60 border border-slate-800 p-6 rounded-3xl">
-              <h3 className="text-xl font-bold text-orange-400">Personal Information</h3>
-              <div className="space-y-4">
+            {/* Form Column (Personal Info + Education) */}
+            <div className="lg:col-span-6 space-y-8">
+              {/* Personal Information Box */}
+              <div className="space-y-6 bg-slate-900/60 border border-slate-800 p-6 rounded-3xl">
+                <h3 className="text-xl font-bold text-orange-400">Personal Information</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Full Name</label>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1">
+                    First Name <span className="text-orange-400">*</span>
+                  </label>
                   <input
                     type="text"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    placeholder="Ankit Sharma"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-orange-500"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    placeholder="Ankit"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Email</label>
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="ankit@example.com"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-orange-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Phone</label>
-                    <input
-                      type="text"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder="+91 1234567890"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-orange-500"
-                    />
-                  </div>
-                </div>
+
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Professional Summary</label>
-                  <textarea
-                    rows={4}
-                    value={summary}
-                    onChange={(e) => setSummary(e.target.value)}
-                    placeholder="Brief summary of your professional background and achievements..."
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-white focus:outline-none focus:border-orange-500"
+                  <label className="block text-xs font-semibold text-slate-400 mb-1">
+                    Last Name <span className="text-orange-400">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    placeholder="Sharma"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1">
+                    Email <span className="text-orange-400">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="ankit@example.com"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1">
+                    Location
+                  </label>
+                  <input
+                    type="text"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    placeholder="Bengaluru, India"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1">
+                    Phone Number
+                  </label>
+                  <input
+                    type="text"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="+91 1234567890"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1">
+                    Github
+                  </label>
+                  <input
+                    type="text"
+                    value={github}
+                    onChange={(e) => setGithub(e.target.value)}
+                    placeholder="github.com/username"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1">
+                    LinkedIn
+                  </label>
+                  <input
+                    type="text"
+                    value={linkedin}
+                    onChange={(e) => setLinkedin(e.target.value)}
+                    placeholder="linkedin.com/in/username"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1">
+                    Portfolio
+                  </label>
+                  <input
+                    type="text"
+                    value={portfolio}
+                    onChange={(e) => setPortfolio(e.target.value)}
+                    placeholder="yourwebsite.com"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Professional Summary</label>
+                <textarea
+                  rows={4}
+                  value={summary}
+                  onChange={(e) => setSummary(e.target.value)}
+                  placeholder="Brief summary of your professional background and achievements..."
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                />
+              </div>
+              </div>
+
+              {/* Education Section Box */}
+              <div className="space-y-6 bg-slate-900/60 border border-slate-800 p-6 rounded-3xl">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xl font-bold text-orange-400">Education</h3>
+                  <button
+                    type="button"
+                    onClick={addEducation}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 font-semibold text-xs transition-colors"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Add Education</span>
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  {educationList.map((edu) => (
+                    <div
+                      key={edu.id}
+                      className="p-5 rounded-2xl bg-slate-950/50 border border-slate-800/80 space-y-4 relative"
+                    >
+                      {educationList.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeEducation(edu.id)}
+                          className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                          title="Remove Education"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-400 mb-1">
+                            Institute Name <span className="text-orange-400">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            value={edu.instituteName}
+                            onChange={(e) => updateEducation(edu.id, 'instituteName', e.target.value)}
+                            placeholder="IIT Bombay"
+                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-400 mb-1">
+                            Location
+                          </label>
+                          <input
+                            type="text"
+                            value={edu.location}
+                            onChange={(e) => updateEducation(edu.id, 'location', e.target.value)}
+                            placeholder="Mumbai, India"
+                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-400 mb-1">
+                            Degree Type <span className="text-orange-400">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            value={edu.degreeType}
+                            onChange={(e) => updateEducation(edu.id, 'degreeType', e.target.value)}
+                            placeholder="B.Tech / XII / B.Sc"
+                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-400 mb-1">
+                            Field of Study/Board <span className="text-orange-400">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            value={edu.fieldOfStudy}
+                            onChange={(e) => updateEducation(edu.id, 'fieldOfStudy', e.target.value)}
+                            placeholder="Computer Science / CBSE"
+                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-400 mb-1">
+                            Start Year <span className="text-orange-400">*</span>
+                          </label>
+                          <div className="relative">
+                            <Calendar className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                            <input
+                              type="text"
+                              value={edu.startYear}
+                              onChange={(e) => updateEducation(edu.id, 'startYear', e.target.value)}
+                              placeholder="YYYY"
+                              className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-400 mb-1">
+                            Grad Year <span className="text-orange-400">*</span>
+                          </label>
+                          <div className="relative">
+                            <Calendar className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                            <input
+                              type="text"
+                              value={edu.gradYear}
+                              onChange={(e) => updateEducation(edu.id, 'gradYear', e.target.value)}
+                              placeholder="YYYY"
+                              className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-400 mb-1">
+                            Score Type
+                          </label>
+                          <select
+                            value={edu.scoreType}
+                            onChange={(e) => updateEducation(edu.id, 'scoreType', e.target.value)}
+                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                          >
+                            <option value="CGPA">CGPA</option>
+                            <option value="Percentage">Percentage</option>
+                            <option value="Grade">Grade</option>
+                            <option value="None">None</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-400 mb-1">
+                            Score
+                          </label>
+                          <input
+                            type="text"
+                            value={edu.score}
+                            onChange={(e) => updateEducation(edu.id, 'score', e.target.value)}
+                            placeholder="e.g. 8.9 / 92%"
+                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Skillsets Section Box */}
+              <div className="space-y-6 bg-slate-900/60 border border-slate-800 p-6 rounded-3xl">
+                <h3 className="text-xl font-bold text-white">Skillsets</h3>
+
+                {/* Technical Skills Collapsible Accordion */}
+                <div className="border border-slate-800 rounded-2xl overflow-hidden bg-slate-950/40">
+                  <button
+                    type="button"
+                    onClick={() => setTechSkillsOpen(!techSkillsOpen)}
+                    className="w-full flex items-center justify-between px-5 py-4 bg-slate-900/80 hover:bg-slate-900 text-left font-bold text-white text-base transition-colors"
+                  >
+                    <span>Technical Skills</span>
+                    {techSkillsOpen ? (
+                      <ChevronUp className="w-5 h-5 text-slate-400" />
+                    ) : (
+                      <ChevronDown className="w-5 h-5 text-slate-400" />
+                    )}
+                  </button>
+
+                  {techSkillsOpen && (
+                    <div className="p-5 border-t border-slate-800/80 space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                            Programming Languages <span className="text-orange-400">(optional)</span>
+                          </label>
+                          <input
+                            type="text"
+                            value={progLanguages}
+                            onChange={(e) => setProgLanguages(e.target.value)}
+                            placeholder="Python, C++, R, Javascript"
+                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                            Libraries/FrameWorks <span className="text-orange-400">(optional)</span>
+                          </label>
+                          <input
+                            type="text"
+                            value={libraries}
+                            onChange={(e) => setLibraries(e.target.value)}
+                            placeholder="ReactJS, NodeJS, AngularJS"
+                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                            Tools/Platforms <span className="text-orange-400">(optional)</span>
+                          </label>
+                          <input
+                            type="text"
+                            value={toolsPlatforms}
+                            onChange={(e) => setToolsPlatforms(e.target.value)}
+                            placeholder="VSCode, Figma, Postman, Canva"
+                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                            Databases <span className="text-orange-400">(optional)</span>
+                          </label>
+                          <input
+                            type="text"
+                            value={databases}
+                            onChange={(e) => setDatabases(e.target.value)}
+                            placeholder="MySQL, MongoDB, PostgreSQL"
+                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Projects Section Box */}
+              <div className="space-y-6 bg-slate-900/60 border border-slate-800 p-6 rounded-3xl">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xl font-bold text-white">Projects</h3>
+                  <button
+                    type="button"
+                    onClick={addProject}
+                    className="flex items-center gap-1.5 text-xs font-bold text-orange-400 hover:text-orange-300 transition-colors bg-orange-500/10 px-3 py-1.5 rounded-lg border border-orange-500/20"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add Project</span>
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  {projectList.map((proj, index) => (
+                    <div
+                      key={proj.id}
+                      className="p-5 rounded-2xl bg-slate-950/40 border border-slate-800/80 space-y-4 relative"
+                    >
+                      <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                          Project #{index + 1}
+                        </span>
+                        {projectList.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removeProject(proj.id)}
+                            className="text-slate-500 hover:text-red-400 transition-colors p-1"
+                            title="Remove Project"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {/* Project Title * */}
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                            Project Title <span className="text-orange-400">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            value={proj.projectTitle}
+                            onChange={(e) => updateProject(proj.id, 'projectTitle', e.target.value)}
+                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                          />
+                        </div>
+
+                        {/* Github Link (optional) */}
+                        <div className="space-y-2">
+                          <div>
+                            <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                              Github Link URL <span className="text-orange-400">(optional)</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={proj.githubLink}
+                              onChange={(e) => updateProject(proj.id, 'githubLink', e.target.value)}
+                              placeholder="https://github.com/..."
+                              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                            />
+                          </div>
+                          {proj.githubLink && (
+                            <div className="bg-slate-900/80 border border-slate-800/80 rounded-xl p-2.5">
+                              <label className="block text-[11px] font-medium text-orange-300 mb-1 flex items-center justify-between">
+                                <span>Customize Link Display Text</span>
+                                <span className="text-[10px] text-slate-400">MS Word Hyperlink Style</span>
+                              </label>
+                              <input
+                                type="text"
+                                value={proj.githubLabel || ''}
+                                onChange={(e) => updateProject(proj.id, 'githubLabel', e.target.value)}
+                                placeholder="e.g. GitHub Repo / Source Code"
+                                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-white text-xs focus:outline-none focus:border-orange-500 transition-colors"
+                              />
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Project Link (optional) */}
+                        <div className="space-y-2">
+                          <div>
+                            <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                              Project Link URL <span className="text-orange-400">(optional)</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={proj.projectLink}
+                              onChange={(e) => updateProject(proj.id, 'projectLink', e.target.value)}
+                              placeholder="https://myproject-demo.com"
+                              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                            />
+                          </div>
+                          {proj.projectLink && (
+                            <div className="bg-slate-900/80 border border-slate-800/80 rounded-xl p-2.5">
+                              <label className="block text-[11px] font-medium text-orange-300 mb-1 flex items-center justify-between">
+                                <span>Customize Link Display Text</span>
+                                <span className="text-[10px] text-slate-400">MS Word Hyperlink Style</span>
+                              </label>
+                              <input
+                                type="text"
+                                value={proj.projectLabel || ''}
+                                onChange={(e) => updateProject(proj.id, 'projectLabel', e.target.value)}
+                                placeholder="e.g. Live Demo / View App"
+                                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-white text-xs focus:outline-none focus:border-orange-500 transition-colors"
+                              />
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Start Date * */}
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                            Start Date <span className="text-orange-400">*</span>
+                          </label>
+                          <div className="relative">
+                            <Calendar className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                            <input
+                              type="text"
+                              value={proj.startDate}
+                              onChange={(e) => updateProject(proj.id, 'startDate', e.target.value)}
+                              placeholder="MM/YYYY"
+                              className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                            />
+                          </div>
+                        </div>
+
+                        {/* End Date * */}
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                            End Date <span className="text-orange-400">*</span>
+                          </label>
+                          <div className="relative">
+                            <Calendar className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                            <input
+                              type="text"
+                              value={proj.endDate}
+                              disabled={proj.currentlyWorking}
+                              onChange={(e) => updateProject(proj.id, 'endDate', e.target.value)}
+                              placeholder={proj.currentlyWorking ? 'Present' : 'MM/YYYY'}
+                              className={`w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors ${
+                                proj.currentlyWorking ? 'opacity-50 cursor-not-allowed' : ''
+                              }`}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Checkbox: I am currently working on this */}
+                      <div className="flex items-center gap-2.5 pt-1">
+                        <input
+                          type="checkbox"
+                          id={`working-${proj.id}`}
+                          checked={proj.currentlyWorking}
+                          onChange={(e) => updateProject(proj.id, 'currentlyWorking', e.target.checked)}
+                          className="w-4 h-4 rounded border-slate-700 bg-slate-950 text-orange-500 focus:ring-orange-500 focus:ring-offset-slate-950"
+                        />
+                        <label
+                          htmlFor={`working-${proj.id}`}
+                          className="text-xs font-medium text-slate-300 cursor-pointer select-none"
+                        >
+                          I am currently working on this
+                        </label>
+                      </div>
+
+                      {/* Description / Key Achievements */}
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                          Project Description / Key Achievements
+                        </label>
+                        <textarea
+                          rows={3}
+                          value={proj.description}
+                          onChange={(e) => updateProject(proj.id, 'description', e.target.value)}
+                          placeholder="Describe your project, features built, and technologies used..."
+                          className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors resize-none"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Certifications Section Box */}
+              <div className="space-y-6 bg-slate-900/60 border border-slate-800 p-6 rounded-3xl">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xl font-bold text-white">Certifications</h3>
+                  <button
+                    type="button"
+                    onClick={addCertification}
+                    className="flex items-center gap-1.5 text-xs font-bold text-orange-400 hover:text-orange-300 transition-colors bg-orange-500/10 px-3 py-1.5 rounded-lg border border-orange-500/20"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add Certification</span>
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  {certificationList.map((cert, index) => (
+                    <div
+                      key={cert.id}
+                      className="p-5 rounded-2xl bg-slate-950/40 border border-slate-800/80 space-y-4 relative"
+                    >
+                      <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                          Certification #{index + 1}
+                        </span>
+                        {certificationList.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removeCertification(cert.id)}
+                            className="text-slate-500 hover:text-red-400 transition-colors p-1"
+                            title="Remove Certification"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {/* Certificate Title * */}
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                            Certificate Title <span className="text-orange-400">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            value={cert.certificateTitle}
+                            onChange={(e) => updateCertification(cert.id, 'certificateTitle', e.target.value)}
+                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                          />
+                        </div>
+
+                        {/* Certificate Link * */}
+                        <div className="space-y-2">
+                          <div>
+                            <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                              Certificate Link URL <span className="text-orange-400">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={cert.certificateLink}
+                              onChange={(e) => updateCertification(cert.id, 'certificateLink', e.target.value)}
+                              placeholder="https://coursera.org/verify/..."
+                              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                            />
+                          </div>
+                          {cert.certificateLink && (
+                            <div className="bg-slate-900/80 border border-slate-800/80 rounded-xl p-2.5">
+                              <label className="block text-[11px] font-medium text-orange-300 mb-1 flex items-center justify-between">
+                                <span>Customize Link Display Text</span>
+                                <span className="text-[10px] text-slate-400">MS Word Hyperlink Style</span>
+                              </label>
+                              <input
+                                type="text"
+                                value={cert.certificateLabel || ''}
+                                onChange={(e) => updateCertification(cert.id, 'certificateLabel', e.target.value)}
+                                placeholder="e.g. View Certificate / Credential"
+                                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-white text-xs focus:outline-none focus:border-orange-500 transition-colors"
+                              />
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Issued By * */}
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                            Issued By <span className="text-orange-400">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            value={cert.issuedBy}
+                            onChange={(e) => updateCertification(cert.id, 'issuedBy', e.target.value)}
+                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
 
-            {/* Live A4 Preview */}
-            <div className="lg:col-span-6 bg-white text-slate-900 p-8 rounded-3xl shadow-2xl min-h-[600px] flex flex-col justify-between">
-              <div>
-                <div className="border-b border-slate-200 pb-4 mb-6 text-center">
-                  <h2 className="text-3xl font-black tracking-tight">{fullName || 'Your Name'}</h2>
-                  <p className="text-xs text-slate-500 mt-1">
-                    {[email || 'email@example.com', phone || '+91 0000000000'].join(' | ')}
-                  </p>
+            {/* Live A4 Preview Column (Sticky, Fixed A4 Size) */}
+            <div className="lg:col-span-6">
+              <div className="sticky top-8">
+                <div className="flex items-center justify-between mb-3 px-1">
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                    <FileText className="w-3.5 h-3.5 text-orange-400" />
+                    <span>A4 Live Preview (Fixed 210 × 297 mm)</span>
+                  </span>
+                  <span className="text-xs text-slate-500 font-medium">1 Page • ATS Friendly</span>
                 </div>
 
-                {summary && (
-                  <div className="mb-6">
-                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">SUMMARY</h3>
-                    <p className="text-sm text-slate-700 leading-relaxed">{summary}</p>
-                  </div>
-                )}
-              </div>
+                {/* Fixed A4 Page Sheet */}
+                <div
+                  id="cv-preview-sheet"
+                  className="bg-white text-slate-900 p-8 sm:p-10 rounded-2xl shadow-2xl border border-slate-300 w-full aspect-[210/297] max-h-[850px] overflow-hidden flex flex-col justify-between relative"
+                >
+                  <div className="overflow-y-auto pr-2 flex-1">
+                    {/* Professional Header */}
+                    <div className="text-center mb-3">
+                      <h2 className="text-2xl font-bold tracking-tight text-slate-900 uppercase">
+                        {fullName || 'Your Name'}
+                      </h2>
+                      <p className="text-xs text-slate-700 mt-1 flex flex-wrap justify-center items-center gap-x-2 gap-y-0.5">
+                        {[
+                          email ? { text: email, url: `mailto:${email}` } : { text: 'email@example.com' },
+                          phone ? { text: phone, url: `tel:${phone}` } : { text: '+91 0000000000' },
+                          location ? { text: location } : null,
+                          github
+                            ? {
+                                text: `github.com/${github.replace(/^https?:\/\/(www\.)?github\.com\//, '')}`,
+                                url: github.startsWith('http') ? github : `https://${github}`
+                              }
+                            : null,
+                          linkedin
+                            ? {
+                                text: `linkedin.com/in/${linkedin.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//, '')}`,
+                                url: linkedin.startsWith('http') ? linkedin : `https://${linkedin}`
+                              }
+                            : null,
+                          portfolio
+                            ? {
+                                text: 'Portfolio',
+                                url: portfolio.startsWith('http') ? portfolio : `https://${portfolio}`
+                              }
+                            : null
+                        ]
+                          .filter((item): item is { text: string; url?: string } => Boolean(item))
+                          .map((item, idx, arr) => (
+                            <span key={idx} className="flex items-center gap-2">
+                              {item.url ? (
+                                <a
+                                  href={item.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-slate-900 hover:underline font-medium"
+                                >
+                                  {item.text}
+                                </a>
+                              ) : (
+                                <span>{item.text}</span>
+                              )}
+                              {idx < arr.length - 1 && <span className="text-slate-400">•</span>}
+                            </span>
+                          ))}
+                      </p>
+                    </div>
 
-              <div className="text-center text-xs text-slate-400 border-t border-slate-100 pt-4">
-                ATS Friendly Resume Preview
+                    {/* SUMMARY */}
+                    {summary && (
+                      <div className="mt-3">
+                        <h3 className="text-[11px] font-bold text-slate-900 uppercase tracking-wider border-b border-slate-900 pb-0.5 mb-1.5">
+                          SUMMARY
+                        </h3>
+                        <p className="text-xs text-slate-800 leading-relaxed text-justify">{summary}</p>
+                      </div>
+                    )}
+
+                    {/* EDUCATION SECTION in Preview */}
+                    {educationList.some(item => item.instituteName || item.degreeType) && (
+                      <div className="mt-3">
+                        <h3 className="text-[11px] font-bold text-slate-900 uppercase tracking-wider border-b border-slate-900 pb-0.5 mb-2">
+                          EDUCATION
+                        </h3>
+                        <div className="space-y-2">
+                          {educationList
+                            .filter(item => item.instituteName || item.degreeType)
+                            .map(item => (
+                              <div key={item.id} className="text-xs text-slate-900">
+                                <div className="flex justify-between items-baseline font-bold">
+                                  <span>
+                                    {item.instituteName || 'Institute Name'}
+                                    {item.location ? `, ${item.location}` : ''}
+                                  </span>
+                                  <span className="font-semibold text-slate-700 whitespace-nowrap">
+                                    {[item.startYear, item.gradYear].filter(Boolean).join(' - ') || 'Year'}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between items-baseline text-slate-800 mt-0.5">
+                                  <span className="italic">
+                                    {item.degreeType || 'Degree'}
+                                    {item.fieldOfStudy ? ` in ${item.fieldOfStudy}` : ''}
+                                  </span>
+                                  {item.score && item.scoreType !== 'None' && (
+                                    <span className="font-medium text-slate-700">
+                                      {item.scoreType}: {item.score}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* TECHNICAL SKILLS SECTION in Preview */}
+                    {(progLanguages || libraries || toolsPlatforms || databases) && (
+                      <div className="mt-3">
+                        <h3 className="text-[11px] font-bold text-slate-900 uppercase tracking-wider border-b border-slate-900 pb-0.5 mb-1.5">
+                          TECHNICAL SKILLS
+                        </h3>
+                        <div className="space-y-1 text-xs text-slate-900">
+                          {progLanguages && (
+                            <div>
+                              <span className="font-bold">Languages: </span>
+                              <span className="text-slate-800">{progLanguages}</span>
+                            </div>
+                          )}
+                          {libraries && (
+                            <div>
+                              <span className="font-bold">Libraries & Frameworks: </span>
+                              <span className="text-slate-800">{libraries}</span>
+                            </div>
+                          )}
+                          {toolsPlatforms && (
+                            <div>
+                              <span className="font-bold">Tools & Platforms: </span>
+                              <span className="text-slate-800">{toolsPlatforms}</span>
+                            </div>
+                          )}
+                          {databases && (
+                            <div>
+                              <span className="font-bold">Databases: </span>
+                              <span className="text-slate-800">{databases}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* PROJECTS SECTION in Preview */}
+                    {projectList.some(item => item.projectTitle) && (
+                      <div className="mt-3">
+                        <h3 className="text-[11px] font-bold text-slate-900 uppercase tracking-wider border-b border-slate-900 pb-0.5 mb-2">
+                          PROJECTS
+                        </h3>
+                        <div className="space-y-2.5">
+                          {projectList
+                            .filter(item => item.projectTitle)
+                            .map(item => (
+                              <div key={item.id} className="text-xs text-slate-900">
+                                <div className="flex justify-between items-baseline">
+                                  <div className="flex items-center gap-1.5 flex-wrap">
+                                    <span className="font-bold">{item.projectTitle}</span>
+                                    {item.githubLink && (
+                                      <span className="text-[11px] text-slate-700">
+                                        |{' '}
+                                        <a
+                                          href={item.githubLink.startsWith('http') ? item.githubLink : `https://${item.githubLink}`}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="text-slate-900 hover:underline font-medium"
+                                        >
+                                          {item.githubLabel || 'GitHub'}
+                                        </a>
+                                      </span>
+                                    )}
+                                    {item.projectLink && (
+                                      <span className="text-[11px] text-slate-700">
+                                        |{' '}
+                                        <a
+                                          href={item.projectLink.startsWith('http') ? item.projectLink : `https://${item.projectLink}`}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="text-slate-900 hover:underline font-medium"
+                                        >
+                                          {item.projectLabel || 'Live Demo'}
+                                        </a>
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div className="text-right font-semibold text-slate-700 whitespace-nowrap">
+                                    {[
+                                      item.startDate,
+                                      item.currentlyWorking ? 'Present' : item.endDate
+                                    ]
+                                      .filter(Boolean)
+                                      .join(' - ') || 'Date'}
+                                  </div>
+                                </div>
+                                {item.description && (
+                                  <p className="text-slate-800 mt-0.5 leading-normal whitespace-pre-line">
+                                    {item.description}
+                                  </p>
+                                )}
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* CERTIFICATIONS SECTION in Preview */}
+                    {certificationList.some(item => item.certificateTitle || item.issuedBy) && (
+                      <div className="mt-3">
+                        <h3 className="text-[11px] font-bold text-slate-900 uppercase tracking-wider border-b border-slate-900 pb-0.5 mb-1.5">
+                          CERTIFICATIONS
+                        </h3>
+                        <div className="space-y-1.5">
+                          {certificationList
+                            .filter(item => item.certificateTitle || item.issuedBy)
+                            .map(item => (
+                              <div key={item.id} className="flex justify-between items-baseline text-xs text-slate-900">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="font-bold">{item.certificateTitle || 'Certificate Title'}</span>
+                                  {item.issuedBy && (
+                                    <span className="italic text-slate-700">
+                                      — Issued by {item.issuedBy}
+                                    </span>
+                                  )}
+                                </div>
+                                {item.certificateLink && (
+                                  <a
+                                    href={item.certificateLink.startsWith('http') ? item.certificateLink : `https://${item.certificateLink}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-[11px] font-medium text-slate-900 hover:underline whitespace-nowrap"
+                                  >
+                                    {item.certificateLabel || 'View Certificate'}
+                                  </a>
+                                )}
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="no-print text-center text-[11px] text-slate-400 border-t border-slate-200 pt-2.5 mt-3 flex items-center justify-between">
+                    <span>ATS Friendly Resume Preview</span>
+                    <span>Page 1 of 1 (A4 Standard)</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -488,7 +1587,7 @@ export default function CVBuilder() {
 
               <div className="pt-2">
                 <motion.button
-                  onClick={() => setView('editor')}
+                  onClick={() => navigate('/cv-templates')}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="flex items-center justify-center bg-gradient-to-r from-emerald-500 via-emerald-600 to-emerald-500 hover:from-emerald-400 hover:to-emerald-600 text-white font-extrabold px-8 py-4 rounded-xl border-2 border-white/90 transition-all shadow-[0_0_25px_rgba(16,185,129,0.4)] text-base sm:text-lg tracking-wide"
@@ -497,7 +1596,6 @@ export default function CVBuilder() {
                 </motion.button>
               </div>
             </motion.div>
-
           </div>
 
           {/* SECTION 3: How It Works */}
@@ -847,75 +1945,6 @@ export default function CVBuilder() {
 
             </div>
           </div>
-
-          {/* Dynamic Featured CV Template Samples uploaded via Admin CV Management */}
-          {samples.length > 0 && (
-            <div className="mt-20 pt-16 border-t border-slate-200 dark:border-slate-800">
-              <div className="text-center mb-12">
-                <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mb-3">
-                  Featured CV Template Samples
-                </h3>
-                <p className="text-slate-600 dark:text-slate-400 max-w-xl mx-auto text-sm sm:text-base">
-                  Explore custom sample resumes and click to redirect or start editing your own CV immediately.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                {samples.map(sample => {
-                  const isImage = sample.imageUrl || sample.fileUrl?.match(/\.(png|jpe?g|webp|gif)$/i);
-                  const displayImg = sample.imageUrl || (isImage ? `${sample.fileUrl?.startsWith('http') ? '' : `${API_URL}/public`}${sample.fileUrl}` : null);
-                  const destination = sample.redirectUrl || '/cv-builder';
-
-                  return (
-                    <motion.div
-                      key={sample.id}
-                      whileHover={{ y: -5 }}
-                      className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-lg dark:shadow-xl flex flex-col justify-between overflow-hidden"
-                    >
-                      <div>
-                        {displayImg ? (
-                          <div className="mb-4 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 h-64 flex items-center justify-center border border-slate-200 dark:border-slate-700">
-                            <img src={displayImg} alt={sample.title} className="w-full h-full object-cover" />
-                          </div>
-                        ) : (
-                          <div className="mb-4 rounded-xl bg-gradient-to-br from-indigo-500/10 to-emerald-500/10 h-64 flex flex-col items-center justify-center border border-slate-200 dark:border-slate-800 text-slate-400">
-                            <FileText className="w-12 h-12 mb-2 text-indigo-500" />
-                            <span className="text-xs font-semibold">CV Sample Document</span>
-                          </div>
-                        )}
-
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-bold text-lg text-slate-900 dark:text-white">{sample.title}</h4>
-                          {sample.category && (
-                            <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold rounded-full">
-                              {sample.category}
-                            </span>
-                          )}
-                        </div>
-
-                        {sample.description && (
-                          <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-2">
-                            {sample.description}
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
-                        <a
-                          href={destination}
-                          target={sample.redirectUrl?.startsWith('http') ? '_blank' : '_self'}
-                          rel="noreferrer"
-                          className="w-full text-center bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold py-2.5 px-4 rounded-xl shadow transition-all text-sm block"
-                        >
-                          Use this Template &rarr;
-                        </a>
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>

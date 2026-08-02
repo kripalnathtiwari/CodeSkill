@@ -81,8 +81,8 @@ app.use("/api/v1/college-management", collegeManagementRoutes);
 app.use("/api/v1/aptitude-problems", aptitudeRoutes);
 app.use("/api/v1/archives", archiveRoutes);
 app.use("/api/v1/contact", contactRoutes);
-app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/admin/cv", cvAdminRoutes);
+app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/ats", atsRoutes);
 
 // Root informational endpoint

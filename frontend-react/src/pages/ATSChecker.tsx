@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ShieldCheck, FileText, Upload, Sparkles, CheckCircle2, 
@@ -11,10 +12,13 @@ import {
 import axios from 'axios';
 import { getApiUrl } from '../utils/apiConfig';
 import { extractTextFromFile, parseResumeContent } from '../utils/cvParser';
+import { useAuth } from '../context/AuthContext';
 
 const API_URL = getApiUrl('/api/v1/ats');
 
 export default function ATSChecker() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [jobDescription, setJobDescription] = useState('');
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   
@@ -25,6 +29,11 @@ export default function ATSChecker() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!user) {
+      if (e.target) e.target.value = '';
+      navigate('/login', { state: { from: '/ats-checker' } });
+      return;
+    }
     const file = e.target.files?.[0];
     if (!file) return;
     setResumeFile(file);
@@ -128,6 +137,10 @@ export default function ATSChecker() {
   };
 
   const handleAnalyze = async () => {
+    if (!user) {
+      navigate('/login', { state: { from: '/ats-checker' } });
+      return;
+    }
     if (!jobDescription || !resumeFile) return;
     
     setIsAnalyzing(true);

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { 
   Briefcase, 
   MapPin, 
@@ -54,10 +55,10 @@ interface TrackedApplication {
   company: string;
   location: string;
   appliedDate: string;
-  currentStep: number; // 1 to 4
+  currentStep: number;
   statusLabel: string;
-  statusColor: 'emerald' | 'blue' | 'amber' | 'purple';
-  nextAction?: string;
+  statusColor: string;
+  nextAction: string;
   atsScore?: number;
 }
 
@@ -229,6 +230,8 @@ const PROGRESS_STEPS = [
 ];
 
 export default function Jobs() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const initialTab = searchParams.get('tab') === 'tracker' ? 'tracker' : 'browse';
   const [activeTab, setActiveTab] = useState<'browse' | 'tracker'>(initialTab);
@@ -378,6 +381,11 @@ export default function Jobs() {
   };
 
   const handleApply = (job: JobOpportunity) => {
+    if (!user) {
+      setActiveModalJob(null);
+      navigate('/login', { state: { from: '/jobs' } });
+      return;
+    }
     // Add to tracked applications if not already present
     const alreadyTracked = trackedApplications.some(t => t.jobId === job.id);
     if (!alreadyTracked) {

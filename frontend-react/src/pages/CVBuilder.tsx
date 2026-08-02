@@ -1240,6 +1240,46 @@ export default function CVBuilder() {
             </div>
           </div>
         </div>
+
+        {/* Login Required Modal inside Editor View */}
+        {showAuthModal && (
+          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl relative overflow-hidden text-white"
+            >
+              <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mx-auto mb-5 border border-emerald-500/20">
+                <LockKeyhole className="w-8 h-8 text-emerald-400" />
+              </div>
+              <h2 className="text-2xl font-black text-white mb-2">Login Required to Download CV</h2>
+              <p className="text-slate-300 text-sm mb-6 leading-relaxed">
+                Please log in or create a free account to export your single-page ATS-optimized PDF resume. Your entered details will be preserved!
+              </p>
+              <div className="space-y-3">
+                <button
+                  onClick={() => navigate('/login', { state: { from: '/cv-builder?view=editor&autoDownload=true' } })}
+                  className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-base shadow-lg transition-all flex items-center justify-center gap-2"
+                >
+                  <LogIn className="w-5 h-5" />
+                  <span>Log In & Download</span>
+                </button>
+                <button
+                  onClick={() => navigate('/register', { state: { from: '/cv-builder?view=editor&autoDownload=true' } })}
+                  className="w-full py-3 px-6 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm transition-all"
+                >
+                  Create Free Account
+                </button>
+                <button
+                  onClick={() => setShowAuthModal(false)}
+                  className="w-full py-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors"
+                >
+                  Continue Editing
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
       </div>
     );
   }

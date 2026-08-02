@@ -869,7 +869,15 @@ export default function Jobs() {
                           </span>
 
                           <button
-                            onClick={() => setActiveModalJob(job)}
+                            onClick={() => {
+                              if (!user) {
+                                sessionStorage.setItem('pending_job_apply', job.id);
+                                setPendingJob(job);
+                                setShowAuthModal(true);
+                                return;
+                              }
+                              setActiveModalJob(job);
+                            }}
                             disabled={isApplied}
                             className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2 ${isApplied
                                 ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 cursor-default'

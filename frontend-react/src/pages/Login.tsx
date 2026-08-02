@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getApiUrl } from "../utils/apiConfig";
 import { Code2, ArrowRight, Eye, EyeOff } from "lucide-react";
@@ -18,8 +18,6 @@ export default function LoginPage() {
 
   const { login } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-  const redirectTarget = location.state?.from || "/";
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,7 +65,7 @@ export default function LoginPage() {
 
       const { accessToken, refreshToken, user } = res.data;
       login(accessToken, refreshToken, user);
-      navigate(redirectTarget);
+      navigate("/");
     } catch (err: any) {
       setError(err.response?.data?.error || "Failed to login. Please try again.");
     } finally {
@@ -85,7 +83,7 @@ export default function LoginPage() {
         });
         const { accessToken, refreshToken, user } = res.data;
         login(accessToken, refreshToken, user);
-        navigate(redirectTarget);
+        navigate("/");
       } catch (err: any) {
         setError(err.response?.data?.details || err.response?.data?.error || "Google login failed.");
       } finally {

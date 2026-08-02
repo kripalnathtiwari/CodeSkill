@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useSearchParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { 
-  Briefcase, 
-  MapPin, 
-  DollarSign, 
-  Clock, 
-  Search, 
-  Filter, 
-  Building2, 
-  ArrowRight, 
-  CheckCircle2, 
-  FileText, 
+import { Link, useSearchParams } from 'react-router-dom';
+import {
+  Briefcase,
+  MapPin,
+  DollarSign,
+  Clock,
+  Search,
+  Filter,
+  Building2,
+  ArrowRight,
+  CheckCircle2,
+  FileText,
   Sparkles,
   ExternalLink,
   Zap,
@@ -55,10 +54,10 @@ interface TrackedApplication {
   company: string;
   location: string;
   appliedDate: string;
-  currentStep: number;
+  currentStep: number; // 1 to 4
   statusLabel: string;
-  statusColor: string;
-  nextAction: string;
+  statusColor: 'emerald' | 'blue' | 'amber' | 'purple';
+  nextAction?: string;
   atsScore?: number;
 }
 
@@ -78,7 +77,7 @@ const resolveCandidateNameFromStorage = (email?: string): string => {
       if (u.name) return u.name;
       if (u.fullName) return u.fullName;
     }
-  } catch (e) {}
+  } catch (e) { }
 
   const targetEmail = email || localStorage.getItem('user_email') || '';
   if (targetEmail) {
@@ -230,8 +229,6 @@ const PROGRESS_STEPS = [
 ];
 
 export default function Jobs() {
-  const navigate = useNavigate();
-  const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const initialTab = searchParams.get('tab') === 'tracker' ? 'tracker' : 'browse';
   const [activeTab, setActiveTab] = useState<'browse' | 'tracker'>(initialTab);
@@ -270,7 +267,7 @@ export default function Jobs() {
           const nonDuplicateSamples = SAMPLE_JOBS.filter(s => !existingIds.has(s.id));
           setAllJobs([...parsed, ...nonDuplicateSamples]);
         }
-      } catch (e) {}
+      } catch (e) { }
     };
     window.addEventListener('published_jobs_updated', handleStorageChange);
     window.addEventListener('storage', handleStorageChange);
@@ -381,11 +378,6 @@ export default function Jobs() {
   };
 
   const handleApply = (job: JobOpportunity) => {
-    if (!user) {
-      setActiveModalJob(null);
-      navigate('/login', { state: { from: '/jobs' } });
-      return;
-    }
     // Add to tracked applications if not already present
     const alreadyTracked = trackedApplications.some(t => t.jobId === job.id);
     if (!alreadyTracked) {
@@ -409,7 +401,7 @@ export default function Jobs() {
     try {
       const storedCvs = localStorage.getItem('codeskill_user_cvs');
       const parsedCvs = storedCvs ? JSON.parse(storedCvs) : [];
-      
+
       const candidateEmail = localStorage.getItem('user_email') || 'candidate@codeskill.dev';
       const candidateName = resolveCandidateNameFromStorage(candidateEmail);
       const rawName = uploadedCV ? uploadedCV.name : `${candidateName.replace(/\s+/g, '_')}_Resume.pdf`;
@@ -487,7 +479,7 @@ export default function Jobs() {
   };
 
   const filteredJobs = allJobs.filter((job) => {
-    const matchesSearch = 
+    const matchesSearch =
       job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       job.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
       job.skills.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -520,11 +512,10 @@ export default function Jobs() {
           {/* Box 1: Browse Jobs */}
           <button
             onClick={() => handleTabChange('browse')}
-            className={`group relative text-left overflow-hidden rounded-2xl bg-white dark:bg-slate-800/80 border p-5 transition-all duration-300 flex flex-col justify-between shadow-md hover:shadow-lg ${
-              activeTab === 'browse'
+            className={`group relative text-left overflow-hidden rounded-2xl bg-white dark:bg-slate-800/80 border p-5 transition-all duration-300 flex flex-col justify-between shadow-md hover:shadow-lg ${activeTab === 'browse'
                 ? 'border-emerald-500 ring-2 ring-emerald-500/20 bg-emerald-50/50 dark:bg-emerald-500/10'
                 : 'border-slate-200 dark:border-slate-700 hover:border-emerald-500/60'
-            }`}
+              }`}
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
@@ -555,11 +546,10 @@ export default function Jobs() {
           {/* Box 2: Track Application Progress */}
           <button
             onClick={() => handleTabChange('tracker')}
-            className={`group relative text-left overflow-hidden rounded-2xl bg-white dark:bg-slate-800/80 border p-5 transition-all duration-300 flex flex-col justify-between shadow-md hover:shadow-lg ${
-              activeTab === 'tracker'
+            className={`group relative text-left overflow-hidden rounded-2xl bg-white dark:bg-slate-800/80 border p-5 transition-all duration-300 flex flex-col justify-between shadow-md hover:shadow-lg ${activeTab === 'tracker'
                 ? 'border-emerald-500 ring-2 ring-emerald-500/20 bg-emerald-50/50 dark:bg-emerald-500/10'
                 : 'border-slate-200 dark:border-slate-700 hover:border-emerald-500/60'
-            }`}
+              }`}
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
@@ -648,7 +638,7 @@ export default function Jobs() {
                       )}
                     </h3>
                     <p className="text-sm text-slate-600 dark:text-slate-400">
-                      {uploadedCV 
+                      {uploadedCV
                         ? `Using ${uploadedCV.name} (${uploadedCV.size}) for 1-click apply and automated ATS screening.`
                         : 'Upload your latest resume (.pdf, .doc, .docx) to enable fast applying across all tech roles.'}
                     </p>
@@ -854,11 +844,10 @@ export default function Jobs() {
                           <button
                             onClick={() => setActiveModalJob(job)}
                             disabled={isApplied}
-                            className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2 ${
-                              isApplied
+                            className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2 ${isApplied
                                 ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 cursor-default'
                                 : 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-md hover:shadow-emerald-500/20'
-                            }`}
+                              }`}
                           >
                             {isApplied ? (
                               <>
@@ -990,23 +979,21 @@ export default function Jobs() {
                                 {/* Connecting line between dots */}
                                 {idx < PROGRESS_STEPS.length - 1 && (
                                   <div
-                                    className={`absolute top-4 left-1/2 w-full h-1 -z-0 transition-colors duration-300 ${
-                                      stepItem.step < app.currentStep
+                                    className={`absolute top-4 left-1/2 w-full h-1 -z-0 transition-colors duration-300 ${stepItem.step < app.currentStep
                                         ? 'bg-emerald-500'
                                         : 'bg-slate-200 dark:bg-slate-700'
-                                    }`}
+                                      }`}
                                   />
                                 )}
 
                                 {/* Dot / Icon */}
                                 <div
-                                  className={`w-9 h-9 rounded-full flex items-center justify-center z-10 transition-all ${
-                                    isCompleted
+                                  className={`w-9 h-9 rounded-full flex items-center justify-center z-10 transition-all ${isCompleted
                                       ? 'bg-emerald-500 text-white shadow-md'
                                       : isCurrent
-                                      ? 'bg-white dark:bg-slate-900 border-2 border-emerald-500 text-emerald-600 dark:text-emerald-400 shadow-lg ring-4 ring-emerald-500/20'
-                                      : 'bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-400 dark:text-slate-500'
-                                  }`}
+                                        ? 'bg-white dark:bg-slate-900 border-2 border-emerald-500 text-emerald-600 dark:text-emerald-400 shadow-lg ring-4 ring-emerald-500/20'
+                                        : 'bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-400 dark:text-slate-500'
+                                    }`}
                                 >
                                   {isCompleted ? (
                                     <Check className="w-5 h-5" />
@@ -1020,11 +1007,10 @@ export default function Jobs() {
                                 {/* Step label */}
                                 <div className="mt-2 space-y-0.5">
                                   <div
-                                    className={`text-xs sm:text-sm font-bold ${
-                                      isCompleted || isCurrent
+                                    className={`text-xs sm:text-sm font-bold ${isCompleted || isCurrent
                                         ? 'text-slate-900 dark:text-white'
                                         : 'text-slate-400 dark:text-slate-500'
-                                    }`}
+                                      }`}
                                   >
                                     {stepItem.name}
                                   </div>

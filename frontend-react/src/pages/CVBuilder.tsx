@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { UserCog, Users, FileText, Sparkles, Plus, Download, Trash2, ShieldCheck, Check, Edit3, ArrowRight, Calendar, ChevronUp, ChevronDown, Lock, LogIn } from 'lucide-react';
+import { UserCog, Users, FileText, Sparkles, Plus, Download, Trash2, ShieldCheck, Check, Edit3, ArrowRight, Calendar, ChevronUp, ChevronDown, LockKeyhole, LogIn } from 'lucide-react';
 import axios from 'axios';
 import { API_BASE_URL as API_URL } from '../utils/apiConfig';
 import { useAuth } from '../context/AuthContext';
@@ -52,7 +52,7 @@ interface CertificationItem {
 
 export default function CVBuilder() {
   const navigate = useNavigate();
-  const { user, isLoading: isAuthLoading } = useAuth();
+  const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const routerLocation = useLocation();
   const initialView = (searchParams.get('view') === 'editor' || routerLocation.hash === '#editor' || routerLocation.state?.view === 'editor')
@@ -63,19 +63,9 @@ export default function CVBuilder() {
 
   useEffect(() => {
     if (searchParams.get('view') === 'editor' || routerLocation.hash === '#editor' || routerLocation.state?.view === 'editor') {
-      if (!user && !isAuthLoading) {
-        setShowAuthModal(true);
-      } else {
-        setView('editor');
-      }
+      setView('editor');
     }
-  }, [searchParams, routerLocation, user, isAuthLoading]);
-
-  useEffect(() => {
-    if (view === 'editor' && !user && !isAuthLoading) {
-      setShowAuthModal(true);
-    }
-  }, [view, user, isAuthLoading]);
+  }, [searchParams, routerLocation]);
 
   // Personal Information State (matching comprehensive 2-column form layout)
   const [firstName, setFirstName] = useState('');
@@ -220,6 +210,10 @@ export default function CVBuilder() {
   };
 
   const handlePrintCV = () => {
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
     const previewElement = document.getElementById('cv-preview-sheet');
     if (!previewElement) {
       window.print();
@@ -353,122 +347,122 @@ export default function CVBuilder() {
               {/* Personal Information Box */}
               <div className="space-y-6 bg-slate-900/60 border border-slate-800 p-6 rounded-3xl">
                 <h3 className="text-xl font-bold text-orange-400">Personal Information</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1">
-                    First Name <span className="text-orange-400">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    placeholder="Ankit"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 mb-1">
+                      First Name <span className="text-orange-400">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      placeholder="Ankit"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 mb-1">
+                      Last Name <span className="text-orange-400">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      placeholder="Sharma"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 mb-1">
+                      Email <span className="text-orange-400">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="ankit@example.com"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 mb-1">
+                      Location
+                    </label>
+                    <input
+                      type="text"
+                      value={location}
+                      onChange={(e) => setLocation(e.target.value)}
+                      placeholder="Bengaluru, India"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 mb-1">
+                      Phone Number
+                    </label>
+                    <input
+                      type="text"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="+91 1234567890"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 mb-1">
+                      Github
+                    </label>
+                    <input
+                      type="text"
+                      value={github}
+                      onChange={(e) => setGithub(e.target.value)}
+                      placeholder="github.com/username"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 mb-1">
+                      LinkedIn
+                    </label>
+                    <input
+                      type="text"
+                      value={linkedin}
+                      onChange={(e) => setLinkedin(e.target.value)}
+                      placeholder="linkedin.com/in/username"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 mb-1">
+                      Portfolio
+                    </label>
+                    <input
+                      type="text"
+                      value={portfolio}
+                      onChange={(e) => setPortfolio(e.target.value)}
+                      placeholder="yourwebsite.com"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1">
-                    Last Name <span className="text-orange-400">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    placeholder="Sharma"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                <div className="pt-2">
+                  <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Professional Summary</label>
+                  <textarea
+                    rows={4}
+                    value={summary}
+                    onChange={(e) => setSummary(e.target.value)}
+                    placeholder="Brief summary of your professional background and achievements..."
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
                   />
                 </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1">
-                    Email <span className="text-orange-400">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="ankit@example.com"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1">
-                    Location
-                  </label>
-                  <input
-                    type="text"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    placeholder="Bengaluru, India"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1">
-                    Phone Number
-                  </label>
-                  <input
-                    type="text"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+91 1234567890"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1">
-                    Github
-                  </label>
-                  <input
-                    type="text"
-                    value={github}
-                    onChange={(e) => setGithub(e.target.value)}
-                    placeholder="github.com/username"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1">
-                    LinkedIn
-                  </label>
-                  <input
-                    type="text"
-                    value={linkedin}
-                    onChange={(e) => setLinkedin(e.target.value)}
-                    placeholder="linkedin.com/in/username"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1">
-                    Portfolio
-                  </label>
-                  <input
-                    type="text"
-                    value={portfolio}
-                    onChange={(e) => setPortfolio(e.target.value)}
-                    placeholder="yourwebsite.com"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
-                  />
-                </div>
-              </div>
-
-              <div className="pt-2">
-                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Professional Summary</label>
-                <textarea
-                  rows={4}
-                  value={summary}
-                  onChange={(e) => setSummary(e.target.value)}
-                  placeholder="Brief summary of your professional background and achievements..."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors"
-                />
-              </div>
               </div>
 
               {/* Education Section Box */}
@@ -842,9 +836,8 @@ export default function CVBuilder() {
                               disabled={proj.currentlyWorking}
                               onChange={(e) => updateProject(proj.id, 'endDate', e.target.value)}
                               placeholder={proj.currentlyWorking ? 'Present' : 'MM/YYYY'}
-                              className={`w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors ${
-                                proj.currentlyWorking ? 'opacity-50 cursor-not-allowed' : ''
-                              }`}
+                              className={`w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors ${proj.currentlyWorking ? 'opacity-50 cursor-not-allowed' : ''
+                                }`}
                             />
                           </div>
                         </div>
@@ -1014,21 +1007,21 @@ export default function CVBuilder() {
                           location ? { text: location } : null,
                           github
                             ? {
-                                text: `github.com/${github.replace(/^https?:\/\/(www\.)?github\.com\//, '')}`,
-                                url: github.startsWith('http') ? github : `https://${github}`
-                              }
+                              text: `github.com/${github.replace(/^https?:\/\/(www\.)?github\.com\//, '')}`,
+                              url: github.startsWith('http') ? github : `https://${github}`
+                            }
                             : null,
                           linkedin
                             ? {
-                                text: `linkedin.com/in/${linkedin.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//, '')}`,
-                                url: linkedin.startsWith('http') ? linkedin : `https://${linkedin}`
-                              }
+                              text: `linkedin.com/in/${linkedin.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//, '')}`,
+                              url: linkedin.startsWith('http') ? linkedin : `https://${linkedin}`
+                            }
                             : null,
                           portfolio
                             ? {
-                                text: 'Portfolio',
-                                url: portfolio.startsWith('http') ? portfolio : `https://${portfolio}`
-                              }
+                              text: 'Portfolio',
+                              url: portfolio.startsWith('http') ? portfolio : `https://${portfolio}`
+                            }
                             : null
                         ]
                           .filter((item): item is { text: string; url?: string } => Boolean(item))
@@ -1280,7 +1273,7 @@ export default function CVBuilder() {
       {/* SECTION 1: Hero Banner */}
       <div className="max-w-7xl mx-auto w-full relative z-10 py-12 px-6 md:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          
+
           {/* Left Column - Text & Actions */}
           <div className="lg:col-span-6 space-y-8 text-left">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tight">
@@ -1318,7 +1311,7 @@ export default function CVBuilder() {
           {/* Right Column - Visual Mockup */}
           <div className="lg:col-span-6 relative flex justify-center items-center py-8">
             <div className="relative w-full max-w-lg">
-              
+
               {/* FREE Badge Top Right */}
               <motion.div
                 animate={{ y: [0, -6, 0], rotate: [12, 14, 12] }}
@@ -1430,11 +1423,11 @@ export default function CVBuilder() {
       <div className="bg-[#F8FAFC] dark:bg-[#0B1320] text-slate-900 dark:text-white py-24 px-6 md:px-12 border-t border-slate-200 dark:border-slate-800/80 relative z-10">
         <div className="max-w-7xl mx-auto w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-12 items-center">
-            
+
             {/* Left Column: 3 Overlapping/Stacked Resume Template Sheets */}
             <div className="lg:col-span-7 relative flex justify-center items-center py-10 min-h-[500px]">
               <div className="relative w-full max-w-lg flex justify-center items-center">
-                
+
                 {/* Back Left Template (Cipher Schools) */}
                 <motion.div
                   initial={{ opacity: 0, x: -30 }}
@@ -1633,7 +1626,7 @@ export default function CVBuilder() {
             </motion.div>
 
             <div className="flex flex-col lg:flex-row items-start justify-between gap-12 lg:gap-6 mt-10">
-              
+
               {/* Step 1 */}
               <motion.div
                 initial={{ opacity: 0, y: 40 }}
@@ -1804,7 +1797,7 @@ export default function CVBuilder() {
                           </div>
                           <div className="w-24 h-2 bg-slate-200 dark:bg-slate-700 rounded"></div>
                         </div>
-                        
+
                         {/* Animated Editable Progress / Layout bar */}
                         <div className="space-y-1">
                           <div className="flex justify-between text-[8px] text-slate-400 font-bold">
@@ -1970,11 +1963,11 @@ export default function CVBuilder() {
             className="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl relative overflow-hidden text-white"
           >
             <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mx-auto mb-5 border border-emerald-500/20">
-              <Lock className="w-8 h-8" />
+              <LockKeyhole className="w-8 h-8" />
             </div>
-            <h2 className="text-2xl font-black text-white mb-2">Login Required</h2>
+            <h2 className="text-2xl font-black text-white mb-2">Login Required to Download CV</h2>
             <p className="text-slate-300 text-sm mb-6 leading-relaxed">
-              Please sign in to access the ATS Resume Builder, save your details, and export your CV.
+              Please sign in to export your single-page ATS-optimized PDF resume.
             </p>
             <div className="space-y-3">
               <button
@@ -1982,7 +1975,7 @@ export default function CVBuilder() {
                 className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-base shadow-lg transition-all flex items-center justify-center gap-2"
               >
                 <LogIn className="w-5 h-5" />
-                <span>Log In to Continue</span>
+                <span>Log In & Download</span>
               </button>
               <button
                 onClick={() => navigate('/register', { state: { from: '/cv-builder?view=editor' } })}
@@ -1991,13 +1984,10 @@ export default function CVBuilder() {
                 Create Free Account
               </button>
               <button
-                onClick={() => {
-                  setShowAuthModal(false);
-                  setView('landing');
-                }}
+                onClick={() => setShowAuthModal(false)}
                 className="w-full py-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors"
               >
-                Back to Overview
+                Continue Editing
               </button>
             </div>
           </motion.div>

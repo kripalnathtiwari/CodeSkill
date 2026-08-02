@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  FileText, 
-  Search, 
-  Filter, 
-  Sparkles, 
-  ExternalLink, 
-  Download, 
-  CheckCircle2, 
-  Layers, 
-  Eye, 
+import {
+  FileText,
+  Search,
+  Filter,
+  Sparkles,
+  ExternalLink,
+  Download,
+  CheckCircle2,
+  Layers,
+  Eye,
   Plus,
   Briefcase,
   X
@@ -18,7 +18,6 @@ import {
 import axios from 'axios';
 import { API_BASE_URL as API_URL } from '../utils/apiConfig';
 import DriveImage, { extractDriveId } from '../components/DriveImage';
-import { useAuth } from '../context/AuthContext';
 
 interface SampleCv {
   id: string;
@@ -44,34 +43,30 @@ function getEmbedPreviewUrl(sample: SampleCv | null, apiUrl: string): { type: 'i
     };
   }
 
-  if (rawUrl.toLowerCase().endsWith('.pdf') || rawUrl.includes('/pdf/')) {
+  const fullUrl = rawUrl.startsWith('http://') || rawUrl.startsWith('https://')
+    ? rawUrl
+    : `${apiUrl}/public${rawUrl.startsWith('/') ? '' : '/'}${rawUrl}`;
+
+  if (rawUrl.match(/\.(pdf)$/i) || fullUrl.includes('.pdf')) {
     return {
       type: 'iframe',
-      url: rawUrl.startsWith('http') ? rawUrl : `${apiUrl}${rawUrl}`
+      url: fullUrl
     };
   }
 
   return {
     type: 'image',
-    url: rawUrl.startsWith('http') ? rawUrl : `${apiUrl}${rawUrl}`
+    url: fullUrl
   };
 }
 
 export default function CVTemplates() {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [samples, setSamples] = useState<SampleCv[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedPreview, setSelectedPreview] = useState<SampleCv | null>(null);
-
-  const handleStartBuilder = (e: React.MouseEvent) => {
-    if (!user) {
-      e.preventDefault();
-      navigate('/login', { state: { from: '/cv-builder?view=editor' } });
-    }
-  };
 
   useEffect(() => {
     fetchSamples();
@@ -107,10 +102,10 @@ export default function CVTemplates() {
   // Filter samples based on search query and category
   const filteredSamples = useMemo(() => {
     return samples.filter(sample => {
-      const matchesCategory = selectedCategory === 'All' || 
+      const matchesCategory = selectedCategory === 'All' ||
         sample.category?.toLowerCase() === selectedCategory.toLowerCase();
-      const matchesSearch = !searchQuery.trim() || 
-        sample.title?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      const matchesSearch = !searchQuery.trim() ||
+        sample.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         sample.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         sample.category?.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
@@ -120,13 +115,12 @@ export default function CVTemplates() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white py-12 px-4 sm:px-6 lg:px-12 transition-colors">
       <div className="max-w-7xl mx-auto">
-        
+
         {/* Top Navigation Bar */}
         <div className="flex items-center justify-end mb-8 pb-6 border-b border-slate-200 dark:border-slate-800">
           <div className="flex items-center gap-3">
             <Link
               to="/cv-builder?view=editor"
-              onClick={handleStartBuilder}
               className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold text-sm shadow-md transition-all flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
@@ -168,7 +162,7 @@ export default function CVTemplates() {
         {/* Filter and Search Bar */}
         <div className="bg-white dark:bg-slate-900/80 backdrop-blur-md border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-6 mb-10 shadow-lg">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            
+
             {/* Search Input */}
             <div className="relative w-full md:w-80">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -188,11 +182,10 @@ export default function CVTemplates() {
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
-                    selectedCategory === cat
+                  className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${selectedCategory === cat
                       ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20'
                       : 'bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                  }`}
+                    }`}
                 >
                   {cat}
                 </button>
@@ -217,11 +210,11 @@ export default function CVTemplates() {
               {filteredSamples.map((sample) => {
                 const isImage = sample.imageUrl || sample.fileUrl?.match(/\.(png|jpe?g|webp|gif)$/i);
                 const destination = sample.redirectUrl || '/cv-builder';
-                const previewUrl = sample.fileUrl 
+                const previewUrl = sample.fileUrl
                   ? (sample.fileUrl.startsWith('http') ? sample.fileUrl : `${API_URL}/public${sample.fileUrl}`)
                   : sample.imageUrl
-                  ? (sample.imageUrl.startsWith('http') ? sample.imageUrl : `${API_URL}/public${sample.imageUrl}`)
-                  : null;
+                    ? (sample.imageUrl.startsWith('http') ? sample.imageUrl : `${API_URL}/public${sample.imageUrl}`)
+                    : null;
 
                 return (
                   <motion.div
@@ -332,7 +325,6 @@ export default function CVTemplates() {
               )}
               <Link
                 to="/cv-builder?view=editor"
-                onClick={handleStartBuilder}
                 className="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold text-sm transition-all shadow-lg shadow-emerald-500/20"
               >
                 Go to Resume Editor
@@ -359,7 +351,6 @@ export default function CVTemplates() {
             </div>
             <Link
               to="/cv-builder?view=editor"
-              onClick={handleStartBuilder}
               className="px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-base shadow-xl transition-all whitespace-nowrap"
             >
               Start Resume Builder
@@ -405,11 +396,6 @@ export default function CVTemplates() {
                   <div className="flex items-center gap-3 shrink-0">
                     <button
                       onClick={() => {
-                        if (!user) {
-                          setSelectedPreview(null);
-                          navigate('/login', { state: { from: '/cv-builder?view=editor' } });
-                          return;
-                        }
                         const dest = selectedPreview.redirectUrl || '/cv-builder?view=editor';
                         if (!selectedPreview.redirectUrl || selectedPreview.redirectUrl === '/cv-builder') {
                           setSelectedPreview(null);

@@ -1,44 +1,35 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  ShieldCheck, FileText, Upload, Sparkles, CheckCircle2, 
+import {
+  ShieldCheck, FileText, Upload, Sparkles, CheckCircle2,
   AlertCircle, RefreshCw, FileUp, Download, Briefcase, Award, ArrowLeft
 } from 'lucide-react';
-import { 
-  Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, 
+import {
+  Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   ResponsiveContainer, PieChart, Pie, Cell, Tooltip
 } from 'recharts';
 import axios from 'axios';
 import { getApiUrl } from '../utils/apiConfig';
 import { extractTextFromFile, parseResumeContent } from '../utils/cvParser';
-import { useAuth } from '../context/AuthContext';
 
 const API_URL = getApiUrl('/api/v1/ats');
 
 export default function ATSChecker() {
-  const navigate = useNavigate();
-  const { user } = useAuth();
   const [jobDescription, setJobDescription] = useState('');
   const [resumeFile, setResumeFile] = useState<File | null>(null);
-  
+
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisId, setAnalysisId] = useState<string | null>(null);
   const [results, setResults] = useState<any>(null);
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!user) {
-      if (e.target) e.target.value = '';
-      navigate('/login', { state: { from: '/ats-checker' } });
-      return;
-    }
     const file = e.target.files?.[0];
     if (!file) return;
     setResumeFile(file);
     // Reset previous results if uploading new file
-    setResults(null); 
+    setResults(null);
     setAnalysisId(null);
 
     try {
@@ -78,7 +69,7 @@ export default function ATSChecker() {
             if (u.name) return u.name;
             if (u.fullName) return u.fullName;
           }
-        } catch (e) {}
+        } catch (e) { }
         if (candidateEmail) {
           const prefix = candidateEmail.split('@')[0];
           const cleaned = prefix.replace(/[0-9]+$/, '').replace(/[._-]+/g, ' ').trim();
@@ -137,20 +128,16 @@ export default function ATSChecker() {
   };
 
   const handleAnalyze = async () => {
-    if (!user) {
-      navigate('/login', { state: { from: '/ats-checker' } });
-      return;
-    }
     if (!jobDescription || !resumeFile) return;
-    
+
     setIsAnalyzing(true);
     setResults(null);
-    
+
     try {
       // 1. Upload Resume
       const formData = new FormData();
       formData.append('resume', resumeFile);
-      
+
       // Note: Assumes JWT auth token is stored in localStorage
       const token = localStorage.getItem('accessToken');
       const headers = { Authorization: `Bearer ${token}` };
@@ -181,10 +168,10 @@ export default function ATSChecker() {
       interval = setInterval(async () => {
         try {
           const token = localStorage.getItem('accessToken');
-          const res = await axios.get(`${API_URL}/analysis/${analysisId}`, { 
-            headers: { Authorization: `Bearer ${token}` } 
+          const res = await axios.get(`${API_URL}/analysis/${analysisId}`, {
+            headers: { Authorization: `Bearer ${token}` }
           });
-          
+
           if (res.data.status === 'COMPLETED') {
             setResults(res.data);
             setIsAnalyzing(false);
@@ -207,7 +194,7 @@ export default function ATSChecker() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 pt-20 px-6 pb-20">
       <div className="max-w-7xl mx-auto space-y-8">
-        
+
         {/* Header */}
         <div className="text-center space-y-4 max-w-2xl mx-auto mb-12">
           <div className="inline-flex items-center justify-center p-3 bg-indigo-500/10 text-indigo-500 rounded-2xl mb-2">
@@ -220,16 +207,16 @@ export default function ATSChecker() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          
+
           {/* LEFT: Inputs */}
           <div className="lg:col-span-5 space-y-6">
             <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm relative overflow-hidden">
               <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500" />
               <h2 className="text-xl font-bold flex items-center gap-2 mb-4">
-                <FileText className="text-indigo-400" /> 
+                <FileText className="text-indigo-400" />
                 1. Job Description
               </h2>
-              <textarea 
+              <textarea
                 value={jobDescription}
                 onChange={(e) => setJobDescription(e.target.value)}
                 placeholder="Paste the target job description here..."
@@ -241,22 +228,22 @@ export default function ATSChecker() {
               <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500" />
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold flex items-center gap-2">
-                  <Upload className="text-emerald-400" /> 
+                  <Upload className="text-emerald-400" />
                   2. Your Resume
                 </h2>
-                <button 
+                <button
                   onClick={() => fileInputRef.current?.click()}
                   className="text-sm bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors font-medium"
                 >
                   <FileUp className="w-4 h-4" />
                   Upload File
                 </button>
-                <input 
-                  type="file" 
+                <input
+                  type="file"
                   ref={fileInputRef}
                   onChange={handleFileUpload}
                   accept=".pdf,.doc,.docx"
-                  className="hidden" 
+                  className="hidden"
                 />
               </div>
 
@@ -278,7 +265,7 @@ export default function ATSChecker() {
               )}
             </div>
 
-            <button 
+            <button
               onClick={handleAnalyze}
               disabled={isAnalyzing || !jobDescription || !resumeFile}
               className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold py-4 rounded-xl shadow-[0_0_20px_rgba(99,102,241,0.4)] transition-all disabled:opacity-50 flex justify-center items-center gap-2"
@@ -294,11 +281,11 @@ export default function ATSChecker() {
 
           {/* RIGHT: Results Dashboard */}
           <div className="lg:col-span-7 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 lg:p-8 shadow-xl relative min-h-[600px] flex flex-col">
-            
+
             <AnimatePresence mode="wait">
               {!results && !isAnalyzing && (
-                <motion.div 
-                  initial={{ opacity: 0 }} 
+                <motion.div
+                  initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className="flex-1 flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 space-y-4"
@@ -309,8 +296,8 @@ export default function ATSChecker() {
               )}
 
               {isAnalyzing && (
-                <motion.div 
-                  initial={{ opacity: 0 }} 
+                <motion.div
+                  initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className="flex-1 flex flex-col items-center justify-center space-y-8"
@@ -332,23 +319,23 @@ export default function ATSChecker() {
               )}
 
               {results && !isAnalyzing && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }} 
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="flex-1 space-y-8"
                 >
-                  
+
                   {/* Top Score Section */}
                   <div className="flex flex-col md:flex-row items-center gap-8 pb-8 border-b border-slate-200 dark:border-slate-800">
                     <div className="relative w-48 h-48 shrink-0">
                       <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                         <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" className="text-slate-200 dark:text-slate-800" strokeWidth="8" />
-                        <circle 
-                          cx="50" cy="50" r="45" 
-                          fill="none" 
-                          stroke="url(#gradient)" 
-                          strokeWidth="8" 
-                          strokeDasharray="283" 
+                        <circle
+                          cx="50" cy="50" r="45"
+                          fill="none"
+                          stroke="url(#gradient)"
+                          strokeWidth="8"
+                          strokeDasharray="283"
                           strokeDashoffset={283 - (283 * results.overallScore) / 100}
                           className="transition-all duration-1000 ease-out"
                         />
@@ -364,14 +351,14 @@ export default function ATSChecker() {
                         <span className="text-sm text-slate-500 font-bold uppercase tracking-widest mt-1">Overall</span>
                       </div>
                     </div>
-                    
+
                     <div className="flex-1">
                       <h3 className="text-3xl font-bold mb-3 flex items-center gap-3">
                         {results.overallScore > 80 ? 'Excellent Match 🎉' : results.overallScore > 50 ? 'Good Match 👍' : 'Needs Work ⚠️'}
                       </h3>
                       <p className="text-slate-600 dark:text-slate-400 text-lg mb-4">
-                        {results.overallScore > 80 
-                          ? 'Your resume is highly optimized for this role and will easily pass ATS systems.' 
+                        {results.overallScore > 80
+                          ? 'Your resume is highly optimized for this role and will easily pass ATS systems.'
                           : 'Your resume lacks critical keywords and structure required for this position.'}
                       </p>
                       <button className="flex items-center gap-2 px-4 py-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg font-medium hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors">
@@ -430,14 +417,14 @@ export default function ATSChecker() {
                       <ul className="space-y-3">
                         {results.aiSuggestions.map((sug: string, i: number) => (
                           <li key={i} className="flex gap-3">
-                            <span className="shrink-0 mt-1 flex items-center justify-center w-5 h-5 rounded-full bg-indigo-200 dark:bg-indigo-800 text-indigo-700 dark:text-indigo-300 text-xs font-bold">{i+1}</span>
+                            <span className="shrink-0 mt-1 flex items-center justify-center w-5 h-5 rounded-full bg-indigo-200 dark:bg-indigo-800 text-indigo-700 dark:text-indigo-300 text-xs font-bold">{i + 1}</span>
                             <span className="text-slate-700 dark:text-slate-300 leading-relaxed">{sug}</span>
                           </li>
                         ))}
                       </ul>
                     </div>
                   )}
-                  
+
                   {/* Formatting Issues */}
                   {results.formattingIssues && results.formattingIssues.length > 0 && (
                     <div className="bg-rose-50 dark:bg-rose-900/10 border border-rose-100 dark:border-rose-500/20 rounded-xl p-6">
@@ -489,7 +476,7 @@ export default function ATSChecker() {
                 </motion.div>
               )}
             </AnimatePresence>
-            
+
           </div>
         </div>
       </div>

@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { UserCog, Users, FileText, Sparkles, Plus, Download, Trash2, ShieldCheck, Check, Edit3, ArrowRight, Calendar, ChevronUp, ChevronDown, LockKeyhole, LogIn } from 'lucide-react';
+import { UserCog, Users, FileText, Sparkles, Plus, Download, Trash2, ShieldCheck, Check, Edit3, ArrowRight, Calendar, ChevronUp, ChevronDown } from 'lucide-react';
 import axios from 'axios';
 import { API_BASE_URL as API_URL } from '../utils/apiConfig';
-import { useAuth } from '../context/AuthContext';
 
 interface EducationItem {
   id: string;
@@ -52,20 +51,44 @@ interface CertificationItem {
 
 export default function CVBuilder() {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const routerLocation = useLocation();
   const initialView = (searchParams.get('view') === 'editor' || routerLocation.hash === '#editor' || routerLocation.state?.view === 'editor')
     ? 'editor'
     : 'landing';
   const [view, setView] = useState<'landing' | 'editor' | 'my-resumes'>(initialView);
-  const [showAuthModal, setShowAuthModal] = useState(false);
 
   useEffect(() => {
     if (searchParams.get('view') === 'editor' || routerLocation.hash === '#editor' || routerLocation.state?.view === 'editor') {
       setView('editor');
     }
   }, [searchParams, routerLocation]);
+
+  // Auto-restore draft from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedDraft = localStorage.getItem('codeskill_cv_draft');
+      if (savedDraft) {
+        const draft = JSON.parse(savedDraft);
+        if (draft.firstName) setFirstName(draft.firstName);
+        if (draft.lastName) setLastName(draft.lastName);
+        if (draft.email) setEmail(draft.email);
+        if (draft.location) setLocation(draft.location);
+        if (draft.phone) setPhone(draft.phone);
+        if (draft.github) setGithub(draft.github);
+        if (draft.linkedin) setLinkedin(draft.linkedin);
+        if (draft.portfolio) setPortfolio(draft.portfolio);
+        if (draft.summary) setSummary(draft.summary);
+        if (draft.educationList?.length) setEducationList(draft.educationList);
+        if (draft.projectList?.length) setProjectList(draft.projectList);
+        if (draft.progLanguages) setProgLanguages(draft.progLanguages);
+        if (draft.libraries) setLibraries(draft.libraries);
+        if (draft.toolsPlatforms) setToolsPlatforms(draft.toolsPlatforms);
+        if (draft.databases) setDatabases(draft.databases);
+        if (draft.certificationList?.length) setCertificationList(draft.certificationList);
+      }
+    } catch (e) {}
+  }, []);
 
   // Personal Information State (matching comprehensive 2-column form layout)
   const [firstName, setFirstName] = useState('');
@@ -210,10 +233,6 @@ export default function CVBuilder() {
   };
 
   const handlePrintCV = () => {
-    if (!user) {
-      setShowAuthModal(true);
-      return;
-    }
     const previewElement = document.getElementById('cv-preview-sheet');
     if (!previewElement) {
       window.print();
@@ -1953,46 +1972,6 @@ export default function CVBuilder() {
           </div>
         </div>
       </div>
-
-      {/* Login Required Modal */}
-      {showAuthModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl relative overflow-hidden text-white"
-          >
-            <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mx-auto mb-5 border border-emerald-500/20">
-              <LockKeyhole className="w-8 h-8" />
-            </div>
-            <h2 className="text-2xl font-black text-white mb-2">Login Required to Download CV</h2>
-            <p className="text-slate-300 text-sm mb-6 leading-relaxed">
-              Please sign in to export your single-page ATS-optimized PDF resume.
-            </p>
-            <div className="space-y-3">
-              <button
-                onClick={() => navigate('/login', { state: { from: '/cv-builder?view=editor' } })}
-                className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-base shadow-lg transition-all flex items-center justify-center gap-2"
-              >
-                <LogIn className="w-5 h-5" />
-                <span>Log In & Download</span>
-              </button>
-              <button
-                onClick={() => navigate('/register', { state: { from: '/cv-builder?view=editor' } })}
-                className="w-full py-3 px-6 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm transition-all"
-              >
-                Create Free Account
-              </button>
-              <button
-                onClick={() => setShowAuthModal(false)}
-                className="w-full py-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors"
-              >
-                Continue Editing
-              </button>
-            </div>
-          </motion.div>
-        </div>
-      )}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import {
   Briefcase,
   MapPin,
@@ -229,6 +230,8 @@ const PROGRESS_STEPS = [
 ];
 
 export default function Jobs() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const initialTab = searchParams.get('tab') === 'tracker' ? 'tracker' : 'browse';
   const [activeTab, setActiveTab] = useState<'browse' | 'tracker'>(initialTab);
@@ -289,6 +292,18 @@ export default function Jobs() {
     parsedJson?: any;
     fileDataUrl?: string;
   } | null>(null);
+
+  // Handle auto-opening job application modal after returning from successful login
+  useEffect(() => {
+    const autoJobId = searchParams.get('autoApply') || sessionStorage.getItem('pending_job_apply');
+    if (user && autoJobId && allJobs.length > 0) {
+      const targetJob = allJobs.find(j => j.id === autoJobId);
+      if (targetJob) {
+        setActiveModalJob(targetJob);
+        sessionStorage.removeItem('pending_job_apply');
+      }
+    }
+  }, [user, searchParams, allJobs]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -378,6 +393,12 @@ export default function Jobs() {
   };
 
   const handleApply = (job: JobOpportunity) => {
+    if (!user) {
+      sessionStorage.setItem('pending_job_apply', job.id);
+      setActiveModalJob(null);
+      navigate('/login', { state: { from: `/jobs?autoApply=${job.id}` } });
+      return;
+    }
     // Add to tracked applications if not already present
     const alreadyTracked = trackedApplications.some(t => t.jobId === job.id);
     if (!alreadyTracked) {

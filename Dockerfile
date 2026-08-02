@@ -23,11 +23,12 @@ RUN apt-get update -y && apt-get install -y openssl ca-certificates && rm -rf /v
 COPY package*.json ./
 COPY backend/package*.json ./backend/
 COPY backend/prisma ./backend/prisma
-RUN npm install --omit=dev && npm cache clean --force
+RUN npm install && npm cache clean --force
 RUN npm run prisma:generate
 
 COPY --from=builder /usr/src/app/backend/dist ./backend/dist
 
+ENV PATH="/usr/src/app/node_modules/.bin:/usr/src/app/backend/node_modules/.bin:${PATH}"
 EXPOSE 5000
 
-CMD ["sh", "-c", "npx --yes prisma db push --schema=backend/prisma/schema.prisma --accept-data-loss && node backend/dist/src/app.js"]
+CMD ["sh", "-c", "npx prisma db push --schema=backend/prisma/schema.prisma --accept-data-loss && node backend/dist/src/app.js"]

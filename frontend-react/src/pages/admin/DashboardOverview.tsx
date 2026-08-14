@@ -66,37 +66,37 @@ export default function DashboardOverview({ setActiveTab }: { setActiveTab?: (ta
       animate="visible"
     >
       <div className="flex justify-between items-center">
-        <motion.h2 variants={itemVariants} className="text-3xl font-bold text-white">Platform Overview</motion.h2>
-        <motion.div variants={itemVariants} className="text-sm text-slate-400 bg-slate-800/50 px-4 py-2 rounded-lg border border-slate-700 backdrop-blur-sm">
+        <motion.h2 variants={itemVariants} className="text-3xl font-bold text-text-inverse">Platform Overview</motion.h2>
+        <motion.div variants={itemVariants} className="text-sm text-text-muted bg-slate-800/50 px-4 py-2 rounded-lg border border-border backdrop-blur-sm">
           Last updated: Just now
         </motion.div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <motion.div variants={itemVariants} whileHover={{ y: -5, scale: 1.02 }} className="bg-[#111827] p-6 rounded-2xl border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.05)] hover:border-emerald-500/40 hover:shadow-[0_0_20px_rgba(16,185,129,0.15)] transition-all duration-300 group">
+        <motion.div variants={itemVariants} whileHover={{ y: -5, scale: 1.02 }} className="bg-[#111827] p-6 rounded-2xl border border-primary/20 shadow-[0_0_15px_rgba(16,185,129,0.05)] hover:border-primary/40 hover:shadow-[0_0_20px_rgba(16,185,129,0.15)] transition-all duration-300 group">
           <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-emerald-500/10 rounded-xl text-emerald-400 group-hover:bg-emerald-500/20 transition-colors">
+            <div className="p-3 bg-primary/10 rounded-xl text-primary group-hover:bg-primary/20 transition-colors">
               <CreditCard className="w-6 h-6" />
             </div>
-            <span className="flex items-center text-emerald-400 text-sm font-bold bg-emerald-500/10 px-2 py-1 rounded-md">
+            <span className="flex items-center text-primary text-sm font-bold bg-primary/10 px-2 py-1 rounded-md">
               <TrendingUp className="w-3 h-3 mr-1" /> +14%
             </span>
           </div>
-          <p className="text-slate-400 text-sm mb-1">Total Revenue</p>
-          <h3 className="text-3xl font-extrabold text-white tracking-tight">₹{stats.revenue.toLocaleString('en-IN')}</h3>
+          <p className="text-text-muted text-sm mb-1">Total Revenue</p>
+          <h3 className="text-3xl font-extrabold text-text-inverse tracking-tight">₹{stats.revenue.toLocaleString('en-IN')}</h3>
         </motion.div>
 
-        <motion.div variants={itemVariants} whileHover={{ y: -5, scale: 1.02 }} className="bg-[#111827] p-6 rounded-2xl border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.05)] hover:border-blue-500/40 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] transition-all duration-300 group">
+        <motion.div variants={itemVariants} whileHover={{ y: -5, scale: 1.02 }} className="bg-[#111827] p-6 rounded-2xl border border-primary/20 shadow-[0_0_15px_rgba(59,130,246,0.05)] hover:border-primary/40 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] transition-all duration-300 group">
           <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-blue-500/10 rounded-xl text-blue-400 group-hover:bg-blue-500/20 transition-colors">
+            <div className="p-3 bg-primary/10 rounded-xl text-primary group-hover:bg-primary/20 transition-colors">
               <BookOpen className="w-6 h-6" />
             </div>
-            <span className="flex items-center text-blue-400 text-sm font-bold bg-blue-500/10 px-2 py-1 rounded-md">
+            <span className="flex items-center text-primary text-sm font-bold bg-primary/10 px-2 py-1 rounded-md">
               <TrendingUp className="w-3 h-3 mr-1" /> +8%
             </span>
           </div>
-          <p className="text-slate-400 text-sm mb-1">Course Enrollments</p>
-          <h3 className="text-3xl font-extrabold text-white tracking-tight">{stats.enrollments}</h3>
+          <p className="text-text-muted text-sm mb-1">Course Enrollments</p>
+          <h3 className="text-3xl font-extrabold text-text-inverse tracking-tight">{stats.enrollments}</h3>
         </motion.div>
 
         <motion.div variants={itemVariants} whileHover={{ y: -5, scale: 1.02 }} className="bg-[#111827] p-6 rounded-2xl border border-rose-500/20 shadow-[0_0_15px_rgba(244,63,94,0.05)] hover:border-rose-500/40 hover:shadow-[0_0_20px_rgba(244,63,94,0.15)] transition-all duration-300 group">
@@ -108,8 +108,8 @@ export default function DashboardOverview({ setActiveTab }: { setActiveTab?: (ta
               <TrendingUp className="w-3 h-3 mr-1" /> +2.4%
             </span>
           </div>
-          <p className="text-slate-400 text-sm mb-1">Registered Users</p>
-          <h3 className="text-3xl font-extrabold text-white tracking-tight">{stats.users.toLocaleString()}</h3>
+          <p className="text-text-muted text-sm mb-1">Registered Users</p>
+          <h3 className="text-3xl font-extrabold text-text-inverse tracking-tight">{stats.users.toLocaleString()}</h3>
         </motion.div>
 
         <motion.div variants={itemVariants} whileHover={{ y: -5, scale: 1.02 }} className="bg-[#111827] p-6 rounded-2xl border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.05)] hover:border-amber-500/40 hover:shadow-[0_0_20px_rgba(245,158,11,0.15)] transition-all duration-300 group">
@@ -117,12 +117,12 @@ export default function DashboardOverview({ setActiveTab }: { setActiveTab?: (ta
             <div className="p-3 bg-amber-500/10 rounded-xl text-amber-400 group-hover:bg-amber-500/20 transition-colors">
               <Activity className="w-6 h-6" />
             </div>
-            <span className="flex items-center text-slate-400 text-sm font-bold bg-slate-800 px-2 py-1 rounded-md">
+            <span className="flex items-center text-text-muted text-sm font-bold bg-slate-800 px-2 py-1 rounded-md">
               Live
             </span>
           </div>
-          <p className="text-slate-400 text-sm mb-1">Active Sandbox Sessions</p>
-          <h3 className="text-3xl font-extrabold text-white tracking-tight">{stats.active}</h3>
+          <p className="text-text-muted text-sm mb-1">Active Sandbox Sessions</p>
+          <h3 className="text-3xl font-extrabold text-text-inverse tracking-tight">{stats.active}</h3>
         </motion.div>
 
         <motion.div 
@@ -135,38 +135,38 @@ export default function DashboardOverview({ setActiveTab }: { setActiveTab?: (ta
             <div className="p-3 bg-purple-500/10 rounded-xl text-purple-400 group-hover:bg-purple-500/20 transition-colors">
               <Building2 className="w-6 h-6" />
             </div>
-            <span className="flex items-center text-slate-400 text-sm font-bold bg-slate-800 px-2 py-1 rounded-md">
+            <span className="flex items-center text-text-muted text-sm font-bold bg-slate-800 px-2 py-1 rounded-md">
               View All
             </span>
           </div>
-          <p className="text-slate-400 text-sm mb-1">Total Colleges</p>
-          <h3 className="text-3xl font-extrabold text-white tracking-tight">{stats.colleges}</h3>
+          <p className="text-text-muted text-sm mb-1">Total Colleges</p>
+          <h3 className="text-3xl font-extrabold text-text-inverse tracking-tight">{stats.colleges}</h3>
         </motion.div>
 
         <motion.div 
           onClick={() => setActiveTab && setActiveTab('users')}
           variants={itemVariants} 
           whileHover={{ y: -5, scale: 1.02 }} 
-          className="bg-[#111827] p-6 rounded-2xl border border-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.05)] hover:border-cyan-500/40 hover:shadow-[0_0_20px_rgba(6,182,212,0.15)] transition-all duration-300 group cursor-pointer"
+          className="bg-[#111827] p-6 rounded-2xl border border-sky-500/20 shadow-[0_0_15px_rgba(6,182,212,0.05)] hover:border-sky-500/40 hover:shadow-[0_0_20px_rgba(6,182,212,0.15)] transition-all duration-300 group cursor-pointer"
         >
           <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-cyan-500/10 rounded-xl text-cyan-400 group-hover:bg-cyan-500/20 transition-colors">
+            <div className="p-3 bg-sky-500/10 rounded-xl text-sky-400 group-hover:bg-sky-500/20 transition-colors">
               <UserCheck className="w-6 h-6" />
             </div>
-            <span className="flex items-center text-slate-400 text-sm font-bold bg-slate-800 px-2 py-1 rounded-md">
+            <span className="flex items-center text-text-muted text-sm font-bold bg-slate-800 px-2 py-1 rounded-md">
               View All
             </span>
           </div>
-          <p className="text-slate-400 text-sm mb-1">Total Instructors</p>
-          <h3 className="text-3xl font-extrabold text-white tracking-tight">{stats.instructors}</h3>
+          <p className="text-text-muted text-sm mb-1">Total Instructors</p>
+          <h3 className="text-3xl font-extrabold text-text-inverse tracking-tight">{stats.instructors}</h3>
         </motion.div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <motion.div variants={itemVariants} className="bg-[#111827] p-6 rounded-2xl border border-slate-800 min-h-[350px] relative overflow-hidden group hover:border-slate-700 transition-colors">
-           <h4 className="text-xl font-bold text-white mb-6 flex items-center">
+        <motion.div variants={itemVariants} className="bg-[#111827] p-6 rounded-2xl border border-border min-h-[350px] relative overflow-hidden group hover:border-border transition-colors">
+           <h4 className="text-xl font-bold text-text-inverse mb-6 flex items-center">
              Revenue Growth
-             <span className="ml-3 text-xs font-medium bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded-full border border-emerald-500/20">This Year</span>
+             <span className="ml-3 text-xs font-medium bg-primary/10 text-primary px-2 py-1 rounded-full border border-primary/20">This Year</span>
            </h4>
            <div className="h-[250px] w-full">
              <ResponsiveContainer width="100%" height="100%">
@@ -190,15 +190,15 @@ export default function DashboardOverview({ setActiveTab }: { setActiveTab?: (ta
            </div>
         </motion.div>
         
-        <motion.div variants={itemVariants} className="bg-[#111827] p-6 rounded-2xl border border-slate-800 hover:border-slate-700 transition-colors flex flex-col">
-           <h4 className="text-lg font-bold text-white mb-6 flex items-center">
+        <motion.div variants={itemVariants} className="bg-[#111827] p-6 rounded-2xl border border-border hover:border-border transition-colors flex flex-col">
+           <h4 className="text-lg font-bold text-text-inverse mb-6 flex items-center">
              Recent System Activity
              <div className="ml-auto flex items-center space-x-2">
                <span className="flex h-2 w-2 relative">
-                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                 <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                </span>
-               <span className="text-xs text-slate-400">Live</span>
+               <span className="text-xs text-text-muted">Live</span>
              </div>
            </h4>
            <div className="space-y-4 overflow-y-auto pr-2 custom-scrollbar flex-1">
@@ -206,18 +206,18 @@ export default function DashboardOverview({ setActiveTab }: { setActiveTab?: (ta
                <motion.div 
                  key={i} 
                  whileHover={{ x: 5, backgroundColor: 'rgba(31, 41, 55, 0.5)' }}
-                 className="flex items-center justify-between text-sm p-3 rounded-xl transition-all cursor-pointer border border-transparent hover:border-slate-800"
+                 className="flex items-center justify-between text-sm p-3 rounded-xl transition-all cursor-pointer border border-transparent hover:border-border"
                >
                  <div className="flex items-center space-x-4">
-                   <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/20">
+                   <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
                      <Users className="w-4 h-4" />
                    </div>
                    <div className="flex flex-col">
-                     <span className="text-slate-200 font-medium">New Enrollment</span>
-                     <span className="text-slate-400 text-xs mt-0.5">User {Math.floor(Math.random() * 9000) + 1000} enrolled in "System Design Masterclass"</span>
+                     <span className="text-text-secondary font-medium">New Enrollment</span>
+                     <span className="text-text-muted text-xs mt-0.5">User {Math.floor(Math.random() * 9000) + 1000} enrolled in "System Design Masterclass"</span>
                    </div>
                  </div>
-                 <span className="text-slate-500 text-xs font-mono bg-slate-800/50 px-2 py-1 rounded-md">{i * 12}m</span>
+                 <span className="text-text-muted text-xs font-mono bg-slate-800/50 px-2 py-1 rounded-md">{i * 12}m</span>
                </motion.div>
              ))}
            </div>

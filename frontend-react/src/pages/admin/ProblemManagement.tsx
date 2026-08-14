@@ -179,17 +179,7 @@ export default function ProblemManagement() {
   });
   const [testCases, setTestCases] = useState<{input: string, output: string, isHidden: boolean}[]>([]);
 
-  const MOCK_PROBLEMS = [
-    {
-      _id: "p1", title: "Two Sum", slug: "two-sum", difficulty: "Easy",
-      topicTags: [{ name: "Array" }, { name: "HashMap" }],
-      content: "Given an integer array nums and an integer target, return the indices of the two numbers such that they add up to target.",
-      starterCode: { javascript: "function twoSum(nums, target) {\n    return [];\n}", cpp: "#include <vector>\nusing namespace std;\nvector<int> twoSum(vector<int>& nums, int target){ return {}; }", python: "def twoSum(nums, target):\n    pass", java: "class Solution {\n    public int[] twoSum(int[] nums, int target) {\n        return new int[]{};\n    }\n}" },
-    },
-    { _id: "p2", title: "Add Two Numbers", difficulty: "Medium", topicTags: [{ name: "Linked List" }, { name: "Math" }] },
-    { _id: "p3", title: "Median of Two Sorted Arrays", difficulty: "Hard", topicTags: [{ name: "Array" }, { name: "Binary Search" }] },
-    { _id: "p4", title: "Longest Palindromic Substring", difficulty: "Medium", topicTags: [{ name: "String" }, { name: "DP" }] },
-  ];
+  const MOCK_PROBLEMS: any[] = [];
 
   useEffect(() => {
     axios.get(getApiUrl("/api/v1/questions?limit=50"))
@@ -377,23 +367,23 @@ export default function ProblemManagement() {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-3">
-            <button onClick={handleCancel} className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors">
+            <button onClick={handleCancel} className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-text-muted hover:text-text-inverse transition-colors">
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div>
-              <h2 className="text-2xl font-bold text-white">
+              <h2 className="text-2xl font-bold text-text-inverse">
                 {isEditMode ? "Edit Problem" : "Add New Problem"}
               </h2>
-              <p className="text-slate-400 text-sm">
+              <p className="text-text-muted text-sm">
                 {isEditMode ? "Update the problem details and save." : "Fill in the fields to create a new problem."}
               </p>
             </div>
           </div>
           <div className="flex space-x-3">
-            <button onClick={handleCancel} className="px-5 py-2.5 rounded-xl font-semibold text-slate-400 hover:text-white border border-slate-700 hover:border-slate-500 transition-colors">
+            <button onClick={handleCancel} className="px-5 py-2.5 rounded-xl font-semibold text-text-muted hover:text-text-inverse border border-border hover:border-slate-500 transition-colors">
               Cancel
             </button>
-            <button onClick={handleSave} className="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2.5 rounded-xl font-bold flex items-center space-x-2 shadow-lg shadow-emerald-500/20 transition-colors">
+            <button onClick={handleSave} className="bg-primary hover:bg-primary text-text-inverse px-6 py-2.5 rounded-xl font-bold flex items-center space-x-2 shadow-lg shadow-blue-500/20 transition-colors">
               <Save className="w-4 h-4" />
               <span>{isEditMode ? "Save Changes" : "Create Problem"}</span>
             </button>
@@ -401,21 +391,21 @@ export default function ProblemManagement() {
         </div>
 
         {/* Main Form */}
-        <div className="bg-[#111827] rounded-3xl p-8 border border-slate-800 shadow-xl space-y-6">
+        <div className="bg-[#111827] rounded-3xl p-8 border border-border shadow-xl space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-bold text-slate-400 mb-2">Problem Title *</label>
+              <label className="block text-sm font-bold text-text-muted mb-2">Problem Title *</label>
               <input
                 type="text" value={title} onChange={e => setTitle(e.target.value)}
-                className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500"
+                className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
                 placeholder="e.g. Merge K Sorted Lists"
               />
             </div>
             <div>
-              <label className="block text-sm font-bold text-slate-400 mb-2">Difficulty</label>
+              <label className="block text-sm font-bold text-text-muted mb-2">Difficulty</label>
               <select
                 value={difficulty} onChange={e => setDifficulty(e.target.value)}
-                className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500"
+                className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
               >
                 <option value="Easy">Easy</option>
                 <option value="Medium">Medium</option>
@@ -425,29 +415,29 @@ export default function ProblemManagement() {
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-slate-400 mb-2">Problem Description * (Markdown supported)</label>
+            <label className="block text-sm font-bold text-text-muted mb-2">Problem Description * (Markdown supported)</label>
             <textarea
               value={description} onChange={e => setDescription(e.target.value)}
               rows={6}
-              className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 font-mono text-sm resize-none"
+              className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary font-mono text-sm resize-none"
               placeholder="Write the problem statement, input/output format, constraints, and examples..."
             />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-bold text-slate-400 mb-2">Topic Tags (comma separated)</label>
+              <label className="block text-sm font-bold text-text-muted mb-2">Topic Tags (comma separated)</label>
               <input
                 type="text" value={topics} onChange={e => setTopics(e.target.value)}
-                className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500"
+                className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
                 placeholder="Array, Dynamic Programming"
               />
             </div>
             <div>
-              <label className="block text-sm font-bold text-slate-400 mb-2">Company Tags (comma separated)</label>
+              <label className="block text-sm font-bold text-text-muted mb-2">Company Tags (comma separated)</label>
               <input
                 type="text" value={companies} onChange={e => setCompanies(e.target.value)}
-                className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500"
+                className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
                 placeholder="Google, Amazon, Meta"
               />
             </div>
@@ -455,8 +445,8 @@ export default function ProblemManagement() {
 
           {/* Starter Code Section */}
           <div className="space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-              <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Starter Code</h3>
+            <div className="flex items-center justify-between border-b border-border pb-2">
+              <h3 className="text-sm font-bold text-text-muted uppercase tracking-widest">Starter Code</h3>
               <div className="flex space-x-2">
                 <button
                   onClick={() => {
@@ -470,7 +460,7 @@ export default function ProblemManagement() {
                       }
                     }
                   }}
-                  className="flex items-center space-x-1.5 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 hover:text-emerald-300 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors"
+                  className="flex items-center space-x-1.5 bg-primary/10 text-primary hover:bg-primary/20 hover:text-blue-300 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Add Language</span>
@@ -523,14 +513,14 @@ export default function ProblemManagement() {
               {Object.entries(starterCodes).map(([lang, code]) => (
                 <div key={lang} className="relative">
                   <div className="flex items-center justify-between mb-1.5">
-                    <label className="block text-xs font-bold text-slate-500 capitalize">{lang}</label>
+                    <label className="block text-xs font-bold text-text-muted capitalize">{lang}</label>
                     <button 
                       onClick={() => {
                         const newCodes = { ...starterCodes };
                         delete newCodes[lang];
                         setStarterCodes(newCodes);
                       }}
-                      className="text-slate-500 hover:text-rose-500 transition-colors"
+                      className="text-text-muted hover:text-rose-500 transition-colors"
                       title="Remove language"
                     >
                       <X className="w-3.5 h-3.5" />
@@ -539,7 +529,7 @@ export default function ProblemManagement() {
                   <textarea
                     value={code} onChange={e => setStarterCodes(prev => ({ ...prev, [lang]: e.target.value }))}
                     rows={5}
-                    className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-emerald-500 font-mono text-xs resize-none"
+                    className="w-full bg-[#0a1128] border border-border rounded-xl px-3 py-2.5 text-text-inverse focus:outline-none focus:border-primary font-mono text-xs resize-none"
                     placeholder={`Write starter code for ${lang}...`}
                   />
                 </div>
@@ -549,11 +539,11 @@ export default function ProblemManagement() {
 
           {/* Test Cases Section */}
           <div className="space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-              <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Test Cases</h3>
+            <div className="flex items-center justify-between border-b border-border pb-2">
+              <h3 className="text-sm font-bold text-text-muted uppercase tracking-widest">Test Cases</h3>
               <button
                 onClick={() => setTestCases([...testCases, { input: "", output: "", isHidden: false }])}
-                className="flex items-center space-x-1.5 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 hover:text-emerald-300 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors"
+                className="flex items-center space-x-1.5 bg-primary/10 text-primary hover:bg-primary/20 hover:text-blue-300 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Add Test Case</span>
@@ -562,11 +552,11 @@ export default function ProblemManagement() {
             
             <div className="space-y-3">
               {testCases.map((tc, idx) => (
-                <div key={idx} className="bg-[#1a2333] border border-slate-700 rounded-xl p-4 relative">
+                <div key={idx} className="bg-[#1a2333] border border-border rounded-xl p-4 relative">
                   <div className="flex justify-between items-center mb-3">
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Test Case {idx + 1}</span>
+                    <span className="text-xs font-bold text-text-muted uppercase tracking-wider">Test Case {idx + 1}</span>
                     <div className="flex items-center space-x-4">
-                      <label className="flex items-center space-x-2 text-xs font-semibold text-slate-300 cursor-pointer">
+                      <label className="flex items-center space-x-2 text-xs font-semibold text-text-secondary cursor-pointer">
                         <input
                           type="checkbox"
                           checked={tc.isHidden}
@@ -575,7 +565,7 @@ export default function ProblemManagement() {
                             newTc[idx].isHidden = e.target.checked;
                             setTestCases(newTc);
                           }}
-                          className="w-3.5 h-3.5 rounded border-slate-600 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-slate-900 bg-slate-800"
+                          className="w-3.5 h-3.5 rounded border-slate-600 text-primary focus:ring-blue-500 focus:ring-offset-slate-900 bg-slate-800"
                         />
                         <span>Hidden Test</span>
                       </label>
@@ -585,7 +575,7 @@ export default function ProblemManagement() {
                           newTc.splice(idx, 1);
                           setTestCases(newTc);
                         }}
-                        className="text-slate-500 hover:text-rose-500 transition-colors p-1"
+                        className="text-text-muted hover:text-rose-500 transition-colors p-1"
                         title="Remove Test Case"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -594,7 +584,7 @@ export default function ProblemManagement() {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 mb-1">Input</label>
+                      <label className="block text-xs font-semibold text-text-muted mb-1">Input</label>
                       <textarea
                         value={tc.input}
                         onChange={e => {
@@ -603,12 +593,12 @@ export default function ProblemManagement() {
                           setTestCases(newTc);
                         }}
                         rows={2}
-                        className="w-full bg-[#0a1128] border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-emerald-500 font-mono text-sm resize-y min-h-[60px]"
+                        className="w-full bg-[#0a1128] border border-border rounded-lg px-3 py-2 text-text-inverse focus:outline-none focus:border-primary font-mono text-sm resize-y min-h-[60px]"
                         placeholder="e.g. nums = [2,7,11,15], target = 9"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 mb-1">Expected Output</label>
+                      <label className="block text-xs font-semibold text-text-muted mb-1">Expected Output</label>
                       <textarea
                         value={tc.output}
                         onChange={e => {
@@ -617,7 +607,7 @@ export default function ProblemManagement() {
                           setTestCases(newTc);
                         }}
                         rows={2}
-                        className="w-full bg-[#0a1128] border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-emerald-500 font-mono text-sm resize-y min-h-[60px]"
+                        className="w-full bg-[#0a1128] border border-border rounded-lg px-3 py-2 text-text-inverse focus:outline-none focus:border-primary font-mono text-sm resize-y min-h-[60px]"
                         placeholder="e.g. [0,1]"
                       />
                     </div>
@@ -625,9 +615,9 @@ export default function ProblemManagement() {
                 </div>
               ))}
               {testCases.length === 0 && (
-                <div className="text-center py-6 border-2 border-dashed border-slate-800 rounded-xl">
-                  <p className="text-sm text-slate-500">No test cases added yet.</p>
-                  <p className="text-xs text-slate-600 mt-1">Uploaded test cases will appear here, or you can add them manually.</p>
+                <div className="text-center py-6 border-2 border-dashed border-border rounded-xl">
+                  <p className="text-sm text-text-muted">No test cases added yet.</p>
+                  <p className="text-xs text-text-secondary mt-1">Uploaded test cases will appear here, or you can add them manually.</p>
                 </div>
               )}
             </div>
@@ -642,8 +632,8 @@ export default function ProblemManagement() {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold text-white mb-1">Coding Problems</h2>
-          <p className="text-slate-400">Manage sandbox coding challenges and their test cases.</p>
+          <h2 className="text-3xl font-bold text-text-inverse mb-1">Coding Problems</h2>
+          <p className="text-text-muted">Manage sandbox coding challenges and their test cases.</p>
         </div>
         <div className="flex space-x-3">
           <button
@@ -653,28 +643,28 @@ export default function ProblemManagement() {
                 setProblems(problems.filter(p => !isCustomProblem(p._id || p.id)));
               }
             }}
-            className="flex items-center space-x-2 bg-rose-600 hover:bg-rose-500 text-white px-4 py-2 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(225,29,72,0.3)]"
+            className="flex items-center space-x-2 bg-rose-600 hover:bg-rose-500 text-text-inverse px-4 py-2 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(225,29,72,0.3)]"
           >
             <Trash2 className="w-5 h-5" />
             <span>Clear Custom</span>
           </button>
           <button
             onClick={() => setShowUploadModal(true)}
-            className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(37,99,235,0.3)]"
+            className="flex items-center space-x-2 bg-primary hover:bg-primary text-text-inverse px-4 py-2 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(37,99,235,0.3)]"
           >
             <Upload className="w-5 h-5" />
             <span>Upload Questions</span>
           </button>
           <button
             onClick={() => setShowGeneratorModal(true)}
-            className="flex items-center space-x-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white px-4 py-2 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(139,92,246,0.3)]"
+            className="flex items-center space-x-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-text-inverse px-4 py-2 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(139,92,246,0.3)]"
           >
             <Wand2 className="w-5 h-5" />
             <span>AI Auto-Generator</span>
           </button>
           <button
             onClick={openCreate}
-            className="flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+            className="flex items-center space-x-2 bg-primary hover:bg-primary text-text-inverse px-4 py-2 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)]"
           >
             <Plus className="w-5 h-5" />
             <span>Add Problem</span>
@@ -682,22 +672,22 @@ export default function ProblemManagement() {
         </div>
       </div>
 
-      <div className="bg-[#111827] border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-        <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
+      <div className="bg-[#111827] border border-border rounded-2xl overflow-hidden shadow-xl">
+        <div className="p-4 border-b border-border flex justify-between items-center bg-slate-900/50">
           <div className="relative w-80">
             <input
               type="text" placeholder="Search problems..."
               value={search} onChange={e => setSearch(e.target.value)}
-              className="w-full bg-[#1a2333] border border-slate-700 rounded-lg pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-inverse focus:outline-none focus:border-primary"
             />
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
           </div>
-          <span className="text-sm font-medium text-slate-400">Total: {filtered.length} problems</span>
+          <span className="text-sm font-medium text-text-muted">Total: {filtered.length} problems</span>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-300">
-            <thead className="bg-[#1a2333] text-slate-400 uppercase text-xs font-semibold">
+          <table className="w-full text-left text-sm text-text-secondary">
+            <thead className="bg-[#1a2333] text-text-muted uppercase text-xs font-semibold">
               <tr>
                 <th className="px-6 py-4">Title</th>
                 <th className="px-6 py-4">Difficulty</th>
@@ -708,18 +698,18 @@ export default function ProblemManagement() {
             </thead>
             <tbody className="divide-y divide-slate-800">
               {loading ? (
-                <tr><td colSpan={5} className="px-6 py-8 text-center text-slate-500">Loading problems...</td></tr>
+                <tr><td colSpan={5} className="px-6 py-8 text-center text-text-muted">Loading problems...</td></tr>
               ) : filtered.map((problem, idx) => (
                 <tr key={problem._id || problem.id || `fallback-key-${idx}`} className="hover:bg-slate-800/30 transition-colors">
-                  <td className="px-6 py-4 font-medium text-white">
+                  <td className="px-6 py-4 font-medium text-text-inverse">
                     <div className="flex items-center space-x-3">
-                      <Code2 className="w-5 h-5 text-emerald-500 shrink-0" />
+                      <Code2 className="w-5 h-5 text-primary shrink-0" />
                       <span className="line-clamp-1">{problem.title}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <span className={`px-2 py-1 rounded text-xs font-bold ${
-                      problem.difficulty === "Easy" ? "bg-emerald-500/10 text-emerald-400" :
+                      problem.difficulty === "Easy" ? "bg-primary/10 text-primary" :
                       problem.difficulty === "Medium" ? "bg-amber-500/10 text-amber-400" :
                       "bg-rose-500/10 text-rose-500"
                     }`}>
@@ -729,24 +719,24 @@ export default function ProblemManagement() {
                   <td className="px-6 py-4">
                     <div className="flex gap-1.5 flex-wrap">
                       {(problem.topicTags || []).slice(0, 2).map((tag: any, idx: number) => (
-                        <span key={idx} className="bg-slate-800 text-slate-300 text-[10px] px-2 py-1 rounded-md uppercase tracking-wider">
+                        <span key={idx} className="bg-slate-800 text-text-secondary text-[10px] px-2 py-1 rounded-md uppercase tracking-wider">
                           {tag.name || tag}
                         </span>
                       ))}
-                      {(problem.topicTags?.length > 2) && <span className="text-xs text-slate-500">+{problem.topicTags.length - 2}</span>}
+                      {(problem.topicTags?.length > 2) && <span className="text-xs text-text-muted">+{problem.topicTags.length - 2}</span>}
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     {isCustomProblem(problem._id || problem.id)
-                      ? <span className="text-xs px-2 py-1 rounded-md bg-emerald-500/10 text-emerald-400 font-medium">Custom</span>
-                      : <span className="text-xs px-2 py-1 rounded-md bg-slate-700 text-slate-400 font-medium">Default</span>
+                      ? <span className="text-xs px-2 py-1 rounded-md bg-primary/10 text-primary font-medium">Custom</span>
+                      : <span className="text-xs px-2 py-1 rounded-md bg-slate-700 text-text-muted font-medium">Default</span>
                     }
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end space-x-1">
                       <button
                         onClick={() => openEdit(problem)}
-                        className="p-2 text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
+                        className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
                         title={isCustomProblem(problem._id || problem.id) ? "Edit Problem" : "View Problem (read-only)"}
                       >
                         <Edit className="w-4 h-4" />
@@ -763,7 +753,7 @@ export default function ProblemManagement() {
                 </tr>
               ))}
               {!loading && filtered.length === 0 && (
-                <tr><td colSpan={5} className="px-6 py-12 text-center text-slate-500">No problems found.</td></tr>
+                <tr><td colSpan={5} className="px-6 py-12 text-center text-text-muted">No problems found.</td></tr>
               )}
             </tbody>
           </table>
@@ -774,8 +764,8 @@ export default function ProblemManagement() {
       {deleteConfirmId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setDeleteConfirmId(null)} />
-          <div className="relative bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl p-6 w-full max-w-md">
-            <button onClick={() => setDeleteConfirmId(null)} className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">
+          <div className="relative bg-slate-900 border border-border rounded-2xl shadow-2xl p-6 w-full max-w-md">
+            <button onClick={() => setDeleteConfirmId(null)} className="absolute top-4 right-4 p-1.5 text-text-muted hover:text-text-inverse hover:bg-slate-800 rounded-lg transition-colors">
               <X className="w-4 h-4" />
             </button>
 
@@ -786,12 +776,12 @@ export default function ProblemManagement() {
                     <AlertTriangle className="w-6 h-6 text-amber-500" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-white">Protected Problem</h3>
-                    <p className="mt-1 text-sm text-slate-400">This is a <span className="text-amber-400 font-semibold">default/backend problem</span> and cannot be deleted. Only custom problems you've created can be removed.</p>
+                    <h3 className="text-lg font-bold text-text-inverse">Protected Problem</h3>
+                    <p className="mt-1 text-sm text-text-muted">This is a <span className="text-amber-400 font-semibold">default/backend problem</span> and cannot be deleted. Only custom problems you've created can be removed.</p>
                   </div>
                 </div>
                 <div className="mt-6 flex justify-end">
-                  <button onClick={() => setDeleteConfirmId(null)} className="px-5 py-2.5 text-sm font-semibold rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors">Close</button>
+                  <button onClick={() => setDeleteConfirmId(null)} className="px-5 py-2.5 text-sm font-semibold rounded-xl border border-border text-text-secondary hover:bg-slate-800 transition-colors">Close</button>
                 </div>
               </>
             ) : (
@@ -801,13 +791,13 @@ export default function ProblemManagement() {
                     <AlertTriangle className="w-6 h-6 text-rose-500" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-white">Delete Problem?</h3>
-                    <p className="mt-1 text-sm text-slate-400">This action is <span className="text-rose-400 font-semibold">permanent</span>. The problem will be removed immediately.</p>
+                    <h3 className="text-lg font-bold text-text-inverse">Delete Problem?</h3>
+                    <p className="mt-1 text-sm text-text-muted">This action is <span className="text-rose-400 font-semibold">permanent</span>. The problem will be removed immediately.</p>
                   </div>
                 </div>
                 <div className="mt-6 flex items-center justify-end space-x-3">
-                  <button onClick={() => setDeleteConfirmId(null)} className="px-5 py-2.5 text-sm font-semibold rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors">Cancel</button>
-                  <button onClick={confirmDelete} className="px-5 py-2.5 text-sm font-semibold rounded-xl bg-rose-600 hover:bg-rose-500 text-white flex items-center space-x-2 shadow-lg shadow-rose-500/20 transition-colors">
+                  <button onClick={() => setDeleteConfirmId(null)} className="px-5 py-2.5 text-sm font-semibold rounded-xl border border-border text-text-secondary hover:bg-slate-800 transition-colors">Cancel</button>
+                  <button onClick={confirmDelete} className="px-5 py-2.5 text-sm font-semibold rounded-xl bg-rose-600 hover:bg-rose-500 text-text-inverse flex items-center space-x-2 shadow-lg shadow-rose-500/20 transition-colors">
                     <Trash2 className="w-4 h-4" />
                     <span>Delete Problem</span>
                   </button>
@@ -821,28 +811,28 @@ export default function ProblemManagement() {
       {/* Upload Questions Modal */}
       {showUploadModal && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-[#111827] border border-slate-800 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden relative">
-            <div className="p-6 border-b border-slate-800 flex justify-between items-center bg-gradient-to-r from-blue-900/20 to-cyan-900/20">
+          <div className="bg-[#111827] border border-border rounded-3xl w-full max-w-md shadow-2xl overflow-hidden relative">
+            <div className="p-6 border-b border-border flex justify-between items-center bg-gradient-to-r from-blue-900/20 to-sky-900/20">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center shadow-lg">
-                  <Upload className="w-5 h-5 text-white" />
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-sky-600 flex items-center justify-center shadow-lg">
+                  <Upload className="w-5 h-5 text-text-inverse" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-white">Upload Questions</h3>
+                  <h3 className="text-xl font-bold text-text-inverse">Upload Questions</h3>
                   <p className="text-xs text-blue-300">Import PDF or JSON file</p>
                 </div>
               </div>
-              <button onClick={() => setShowUploadModal(false)} disabled={isUploading} className="text-slate-400 hover:text-white transition-colors">
+              <button onClick={() => setShowUploadModal(false)} disabled={isUploading} className="text-text-muted hover:text-text-inverse transition-colors">
                 <X className="w-6 h-6" />
               </button>
             </div>
             
             <div className="p-6 space-y-5">
                <div>
-                <label className="block text-sm font-bold text-slate-400 mb-2">Gemini API Key (Required for PDF)</label>
-                <input type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500" placeholder="AIzaSy..." disabled={isUploading} />
+                <label className="block text-sm font-bold text-text-muted mb-2">Gemini API Key (Required for PDF)</label>
+                <input type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary" placeholder="AIzaSy..." disabled={isUploading} />
               </div>
-              <div className="border-2 border-dashed border-slate-700 hover:border-blue-500 transition-colors rounded-2xl p-8 flex flex-col items-center justify-center text-center group cursor-pointer relative overflow-hidden">
+              <div className="border-2 border-dashed border-border hover:border-primary transition-colors rounded-2xl p-8 flex flex-col items-center justify-center text-center group cursor-pointer relative overflow-hidden">
                 <input 
                   type="file" 
                   accept=".json,.pdf" 
@@ -853,8 +843,8 @@ export default function ProblemManagement() {
                 
                 {isUploading ? (
                   <div className="flex flex-col items-center space-y-3">
-                    <Loader2 className="w-10 h-10 text-blue-500 animate-spin" />
-                    <p className="text-slate-300 font-medium text-sm">Processing file...</p>
+                    <Loader2 className="w-10 h-10 text-primary animate-spin" />
+                    <p className="text-text-secondary font-medium text-sm">Processing file...</p>
                   </div>
                 ) : (
                   <>
@@ -862,8 +852,8 @@ export default function ProblemManagement() {
                       <FileJson className="w-10 h-10 text-amber-500 group-hover:scale-110 transition-transform" />
                       <FileText className="w-10 h-10 text-rose-500 group-hover:scale-110 transition-transform" />
                     </div>
-                    <h4 className="text-white font-bold mb-1">Click or drag file to upload</h4>
-                    <p className="text-xs text-slate-400 max-w-[200px]">Supports structured JSON files or unstructured PDF documents</p>
+                    <h4 className="text-text-inverse font-bold mb-1">Click or drag file to upload</h4>
+                    <p className="text-xs text-text-muted max-w-[200px]">Supports structured JSON files or unstructured PDF documents</p>
                   </>
                 )}
               </div>
@@ -875,49 +865,49 @@ export default function ProblemManagement() {
       {/* AI Generator Modal */}
       {showGeneratorModal && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-[#111827] border border-slate-800 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden">
-            <div className="p-6 border-b border-slate-800 flex justify-between items-center bg-gradient-to-r from-indigo-900/20 to-purple-900/20">
+          <div className="bg-[#111827] border border-border rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden">
+            <div className="p-6 border-b border-border flex justify-between items-center bg-gradient-to-r from-indigo-900/20 to-purple-900/20">
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
-                  <Wand2 className="w-5 h-5 text-white" />
+                  <Wand2 className="w-5 h-5 text-text-inverse" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-white">AI Problem Generator</h3>
+                  <h3 className="text-xl font-bold text-text-inverse">AI Problem Generator</h3>
                   <p className="text-xs text-indigo-300">Generate 100s of problems instantly</p>
                 </div>
               </div>
-              <button onClick={() => setShowGeneratorModal(false)} className="text-slate-400 hover:text-white transition-colors">
+              <button onClick={() => setShowGeneratorModal(false)} className="text-text-muted hover:text-text-inverse transition-colors">
                 <X className="w-6 h-6" />
               </button>
             </div>
             <div className="p-6 space-y-5">
               <div>
-                <label className="block text-sm font-bold text-slate-400 mb-2">Topic</label>
-                <input type="text" value={genTopic} onChange={e => setGenTopic(e.target.value)} className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500" placeholder="e.g. Arrays, Dynamic Programming" />
+                <label className="block text-sm font-bold text-text-muted mb-2">Topic</label>
+                <input type="text" value={genTopic} onChange={e => setGenTopic(e.target.value)} className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500" placeholder="e.g. Arrays, Dynamic Programming" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-bold text-slate-400 mb-2">Difficulty</label>
-                  <select value={genDifficulty} onChange={e => setGenDifficulty(e.target.value)} className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500">
+                  <label className="block text-sm font-bold text-text-muted mb-2">Difficulty</label>
+                  <select value={genDifficulty} onChange={e => setGenDifficulty(e.target.value)} className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500">
                     <option value="Easy">Easy</option>
                     <option value="Medium">Medium</option>
                     <option value="Hard">Hard</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-slate-400 mb-2">Count</label>
-                  <input type="number" min="1" max="100" value={genCount} onChange={e => setGenCount(e.target.value)} className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500" />
+                  <label className="block text-sm font-bold text-text-muted mb-2">Count</label>
+                  <input type="number" min="1" max="100" value={genCount} onChange={e => setGenCount(e.target.value)} className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500" />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-400 mb-2">Gemini API Key</label>
-                <input type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500" placeholder="AIzaSy..." />
-                <p className="text-xs text-slate-500 mt-2">Your API key is used only locally in your browser.</p>
+                <label className="block text-sm font-bold text-text-muted mb-2">Gemini API Key</label>
+                <input type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500" placeholder="AIzaSy..." />
+                <p className="text-xs text-text-muted mt-2">Your API key is used only locally in your browser.</p>
               </div>
             </div>
-            <div className="p-6 border-t border-slate-800 bg-[#0a1128]/50 flex justify-end space-x-3">
-              <button onClick={() => setShowGeneratorModal(false)} disabled={isGenerating} className="px-5 py-2.5 rounded-xl font-bold text-slate-400 hover:text-white transition-colors">Cancel</button>
-              <button onClick={handleGenerate} disabled={isGenerating} className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white px-6 py-2.5 rounded-xl font-bold flex items-center shadow-lg shadow-indigo-500/20 disabled:opacity-50 transition-all">
+            <div className="p-6 border-t border-border bg-[#0a1128]/50 flex justify-end space-x-3">
+              <button onClick={() => setShowGeneratorModal(false)} disabled={isGenerating} className="px-5 py-2.5 rounded-xl font-bold text-text-muted hover:text-text-inverse transition-colors">Cancel</button>
+              <button onClick={handleGenerate} disabled={isGenerating} className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-text-inverse px-6 py-2.5 rounded-xl font-bold flex items-center shadow-lg shadow-indigo-500/20 disabled:opacity-50 transition-all">
                 {isGenerating ? <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Generating...</> : <><Wand2 className="w-5 h-5 mr-2" /> Generate Now</>}
               </button>
             </div>

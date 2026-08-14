@@ -15,7 +15,7 @@ export const COURSES_DATA = {
     price: "₹4,999",
     tags: ["MERN Stack", "Projects", "Live Classes"],
     icon: MonitorPlay,
-    color: "from-blue-500 to-cyan-400",
+    color: "from-primary to-sky-400",
     image: "/images/fullstack.png",
     bullets: [
       "Master the MERN stack from the ground up.",
@@ -107,7 +107,7 @@ export const COURSES_DATA = {
     price: "₹3,499",
     tags: ["React", "Node.js", "Full Stack"],
     icon: MonitorPlay,
-    color: "from-emerald-500 to-teal-400",
+    color: "from-primary to-sky-400",
     image: "/images/fullstack.png",
     bullets: [
       "Master modern UI design with React and Tailwind CSS.",

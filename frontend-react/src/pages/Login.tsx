@@ -6,8 +6,6 @@ import { getApiUrl } from "../utils/apiConfig";
 import { Code2, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
 import { Turnstile } from '@marsidev/react-turnstile';
-import { useGoogleLogin } from '@react-oauth/google';
-
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -65,7 +63,7 @@ export default function LoginPage() {
 
       const { accessToken, refreshToken, user } = res.data;
       login(accessToken, refreshToken, user);
-      navigate("/");
+      navigate("/dashboard");
     } catch (err: any) {
       setError(err.response?.data?.error || "Failed to login. Please try again.");
     } finally {
@@ -73,130 +71,150 @@ export default function LoginPage() {
     }
   };
 
-  const googleLogin = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
-      setIsLoading(true);
-      setError("");
-      try {
-        const res = await axios.post(getApiUrl("/api/v1/auth/google"), {
-          token: tokenResponse.access_token,
-        });
-        const { accessToken, refreshToken, user } = res.data;
-        login(accessToken, refreshToken, user);
-        navigate("/");
-      } catch (err: any) {
-        setError(err.response?.data?.details || err.response?.data?.error || "Google login failed.");
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    onError: () => setError("Google login failed."),
-  });
 
   return (
-    <div className="flex-grow flex items-center justify-center relative overflow-hidden bg-slate-50 dark:bg-slate-950 px-4">
-      {/* Background orbs */}
-      <div className="absolute top-1/4 left-1/4 w-[40%] h-[40%] bg-emerald-600/20 rounded-full blur-[100px] pointer-events-none"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-[40%] h-[40%] bg-teal-600/20 rounded-full blur-[100px] pointer-events-none"></div>
+    <div className="flex-grow min-h-[calc(100vh-4rem)] flex w-full">
+      {/* Left Side: Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center bg-slate-50 relative p-6 lg:p-12 overflow-hidden">
+        {/* Subtle background nodes pattern (simulated with CSS or existing grid) */}
+        <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none"></div>
+        <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-100 rounded-full blur-[100px] pointer-events-none"></div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-sm glass-card rounded-2xl p-6 md:p-7 z-10 border border-slate-200 dark:border-slate-800 shadow-xl"
-      >
-        <div className="flex flex-col items-center mb-6">
-          <div className="h-10 w-10 bg-emerald-600/10 dark:bg-emerald-500/10 border border-emerald-600/30 dark:border-emerald-500/20 rounded-xl flex items-center justify-center text-emerald-700 dark:text-emerald-400 mb-3">
-            <Code2 className="h-5 w-5" />
-          </div>
-          <h1 className="text-xl font-bold text-slate-950 dark:text-slate-50">Welcome Back</h1>
-          <p className="text-slate-700 dark:text-slate-400 text-sm mt-1">Sign in to continue your streak</p>
-        </div>
-
-        {error && (
-          <div className="bg-red-500/10 border border-red-500/50 text-red-400 text-sm p-3 rounded-lg mb-6 text-center">
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div className="space-y-1">
-            <label className="text-xs font-semibold text-slate-700 dark:text-slate-400 uppercase tracking-wider">Email</label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-slate-100/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-slate-950 dark:text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all placeholder:text-slate-600"
-              placeholder="developer@example.com"
-            />
-          </div>
-
-          <div className="space-y-1 relative">
-            <label className="text-xs font-semibold text-slate-700 dark:text-slate-400 uppercase tracking-wider">Password</label>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-slate-100/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 pr-12 text-slate-950 dark:text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all placeholder:text-slate-600"
-                placeholder="••••••••"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg text-black dark:text-white hover:bg-slate-300 dark:hover:bg-slate-700 transition-all z-20 shadow-sm"
-              >
-                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-              </button>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-md z-10 bg-white rounded-2xl p-8 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100"
+        >
+          <div className="flex items-center mb-8">
+            <div className="h-8 w-8 bg-[#0056D2] rounded flex items-center justify-center text-white mr-2.5">
+              <Code2 className="h-5 w-5" />
             </div>
+            <span className="text-xl font-extrabold text-slate-900 tracking-tight">CodeSklii</span>
           </div>
 
-          <div className="flex justify-center mt-4">
-            <div style={{ position: 'relative', width: '300px', height: '50px', overflow: 'hidden', borderRadius: '8px' }}>
-              <div style={{ position: 'absolute', top: 0, left: 0, width: '300px' }}>
-                <Turnstile siteKey="1x00000000000000000000AA" onSuccess={(token) => setCfToken(token)} />
+          <h1 className="text-2xl font-bold text-slate-900 mb-2">Welcome to CodeSklii 👋</h1>
+          <p className="text-slate-500 text-sm mb-8 font-medium">Enter your credentials below to access your account.</p>
+
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-600 text-sm font-medium p-3 rounded-lg mb-6 text-center">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleLogin} className="space-y-5">
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Email Id <span className="text-red-500">*</span></label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0056D2]/50 transition-all placeholder:text-slate-400 text-sm font-medium"
+                placeholder="developer@example.com"
+              />
+            </div>
+
+            <div className="space-y-1.5 relative">
+              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Password <span className="text-red-500">*</span></label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-3 pr-12 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0056D2]/50 transition-all placeholder:text-slate-400 text-sm font-medium"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 transition-colors"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
             </div>
-          </div>
 
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            disabled={isLoading}
-            className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-3.5 rounded-xl transition-colors shadow-lg shadow-emerald-600/20 flex items-center justify-center space-x-2 mt-4 disabled:opacity-50"
-          >
-            <span>{isLoading ? "Signing in..." : "Sign In"}</span>
-            {!isLoading && <ArrowRight className="h-4 w-4" />}
-          </motion.button>
-        </form>
+            <div className="flex items-center justify-between mt-2">
+              <label className="flex items-center space-x-2 cursor-pointer">
+                <input type="checkbox" className="w-4 h-4 rounded border-slate-300 text-[#0056D2] focus:ring-[#0056D2]" />
+                <span className="text-xs font-medium text-slate-600">Remember me</span>
+              </label>
+              <Link to="/forgot-password" className="text-xs font-bold text-[#0056D2] hover:underline">
+                Forgot Password?
+              </Link>
+            </div>
 
-        <div className="mt-6 flex flex-col items-center gap-4">
-          <div className="relative w-full flex items-center justify-center border-t border-slate-200 dark:border-slate-800">
-            <span className="absolute bg-slate-50 dark:bg-slate-950 px-3 text-xs text-slate-900 dark:text-slate-400 uppercase font-bold">Or continue with</span>
+            <div className="flex justify-center mt-2">
+              <div style={{ position: 'relative', width: '100%', height: '50px', overflow: 'hidden', borderRadius: '8px' }} className="flex justify-center">
+                <div style={{ position: 'absolute', top: 0, transform: 'scale(0.9)' }}>
+                  <Turnstile siteKey="1x00000000000000000000AA" onSuccess={(token) => setCfToken(token)} />
+                </div>
+              </div>
+            </div>
+
+            <motion.button
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
+              disabled={isLoading}
+              className="w-full bg-[#0056D2] hover:bg-blue-700 text-white font-bold px-4 py-3.5 rounded-xl shadow-[0_4px_14px_rgba(0,86,210,0.3)] flex items-center justify-center transition-all disabled:opacity-50 mt-4 text-sm"
+            >
+              {isLoading ? "Signing in..." : "Login"}
+            </motion.button>
+          </form>
+
+
+          <div className="text-center mt-8 space-y-4">
+            <p className="text-xs text-slate-400 font-medium">
+              Version 11.08
+            </p>
+
           </div>
-          <button
-            type="button"
-            onClick={() => googleLogin()}
-            className="w-full flex items-center justify-center gap-3 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-semibold py-2.5 px-4 rounded-xl shadow-sm transition-all text-sm cursor-pointer"
-          >
-            <img
-              src="https://www.svgrepo.com/show/475656/google-color.svg"
-              alt="Google"
-              className="w-5 h-5"
+        </motion.div>
+      </div>
+
+      {/* Right Side: Visuals */}
+      <div className="hidden lg:flex w-1/2 bg-[#0056D2] relative flex-col items-center justify-center p-12 overflow-hidden">
+        {/* Background Decorative Elements */}
+        <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-400/20 via-transparent to-transparent pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-sky-400/20 via-transparent to-transparent pointer-events-none"></div>
+
+        <div className="z-10 w-full max-w-2xl flex flex-col items-center mt-[-40px]">
+          {/* Illustration Area */}
+          <div className="w-full aspect-video mb-8 relative flex items-center justify-center p-2 rounded-3xl bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl overflow-hidden group">
+            {/* The user will replace this src with their actual illustration */}
+            <img 
+              src="/assets/auth-illustration.png" 
+              alt="Teacher teaching student" 
+              className="w-full h-full object-cover rounded-2xl opacity-90 transition-all duration-500 group-hover:opacity-100 group-hover:scale-[1.02]"
             />
-            <span>Sign in with Google</span>
-          </button>
-        </div>
+          </div>
 
-        <p className="text-center text-slate-700 dark:text-slate-400 text-sm mt-8">
-          Don't have an account?{" "}
-          <Link to="/register" className="text-emerald-400 font-semibold hover:text-emerald-300 transition-colors">
-            Create one
-          </Link>
-        </p>
-      </motion.div>
+          <div className="text-left w-full">
+            <h2 className="text-3xl lg:text-4xl font-extrabold text-white mb-4 tracking-tight">Learn, Practice and Succeed with CodeSkill</h2>
+            <p className="text-blue-100 text-sm lg:text-base leading-relaxed mb-10 max-w-md font-medium">
+              Access courses, build skills through self-learning, practice consistently, and get interview-ready.
+            </p>
+          </div>
+
+          {/* Stats Card */}
+          <div className="bg-slate-50/95 backdrop-blur-md rounded-2xl p-6 w-full flex items-center justify-between shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-white/20">
+            <div className="text-center flex-1 border-r border-slate-200">
+              <div className="text-2xl font-extrabold text-slate-900">25,000+</div>
+              <div className="text-[10px] font-bold text-slate-500 mt-1 uppercase tracking-wider">Careers Empowered</div>
+            </div>
+            <div className="text-center flex-1 border-r border-slate-200">
+              <div className="text-2xl font-extrabold text-slate-900">20+</div>
+              <div className="text-[10px] font-bold text-slate-500 mt-1 uppercase tracking-wider">Campus Partners</div>
+            </div>
+            <div className="text-center flex-1">
+              <div className="text-2xl font-extrabold text-slate-900">4.9/5</div>
+              <div className="text-[10px] font-bold text-slate-500 mt-1 uppercase tracking-wider">Average Rating</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

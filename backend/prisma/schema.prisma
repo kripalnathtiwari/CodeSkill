@@ -76,6 +76,9 @@ model DeviceSession {
   lastActive   DateTime @default(now())
   createdAt    DateTime @default(now())
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([lastActive])
 }
 
 model UserActivityLog {
@@ -87,6 +90,10 @@ model UserActivityLog {
   browser   String?
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([action])
 }
 
 model Category {
@@ -158,6 +165,9 @@ model Section {
   updatedAt DateTime @updatedAt
   lessons   Lesson[]
   course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([courseId])
+  @@index([order])
 }
 
 model Lesson {
@@ -175,6 +185,9 @@ model Lesson {
   updatedAt     DateTime         @updatedAt
   progress      CourseProgress[]
   section       Section          @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+
+  @@index([sectionId])
+  @@index([order])
 }
 
 model Order {
@@ -195,6 +208,10 @@ model Order {
   enrollments    Enrollment[]
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   payments       Payment[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
 }
 
 model Payment {
@@ -215,6 +232,10 @@ model Payment {
   createdAt       DateTime  @default(now())
   order           Order?    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([orderId])
+  @@index([createdAt])
 }
 
 model Enrollment {
@@ -237,6 +258,10 @@ model Enrollment {
   course             Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
   order              Order?           @relation(fields: [orderId], references: [id])
   student            User             @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([courseId])
+  @@index([status])
 }
 
 model CourseProgress {
@@ -267,6 +292,10 @@ model Review {
   updatedAt      DateTime @updatedAt
   course         Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([courseId])
+  @@index([userId])
+  @@index([createdAt])
 }
 
 model Coupon {
@@ -317,6 +346,9 @@ model Question {
   @@index([difficulty])
   @@index([type])
   @@index([createdAt])
+  @@index([difficulty, createdAt(sort: Desc), id(sort: Desc)])
+  @@index([type, createdAt(sort: Desc), id(sort: Desc)])
+  @@index([createdAt(sort: Desc), id(sort: Desc)])
 }
 
 model TestCase {
@@ -474,6 +506,10 @@ model Certificate {
   course     Course?  @relation(fields: [courseId], references: [id], onDelete: Cascade)
   test       Test?    @relation(fields: [testId], references: [id], onDelete: Cascade)
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([courseId])
+  @@index([testId])
 }
 
 model Bookmark {
@@ -491,6 +527,7 @@ model Bookmark {
   @@unique([userId, questionId])
   @@unique([userId, testId])
   @@unique([userId, courseId])
+  @@index([userId])
 }
 
 model Discussion {
@@ -505,6 +542,9 @@ model Discussion {
   comments   Comment[]
   question   Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
   user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([questionId])
+  @@index([userId])
 }
 
 model Comment {
@@ -519,6 +559,9 @@ model Comment {
   parent       Comment?   @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
   replies      Comment[]  @relation("CommentReplies")
   user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([discussionId])
+  @@index([parentId])
 }
 
 model Notification {
@@ -530,6 +573,8 @@ model Notification {
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
 }
 
 model Achievement {
@@ -566,6 +611,9 @@ model CollegeStudent {
   email        String
   phone        String?
   regNum       String?
+
+  @@index([collectionId])
+  @@index([email])
 }
 
 model CollegeInstitution {
@@ -589,6 +637,78 @@ model CollegeTutor {
   email          String
   section        String?
   trainerId      String?  @unique
+
+  @@index([institutionId])
+  @@index([email])
+}
+
+model CollegeCourseCategory {
+  id           String   @id @default(uuid()) @db.Uuid
+  collegeName  String
+  collegeEmail String?
+  courseName   String
+  description  String?
+  createdAt    DateTime @default(now())
+
+  classes      CollegeCourseClass[]
+  instructors  CollegeCourseInstructor[]
+  students     CollegeCourseStudent[]
+
+  @@index([collegeName])
+  @@index([courseName])
+}
+
+model CollegeCourseClass {
+  id           String   @id @default(uuid()) @db.Uuid
+  categoryId   String   @db.Uuid
+  category     CollegeCourseCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  className    String
+  description  String?
+  createdAt    DateTime @default(now())
+
+  instructors  CollegeCourseInstructor[]
+  students     CollegeCourseStudent[]
+
+  @@index([categoryId])
+  @@index([className])
+}
+
+model CollegeCourseInstructor {
+  id           String   @id @default(uuid()) @db.Uuid
+  categoryId   String   @db.Uuid
+  category     CollegeCourseCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  classId      String?  @db.Uuid
+  courseClass  CollegeCourseClass? @relation(fields: [classId], references: [id], onDelete: SetNull)
+
+  name         String
+  email        String
+  phone        String?
+  domain       String?
+  trainerId    String?
+
+  @@index([categoryId])
+  @@index([classId])
+  @@index([email])
+}
+
+model CollegeCourseStudent {
+  id           String   @id @default(uuid()) @db.Uuid
+  categoryId   String   @db.Uuid
+  category     CollegeCourseCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  classId      String?  @db.Uuid
+  courseClass  CollegeCourseClass? @relation(fields: [classId], references: [id], onDelete: SetNull)
+
+  name         String
+  email        String
+  regNum       String?
+  phone        String?
+
+  @@index([categoryId])
+  @@index([classId])
+  @@index([email])
 }
 
 model AptitudeProblem {
@@ -604,6 +724,7 @@ model AptitudeProblem {
 
   @@index([topic])
   @@index([difficulty])
+  @@index([createdAt(sort: Desc), id(sort: Desc)])
 }
 
 model ArchiveRecord {
@@ -631,6 +752,8 @@ model Resume {
   updatedAt      DateTime      @updatedAt
   user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   analyses       AtsAnalysis[]
+
+  @@index([userId])
 }
 
 model JobDescription {
@@ -643,6 +766,8 @@ model JobDescription {
   updatedAt         DateTime      @updatedAt
   user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   analyses          AtsAnalysis[]
+
+  @@index([userId])
 }
 
 model AtsAnalysis {
@@ -668,6 +793,11 @@ model AtsAnalysis {
   user               User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   resume             Resume          @relation(fields: [resumeId], references: [id], onDelete: Cascade)
   jobDescription     JobDescription  @relation(fields: [jobDescriptionId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([resumeId])
+  @@index([jobDescriptionId])
+  @@index([createdAt])
 }
 
 model SampleCvTemplate {

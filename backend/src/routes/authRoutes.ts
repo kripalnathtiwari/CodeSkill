@@ -16,6 +16,7 @@ router.delete("/users/:userId", authenticateJWT, AuthController.deleteUser as an
     router.put("/users/:userId/role", AuthController.updateUserRole);
     router.put("/profile", authenticateJWT, AuthController.updateProfile as any);
     router.post("/log-activity", authenticateJWT, AuthController.logActivity as any);
+    router.get("/dashboard-stats", authenticateJWT, AuthController.getDashboardStats as any);
 
 // Password Reset Routes
 router.post("/request-otp", rateLimiter({ windowSeconds: 60, maxRequests: 3 }), AuthController.requestOtp);

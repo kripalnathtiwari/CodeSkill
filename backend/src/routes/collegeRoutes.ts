@@ -1,11 +1,12 @@
 import { Router } from 'express';
 import { getAllColleges, createCollege, updateCollege, deleteCollege } from '../controllers/collegeController';
 import { authenticateJWT, requireRole } from '../middlewares/authMiddleware';
+import { cache } from '../middlewares/cacheMiddleware';
 
 const router = Router();
 
 // Get all college collections
-router.get('/', authenticateJWT, getAllColleges);
+router.get('/', authenticateJWT, cache(180), getAllColleges);
 
 // Create a new college collection
 router.post('/', authenticateJWT, requireRole(['ADMIN', 'COLLEGE_ADMIN']), createCollege);

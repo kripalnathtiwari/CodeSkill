@@ -118,6 +118,7 @@ export default function TakeTest() {
         let testName = `Test ${id}`;
         let testAssignedCollegeId: string | null = null;
         let testAssignedSection: string | null = null;
+        let testAssignedCategory: string | null = null;
 
         const savedTests = localStorage.getItem("admin_custom_tests");
         if (savedTests) {
@@ -127,15 +128,16 @@ export default function TakeTest() {
             if (t.title) testName = t.title;
             if (t.collegeId) testAssignedCollegeId = t.collegeId;
             if (t.section) testAssignedSection = t.section;
+            if (t.category) testAssignedCategory = t.category;
           }
         }
         
         const studentName = user?.profile ? `${user.profile.firstName} ${user.profile.lastName}` : user?.email || "Anonymous Student";
         
-        // --- RESOLVE COLLEGE AND SECTION ---
+        // --- RESOLVE COLLEGE, CATEGORY AND SECTION ---
         const passedState = location.state as any || {};
         let resolvedCollegeName = "Global / Not Selected";
-        let resolvedSection = "N/A";
+        let resolvedSection = "All Sections";
         
         let allColleges: any[] = [];
         try {
@@ -154,11 +156,16 @@ export default function TakeTest() {
           if (found) resolvedCollegeName = found.name;
         }
 
+        // Prioritize the test's assigned category, fallback to student selection
+        const resolvedCategory = testAssignedCategory || (passedState.category && passedState.category !== "all" ? passedState.category : null) || "General Course";
+
         // Prioritize the test's assigned section, fallback to student selection
-        if (testAssignedSection) {
+        if (testAssignedSection && testAssignedSection !== "all") {
           resolvedSection = testAssignedSection;
         } else if (passedState.section && passedState.section !== "all") {
           resolvedSection = passedState.section;
+        } else {
+          resolvedSection = "All Sections";
         }
 
         const newScoreRecord = {
@@ -167,6 +174,8 @@ export default function TakeTest() {
           studentName: studentName,
           studentEmail: user?.email || "Unknown",
           collegeName: resolvedCollegeName,
+          courseCategory: resolvedCategory,
+          courseName: resolvedCategory,
           sectionName: resolvedSection,
           score: calculatedScore,
           totalQuestions: testQuestions.length,
@@ -391,14 +400,14 @@ export default function TakeTest() {
   // 1. Result Screen
   if (isFinished) {
     return (
-      <div className="flex-1 bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-6 min-h-screen z-[300] overflow-y-auto">
+      <div className="flex-1 bg-background dark:bg-background flex flex-col items-center justify-center p-6 min-h-screen z-[300] overflow-y-auto">
         <div className={`glass-card max-w-4xl w-full p-10 rounded-3xl text-center space-y-6 animate-in zoom-in duration-500 shadow-2xl ${showDetailedResults ? 'my-10' : ''}`}>
           {!showDetailedResults ? (
             <>
               <div className="w-24 h-24 bg-amber-500/20 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-4 border border-amber-500/30">
                 <Trophy className="h-12 w-12" />
               </div>
-              <h2 className="text-3xl font-black text-slate-800 dark:text-white">Test Completed!</h2>
+              <h2 className="text-3xl font-black text-text-primary dark:text-text-primary">Test Completed!</h2>
               {tabSwitchCount >= 3 && (
                 <div className="bg-rose-500/10 text-rose-500 p-4 rounded-xl mb-6 inline-flex items-center">
                   <ShieldAlert className="h-5 w-5 mr-2" />
@@ -406,12 +415,12 @@ export default function TakeTest() {
                 </div>
               )}
               <div className="flex justify-center gap-4">
-                <div className="bg-slate-100 dark:bg-slate-900 px-6 py-4 rounded-2xl border border-slate-200 dark:border-slate-800">
-                  <div className="text-sm text-slate-500 dark:text-slate-400 font-medium mb-1">Your Score</div>
-                  <div className="text-4xl font-black text-emerald-500">{score}<span className="text-2xl text-slate-400">/10</span></div>
+                <div className="bg-surface-secondary dark:bg-background px-6 py-4 rounded-2xl border border-border dark:border-border">
+                  <div className="text-sm text-text-muted dark:text-text-muted font-medium mb-1">Your Score</div>
+                  <div className="text-4xl font-black text-primary">{score}<span className="text-2xl text-text-muted">/10</span></div>
                 </div>
-                <div className="bg-slate-100 dark:bg-slate-900 px-6 py-4 rounded-2xl border border-slate-200 dark:border-slate-800">
-                  <div className="text-sm text-slate-500 dark:text-slate-400 font-medium mb-1">Global Rank</div>
+                <div className="bg-surface-secondary dark:bg-background px-6 py-4 rounded-2xl border border-border dark:border-border">
+                  <div className="text-sm text-text-muted dark:text-text-muted font-medium mb-1">Global Rank</div>
                   <div className="text-4xl font-black text-amber-500">#{rank}</div>
                 </div>
               </div>
@@ -419,13 +428,13 @@ export default function TakeTest() {
               <div className="pt-6 flex flex-col sm:flex-row gap-4 justify-center">
                 <button
                   onClick={() => setShowDetailedResults(true)}
-                  className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-xl shadow-emerald-500/20"
+                  className="bg-primary hover:bg-primary text-text-inverse font-bold py-4 px-8 rounded-xl transition-all shadow-xl shadow-blue-500/20"
                 >
                   Cross-check Results
                 </button>
                 <button
                   onClick={() => navigate('/contests')}
-                  className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-4 px-8 rounded-xl hover:scale-[1.02] transition-transform"
+                  className="bg-slate-900 dark:bg-surface text-text-inverse dark:text-text-primary font-bold py-4 px-8 rounded-xl hover:scale-[1.02] transition-transform"
                 >
                   Return to Dashboard
                 </button>
@@ -433,14 +442,14 @@ export default function TakeTest() {
             </>
           ) : (
             <div className="text-left space-y-8 animate-in slide-in-from-bottom-10 duration-500">
-              <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-6">
+              <div className="flex items-center justify-between border-b border-border dark:border-border pb-6">
                 <div>
-                  <h2 className="text-3xl font-black text-slate-800 dark:text-white">Detailed Cross-check</h2>
-                  <p className="text-slate-500 dark:text-slate-400 mt-2">Review your answers against the correct ones.</p>
+                  <h2 className="text-3xl font-black text-text-primary dark:text-text-primary">Detailed Cross-check</h2>
+                  <p className="text-text-muted dark:text-text-muted mt-2">Review your answers against the correct ones.</p>
                 </div>
                 <div className="text-right">
-                  <div className="text-4xl font-black text-emerald-500">{score}/10</div>
-                  <div className="text-sm font-bold text-slate-400">Total Score</div>
+                  <div className="text-4xl font-black text-primary">{score}/10</div>
+                  <div className="text-sm font-bold text-text-muted">Total Score</div>
                 </div>
               </div>
 
@@ -451,23 +460,23 @@ export default function TakeTest() {
                   const isUnanswered = !userAnswer;
 
                   return (
-                    <div key={q.id} className={`p-6 rounded-2xl border ${isCorrect ? 'bg-emerald-500/5 border-emerald-500/20' : isUnanswered ? 'bg-slate-500/5 border-slate-500/20' : 'bg-rose-500/5 border-rose-500/20'}`}>
+                    <div key={q.id} className={`p-6 rounded-2xl border ${isCorrect ? 'bg-primary/5 border-primary/20' : isUnanswered ? 'bg-background0/5 border-slate-500/20' : 'bg-rose-500/5 border-rose-500/20'}`}>
                       <div className="flex items-start gap-4">
-                        <div className={`mt-1 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${isCorrect ? 'bg-emerald-500/20 text-emerald-500' : isUnanswered ? 'bg-slate-500/20 text-slate-500' : 'bg-rose-500/20 text-rose-500'}`}>
+                        <div className={`mt-1 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${isCorrect ? 'bg-primary/20 text-primary' : isUnanswered ? 'bg-background0/20 text-text-muted' : 'bg-rose-500/20 text-rose-500'}`}>
                           {isCorrect ? <CheckCircle className="w-5 h-5" /> : isUnanswered ? <Minus className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
                         </div>
                         <div className="flex-1">
-                          <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4">{index + 1}. {q.text}</h3>
+                          <h3 className="text-lg font-bold text-text-primary dark:text-text-primary mb-4">{index + 1}. {q.text}</h3>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-1">
-                              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Your Answer</span>
-                              <div className={`p-3 rounded-xl border ${isCorrect ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400' : isUnanswered ? 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500' : 'bg-rose-500/10 border-rose-500/30 text-rose-600 dark:text-rose-400'} font-medium`}>
+                              <span className="text-xs font-bold text-text-muted uppercase tracking-wider">Your Answer</span>
+                              <div className={`p-3 rounded-xl border ${isCorrect ? 'bg-primary/10 border-primary/30 text-primary dark:text-primary' : isUnanswered ? 'bg-surface-secondary dark:bg-slate-800 border-border dark:border-border text-text-muted' : 'bg-rose-500/10 border-rose-500/30 text-rose-600 dark:text-rose-400'} font-medium`}>
                                 {userAnswer || "Not Attempted"}
                               </div>
                             </div>
                             <div className="space-y-1">
-                              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Correct Answer</span>
-                              <div className="p-3 rounded-xl border bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400 font-medium">
+                              <span className="text-xs font-bold text-text-muted uppercase tracking-wider">Correct Answer</span>
+                              <div className="p-3 rounded-xl border bg-primary/10 border-primary/30 text-primary dark:text-primary font-medium">
                                 {q.answer}
                               </div>
                             </div>
@@ -479,10 +488,10 @@ export default function TakeTest() {
                 })}
               </div>
 
-              <div className="pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end">
+              <div className="pt-6 border-t border-border dark:border-border flex justify-end">
                 <button
                   onClick={() => navigate('/contests')}
-                  className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-4 px-8 rounded-xl hover:scale-[1.02] transition-transform"
+                  className="bg-slate-900 dark:bg-surface text-text-inverse dark:text-text-primary font-bold py-4 px-8 rounded-xl hover:scale-[1.02] transition-transform"
                 >
                   Return to Dashboard
                 </button>
@@ -497,10 +506,10 @@ export default function TakeTest() {
   // 2. Pre-Test Screen
   if (!hasStarted) {
     return (
-      <div className="flex-1 bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-6 min-h-screen">
-        <div className="glass-card rounded-3xl p-10 max-w-lg w-full text-center border border-slate-200 dark:border-slate-800 shadow-xl">
-          <ShieldAlert className="h-16 w-16 text-emerald-500 mx-auto mb-6" />
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">Ready to Start?</h1>
+      <div className="flex-1 bg-background dark:bg-background flex flex-col items-center justify-center p-6 min-h-screen">
+        <div className="glass-card rounded-3xl p-10 max-w-lg w-full text-center border border-border dark:border-border shadow-xl">
+          <ShieldAlert className="h-16 w-16 text-primary mx-auto mb-6" />
+          <h1 className="text-3xl font-bold text-text-primary dark:text-text-primary mb-4">Ready to Start?</h1>
           <div className="bg-amber-500/10 text-amber-600 dark:text-amber-400 p-4 rounded-xl text-left mb-8 text-sm space-y-2 border border-amber-500/20">
             <p className="font-bold flex items-center text-lg"><AlertTriangle className="h-5 w-5 mr-2" /> Anti-Cheat Enforced</p>
             <ul className="list-disc pl-6 space-y-1 mt-2">
@@ -511,7 +520,7 @@ export default function TakeTest() {
           </div>
           <button 
             onClick={startTest}
-            className="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-emerald-500/30"
+            className="w-full bg-primary hover:bg-primary text-text-inverse py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-blue-500/30"
           >
             I Understand, Start Test
           </button>
@@ -525,25 +534,25 @@ export default function TakeTest() {
 
   // 3. Active Test Screen
   return (
-    <div ref={testContainerRef} className="bg-slate-50 dark:bg-slate-950 min-h-screen flex flex-col w-full absolute inset-0 z-50">
+    <div ref={testContainerRef} className="bg-background dark:bg-background min-h-screen flex flex-col w-full absolute inset-0 z-50">
       
       {/* Test Header */}
-      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 p-4 flex justify-between items-center shadow-sm">
+      <div className="bg-surface dark:bg-background border-b border-border dark:border-border p-4 flex justify-between items-center shadow-sm">
         <div className="flex items-center space-x-4">
           <div className="bg-rose-500/10 text-rose-500 px-3 py-1.5 rounded-full flex items-center text-sm font-bold animate-pulse border border-rose-500/20">
             <span className="w-2 h-2 rounded-full bg-rose-500 mr-2" /> Live Protected Session
           </div>
-          <span className="text-slate-500 dark:text-slate-400 font-mono text-sm border-l border-slate-200 dark:border-slate-700 pl-4">
-            Strikes: <span className={tabSwitchCount > 0 ? "text-rose-500 font-bold" : "font-bold text-emerald-500"}>{tabSwitchCount}/3</span>
+          <span className="text-text-muted dark:text-text-muted font-mono text-sm border-l border-border dark:border-border pl-4">
+            Strikes: <span className={tabSwitchCount > 0 ? "text-rose-500 font-bold" : "font-bold text-primary"}>{tabSwitchCount}/3</span>
           </span>
         </div>
-        <div className="font-bold text-lg text-slate-900 dark:text-white flex items-center">
-          <Clock className="h-5 w-5 mr-2 text-emerald-500" />
+        <div className="font-bold text-lg text-text-primary dark:text-text-primary flex items-center">
+          <Clock className="h-5 w-5 mr-2 text-primary" />
           Test in Progress
         </div>
         <button 
           onClick={handleFinalSubmit}
-          className="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg font-bold transition-colors shadow-lg shadow-emerald-500/20"
+          className="bg-primary hover:bg-primary text-text-inverse px-6 py-2 rounded-lg font-bold transition-colors shadow-lg shadow-blue-500/20"
         >
           Submit Test
         </button>
@@ -553,12 +562,12 @@ export default function TakeTest() {
       <div className="flex-1 w-full flex flex-col md:flex-row gap-8 p-6 md:p-8 overflow-hidden">
         
         {/* Left Side: Question */}
-        <div className="flex-1 flex flex-col justify-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm overflow-y-auto">
+        <div className="flex-1 flex flex-col justify-center bg-surface dark:bg-background rounded-3xl border border-border dark:border-border p-8 shadow-sm overflow-y-auto">
           <div className="mb-8">
-            <span className="text-emerald-600 dark:text-emerald-400 font-bold tracking-wider uppercase text-sm mb-3 block">
+            <span className="text-primary dark:text-primary font-bold tracking-wider uppercase text-sm mb-3 block">
               Question {currentQuestionIndex + 1} of {testQuestions.length}
             </span>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white leading-tight">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-text-primary dark:text-text-primary leading-tight">
               {currentQuestionIndex + 1}. {currentQ.text}
             </h2>
           </div>
@@ -570,18 +579,18 @@ export default function TakeTest() {
                 onClick={() => handleSelectAnswer(opt)}
                 className={`w-full text-left p-6 rounded-2xl border-2 transition-all flex items-center ${
                   selectedAnswers[currentQ.id] === opt
-                    ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 shadow-md"
-                    : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-md"
+                    ? "border-primary bg-blue-50 dark:bg-primary/10 shadow-md"
+                    : "border-border dark:border-border bg-surface dark:bg-background hover:border-border dark:hover:border-border hover:shadow-md"
                 }`}
               >
                 <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center mr-4 flex-shrink-0 ${
                   selectedAnswers[currentQ.id] === opt 
-                    ? "border-emerald-500" 
-                    : "border-slate-300 dark:border-slate-600"
+                    ? "border-primary" 
+                    : "border-border dark:border-slate-600"
                 }`}>
-                  {selectedAnswers[currentQ.id] === opt && <div className="w-3 h-3 rounded-full bg-emerald-500" />}
+                  {selectedAnswers[currentQ.id] === opt && <div className="w-3 h-3 rounded-full bg-primary" />}
                 </div>
-                <span className={`text-xl ${selectedAnswers[currentQ.id] === opt ? "text-emerald-700 dark:text-emerald-400 font-bold" : "text-slate-700 dark:text-slate-300 font-medium"}`}>
+                <span className={`text-xl ${selectedAnswers[currentQ.id] === opt ? "text-blue-700 dark:text-primary font-bold" : "text-text-primary dark:text-text-secondary font-medium"}`}>
                   {opt}
                 </span>
               </button>
@@ -589,11 +598,11 @@ export default function TakeTest() {
           </div>
 
           {/* Navigation Footer */}
-          <div className="mt-8 pt-8 border-t border-slate-200 dark:border-slate-800 flex justify-between">
+          <div className="mt-8 pt-8 border-t border-border dark:border-border flex justify-between">
             <button
               onClick={() => setCurrentQuestionIndex(Math.max(0, currentQuestionIndex - 1))}
               disabled={currentQuestionIndex === 0}
-              className="flex items-center space-x-2 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white font-bold disabled:opacity-30 transition-colors"
+              className="flex items-center space-x-2 text-text-muted dark:text-text-muted hover:text-text-primary dark:hover:text-text-inverse font-bold disabled:opacity-30 transition-colors"
             >
               <ChevronLeft className="w-5 h-5" />
               <span>Previous</span>
@@ -602,7 +611,7 @@ export default function TakeTest() {
             {currentQuestionIndex === testQuestions.length - 1 ? (
               <button
                 onClick={handleFinalSubmit}
-                className="flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-emerald-500/20"
+                className="flex items-center space-x-2 bg-primary hover:bg-primary text-text-inverse px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue-500/20"
               >
                 <span>Submit Test</span>
                 <CheckCircle className="w-5 h-5" />
@@ -610,7 +619,7 @@ export default function TakeTest() {
             ) : (
               <button
                 onClick={() => setCurrentQuestionIndex(Math.min(testQuestions.length - 1, currentQuestionIndex + 1))}
-                className="flex items-center space-x-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-3 rounded-xl font-bold hover:scale-[1.02] transition-transform"
+                className="flex items-center space-x-2 bg-slate-900 dark:bg-surface text-text-inverse dark:text-text-primary px-6 py-3 rounded-xl font-bold hover:scale-[1.02] transition-transform"
               >
                 <span>Next</span>
                 <ChevronRight className="w-5 h-5" />
@@ -620,9 +629,9 @@ export default function TakeTest() {
         </div>
 
         {/* Right Side: Question Navigator */}
-        <div className="w-full md:w-80 flex flex-col bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
-          <h3 className="font-bold text-slate-900 dark:text-white mb-6 uppercase tracking-wider text-sm flex items-center">
-            <CheckCircle className="w-4 h-4 mr-2 text-emerald-500" /> Test Navigator
+        <div className="w-full md:w-80 flex flex-col bg-surface dark:bg-background rounded-3xl border border-border dark:border-border p-6 shadow-sm">
+          <h3 className="font-bold text-text-primary dark:text-text-primary mb-6 uppercase tracking-wider text-sm flex items-center">
+            <CheckCircle className="w-4 h-4 mr-2 text-primary" /> Test Navigator
           </h3>
           <div className="grid grid-cols-5 gap-3 flex-1 content-start">
             {testQuestions.map((q: any, idx: number) => {
@@ -635,10 +644,10 @@ export default function TakeTest() {
                   onClick={() => setCurrentQuestionIndex(idx)}
                   className={`w-full aspect-square rounded-xl font-bold text-sm flex items-center justify-center transition-all ${
                     isCurrent
-                      ? "ring-2 ring-emerald-500 bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 scale-110 shadow-sm"
+                      ? "ring-2 ring-blue-500 bg-blue-50 dark:bg-primary/20 text-blue-700 dark:text-primary scale-110 shadow-sm"
                       : isAnswered
-                        ? "bg-emerald-500 text-white shadow-sm hover:bg-emerald-600"
-                        : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
+                        ? "bg-primary text-text-inverse shadow-sm hover:bg-primary"
+                        : "bg-surface-secondary dark:bg-slate-800 text-text-muted dark:text-text-muted hover:bg-slate-200 dark:hover:bg-slate-700"
                   }`}
                 >
                   {idx + 1}
@@ -647,25 +656,25 @@ export default function TakeTest() {
             })}
           </div>
           
-          <div className="mt-8 pt-8 border-t border-slate-200 dark:border-slate-800">
+          <div className="mt-8 pt-8 border-t border-border dark:border-border">
             <div className="space-y-4 mb-6">
-              <div className="flex items-center space-x-3 text-sm text-slate-600 dark:text-slate-400 font-medium">
-                <div className="w-4 h-4 rounded bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]"></div>
+              <div className="flex items-center space-x-3 text-sm text-text-secondary dark:text-text-muted font-medium">
+                <div className="w-4 h-4 rounded bg-primary shadow-[0_0_10px_rgba(16,185,129,0.3)]"></div>
                 <span>Answered ({Object.keys(selectedAnswers).length})</span>
               </div>
-              <div className="flex items-center space-x-3 text-sm text-slate-600 dark:text-slate-400 font-medium">
-                <div className="w-4 h-4 rounded bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700"></div>
+              <div className="flex items-center space-x-3 text-sm text-text-secondary dark:text-text-muted font-medium">
+                <div className="w-4 h-4 rounded bg-slate-200 dark:bg-slate-800 border border-border dark:border-border"></div>
                 <span>Unanswered ({testQuestions.length - Object.keys(selectedAnswers).length})</span>
               </div>
-              <div className="flex items-center space-x-3 text-sm text-slate-600 dark:text-slate-400 font-medium">
-                <div className="w-4 h-4 rounded border-2 border-emerald-500"></div>
+              <div className="flex items-center space-x-3 text-sm text-text-secondary dark:text-text-muted font-medium">
+                <div className="w-4 h-4 rounded border-2 border-primary"></div>
                 <span>Current</span>
               </div>
             </div>
 
             <button
               onClick={handleFinalSubmit}
-              className="w-full bg-white dark:bg-slate-900 border-2 border-emerald-500 text-emerald-600 dark:text-emerald-400 font-bold py-4 rounded-xl hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-colors shadow-sm"
+              className="w-full bg-surface dark:bg-background border-2 border-primary text-primary dark:text-primary font-bold py-4 rounded-xl hover:bg-blue-50 dark:hover:bg-primary/10 transition-colors shadow-sm"
             >
               Submit Full Test
             </button>
@@ -676,12 +685,12 @@ export default function TakeTest() {
       {/* Warning Modal */}
       {showWarningModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-sm">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-10 max-w-md w-full shadow-2xl border-2 border-rose-500 text-center animate-bounce shadow-rose-500/20">
+          <div className="bg-surface dark:bg-background rounded-3xl p-10 max-w-md w-full shadow-2xl border-2 border-rose-500 text-center animate-bounce shadow-rose-500/20">
             <div className="w-24 h-24 bg-rose-500/10 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-6 border border-rose-500/20">
               <AlertTriangle className="h-12 w-12" />
             </div>
-            <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-3">DON'T SWITCH TAB!</h2>
-            <p className="text-slate-600 dark:text-slate-400 mb-8 font-medium">
+            <h2 className="text-3xl font-black text-text-primary dark:text-text-primary mb-3">DON'T SWITCH TAB!</h2>
+            <p className="text-text-secondary dark:text-text-muted mb-8 font-medium">
               You have switched tabs <span className="font-bold text-rose-500 text-lg">{tabSwitchCount}</span> time(s). If you switch tabs 3 times, your test will be <span className="font-bold underline text-rose-500">automatically submitted</span>.
             </p>
             <button
@@ -693,7 +702,7 @@ export default function TakeTest() {
                   });
                 }
               }}
-              className="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-xl shadow-rose-500/30 text-lg uppercase tracking-wider flex items-center justify-center space-x-2"
+              className="w-full bg-rose-600 hover:bg-rose-500 text-text-inverse font-bold py-4 px-6 rounded-xl transition-all shadow-xl shadow-rose-500/30 text-lg uppercase tracking-wider flex items-center justify-center space-x-2"
             >
               <span>Return to Test ({warningCountdown}s)</span>
             </button>
@@ -714,11 +723,11 @@ export default function TakeTest() {
           }}
         >
           <div className="text-center animate-pulse">
-            <div className="w-24 h-24 bg-emerald-500/20 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 border border-emerald-500/30">
+            <div className="w-24 h-24 bg-primary/20 text-primary rounded-full flex items-center justify-center mx-auto mb-6 border border-primary/30">
               <CheckCircle className="h-12 w-12" />
             </div>
-            <h2 className="text-3xl font-black text-white mb-4">Resume Fullscreen</h2>
-            <p className="text-slate-300 text-lg">Click anywhere to return to fullscreen mode</p>
+            <h2 className="text-3xl font-black text-text-inverse mb-4">Resume Fullscreen</h2>
+            <p className="text-text-secondary text-lg">Click anywhere to return to fullscreen mode</p>
           </div>
         </div>
       )}

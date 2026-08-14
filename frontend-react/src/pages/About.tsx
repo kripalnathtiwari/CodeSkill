@@ -4,7 +4,7 @@ import { Search } from 'lucide-react';
 
 export default function About() {
   return (
-    <div className="min-h-screen bg-[#0B1121] text-white">
+    <div className="min-h-screen bg-[#0B1121] text-text-inverse">
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -17,7 +17,7 @@ export default function About() {
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
               About Us
             </h1>
-            <p className="text-lg text-slate-300 leading-relaxed max-w-xl">
+            <p className="text-lg text-text-secondary leading-relaxed max-w-xl">
               CodeSkill is a bootstrapped educational video streaming platform in India that is connecting passionate unskilled students to skilled Industry experts to fulfill their career dreams.
             </p>
           </motion.div>
@@ -28,20 +28,20 @@ export default function About() {
             className="bg-[#FBA718] p-8 md:p-12 lg:p-16 shadow-xl grid grid-cols-2 gap-y-12 gap-x-8"
           >
             <div className="text-center space-y-2">
-              <div className="text-4xl md:text-5xl font-bold text-white">30K+</div>
-              <div className="text-sm font-medium text-white/90">Students</div>
+              <div className="text-4xl md:text-5xl font-bold text-text-inverse">30K+</div>
+              <div className="text-sm font-medium text-text-inverse/90">Students</div>
             </div>
             <div className="text-center space-y-2">
-              <div className="text-4xl md:text-5xl font-bold text-white">25K+</div>
-              <div className="text-sm font-medium text-white/90">Certificate<br/>Delivered</div>
+              <div className="text-4xl md:text-5xl font-bold text-text-inverse">25K+</div>
+              <div className="text-sm font-medium text-text-inverse/90">Certificate<br/>Delivered</div>
             </div>
             <div className="text-center space-y-2">
-              <div className="text-4xl md:text-5xl font-bold text-white">450K+</div>
-              <div className="text-sm font-medium text-white/90">Streamed<br/>Minutes</div>
+              <div className="text-4xl md:text-5xl font-bold text-text-inverse">450K+</div>
+              <div className="text-sm font-medium text-text-inverse/90">Streamed<br/>Minutes</div>
             </div>
             <div className="text-center space-y-2">
-              <div className="text-4xl md:text-5xl font-bold text-white">50K+</div>
-              <div className="text-sm font-medium text-white/90">Creators</div>
+              <div className="text-4xl md:text-5xl font-bold text-text-inverse">50K+</div>
+              <div className="text-sm font-medium text-text-inverse/90">Creators</div>
             </div>
           </motion.div>
         </div>
@@ -68,11 +68,11 @@ export default function About() {
             <p className="text-[#FBA718] font-bold text-sm uppercase tracking-wider mb-4">
               KNOW ABOUT US &
             </p>
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-10 tracking-tight">
+            <h2 className="text-4xl md:text-5xl font-bold text-text-inverse mb-10 tracking-tight">
               OUR TEAM
             </h2>
-            <button className="bg-white text-[#FBA718] font-bold px-8 py-3 rounded-full flex items-center gap-2 hover:bg-slate-100 transition-colors shadow-lg">
-              CODESKILL <Search size={20} className="text-blue-500 stroke-[3]" />
+            <button className="bg-surface text-[#FBA718] font-bold px-8 py-3 rounded-full flex items-center gap-2 hover:bg-surface-secondary transition-colors shadow-lg">
+              CODESKILL <Search size={20} className="text-primary stroke-[3]" />
             </button>
           </motion.div>
         </div>
@@ -102,7 +102,7 @@ export default function About() {
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
               Our Vision
             </h2>
-            <p className="text-lg text-slate-300 leading-relaxed max-w-xl">
+            <p className="text-lg text-text-secondary leading-relaxed max-w-xl">
               Envision a world where high-quality online learning is readily accessible to everyone, regardless of their location. At our core, we aspire to transform this vision into a tangible reality by becoming the go-to platform for anyone seeking online learning experiences.
             </p>
           </motion.div>
@@ -121,7 +121,7 @@ export default function About() {
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
               Our Mission
             </h2>
-            <p className="text-lg text-slate-300 leading-relaxed max-w-xl">
+            <p className="text-lg text-text-secondary leading-relaxed max-w-xl">
               To empower individuals by providing affordable, accessible, and high-quality technical education. We aim to bridge the gap between academic learning and industry requirements, ensuring our students are job-ready from day one.
             </p>
           </motion.div>

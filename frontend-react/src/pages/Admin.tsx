@@ -18,7 +18,8 @@ import {
   TrendingUp,
   FileText,
   Briefcase,
-  Megaphone
+  Megaphone,
+  Target
 } from "lucide-react";
 
 import DashboardOverview from "./admin/DashboardOverview";
@@ -36,6 +37,7 @@ import DatabaseManagement from "./admin/DatabaseManagement";
 import CvManagement from "./admin/CvManagement";
 import UserActivityManagement from "./admin/UserActivityManagement";
 import JobPublishingManagement from "./admin/JobPublishingManagement";
+import OtherPracticeManagement from "./admin/OtherPracticeManagement";
 
 export default function AdminDashboard() {
   const { user, isLoading, logout } = useAuth();
@@ -56,6 +58,7 @@ export default function AdminDashboard() {
     { id: "college_collection", label: "College Collection", icon: Users, roles: ["COLLEGE_ADMIN"] },
     { id: "cv_management", label: "CV Management", icon: FileText, roles: ["ADMIN"] },
     { id: "publish_job", label: "Publish Jobs", icon: Megaphone, roles: ["ADMIN"] },
+    { id: "other_practice", label: "Other Practice", icon: Target, roles: ["ADMIN"] },
     { id: "user_activity", label: "User Activity", icon: TrendingUp, roles: ["ADMIN"] },
     { id: "activity", label: "Activity Logs", icon: Activity, roles: ["ADMIN"] },
     { id: "database", label: "Database", icon: Database, roles: ["ADMIN"] },
@@ -64,13 +67,13 @@ export default function AdminDashboard() {
   NAV_ITEMS = NAV_ITEMS.filter(item => item.roles.includes(user?.role || "ADMIN"));
 
   return (
-    <div className="flex h-screen bg-[#0a1128] text-slate-100 overflow-hidden font-sans pt-16">
+    <div className="flex h-screen bg-[#0a1128] text-text-inverse overflow-hidden font-sans pt-16">
       
       {/* Sidebar Navigation */}
       <aside 
-        className={`${isSidebarOpen ? "w-64" : "w-20"} flex-shrink-0 bg-[#111827] border-r border-slate-800 transition-all duration-300 flex flex-col h-full`}
+        className={`${isSidebarOpen ? "w-64" : "w-20"} flex-shrink-0 bg-[#111827] border-r border-border transition-all duration-300 flex flex-col h-full`}
       >
-        <div className="p-4 border-b border-slate-800 flex justify-between items-center h-16">
+        <div className="p-4 border-b border-border flex justify-between items-center h-16">
           {isSidebarOpen && (
             <div className="flex items-center space-x-2 text-rose-500 font-bold text-lg tracking-wider">
               <ShieldAlert className="w-6 h-6" />
@@ -79,7 +82,7 @@ export default function AdminDashboard() {
           )}
           <button 
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="p-2 text-slate-400 hover:text-white transition-colors"
+            className="p-2 text-text-muted hover:text-text-inverse transition-colors"
           >
             {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-6 h-6 mx-auto" />}
           </button>
@@ -93,7 +96,7 @@ export default function AdminDashboard() {
               className={`w-full flex items-center space-x-3 px-3 py-3 rounded-xl transition-all ${
                 activeTab === item.id 
                   ? "bg-rose-500/10 text-rose-500 border border-rose-500/20" 
-                  : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 border border-transparent"
+                  : "text-text-muted hover:bg-slate-800/50 hover:text-text-secondary border border-transparent"
               } ${!isSidebarOpen && "justify-center"}`}
               title={!isSidebarOpen ? item.label : ""}
             >
@@ -103,10 +106,10 @@ export default function AdminDashboard() {
           ))}
         </nav>
 
-        <div className="p-4 border-t border-slate-800">
+        <div className="p-4 border-t border-border">
            <button 
               onClick={() => { logout(); navigate("/"); }}
-              className={`w-full flex items-center space-x-3 px-3 py-3 rounded-xl text-slate-400 hover:bg-rose-500/10 hover:text-rose-500 transition-all ${!isSidebarOpen && "justify-center"}`}
+              className={`w-full flex items-center space-x-3 px-3 py-3 rounded-xl text-text-muted hover:bg-rose-500/10 hover:text-rose-500 transition-all ${!isSidebarOpen && "justify-center"}`}
               title="Logout"
             >
               <LogOut className="w-5 h-5" />
@@ -131,6 +134,7 @@ export default function AdminDashboard() {
         { activeTab === "user_activity" && <UserActivityManagement /> }
         { activeTab === "activity" && <ActivityLogs /> }
         { activeTab === "database" && <DatabaseManagement />}
+        { activeTab === "other_practice" && <OtherPracticeManagement />}
       </main>
 
     </div>

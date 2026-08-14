@@ -10,6 +10,7 @@ import {
 } from '../controllers/cvAdminController';
 import multer from 'multer';
 import { authenticateJWT, requireRole } from '../middlewares/authMiddleware';
+import { cache } from '../middlewares/cacheMiddleware';
 import path from 'path';
 import fs from 'fs';
 
@@ -45,7 +46,7 @@ const requireAdmin = [authenticateJWT, requireRole(['ADMIN', 'SUPERADMIN'])];
 // CV Samples
 // ==========================
 router.post('/samples', requireAdmin, upload.single('file'), uploadSampleCv);
-router.get('/samples', getSampleCvs); // Public so users can view them
+router.get('/samples', cache(300), getSampleCvs); // Public so users can view them
 router.delete('/samples/:id', requireAdmin, deleteSampleCv);
 
 // ==========================
@@ -53,7 +54,7 @@ router.delete('/samples/:id', requireAdmin, deleteSampleCv);
 // ==========================
 router.post('/skills', requireAdmin, addJobSkill);
 router.put('/skills/remove/:id', requireAdmin, removeJobSkill);
-router.get('/skills', getJobSkills); // Public so CV builder can fetch them
+router.get('/skills', cache(300), getJobSkills); // Public so CV builder can fetch them
 router.delete('/skills/:id', requireAdmin, deleteJobSkillMap);
 
 export default router;

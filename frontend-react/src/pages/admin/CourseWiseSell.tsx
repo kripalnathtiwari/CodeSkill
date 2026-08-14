@@ -93,21 +93,21 @@ export default function CourseWiseSell() {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold text-white mb-1">Course Wise Sell</h2>
-          <p className="text-slate-400">Track revenue and enrollments for each course.</p>
+          <h2 className="text-3xl font-bold text-text-inverse mb-1">Course Wise Sell</h2>
+          <p className="text-text-muted">Track revenue and enrollments for each course.</p>
         </div>
       </div>
 
       {/* Tabs Navigation */}
-      <div className="bg-[#111827] rounded-xl border border-slate-800 overflow-hidden shadow-2xl">
-        <div className="p-4 border-b border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-900/50">
+      <div className="bg-[#111827] rounded-xl border border-border overflow-hidden shadow-2xl">
+        <div className="p-4 border-b border-border flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-900/50">
           <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 hide-scrollbar">
             <button
               onClick={() => { setActiveTab("ALL"); setSearch(""); }}
               className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
                 activeTab === "ALL" 
-                  ? "bg-blue-600 text-white" 
-                  : "bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white"
+                  ? "bg-primary text-text-inverse" 
+                  : "bg-slate-800 text-text-muted hover:bg-slate-700 hover:text-text-inverse"
               }`}
             >
               All Courses
@@ -118,8 +118,8 @@ export default function CourseWiseSell() {
                 onClick={() => { setActiveTab(courseName); setSearch(""); }}
                 className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
                   activeTab === courseName 
-                    ? "bg-blue-600 text-white" 
-                    : "bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white"
+                    ? "bg-primary text-text-inverse" 
+                    : "bg-slate-800 text-text-muted hover:bg-slate-700 hover:text-text-inverse"
                 }`}
               >
                 {courseName}
@@ -134,9 +134,9 @@ export default function CourseWiseSell() {
                 placeholder="Search students..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-slate-800/50 border border-slate-700 rounded-lg pl-10 pr-4 py-2 text-white focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                className="w-full bg-slate-800/50 border border-border rounded-lg pl-10 pr-4 py-2 text-text-inverse focus:ring-2 focus:ring-blue-500 outline-none text-sm"
               />
-              <Search className="absolute left-3 top-2.5 text-slate-400 w-4 h-4" />
+              <Search className="absolute left-3 top-2.5 text-text-muted w-4 h-4" />
             </div>
           )}
         </div>
@@ -149,42 +149,42 @@ export default function CourseWiseSell() {
                 const revenue = courseSales.length * 3999; 
                 
                 return (
-                  <div key={courseName} className="bg-slate-900/50 border border-slate-800 rounded-2xl overflow-hidden flex flex-col hover:border-slate-700 transition-colors">
+                  <div key={courseName} className="bg-slate-900/50 border border-border rounded-2xl overflow-hidden flex flex-col hover:border-border transition-colors">
                     <div className="p-6 flex-1 cursor-pointer group" onClick={() => setActiveTab(courseName)}>
                       <div className="flex items-start justify-between mb-4">
-                        <div className="p-3 bg-blue-500/10 text-blue-500 rounded-xl group-hover:scale-110 transition-transform">
+                        <div className="p-3 bg-primary/10 text-primary rounded-xl group-hover:scale-110 transition-transform">
                           <BookOpen className="w-6 h-6" />
                         </div>
                       </div>
-                      <h3 className="text-xl font-bold text-white mb-2 line-clamp-2" title={courseName}>{courseName}</h3>
+                      <h3 className="text-xl font-bold text-text-inverse mb-2 line-clamp-2" title={courseName}>{courseName}</h3>
                       <div className="space-y-4 mt-6">
                         <div className="flex items-center justify-between p-3 bg-slate-800/50 rounded-xl">
                           <div className="flex items-center space-x-3">
-                            <Users className="w-5 h-5 text-slate-400" />
-                            <span className="text-sm text-slate-300">Enrollments</span>
+                            <Users className="w-5 h-5 text-text-muted" />
+                            <span className="text-sm text-text-secondary">Enrollments</span>
                           </div>
-                          <span className="font-bold text-white">{courseSales.length}</span>
+                          <span className="font-bold text-text-inverse">{courseSales.length}</span>
                         </div>
-                        <div className="flex items-center justify-between p-3 bg-emerald-500/5 rounded-xl border border-emerald-500/10">
+                        <div className="flex items-center justify-between p-3 bg-primary/5 rounded-xl border border-primary/10">
                           <div className="flex items-center space-x-3">
-                            <TrendingUp className="w-5 h-5 text-emerald-400" />
-                            <span className="text-sm text-emerald-400/80">Revenue</span>
+                            <TrendingUp className="w-5 h-5 text-primary" />
+                            <span className="text-sm text-primary/80">Revenue</span>
                           </div>
-                          <span className="font-bold text-emerald-400">₹{revenue.toLocaleString('en-IN')}</span>
+                          <span className="font-bold text-primary">₹{revenue.toLocaleString('en-IN')}</span>
                         </div>
                       </div>
                     </div>
-                    <div className="p-4 border-t border-slate-800 bg-slate-800/30 space-y-2">
+                    <div className="p-4 border-t border-border bg-slate-800/30 space-y-2">
                       <button
                         onClick={(e) => { e.stopPropagation(); downloadCSV(courseName, courseSales); }}
-                        className="w-full flex items-center justify-center space-x-2 bg-slate-800 hover:bg-slate-700 text-white px-4 py-2.5 rounded-xl font-semibold transition-all text-sm"
+                        className="w-full flex items-center justify-center space-x-2 bg-slate-800 hover:bg-slate-700 text-text-inverse px-4 py-2.5 rounded-xl font-semibold transition-all text-sm"
                       >
                         <Download className="w-4 h-4" />
                         <span>Download Sales Report</span>
                       </button>
                       <div className="flex gap-2">
                         <label
-                          className="w-full flex items-center justify-center bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 px-4 py-2 rounded-xl font-semibold transition-all text-sm cursor-pointer border border-blue-500/20"
+                          className="w-full flex items-center justify-center bg-primary/20 hover:bg-primary/30 text-primary px-4 py-2 rounded-xl font-semibold transition-all text-sm cursor-pointer border border-primary/20"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <span>Upload Demo Cert</span>
@@ -192,7 +192,7 @@ export default function CourseWiseSell() {
                         </label>
                         <button
                           onClick={(e) => { e.stopPropagation(); handlePublishCertificates(courseName, !courseSettings[courseName]?.certificatePublished); }}
-                          className={`w-full flex items-center justify-center px-4 py-2 rounded-xl font-semibold transition-all text-sm ${courseSettings[courseName]?.certificatePublished ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-slate-700 hover:bg-slate-600 text-slate-300'}`}
+                          className={`w-full flex items-center justify-center px-4 py-2 rounded-xl font-semibold transition-all text-sm ${courseSettings[courseName]?.certificatePublished ? 'bg-primary hover:bg-blue-700 text-text-inverse' : 'bg-slate-700 hover:bg-slate-600 text-text-secondary'}`}
                         >
                           <span>{courseSettings[courseName]?.certificatePublished ? 'Hide Certs' : 'Show Certs'}</span>
                         </button>
@@ -203,42 +203,42 @@ export default function CourseWiseSell() {
               })}
               
               {courseNames.length === 0 && (
-                <div className="col-span-full py-12 text-center text-slate-400">
-                  <BookOpen className="w-12 h-12 text-slate-600 mx-auto mb-4" />
+                <div className="col-span-full py-12 text-center text-text-muted">
+                  <BookOpen className="w-12 h-12 text-text-secondary mx-auto mb-4" />
                   <p>No course sales found.</p>
                 </div>
               )}
             </div>
           ) : (
             <div className="space-y-6 animate-in fade-in duration-300">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900/50 p-6 rounded-2xl border border-border">
                 <div>
-                  <h3 className="text-2xl font-bold text-white">{activeTab}</h3>
+                  <h3 className="text-2xl font-bold text-text-inverse">{activeTab}</h3>
                   <div className="flex flex-wrap gap-4 md:gap-6 mt-3">
-                     <div className="flex items-center gap-2 text-slate-300 bg-slate-800/50 px-3 py-1.5 rounded-lg border border-slate-700/50">
-                       <Users className="w-4 h-4 text-blue-400" />
+                     <div className="flex items-center gap-2 text-text-secondary bg-slate-800/50 px-3 py-1.5 rounded-lg border border-border/50">
+                       <Users className="w-4 h-4 text-primary" />
                        <span className="font-medium text-sm">{activeCourseSales.length} Enrollments</span>
                      </div>
-                     <div className="flex items-center gap-2 text-slate-300 bg-emerald-500/5 px-3 py-1.5 rounded-lg border border-emerald-500/10">
-                       <TrendingUp className="w-4 h-4 text-emerald-400" />
-                       <span className="font-medium text-sm text-emerald-400">₹{(activeCourseSales.length * 3999).toLocaleString('en-IN')} Revenue</span>
+                     <div className="flex items-center gap-2 text-text-secondary bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/10">
+                       <TrendingUp className="w-4 h-4 text-primary" />
+                       <span className="font-medium text-sm text-primary">₹{(activeCourseSales.length * 3999).toLocaleString('en-IN')} Revenue</span>
                      </div>
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-2 md:gap-4 shrink-0">
-                  <label className="flex items-center space-x-2 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/20 px-4 py-2 rounded-xl font-semibold transition-all cursor-pointer text-sm">
+                  <label className="flex items-center space-x-2 bg-primary/20 hover:bg-primary/30 text-primary border border-primary/20 px-4 py-2 rounded-xl font-semibold transition-all cursor-pointer text-sm">
                     <span>Upload Demo</span>
                     <input type="file" className="hidden" accept="image/*" onChange={(e) => handleUploadDemoCertificate(activeTab, e)} />
                   </label>
                   <button
                     onClick={() => handlePublishCertificates(activeTab, !courseSettings[activeTab]?.certificatePublished)}
-                    className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-semibold transition-all text-sm shrink-0 ${courseSettings[activeTab]?.certificatePublished ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-slate-700 hover:bg-slate-600 text-slate-300'}`}
+                    className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-semibold transition-all text-sm shrink-0 ${courseSettings[activeTab]?.certificatePublished ? 'bg-primary hover:bg-blue-700 text-text-inverse' : 'bg-slate-700 hover:bg-slate-600 text-text-secondary'}`}
                   >
                     <span>{courseSettings[activeTab]?.certificatePublished ? 'Hide Certificates' : 'Show Certificates'}</span>
                   </button>
                   <button
                     onClick={() => downloadCSV(activeTab, activeCourseSales)}
-                    className="flex items-center space-x-2 bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-500 border border-emerald-500/20 px-4 py-2 rounded-xl font-semibold transition-all shrink-0 text-sm"
+                    className="flex items-center space-x-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 px-4 py-2 rounded-xl font-semibold transition-all shrink-0 text-sm"
                   >
                     <Download className="w-4 h-4" />
                     <span>Download CSV</span>
@@ -246,9 +246,9 @@ export default function CourseWiseSell() {
                 </div>
               </div>
 
-              <div className="overflow-x-auto rounded-xl border border-slate-800">
-                <table className="w-full text-left text-sm text-slate-300">
-                  <thead className="bg-[#1a2333] text-slate-400 uppercase text-xs font-semibold tracking-wider">
+              <div className="overflow-x-auto rounded-xl border border-border">
+                <table className="w-full text-left text-sm text-text-secondary">
+                  <thead className="bg-[#1a2333] text-text-muted uppercase text-xs font-semibold tracking-wider">
                     <tr>
                       <th className="px-6 py-4">Transaction Details</th>
                       <th className="px-6 py-4">Student Info</th>
@@ -264,42 +264,42 @@ export default function CourseWiseSell() {
                       <tr key={idx} className="hover:bg-slate-800/30 transition-colors group">
                         <td className="px-6 py-4">
                           <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500 shrink-0">
+                            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
                               <Receipt className="w-5 h-5" />
                             </div>
                             <div>
-                              <div className="font-semibold text-white line-clamp-1">{sale.courseName}</div>
-                              <div className="text-xs text-slate-500 uppercase tracking-wider">TXN-{Math.random().toString(36).substr(2, 8)}</div>
+                              <div className="font-semibold text-text-inverse line-clamp-1">{sale.courseName}</div>
+                              <div className="text-xs text-text-muted uppercase tracking-wider">TXN-{Math.random().toString(36).substr(2, 8)}</div>
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <div className="font-medium text-slate-200">{sale.fullName}</div>
-                          <div className="text-xs text-slate-500">{sale.email}</div>
-                          {sale.phone && <div className="text-xs text-slate-500">{sale.phone}</div>}
+                          <div className="font-medium text-text-secondary">{sale.fullName}</div>
+                          <div className="text-xs text-text-muted">{sale.email}</div>
+                          {sale.phone && <div className="text-xs text-text-muted">{sale.phone}</div>}
                         </td>
-                        <td className="px-6 py-4 font-mono text-emerald-400 font-medium">₹3,999</td>
+                        <td className="px-6 py-4 font-mono text-primary font-medium">₹3,999</td>
                         <td className="px-6 py-4">
                           {sale.status === "UNPAID" ? (
                             <span className="bg-amber-500/10 text-amber-500 px-2 py-1 rounded text-[10px] font-bold uppercase">Unpaid</span>
                           ) : (
-                            <span className="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded text-[10px] font-bold uppercase">Success</span>
+                            <span className="bg-primary/10 text-primary px-2 py-1 rounded text-[10px] font-bold uppercase">Success</span>
                           )}
                         </td>
-                        <td className="px-6 py-4 font-mono text-slate-400">
+                        <td className="px-6 py-4 font-mono text-text-muted">
                           {new Date(sale.dateRegistered).toLocaleDateString()}
                         </td>
                         <td className="px-6 py-4 text-center">
                           {sale.certificateId ? (
-                            <span className="bg-blue-500/10 text-blue-400 px-2 py-1 rounded text-[10px] font-bold uppercase">Generated</span>
+                            <span className="bg-primary/10 text-primary px-2 py-1 rounded text-[10px] font-bold uppercase">Generated</span>
                           ) : (
-                            <span className="bg-slate-500/10 text-slate-400 px-2 py-1 rounded text-[10px] font-bold uppercase">Pending</span>
+                            <span className="bg-background0/10 text-text-muted px-2 py-1 rounded text-[10px] font-bold uppercase">Pending</span>
                           )}
                         </td>
                         <td className="px-6 py-4 text-right">
                           <button 
                             onClick={() => handleDeleteRecord(sale)}
-                            className="p-2 text-slate-500 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+                            className="p-2 text-text-muted hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
                             title="Delete Record"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -309,7 +309,7 @@ export default function CourseWiseSell() {
                     ))}
                     {filteredActiveSales.length === 0 && (
                       <tr>
-                        <td colSpan={6} className="px-6 py-12 text-center text-slate-500">No students found for this course.</td>
+                        <td colSpan={6} className="px-6 py-12 text-center text-text-muted">No students found for this course.</td>
                       </tr>
                     )}
                   </tbody>

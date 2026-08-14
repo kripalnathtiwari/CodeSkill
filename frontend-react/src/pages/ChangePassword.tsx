@@ -93,28 +93,28 @@ export default function ChangePassword() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#0a0a0a] flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden transition-colors duration-300">
+    <div className="min-h-screen bg-background dark:bg-background flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden transition-colors duration-300">
       
       {/* Background decorations */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-emerald-500/10 blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-emerald-500/10 blur-[100px] pointer-events-none" />
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary/10 blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-primary/10 blur-[100px] pointer-events-none" />
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
         <div className="flex justify-center">
-          <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-2xl flex items-center justify-center transform rotate-12 shadow-lg backdrop-blur-sm border border-emerald-200 dark:border-emerald-800/50">
-            <Lock className="w-8 h-8 text-emerald-600 dark:text-emerald-400 transform -rotate-12" />
+          <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center transform rotate-12 shadow-lg backdrop-blur-sm border border-blue-200 dark:border-blue-800/50">
+            <Lock className="w-8 h-8 text-primary dark:text-primary transform -rotate-12" />
           </div>
         </div>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-text-primary dark:text-text-primary tracking-tight">
           Change Password
         </h2>
-        <p className="mt-2 text-center text-sm text-slate-600 dark:text-slate-400">
+        <p className="mt-2 text-center text-sm text-text-secondary dark:text-text-muted">
           Securely reset your account password
         </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-        <div className="bg-white/80 dark:bg-[#1a1a1a]/80 py-8 px-4 shadow-2xl sm:rounded-2xl sm:px-10 backdrop-blur-xl border border-slate-200/50 dark:border-slate-800/50">
+        <div className="bg-surface/80 dark:bg-[#1a1a1a]/80 py-8 px-4 shadow-2xl sm:rounded-2xl sm:px-10 backdrop-blur-xl border border-border/50 dark:border-border/50">
           
           {error && (
             <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4 bg-rose-50 dark:bg-rose-900/30 border-l-4 border-rose-500 p-4 rounded-r-lg">
@@ -123,8 +123,8 @@ export default function ChangePassword() {
           )}
 
           {successMsg && (
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4 bg-emerald-50 dark:bg-emerald-900/30 border-l-4 border-emerald-500 p-4 rounded-r-lg">
-              <p className="text-sm text-emerald-700 dark:text-emerald-400">{successMsg}</p>
+            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4 bg-blue-50 dark:bg-blue-900/30 border-l-4 border-primary p-4 rounded-r-lg">
+              <p className="text-sm text-blue-700 dark:text-primary">{successMsg}</p>
             </motion.div>
           )}
 
@@ -139,12 +139,12 @@ export default function ChangePassword() {
                 className="space-y-6"
               >
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                  <label htmlFor="email" className="block text-sm font-medium text-text-primary dark:text-text-secondary">
                     Email address
                   </label>
                   <div className="mt-2 relative rounded-md shadow-sm">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Mail className="h-5 w-5 text-slate-400" />
+                      <Mail className="h-5 w-5 text-text-muted" />
                     </div>
                     <input
                       id="email"
@@ -152,7 +152,7 @@ export default function ChangePassword() {
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="block w-full pl-10 pr-3 py-3 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white sm:text-sm transition-colors"
+                      className="block w-full pl-10 pr-3 py-3 border border-border dark:border-border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-primary bg-surface dark:bg-background text-text-primary dark:text-text-primary sm:text-sm transition-colors"
                       placeholder="you@example.com"
                     />
                   </div>
@@ -161,7 +161,7 @@ export default function ChangePassword() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
+                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-text-inverse bg-primary hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
                 >
                   {isLoading ? "Sending..." : "Send OTP"}
                   {!isLoading && <ArrowRight className="ml-2 w-5 h-5" />}
@@ -179,12 +179,12 @@ export default function ChangePassword() {
                 className="space-y-6"
               >
                 <div>
-                  <label htmlFor="otp" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                  <label htmlFor="otp" className="block text-sm font-medium text-text-primary dark:text-text-secondary">
                     Enter the 6-digit OTP
                   </label>
                   <div className="mt-2 relative rounded-md shadow-sm">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <KeyRound className="h-5 w-5 text-slate-400" />
+                      <KeyRound className="h-5 w-5 text-text-muted" />
                     </div>
                     <input
                       id="otp"
@@ -193,11 +193,11 @@ export default function ChangePassword() {
                       maxLength={6}
                       value={otp}
                       onChange={(e) => setOtp(e.target.value)}
-                      className="block w-full pl-10 pr-3 py-3 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white sm:text-sm transition-colors text-center font-mono text-xl tracking-widest"
+                      className="block w-full pl-10 pr-3 py-3 border border-border dark:border-border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-primary bg-surface dark:bg-background text-text-primary dark:text-text-primary sm:text-sm transition-colors text-center font-mono text-xl tracking-widest"
                       placeholder="000000"
                     />
                   </div>
-                  <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                  <p className="mt-2 text-xs text-text-muted dark:text-text-muted">
                     We sent an OTP to {email}
                   </p>
                 </div>
@@ -206,14 +206,14 @@ export default function ChangePassword() {
                   <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="flex-1 py-3 px-4 border border-slate-300 dark:border-slate-700 rounded-xl shadow-sm text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all active:scale-[0.98]"
+                    className="flex-1 py-3 px-4 border border-border dark:border-border rounded-xl shadow-sm text-sm font-bold text-text-primary dark:text-text-secondary bg-surface dark:bg-slate-800 hover:bg-background dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all active:scale-[0.98]"
                   >
                     Back
                   </button>
                   <button
                     type="submit"
                     disabled={isLoading || otp.length !== 6}
-                    className="flex-[2] flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
+                    className="flex-[2] flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-text-inverse bg-primary hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
                   >
                     {isLoading ? "Verifying..." : "Verify OTP"}
                   </button>
@@ -231,12 +231,12 @@ export default function ChangePassword() {
                 className="space-y-6"
               >
                 <div>
-                  <label htmlFor="newPassword" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                  <label htmlFor="newPassword" className="block text-sm font-medium text-text-primary dark:text-text-secondary">
                     New Password
                   </label>
                   <div className="mt-2 relative rounded-md shadow-sm">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Lock className="h-5 w-5 text-slate-400" />
+                      <Lock className="h-5 w-5 text-text-muted" />
                     </div>
                     <input
                       id="newPassword"
@@ -244,13 +244,13 @@ export default function ChangePassword() {
                       required
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      className="block w-full pl-10 pr-10 py-3 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white sm:text-sm transition-colors"
+                      className="block w-full pl-10 pr-10 py-3 border border-border dark:border-border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-primary bg-surface dark:bg-background text-text-primary dark:text-text-primary sm:text-sm transition-colors"
                       placeholder="••••••••"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-text-muted hover:text-text-secondary dark:hover:text-text-secondary transition-colors"
                     >
                       {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                     </button>
@@ -258,12 +258,12 @@ export default function ChangePassword() {
                 </div>
 
                 <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-text-primary dark:text-text-secondary">
                     Confirm Password
                   </label>
                   <div className="mt-2 relative rounded-md shadow-sm">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Lock className="h-5 w-5 text-slate-400" />
+                      <Lock className="h-5 w-5 text-text-muted" />
                     </div>
                     <input
                       id="confirmPassword"
@@ -271,13 +271,13 @@ export default function ChangePassword() {
                       required
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="block w-full pl-10 pr-10 py-3 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white sm:text-sm transition-colors"
+                      className="block w-full pl-10 pr-10 py-3 border border-border dark:border-border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-primary bg-surface dark:bg-background text-text-primary dark:text-text-primary sm:text-sm transition-colors"
                       placeholder="••••••••"
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-text-muted hover:text-text-secondary dark:hover:text-text-secondary transition-colors"
                     >
                       {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                     </button>
@@ -287,7 +287,7 @@ export default function ChangePassword() {
                 <button
                   type="submit"
                   disabled={isLoading || !newPassword || !confirmPassword}
-                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
+                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-text-inverse bg-primary hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
                 >
                   {isLoading ? "Saving..." : "Change Password"}
                 </button>
@@ -297,7 +297,7 @@ export default function ChangePassword() {
           
           {step === 1 && (
             <div className="mt-6 text-center">
-              <Link to="/login" className="text-sm font-medium text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 flex items-center justify-center transition-colors">
+              <Link to="/login" className="text-sm font-medium text-primary dark:text-primary hover:text-primary flex items-center justify-center transition-colors">
                 <ArrowLeft className="w-4 h-4 mr-1" />
                 Back to Login
               </Link>

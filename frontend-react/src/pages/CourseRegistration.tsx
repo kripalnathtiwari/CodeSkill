@@ -107,16 +107,16 @@ export default function CourseRegistration() {
   };
 
   return (
-    <div className="flex-1 bg-[#111827] w-full min-h-screen py-16 px-6">
+    <div className="flex-1 bg-background w-full min-h-screen py-16 px-6">
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-8">
         
         {/* Left: Registration Form */}
-        <div className="w-full lg:w-[60%] bg-[#1a2333] rounded-2xl border border-slate-700/50 p-8 shadow-2xl">
-          <h2 className="text-2xl font-bold text-white mb-6">Registration Details</h2>
+        <div className="w-full lg:w-[60%] bg-surface rounded-2xl border border-border/50 p-8 shadow-2xl">
+          <h2 className="text-2xl font-bold text-text-primary mb-6">Registration Details</h2>
           
           <form onSubmit={handleRegister} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
+              <label className="block text-sm font-medium text-text-secondary mb-2">
                 Full Name <span className="text-red-500">*</span>
               </label>
               <input 
@@ -126,12 +126,12 @@ export default function CourseRegistration() {
                 onChange={handleChange}
                 required
                 placeholder="Enter your exact name for the certificate"
-                className="w-full bg-[#111827] border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
+                className="w-full bg-background border border-border rounded-lg px-4 py-3 text-text-primary focus:outline-none focus:border-primary transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
+              <label className="block text-sm font-medium text-text-secondary mb-2">
                 Email Id <span className="text-red-500">*</span>
               </label>
               <input 
@@ -140,13 +140,13 @@ export default function CourseRegistration() {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full bg-[#111827] border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
+                className="w-full bg-background border border-border rounded-lg px-4 py-3 text-text-primary focus:outline-none focus:border-primary transition-colors"
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
+                <label className="block text-sm font-medium text-text-secondary mb-2">
                   Country <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
@@ -154,17 +154,17 @@ export default function CourseRegistration() {
                     name="country"
                     value={formData.country}
                     onChange={handleChange}
-                    className="w-full bg-[#111827] border border-slate-700 rounded-lg px-4 py-3 text-white appearance-none focus:outline-none focus:border-emerald-500 transition-colors"
+                    className="w-full bg-background border border-border rounded-lg px-4 py-3 text-text-primary appearance-none focus:outline-none focus:border-primary transition-colors"
                   >
                     <option>India: +91</option>
                     <option>USA: +1</option>
                     <option>UK: +44</option>
                   </select>
-                  <ChevronDown className="absolute right-4 top-3.5 h-5 w-5 text-slate-400 pointer-events-none" />
+                  <ChevronDown className="absolute right-4 top-3.5 h-5 w-5 text-text-muted pointer-events-none" />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
+                <label className="block text-sm font-medium text-text-secondary mb-2">
                   Phone Number <span className="text-red-500">*</span>
                 </label>
                 <input 
@@ -173,13 +173,13 @@ export default function CourseRegistration() {
                   value={formData.phone}
                   onChange={handleChange}
                   required
-                  className="w-full bg-[#111827] border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
+                  className="w-full bg-background border border-border rounded-lg px-4 py-3 text-text-primary focus:outline-none focus:border-primary transition-colors"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
+              <label className="block text-sm font-medium text-text-secondary mb-2">
                 Graduation Year <span className="text-red-500">*</span>
               </label>
               <input 
@@ -188,62 +188,62 @@ export default function CourseRegistration() {
                 value={formData.gradYear}
                 onChange={handleChange}
                 required
-                className="w-full bg-[#111827] border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
+                className="w-full bg-background border border-border rounded-lg px-4 py-3 text-text-primary focus:outline-none focus:border-primary transition-colors"
               />
             </div>
 
             <button 
               type="submit"
-              className="w-full py-3.5 mt-4 bg-emerald-700 hover:bg-emerald-600 text-white font-bold rounded-lg transition-colors shadow-lg"
+              className="w-full py-3.5 mt-4 bg-blue-700 hover:bg-primary text-text-inverse font-bold rounded-lg transition-colors shadow-lg"
             >
               Save & Continue
             </button>
 
-            <p className="text-xs text-slate-500 text-center mt-4">
-              By Registering, you agree to our <a href="#" className="text-emerald-500 hover:underline">Privacy Policy</a> and <a href="#" className="text-emerald-500 hover:underline">Terms & Conditions</a>.
+            <p className="text-xs text-text-muted text-center mt-4">
+              By Registering, you agree to our <a href="#" className="text-primary hover:underline">Privacy Policy</a> and <a href="#" className="text-primary hover:underline">Terms & Conditions</a>.
             </p>
           </form>
         </div>
 
         {/* Right: Batches Available */}
         <div className="w-full lg:w-[40%]">
-          <div className="bg-[#1a2333] rounded-2xl border border-slate-700/50 p-8 shadow-2xl">
+          <div className="bg-surface rounded-2xl border border-border/50 p-8 shadow-2xl">
             <div className="flex items-center justify-between mb-2">
-              <h2 className="text-2xl font-bold text-white">Batches Available</h2>
-              <span className="bg-emerald-900/50 text-emerald-400 text-xs px-3 py-1 rounded-full font-semibold border border-emerald-800/50">
+              <h2 className="text-2xl font-bold text-text-primary">Batches Available</h2>
+              <span className="bg-blue-900/50 text-primary text-xs px-3 py-1 rounded-full font-semibold border border-blue-800/50">
                 1 option
               </span>
             </div>
-            <p className="text-sm text-slate-400 mb-8">Choose the batch that fits your schedule</p>
+            <p className="text-sm text-text-muted mb-8">Choose the batch that fits your schedule</p>
 
             {/* Selected Batch Card */}
-            <div className="bg-[#111827] border-l-4 border-emerald-600 rounded-r-xl rounded-l-sm border-t border-r border-b border-slate-700/50 overflow-hidden">
+            <div className="bg-background border-l-4 border-primary rounded-r-xl rounded-l-sm border-t border-r border-b border-border/50 overflow-hidden">
               <div className="p-6 relative">
                 <div className="absolute top-6 left-5">
-                  <div className="bg-emerald-500 rounded-full w-6 h-6 flex items-center justify-center">
-                    <CheckCircle2 className="w-4 h-4 text-white" />
+                  <div className="bg-primary rounded-full w-6 h-6 flex items-center justify-center">
+                    <CheckCircle2 className="w-4 h-4 text-text-inverse" />
                   </div>
                 </div>
                 
                 <div className="pl-10">
-                  <h3 className="font-bold text-white text-lg mb-4">{course?.title || "Generative AI Training Program"} - Batch 9</h3>
+                  <h3 className="font-bold text-text-primary text-lg mb-4">{course?.title || "Generative AI Training Program"} - Batch 9</h3>
                   
                   <div className="space-y-3">
-                    <div className="flex items-center text-sm text-slate-300">
-                      <Calendar className="w-4 h-4 mr-3 text-slate-400" />
+                    <div className="flex items-center text-sm text-text-secondary">
+                      <Calendar className="w-4 h-4 mr-3 text-text-muted" />
                       <span><span className="font-semibold">Starting From</span> Jun 28, 2026</span>
                     </div>
-                    <div className="flex items-center text-sm text-slate-300">
-                      <Clock className="w-4 h-4 mr-3 text-slate-400" />
+                    <div className="flex items-center text-sm text-text-secondary">
+                      <Clock className="w-4 h-4 mr-3 text-text-muted" />
                       <span>07:00 PM IST - Sat, Sun</span>
                     </div>
                   </div>
                 </div>
               </div>
               
-              <div className="bg-[#151d2d] px-6 py-4 flex justify-between items-center cursor-pointer hover:bg-[#1a2438] transition-colors border-t border-slate-700/50">
-                <span className="text-emerald-500 font-semibold text-sm">View Mentor</span>
-                <ChevronDown className="w-4 h-4 text-emerald-500" />
+              <div className="bg-slate-50 hover:bg-slate-100 dark:bg-[#151d2d] dark:hover:bg-[#1a2438] px-6 py-4 flex justify-between items-center cursor-pointer transition-colors border-t border-border/50">
+                <span className="text-primary font-semibold text-sm">View Mentor</span>
+                <ChevronDown className="w-4 h-4 text-primary" />
               </div>
             </div>
             

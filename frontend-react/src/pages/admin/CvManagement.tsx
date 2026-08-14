@@ -497,17 +497,17 @@ export default function CvManagement() {
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 dark:text-white mb-2">CV Management</h1>
-          <p className="text-slate-500 dark:text-slate-400">Manage sample CV templates and job-specific skills mappings.</p>
+          <h1 className="text-3xl font-black text-text-primary dark:text-text-primary mb-2">CV Management</h1>
+          <p className="text-text-muted dark:text-text-muted">Manage sample CV templates and job-specific skills mappings.</p>
         </div>
       </div>
 
-      <div className="flex space-x-2 border-b border-slate-200 dark:border-slate-800 mb-6 overflow-x-auto">
+      <div className="flex space-x-2 border-b border-border dark:border-border mb-6 overflow-x-auto">
         <button
           onClick={() => setActiveTab('samples')}
           className={`pb-4 px-6 text-sm font-bold uppercase tracking-wider transition-colors shrink-0 ${activeTab === 'samples'
               ? 'text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-500'
-              : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+              : 'text-text-muted hover:text-text-primary dark:hover:text-text-secondary'
             }`}
         >
           CV Template Samples
@@ -516,7 +516,7 @@ export default function CvManagement() {
           onClick={() => setActiveTab('skills')}
           className={`pb-4 px-6 text-sm font-bold uppercase tracking-wider transition-colors shrink-0 ${activeTab === 'skills'
               ? 'text-fuchsia-600 dark:text-fuchsia-400 border-b-2 border-fuchsia-500'
-              : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+              : 'text-text-muted hover:text-text-primary dark:hover:text-text-secondary'
             }`}
         >
           Job Skills
@@ -524,12 +524,12 @@ export default function CvManagement() {
         <button
           onClick={() => setActiveTab('user_cvs')}
           className={`pb-4 px-6 text-sm font-bold uppercase tracking-wider transition-colors shrink-0 flex items-center space-x-2 ${activeTab === 'user_cvs'
-              ? 'text-emerald-600 dark:text-emerald-400 border-b-2 border-emerald-500'
-              : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+              ? 'text-primary dark:text-primary border-b-2 border-primary'
+              : 'text-text-muted hover:text-text-primary dark:hover:text-text-secondary'
             }`}
         >
           <span>User CV Section</span>
-          <span className="px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-extrabold tracking-normal">
+          <span className="px-2 py-0.5 rounded-full text-[10px] bg-primary/15 text-primary dark:text-primary font-extrabold tracking-normal">
             PDF Form ({userCvs.length})
           </span>
         </button>
@@ -538,63 +538,63 @@ export default function CvManagement() {
       {activeTab === 'samples' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Upload Form */}
-          <div className="lg:col-span-1 glass-card bg-white/80 dark:bg-slate-900/80 p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <div className="lg:col-span-1 glass-card bg-surface/80 dark:bg-background/80 p-6 rounded-2xl border border-border dark:border-border">
             <h2 className="text-xl font-bold mb-4 flex items-center"><Plus className="w-5 h-5 mr-2 text-indigo-500" /> Add CV Template Sample</h2>
             <form onSubmit={handleFileUpload} className="space-y-4">
               <div>
-                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Sample CV Name / Title</label>
+                <label className="block text-sm font-bold text-text-primary dark:text-text-secondary mb-1">Sample CV Name / Title</label>
                 <input
                   type="text"
                   required
                   value={title}
                   onChange={e => setTitle(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500"
+                  className="w-full bg-background dark:bg-background border border-border dark:border-border rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500"
                   placeholder="e.g. Modern Tech Specialist CV"
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Sample Image URL</label>
+                <label className="block text-sm font-bold text-text-primary dark:text-text-secondary mb-1">Sample Image URL</label>
                 <input
                   type="text"
                   value={imageUrl}
                   onChange={e => setImageUrl(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500"
+                  className="w-full bg-background dark:bg-background border border-border dark:border-border rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500"
                   placeholder="e.g. https://example.com/sample-cv.png"
                 />
-                <p className="text-xs text-slate-400 mt-1">Paste an image link OR upload an image/file below.</p>
+                <p className="text-xs text-text-muted mt-1">Paste an image link OR upload an image/file below.</p>
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Redirect Page Link</label>
+                <label className="block text-sm font-bold text-text-primary dark:text-text-secondary mb-1">Redirect Page Link</label>
                 <input
                   type="text"
                   value={redirectUrl}
                   onChange={e => setRedirectUrl(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500"
+                  className="w-full bg-background dark:bg-background border border-border dark:border-border rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500"
                   placeholder="e.g. /cv-builder"
                 />
-                <p className="text-xs text-slate-400 mt-1">URL to open when a user clicks on this template sample.</p>
+                <p className="text-xs text-text-muted mt-1">URL to open when a user clicks on this template sample.</p>
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Category</label>
+                <label className="block text-sm font-bold text-text-primary dark:text-text-secondary mb-1">Category</label>
                 <input
                   type="text"
                   value={category}
                   onChange={e => setCategory(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500"
+                  className="w-full bg-background dark:bg-background border border-border dark:border-border rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500"
                   placeholder="e.g. Software Engineering"
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Description (Optional)</label>
+                <label className="block text-sm font-bold text-text-primary dark:text-text-secondary mb-1">Description (Optional)</label>
                 <textarea
                   value={description}
                   onChange={e => setDescription(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 h-20"
+                  className="w-full bg-background dark:bg-background border border-border dark:border-border rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 h-20"
                   placeholder="Brief note about this template..."
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Upload Sample File / Image (Optional)</label>
+                <label className="block text-sm font-bold text-text-primary dark:text-text-secondary mb-1">Upload Sample File / Image (Optional)</label>
                 <input
                   type="file"
                   accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.webp"
@@ -605,7 +605,7 @@ export default function CvManagement() {
               <button
                 type="submit"
                 disabled={isUploading}
-                className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition-colors disabled:opacity-50"
+                className="w-full bg-indigo-600 hover:bg-indigo-500 text-text-inverse font-bold py-3 rounded-xl transition-colors disabled:opacity-50"
               >
                 {isUploading ? 'Saving...' : 'Add Template Sample'}
               </button>
@@ -617,19 +617,19 @@ export default function CvManagement() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {samples.map(sample => {
                 return (
-                  <div key={sample.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 relative group flex flex-col justify-between">
+                  <div key={sample.id} className="bg-surface dark:bg-background border border-border dark:border-border rounded-2xl p-5 relative group flex flex-col justify-between">
                     <div>
-                      <div className="mb-4 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 h-44 flex items-center justify-center border border-slate-200 dark:border-slate-700">
+                      <div className="mb-4 rounded-xl overflow-hidden bg-surface-secondary dark:bg-slate-800 h-44 flex items-center justify-center border border-border dark:border-border">
                         <DriveImage sample={sample} apiUrl={API_URL} />
                       </div>
                       <div className="flex items-center space-x-2 mb-2">
                         <FileText className="w-5 h-5 text-indigo-500 shrink-0" />
-                        <h3 className="font-bold text-lg text-slate-900 dark:text-white">{sample.title}</h3>
+                        <h3 className="font-bold text-lg text-text-primary dark:text-text-primary">{sample.title}</h3>
                       </div>
-                      <p className="text-sm text-slate-500 line-clamp-2 mb-2">{sample.description || 'No description'}</p>
+                      <p className="text-sm text-text-muted line-clamp-2 mb-2">{sample.description || 'No description'}</p>
                       <div className="flex flex-wrap gap-2 mt-2">
                         {sample.category && (
-                          <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-xs font-semibold rounded-full text-slate-600 dark:text-slate-300">
+                          <span className="px-3 py-1 bg-surface-secondary dark:bg-slate-800 text-xs font-semibold rounded-full text-text-secondary dark:text-text-secondary">
                             {sample.category}
                           </span>
                         )}
@@ -641,14 +641,14 @@ export default function CvManagement() {
                       </div>
                     </div>
 
-                    <div className="mt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 pt-4">
+                    <div className="mt-6 flex justify-between items-center border-t border-slate-100 dark:border-border pt-4">
                       <div className="flex items-center space-x-3">
                         {sample.redirectUrl && (
                           <a
                             href={sample.redirectUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors"
+                            className="bg-indigo-600 hover:bg-indigo-500 text-text-inverse px-3 py-1.5 rounded-lg text-xs font-bold transition-colors"
                           >
                             Open CV Page
                           </a>
@@ -672,7 +672,7 @@ export default function CvManagement() {
                 );
               })}
               {samples.length === 0 && (
-                <div className="col-span-full py-12 text-center text-slate-500">
+                <div className="col-span-full py-12 text-center text-text-muted">
                   No sample CVs uploaded yet.
                 </div>
               )}
@@ -684,30 +684,30 @@ export default function CvManagement() {
       {activeTab === 'skills' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Add Job Role Form */}
-          <div className="lg:col-span-1 glass-card bg-white/80 dark:bg-slate-900/80 p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <div className="lg:col-span-1 glass-card bg-surface/80 dark:bg-background/80 p-6 rounded-2xl border border-border dark:border-border">
             <h2 className="text-xl font-bold mb-4 flex items-center"><Briefcase className="w-5 h-5 mr-2 text-fuchsia-500" /> Map Job Skills</h2>
             <form onSubmit={handleSaveJobSkills} className="space-y-4">
               <div>
-                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Job Role</label>
+                <label className="block text-sm font-bold text-text-primary dark:text-text-secondary mb-1">Job Role</label>
                 <input
                   type="text"
                   required
                   value={jobRole}
                   onChange={e => setJobRole(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2 focus:ring-2 focus:ring-fuchsia-500"
+                  className="w-full bg-background dark:bg-background border border-border dark:border-border rounded-xl px-4 py-2 focus:ring-2 focus:ring-fuchsia-500"
                   placeholder="e.g. Backend Developer"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Add Skills</label>
+                <label className="block text-sm font-bold text-text-primary dark:text-text-secondary mb-1">Add Skills</label>
                 <div className="flex space-x-2">
                   <input
                     type="text"
                     value={skillInput}
                     onChange={e => setSkillInput(e.target.value)}
                     onKeyPress={e => e.key === 'Enter' && (e.preventDefault(), addSkillToCurrent())}
-                    className="flex-1 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2 focus:ring-2 focus:ring-fuchsia-500"
+                    className="flex-1 bg-background dark:bg-background border border-border dark:border-border rounded-xl px-4 py-2 focus:ring-2 focus:ring-fuchsia-500"
                     placeholder="e.g. Node.js"
                   />
                   <button type="button" onClick={addSkillToCurrent} className="bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 px-4 rounded-xl font-bold">Add</button>
@@ -728,7 +728,7 @@ export default function CvManagement() {
               <button
                 type="submit"
                 disabled={isSavingSkill}
-                className="w-full bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-bold py-3 rounded-xl transition-colors disabled:opacity-50 mt-4"
+                className="w-full bg-fuchsia-600 hover:bg-fuchsia-500 text-text-inverse font-bold py-3 rounded-xl transition-colors disabled:opacity-50 mt-4"
               >
                 {isSavingSkill ? 'Saving...' : 'Save Job Skills'}
               </button>
@@ -739,7 +739,7 @@ export default function CvManagement() {
           <div className="lg:col-span-2">
             <div className="space-y-4">
               {jobSkillMaps.map(map => (
-                <div key={map.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6">
+                <div key={map.id} className="bg-surface dark:bg-background border border-border dark:border-border rounded-2xl p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-xl font-bold flex items-center">
                       <ChevronRight className="w-5 h-5 text-fuchsia-500 mr-1" />
@@ -751,10 +751,10 @@ export default function CvManagement() {
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {map.skills.map((skill, index) => (
-                      <div key={index} className="flex items-center space-x-2 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg text-sm border border-slate-200 dark:border-slate-700 group">
-                        <Tag className="w-3 h-3 text-slate-400" />
-                        <span className="font-semibold text-slate-700 dark:text-slate-300">{skill}</span>
-                        <button onClick={() => removeIndividualSkill(map.id, skill)} className="text-slate-400 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div key={index} className="flex items-center space-x-2 bg-surface-secondary dark:bg-slate-800 px-3 py-1.5 rounded-lg text-sm border border-border dark:border-border group">
+                        <Tag className="w-3 h-3 text-text-muted" />
+                        <span className="font-semibold text-text-primary dark:text-text-secondary">{skill}</span>
+                        <button onClick={() => removeIndividualSkill(map.id, skill)} className="text-text-muted hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity">
                           &times;
                         </button>
                       </div>
@@ -763,7 +763,7 @@ export default function CvManagement() {
                 </div>
               ))}
               {jobSkillMaps.length === 0 && (
-                <div className="py-12 text-center text-slate-500">
+                <div className="py-12 text-center text-text-muted">
                   No job skills mapped yet.
                 </div>
               )}
@@ -776,33 +776,33 @@ export default function CvManagement() {
       {activeTab === 'user_cvs' && (
         <div className="space-y-6 animate-in fade-in duration-200">
           {/* Storage Efficiency Explanation Banner */}
-          <div className="bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-indigo-500/10 border border-emerald-500/30 rounded-2xl p-6 shadow-sm">
+          <div className="bg-gradient-to-r from-primary/10 via-sky-500/10 to-indigo-500/10 border border-primary/30 rounded-2xl p-6 shadow-sm">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
               <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center text-primary dark:text-primary shrink-0">
                   <Database className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-extrabold text-slate-900 dark:text-white flex items-center space-x-2">
+                  <h3 className="text-lg font-extrabold text-text-primary dark:text-text-primary flex items-center space-x-2">
                     <span>User CV Section (PDF Form)</span>
-                    <span className="px-2.5 py-0.5 rounded-full text-xs bg-emerald-500 text-white font-bold">
+                    <span className="px-2.5 py-0.5 rounded-full text-xs bg-primary text-text-inverse font-bold">
                       PDF Storage Form
                     </span>
                   </h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                  <p className="text-sm text-text-secondary dark:text-text-muted mt-1">
                     When users upload their resume or apply for jobs, their resume is automatically stored in <strong>secure PDF form</strong>, ensuring universal compatibility and easy viewing.
                   </p>
                 </div>
               </div>
               <div className="flex items-center space-x-3 shrink-0">
-                <div className="text-right px-4 py-2 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
-                  <div className="text-[11px] text-slate-400 font-bold uppercase">Total Stored</div>
-                  <div className="text-lg font-black text-emerald-600 dark:text-emerald-400">
+                <div className="text-right px-4 py-2 bg-surface dark:bg-slate-800 rounded-xl border border-border dark:border-border">
+                  <div className="text-[11px] text-text-muted font-bold uppercase">Total Stored</div>
+                  <div className="text-lg font-black text-primary dark:text-primary">
                     {userCvs.length} Resumes
                   </div>
                 </div>
-                <div className="text-right px-4 py-2 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
-                  <div className="text-[11px] text-slate-400 font-bold uppercase">Total Storage Size</div>
+                <div className="text-right px-4 py-2 bg-surface dark:bg-slate-800 rounded-xl border border-border dark:border-border">
+                  <div className="text-[11px] text-text-muted font-bold uppercase">Total Storage Size</div>
                   <div className="text-lg font-black text-indigo-600 dark:text-indigo-400">
                     {(userCvs.reduce((acc, cv) => acc + (cv.storageSizeKB || 1.3), 0)).toFixed(2)} KB
                   </div>
@@ -814,18 +814,18 @@ export default function CvManagement() {
           {/* Search & Action Toolbar */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
               <input
                 type="text"
                 value={userCvSearch}
                 onChange={(e) => setUserCvSearch(e.target.value)}
                 placeholder="Search by candidate name, applied job role, company, or skill..."
-                className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full pl-10 pr-4 py-2.5 bg-surface dark:bg-background border border-border dark:border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <button
               onClick={handleAddSampleUserCv}
-              className="inline-flex items-center space-x-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm rounded-xl shadow-lg hover:shadow-emerald-500/20 transition-all shrink-0"
+              className="inline-flex items-center space-x-2 px-4 py-2.5 bg-primary hover:bg-primary text-text-inverse font-bold text-sm rounded-xl shadow-lg hover:shadow-blue-500/20 transition-all shrink-0"
             >
               <Plus className="w-4 h-4" />
               <span>+ Add Sample Candidate PDF CV</span>
@@ -844,57 +844,57 @@ export default function CvManagement() {
               .map((cv) => (
                 <div
                   key={cv.id}
-                  className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 rounded-2xl p-6 shadow-md hover:shadow-xl transition-all flex flex-col justify-between space-y-4 group"
+                  className="bg-surface dark:bg-background border border-border dark:border-border hover:border-primary/50 rounded-2xl p-6 shadow-md hover:shadow-xl transition-all flex flex-col justify-between space-y-4 group"
                 >
                   <div className="space-y-3">
                     <div className="flex items-start justify-between">
                       <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 font-bold text-base">
+                        <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-primary/10 flex items-center justify-center text-primary dark:text-primary font-bold text-base">
                           {cv.candidateName.charAt(0)}
                         </div>
                         <div>
-                          <h4 className="font-bold text-slate-900 dark:text-white text-base group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                          <h4 className="font-bold text-text-primary dark:text-text-primary text-base group-hover:text-primary dark:group-hover:text-primary transition-colors">
                             {cv.candidateName}
                           </h4>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">
+                          <p className="text-xs text-text-muted dark:text-text-muted">
                             {cv.candidateEmail}
                           </p>
                         </div>
                       </div>
-                      <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-extrabold text-[11px] border border-emerald-500/20 shrink-0">
+                      <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-primary/10 text-primary dark:text-primary font-extrabold text-[11px] border border-primary/20 shrink-0">
                         <FileCode className="w-3 h-3" />
                         <span>{cv.storageFormat} • {cv.storageSizeKB} KB</span>
                       </span>
                     </div>
 
-                    <div className="bg-slate-50 dark:bg-slate-800/60 rounded-xl p-3 space-y-1 text-xs">
+                    <div className="bg-background dark:bg-slate-800/60 rounded-xl p-3 space-y-1 text-xs">
                       <div className="flex items-center justify-between">
-                        <span className="text-slate-400 font-semibold uppercase text-[10px]">Applied Role</span>
-                        <span className="font-bold text-slate-800 dark:text-slate-200">{cv.appliedRole}</span>
+                        <span className="text-text-muted font-semibold uppercase text-[10px]">Applied Role</span>
+                        <span className="font-bold text-text-primary dark:text-text-secondary">{cv.appliedRole}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-slate-400 font-semibold uppercase text-[10px]">Company</span>
-                        <span className="font-semibold text-slate-700 dark:text-slate-300">{cv.company}</span>
+                        <span className="text-text-muted font-semibold uppercase text-[10px]">Company</span>
+                        <span className="font-semibold text-text-primary dark:text-text-secondary">{cv.company}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-slate-400 font-semibold uppercase text-[10px]">File Name</span>
-                        <span className="font-mono text-emerald-600 dark:text-emerald-400 text-[11px]">{cv.resumeFileName}</span>
+                        <span className="text-text-muted font-semibold uppercase text-[10px]">File Name</span>
+                        <span className="font-mono text-primary dark:text-primary text-[11px]">{cv.resumeFileName}</span>
                       </div>
                     </div>
 
                     <div>
-                      <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Key Skills</p>
+                      <p className="text-[11px] font-bold text-text-muted uppercase tracking-wider mb-1.5">Key Skills</p>
                       <div className="flex flex-wrap gap-1.5">
                         {cv.resumeData.skills.slice(0, 5).map((skill, idx) => (
                           <span
                             key={idx}
-                            className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-md text-[11px] font-semibold border border-slate-200 dark:border-slate-700"
+                            className="px-2 py-0.5 bg-surface-secondary dark:bg-slate-800 text-text-primary dark:text-text-secondary rounded-md text-[11px] font-semibold border border-border dark:border-border"
                           >
                             {skill}
                           </span>
                         ))}
                         {cv.resumeData.skills.length > 5 && (
-                          <span className="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-400 rounded-md text-[10px] font-bold">
+                          <span className="px-1.5 py-0.5 bg-surface-secondary dark:bg-slate-800 text-text-muted rounded-md text-[10px] font-bold">
                             +{cv.resumeData.skills.length - 5}
                           </span>
                         )}
@@ -902,20 +902,20 @@ export default function CvManagement() {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+                  <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-border">
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => {
                           setSelectedCvForView(cv);
                         }}
-                        className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold rounded-lg text-xs transition-colors"
+                        className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary dark:text-primary font-bold rounded-lg text-xs transition-colors"
                       >
                         <Eye className="w-3.5 h-3.5" />
                         <span>View PDF CV</span>
                       </button>
                       <button
                         onClick={() => handleDownloadPdf(cv)}
-                        className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-lg text-xs transition-colors"
+                        className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-surface-secondary hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-text-primary dark:text-text-secondary font-bold rounded-lg text-xs transition-colors"
                         title="Download PDF Resume file"
                       >
                         <Download className="w-3.5 h-3.5" />
@@ -924,7 +924,7 @@ export default function CvManagement() {
                     </div>
                     <button
                       onClick={() => handleDeleteUserCv(cv.id)}
-                      className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors"
+                      className="p-2 text-text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors"
                       title="Delete Resume"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -935,16 +935,16 @@ export default function CvManagement() {
           </div>
 
           {userCvs.length === 0 && (
-            <div className="py-16 text-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl space-y-3">
-              <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto text-slate-400">
+            <div className="py-16 text-center bg-surface dark:bg-background border border-border dark:border-border rounded-2xl space-y-3">
+              <div className="w-12 h-12 rounded-full bg-surface-secondary dark:bg-slate-800 flex items-center justify-center mx-auto text-text-muted">
                 <FileCode className="w-6 h-6" />
               </div>
-              <p className="text-slate-600 dark:text-slate-400 font-medium">
+              <p className="text-text-secondary dark:text-text-muted font-medium">
                 No user PDF CVs stored yet. When users upload their resume on the job application page, they will appear here!
               </p>
               <button
                 onClick={handleAddSampleUserCv}
-                className="px-4 py-2 bg-emerald-600 text-white font-bold rounded-xl text-sm"
+                className="px-4 py-2 bg-primary text-text-inverse font-bold rounded-xl text-sm"
               >
                 + Add Sample Candidate PDF CV
               </button>
@@ -956,27 +956,27 @@ export default function CvManagement() {
       {/* JSON RESUME VIEWER MODAL */}
       {selectedCvForView && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-3xl w-full p-6 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div className="bg-surface dark:bg-background border border-border dark:border-border rounded-2xl max-w-3xl w-full p-6 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-border dark:border-border pb-4">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/15 flex items-center justify-center text-emerald-600 dark:text-emerald-400 font-bold">
+                <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center text-primary dark:text-primary font-bold">
                   {selectedCvForView.candidateName.charAt(0)}
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+                  <h3 className="text-xl font-bold text-text-primary dark:text-text-primary flex items-center space-x-2">
                     <span>{selectedCvForView.candidateName}</span>
-                    <span className="px-2 py-0.5 rounded-full text-xs bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-mono font-extrabold">
+                    <span className="px-2 py-0.5 rounded-full text-xs bg-primary/15 text-primary dark:text-primary font-mono font-extrabold">
                       {selectedCvForView.resumeFileName} (PDF format)
                     </span>
                   </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                  <p className="text-xs text-text-muted dark:text-text-muted">
                     Applied for <strong>{selectedCvForView.appliedRole}</strong> at <strong>{selectedCvForView.company}</strong> ({selectedCvForView.appliedDate})
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setSelectedCvForView(null)}
-                className="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white rounded-lg"
+                className="p-1.5 text-text-muted hover:text-text-primary dark:hover:text-text-inverse rounded-lg"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -985,7 +985,7 @@ export default function CvManagement() {
             {/* Original Uploaded PDF Document (Exact candidate formatting & style) */}
             {selectedCvForView.fileDataUrl ? (
               <div className="space-y-4">
-                <div className="w-full h-[640px] bg-slate-950 rounded-xl overflow-hidden border border-slate-800">
+                <div className="w-full h-[640px] bg-slate-950 rounded-xl overflow-hidden border border-border">
                   <iframe
                     src={selectedCvForView.fileDataUrl}
                     title={selectedCvForView.resumeFileName}
@@ -996,8 +996,8 @@ export default function CvManagement() {
             ) : (
               /* Fallback Visual View for entries without stored PDF bytes */
               <div className="space-y-6 text-sm">
-                <div className="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl space-y-2">
-                  <div className="flex flex-wrap items-center justify-between text-xs text-slate-600 dark:text-slate-300">
+                <div className="p-4 bg-background dark:bg-slate-800/60 rounded-xl space-y-2">
+                  <div className="flex flex-wrap items-center justify-between text-xs text-text-secondary dark:text-text-secondary">
                     <div><strong>Email:</strong> {selectedCvForView.resumeData.email}</div>
                     <div><strong>Phone:</strong> {selectedCvForView.resumeData.phone}</div>
                     <div><strong>Storage:</strong> PDF format ({selectedCvForView.storageSizeKB} KB)</div>
@@ -1005,19 +1005,19 @@ export default function CvManagement() {
                 </div>
 
                 <div>
-                  <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Professional Summary</h4>
-                  <p className="text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                  <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Professional Summary</h4>
+                  <p className="text-text-primary dark:text-text-secondary bg-surface dark:bg-slate-800 p-4 rounded-xl border border-border dark:border-border">
                     {selectedCvForView.resumeData.summary}
                   </p>
                 </div>
 
                 <div>
-                  <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Skills & Technologies</h4>
+                  <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Skills & Technologies</h4>
                   <div className="flex flex-wrap gap-2">
                     {selectedCvForView.resumeData.skills.map((s, idx) => (
                       <span
                         key={idx}
-                        className="px-3 py-1.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg text-xs font-bold border border-emerald-500/20"
+                        className="px-3 py-1.5 bg-primary/10 text-primary dark:text-primary rounded-lg text-xs font-bold border border-primary/20"
                       >
                         {s}
                       </span>
@@ -1026,27 +1026,27 @@ export default function CvManagement() {
                 </div>
 
                 <div>
-                  <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Experience</h4>
+                  <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Experience</h4>
                   <div className="space-y-3">
                     {selectedCvForView.resumeData.experience.map((exp, idx) => (
-                      <div key={idx} className="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 space-y-1">
-                        <div className="flex items-center justify-between font-bold text-slate-900 dark:text-white">
+                      <div key={idx} className="p-4 bg-background dark:bg-slate-800/60 rounded-xl border border-border dark:border-border space-y-1">
+                        <div className="flex items-center justify-between font-bold text-text-primary dark:text-text-primary">
                           <span>{exp.role} @ {exp.company}</span>
-                          <span className="text-xs text-emerald-600 dark:text-emerald-400">{exp.duration}</span>
+                          <span className="text-xs text-primary dark:text-primary">{exp.duration}</span>
                         </div>
-                        <p className="text-xs text-slate-600 dark:text-slate-400">{exp.description}</p>
+                        <p className="text-xs text-text-secondary dark:text-text-muted">{exp.description}</p>
                       </div>
                     ))}
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Education</h4>
+                  <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Education</h4>
                   <div className="space-y-2">
                     {selectedCvForView.resumeData.education.map((edu, idx) => (
-                      <div key={idx} className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl flex items-center justify-between text-xs">
-                        <span className="font-bold text-slate-900 dark:text-white">{edu.degree} - {edu.institution}</span>
-                        <span className="text-slate-500">{edu.year}</span>
+                      <div key={idx} className="p-3 bg-background dark:bg-slate-800/60 rounded-xl flex items-center justify-between text-xs">
+                        <span className="font-bold text-text-primary dark:text-text-primary">{edu.degree} - {edu.institution}</span>
+                        <span className="text-text-muted">{edu.year}</span>
                       </div>
                     ))}
                   </div>
@@ -1054,17 +1054,17 @@ export default function CvManagement() {
               </div>
             )}
 
-            <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-200 dark:border-slate-800">
+            <div className="flex items-center justify-end space-x-3 pt-4 border-t border-border dark:border-border">
               <button
                 onClick={() => handleDownloadPdf(selectedCvForView)}
-                className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-sm transition-all shadow-md inline-flex items-center space-x-2"
+                className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-text-inverse font-bold rounded-xl text-sm transition-all shadow-md inline-flex items-center space-x-2"
               >
                 <Download className="w-4 h-4" />
                 <span>Download .PDF Resume</span>
               </button>
               <button
                 onClick={() => setSelectedCvForView(null)}
-                className="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold rounded-xl text-sm transition-colors"
+                className="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-text-primary dark:text-text-secondary font-bold rounded-xl text-sm transition-colors"
               >
                 Close
               </button>

@@ -263,11 +263,11 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
       {!targetCollegeName && (
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+            <h2 className="text-2xl font-bold text-text-inverse flex items-center gap-3">
               <Building2 className="w-6 h-6 text-indigo-500" />
               College Student Collections
             </h2>
-            <p className="text-slate-400">
+            <p className="text-text-muted">
               {user?.role === "ADMIN"
                 ? "View and manage all student data imported by partner colleges."
                 : "Upload and manage your student lists, grouped by course category."}
@@ -280,7 +280,7 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
                 {user?.role === "ADMIN" && (
                   <button
                     onClick={handleDownloadAllCSV}
-                    className="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 transition-colors whitespace-nowrap"
+                    className="bg-primary hover:bg-primary text-text-inverse px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 transition-colors whitespace-nowrap"
                   >
                     <Download className="w-5 h-5" />
                     <span className="hidden sm:inline">Download All</span>
@@ -288,14 +288,14 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
                 )}
                 <button
                   onClick={() => setIsAddingManually(true)}
-                  className="bg-slate-800 hover:bg-slate-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 transition-colors whitespace-nowrap"
+                  className="bg-slate-800 hover:bg-slate-700 text-text-inverse px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 transition-colors whitespace-nowrap"
                 >
                   <Edit2 className="w-5 h-5" />
                   <span className="hidden sm:inline">Add Manually</span>
                 </button>
                 <button
                   onClick={() => setIsUploading(true)}
-                  className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 shadow-lg transition-colors whitespace-nowrap"
+                  className="bg-indigo-600 hover:bg-indigo-500 text-text-inverse px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 shadow-lg transition-colors whitespace-nowrap"
                 >
                   <Upload className="w-5 h-5" />
                   <span>Upload New CSV</span>
@@ -311,7 +311,7 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
           {user?.role === "ADMIN" && (
             <button
               onClick={handleDownloadAllCSV}
-              className="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 transition-colors whitespace-nowrap"
+              className="bg-primary hover:bg-primary text-text-inverse px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 transition-colors whitespace-nowrap"
             >
               <Download className="w-5 h-5" />
               <span className="hidden sm:inline">Download All</span>
@@ -319,14 +319,14 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
           )}
           <button
             onClick={() => setIsAddingManually(true)}
-            className="bg-slate-800 hover:bg-slate-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 transition-colors whitespace-nowrap"
+            className="bg-slate-800 hover:bg-slate-700 text-text-inverse px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 transition-colors whitespace-nowrap"
           >
             <Edit2 className="w-5 h-5" />
             <span className="hidden sm:inline">Add Manual Collection</span>
           </button>
           <button
             onClick={() => setIsUploading(true)}
-            className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 shadow-lg transition-colors whitespace-nowrap"
+            className="bg-indigo-600 hover:bg-indigo-500 text-text-inverse px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 shadow-lg transition-colors whitespace-nowrap"
           >
             <Upload className="w-5 h-5" />
             <span>Upload CSV List</span>
@@ -336,47 +336,47 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
 
       {/* Upload Form */}
       {isUploading && (
-        <div className="bg-[#111827] rounded-3xl p-6 border border-slate-800 shadow-xl max-w-3xl">
+        <div className="bg-[#111827] rounded-3xl p-6 border border-border shadow-xl max-w-3xl">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-bold text-white flex items-center">
+            <h3 className="text-lg font-bold text-text-inverse flex items-center">
               <FileText className="w-5 h-5 mr-2 text-indigo-400" />
               Upload Student Collection
             </h3>
-            <button onClick={() => { setIsUploading(false); setSelectedFile(null); setCategoryInput(""); }} className="text-slate-500 hover:text-white transition-colors">
+            <button onClick={() => { setIsUploading(false); setSelectedFile(null); setCategoryInput(""); }} className="text-text-muted hover:text-text-inverse transition-colors">
               <X className="w-5 h-5" />
             </button>
           </div>
 
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-bold text-slate-400 block mb-1">Course Category *</label>
+              <label className="text-sm font-bold text-text-muted block mb-1">Course Category *</label>
               <input
                 type="text"
                 value={categoryInput}
                 onChange={e => setCategoryInput(e.target.value)}
                 placeholder="e.g., B.Tech CSE, MCA, Full Stack Batch 1"
-                className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500"
+                className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500"
                 autoFocus
               />
-              <p className="text-xs text-slate-500 mt-1">This will group the students under this category. Re-uploading with the same category will overwrite it.</p>
+              <p className="text-xs text-text-muted mt-1">This will group the students under this category. Re-uploading with the same category will overwrite it.</p>
             </div>
 
             <div>
-              <label className="text-sm font-bold text-slate-400 block mb-1">CSV File *</label>
+              <label className="text-sm font-bold text-text-muted block mb-1">CSV File *</label>
               <div className="flex items-center space-x-3">
                 <input
                   type="file"
                   accept=".csv"
                   onChange={handleFileUpload}
                   ref={fileInputRef}
-                  className="block w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-600/20 file:text-indigo-400 hover:file:bg-indigo-600/30 transition-all cursor-pointer bg-[#0a1128] border border-slate-700 rounded-xl"
+                  className="block w-full text-sm text-text-muted file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-600/20 file:text-indigo-400 hover:file:bg-indigo-600/30 transition-all cursor-pointer bg-[#0a1128] border border-border rounded-xl"
                 />
               </div>
-              <p className="text-xs text-slate-500 mt-1">Ensure the CSV has headers like Name, Email, Phone, RegNum.</p>
+              <p className="text-xs text-text-muted mt-1">Ensure the CSV has headers like Name, Email, Phone, RegNum.</p>
             </div>
 
             <div className="pt-4 flex justify-end">
-              <button onClick={processFile} className="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2.5 rounded-xl font-bold flex items-center shadow-lg transition-colors">
+              <button onClick={processFile} className="bg-primary hover:bg-primary text-text-inverse px-6 py-2.5 rounded-xl font-bold flex items-center shadow-lg transition-colors">
                 <Save className="w-5 h-5 mr-2" />
                 Process & Save
               </button>
@@ -387,13 +387,13 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
 
       {/* Manual Add Form */}
       {isAddingManually && (
-        <div className="bg-[#111827] rounded-3xl p-6 border border-slate-800 shadow-xl max-w-3xl">
+        <div className="bg-[#111827] rounded-3xl p-6 border border-border shadow-xl max-w-3xl">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-bold text-white flex items-center">
+            <h3 className="text-lg font-bold text-text-inverse flex items-center">
               <Edit2 className="w-5 h-5 mr-2 text-indigo-400" />
               Create Collection Manually
             </h3>
-            <button onClick={() => { setIsAddingManually(false); setCategoryInput(""); setAdminCollegeEmailInput(""); }} className="text-slate-500 hover:text-white transition-colors">
+            <button onClick={() => { setIsAddingManually(false); setCategoryInput(""); setAdminCollegeEmailInput(""); }} className="text-text-muted hover:text-text-inverse transition-colors">
               <X className="w-5 h-5" />
             </button>
           </div>
@@ -401,30 +401,30 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
           <div className="space-y-4">
             {user?.role === "ADMIN" && !targetCollegeName && (
               <div>
-                <label className="text-sm font-bold text-slate-400 block mb-1">Target College Email *</label>
+                <label className="text-sm font-bold text-text-muted block mb-1">Target College Email *</label>
                 <input
                   type="email"
                   value={adminCollegeEmailInput}
                   onChange={e => setAdminCollegeEmailInput(e.target.value)}
                   placeholder="e.g., admin@college.edu"
-                  className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500"
                 />
               </div>
             )}
             <div>
-              <label className="text-sm font-bold text-slate-400 block mb-1">Course Category *</label>
+              <label className="text-sm font-bold text-text-muted block mb-1">Course Category *</label>
               <input
                 type="text"
                 value={categoryInput}
                 onChange={e => setCategoryInput(e.target.value)}
                 placeholder="e.g., B.Tech CSE"
-                className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500"
+                className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500"
                 autoFocus
               />
             </div>
 
             <div className="pt-4 flex justify-end">
-              <button onClick={handleCreateManualCollection} className="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2.5 rounded-xl font-bold flex items-center shadow-lg transition-colors">
+              <button onClick={handleCreateManualCollection} className="bg-primary hover:bg-primary text-text-inverse px-6 py-2.5 rounded-xl font-bold flex items-center shadow-lg transition-colors">
                 <Save className="w-5 h-5 mr-2" />
                 Create Collection
               </button>
@@ -436,13 +436,13 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
       {/* Collections List */}
       <div className="space-y-4">
         {visibleCollections.length === 0 ? (
-          <div className="bg-[#111827] rounded-3xl border border-slate-800 p-16 text-center text-slate-500">
+          <div className="bg-[#111827] rounded-3xl border border-border p-16 text-center text-text-muted">
             <Users className="w-16 h-16 mx-auto mb-4 opacity-20" />
             <p>No student collections found. Upload a CSV to get started.</p>
           </div>
         ) : (
           visibleCollections.map(collection => (
-            <div key={collection.id} className="bg-[#111827] rounded-2xl border border-slate-800 shadow-lg overflow-hidden transition-all">
+            <div key={collection.id} className="bg-[#111827] rounded-2xl border border-border shadow-lg overflow-hidden transition-all">
               {/* Collection Header */}
               <div
                 className="p-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/30 transition-colors"
@@ -453,13 +453,13 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
                     <FileText className="w-6 h-6 text-indigo-400" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-white text-lg flex items-center gap-2">
+                    <h3 className="font-bold text-text-inverse text-lg flex items-center gap-2">
                       {collection.category}
-                      <span className="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-md border border-emerald-500/20">
+                      <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-md border border-primary/20">
                         {collection.students.length} Students
                       </span>
                     </h3>
-                    <p className="text-sm text-slate-500 flex items-center gap-2 mt-0.5">
+                    <p className="text-sm text-text-muted flex items-center gap-2 mt-0.5">
                       {user?.role === "ADMIN" && (
                         <span className="text-indigo-300">[{collection.collegeEmail}]</span>
                       )}
@@ -483,7 +483,7 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
                   >
                     <Trash2 className="w-5 h-5" />
                   </button>
-                  <button className="p-2 text-slate-400 hover:text-white transition-colors">
+                  <button className="p-2 text-text-muted hover:text-text-inverse transition-colors">
                     {expandedId === collection.id ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                   </button>
                 </div>
@@ -491,16 +491,16 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
 
               {/* Expanded Student List */}
               {expandedId === collection.id && (
-                <div className="border-t border-slate-800 bg-[#0a1128] p-4">
-                  <div className="overflow-x-auto rounded-xl border border-slate-800">
-                    <table className="w-full text-left text-sm text-slate-400">
-                      <thead className="bg-[#111827] text-xs uppercase text-slate-300">
+                <div className="border-t border-border bg-[#0a1128] p-4">
+                  <div className="overflow-x-auto rounded-xl border border-border">
+                    <table className="w-full text-left text-sm text-text-muted">
+                      <thead className="bg-[#111827] text-xs uppercase text-text-secondary">
                         <tr>
-                          <th className="px-4 py-3 border-b border-slate-800">S.No</th>
-                          <th className="px-4 py-3 border-b border-slate-800">Name</th>
-                          <th className="px-4 py-3 border-b border-slate-800">Email</th>
-                          <th className="px-4 py-3 border-b border-slate-800">Reg No.</th>
-                          <th className="px-4 py-3 border-b border-slate-800">Phone</th>
+                          <th className="px-4 py-3 border-b border-border">S.No</th>
+                          <th className="px-4 py-3 border-b border-border">Name</th>
+                          <th className="px-4 py-3 border-b border-border">Email</th>
+                          <th className="px-4 py-3 border-b border-border">Reg No.</th>
+                          <th className="px-4 py-3 border-b border-border">Phone</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -508,10 +508,10 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
                           <tr><td colSpan={5} className="px-4 py-4 text-center">No students added yet.</td></tr>
                         )}
                         {collection.students.map((student, idx) => (
-                          <tr key={student.id} className="border-b border-slate-800/50 hover:bg-slate-800/20">
+                          <tr key={student.id} className="border-b border-border/50 hover:bg-slate-800/20">
                             <td className="px-4 py-3">{idx + 1}</td>
-                            <td className="px-4 py-3 font-medium text-white">{student.name}</td>
-                            <td className="px-4 py-3 text-emerald-400">{student.email}</td>
+                            <td className="px-4 py-3 font-medium text-text-inverse">{student.name}</td>
+                            <td className="px-4 py-3 text-primary">{student.email}</td>
                             <td className="px-4 py-3 font-mono">{student.regNum}</td>
                             <td className="px-4 py-3 font-mono">{student.phone}</td>
                           </tr>
@@ -523,16 +523,16 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
                   {/* Add Manual Student Form */}
                   <div className="mt-4">
                     {isAddingStudentTo === collection.id ? (
-                      <div className="bg-[#1a2333] p-4 rounded-xl border border-slate-700">
+                      <div className="bg-[#1a2333] p-4 rounded-xl border border-border">
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
-                          <input type="text" placeholder="Name *" value={newStudent.name} onChange={e => setNewStudent({ ...newStudent, name: e.target.value })} className="bg-[#0a1128] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white" />
-                          <input type="email" placeholder="Email *" value={newStudent.email} onChange={e => setNewStudent({ ...newStudent, email: e.target.value })} className="bg-[#0a1128] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white" />
-                          <input type="text" placeholder="Reg Num" value={newStudent.regNum} onChange={e => setNewStudent({ ...newStudent, regNum: e.target.value })} className="bg-[#0a1128] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white" />
-                          <input type="text" placeholder="Phone" value={newStudent.phone} onChange={e => setNewStudent({ ...newStudent, phone: e.target.value })} className="bg-[#0a1128] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white" />
+                          <input type="text" placeholder="Name *" value={newStudent.name} onChange={e => setNewStudent({ ...newStudent, name: e.target.value })} className="bg-[#0a1128] border border-border rounded-lg px-3 py-2 text-sm text-text-inverse" />
+                          <input type="email" placeholder="Email *" value={newStudent.email} onChange={e => setNewStudent({ ...newStudent, email: e.target.value })} className="bg-[#0a1128] border border-border rounded-lg px-3 py-2 text-sm text-text-inverse" />
+                          <input type="text" placeholder="Reg Num" value={newStudent.regNum} onChange={e => setNewStudent({ ...newStudent, regNum: e.target.value })} className="bg-[#0a1128] border border-border rounded-lg px-3 py-2 text-sm text-text-inverse" />
+                          <input type="text" placeholder="Phone" value={newStudent.phone} onChange={e => setNewStudent({ ...newStudent, phone: e.target.value })} className="bg-[#0a1128] border border-border rounded-lg px-3 py-2 text-sm text-text-inverse" />
                         </div>
                         <div className="flex justify-end space-x-2">
-                          <button onClick={() => setIsAddingStudentTo(null)} className="px-4 py-1.5 text-sm text-slate-400 hover:text-white border border-slate-700 rounded-lg">Cancel</button>
-                          <button onClick={() => handleAddManualStudent(collection.id)} className="px-4 py-1.5 text-sm bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg">Save Student</button>
+                          <button onClick={() => setIsAddingStudentTo(null)} className="px-4 py-1.5 text-sm text-text-muted hover:text-text-inverse border border-border rounded-lg">Cancel</button>
+                          <button onClick={() => handleAddManualStudent(collection.id)} className="px-4 py-1.5 text-sm bg-primary hover:bg-primary text-text-inverse rounded-lg">Save Student</button>
                         </div>
                       </div>
                     ) : (

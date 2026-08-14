@@ -20,7 +20,7 @@ export const getDashboardStats = async (req: Request, res: Response): Promise<an
     const active = await prisma.deviceSession.count({
       where: {
         lastActive: {
-          gte: new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
+          gte: new Date(Date.now() - 24 * 60 * 60 * 1000)
         }
       }
     });
@@ -33,8 +33,12 @@ export const getDashboardStats = async (req: Request, res: Response): Promise<an
       where: { role: "INSTRUCTOR" }
     });
 
-    // 7. Revenue Chart Data
+    // 7. Revenue Chart Data - Only fetch payments from current year to optimize query size
+    const currentYearStart = new Date(new Date().getFullYear(), 0, 1);
     const payments = await prisma.payment.findMany({
+      where: {
+        createdAt: { gte: currentYearStart }
+      },
       select: { amount: true, createdAt: true }
     });
 
@@ -74,7 +78,10 @@ export const getDashboardStats = async (req: Request, res: Response): Promise<an
 
 export const getUserActivities = async (req: Request, res: Response): Promise<any> => {
   try {
+    const limit = req.query.limit ? Math.min(parseInt(req.query.limit as string, 10), 500) : 200;
     const users = await prisma.user.findMany({
+      take: limit,
+      orderBy: { createdAt: "desc" },
       select: {
         id: true,
         email: true,

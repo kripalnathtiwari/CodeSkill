@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { RotateCcw, Clock, Plus, X, Zap, Timer as TimerIcon } from "lucide-react";
+import { RotateCcw, Clock, Plus, X, Zap, Timer as TimerIcon, Play, Pause } from "lucide-react";
 
 interface PracticeTimerProps {
   storageKey?: string;
@@ -153,22 +153,22 @@ export default function PracticeTimer({
       <div
         className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl border transition-all duration-300 shadow-sm ${
           isTimesUp
-            ? "bg-rose-500/20 border-rose-500/60 text-rose-300 animate-pulse"
+            ? "bg-rose-900/80 border-rose-500/60 text-rose-300 animate-pulse"
             : isLowTime
-            ? "bg-amber-500/20 border-amber-500/60 text-amber-300 animate-pulse"
+            ? "bg-amber-900/80 border-amber-500/60 text-amber-300 animate-pulse"
             : isRunning
-            ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
-            : "bg-slate-800/80 border-slate-700/80 text-slate-300 hover:border-slate-600"
+            ? "bg-slate-900 border-slate-700 text-primary shadow-lg shadow-black/20"
+            : "bg-slate-800 border-slate-700 text-slate-300 hover:border-slate-500"
         }`}
       >
         {/* Mode Icon / Settings Button */}
         <button
           onClick={() => setShowSettings(!showSettings)}
-          className="p-1 rounded-lg hover:bg-white/10 transition-colors flex items-center space-x-1"
+          className="p-1 rounded-lg hover:bg-slate-800 transition-colors flex items-center space-x-1"
           title="Timer Settings & Presets"
         >
-          <TimerIcon className={`w-4 h-4 ${isRunning ? "text-emerald-400" : "text-slate-400"}`} />
-          <span className="text-[10px] font-extrabold uppercase tracking-widest px-1 py-0.5 rounded bg-black/30 text-slate-400">
+          <TimerIcon className={`w-4 h-4 ${isRunning ? "text-primary" : "text-text-muted"}`} />
+          <span className={`text-[10px] font-extrabold uppercase tracking-widest px-1 py-0.5 rounded ${isRunning ? "bg-primary/20 text-primary" : "bg-slate-700 text-slate-300"}`}>
             {mode === "stopwatch" ? "UP" : "DOWN"}
           </span>
         </button>
@@ -179,11 +179,11 @@ export default function PracticeTimer({
         </div>
 
         {/* Controls */}
-        <div className="flex items-center space-x-1 pl-1 border-l border-slate-700/60">
+        <div className="flex items-center space-x-1 pl-1 border-l border-border/60">
           {isTimesUp ? (
             <button
               onClick={() => addExtraMinutes(5)}
-              className="px-2 py-0.5 text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white rounded-md flex items-center space-x-1 transition-colors"
+              className="px-2 py-0.5 text-xs font-bold bg-rose-600 hover:bg-rose-500 text-text-inverse rounded-md flex items-center space-x-1 transition-colors"
               title="Add 5 Extra Minutes"
             >
               <Plus className="w-3 h-3" />
@@ -192,8 +192,16 @@ export default function PracticeTimer({
           ) : null}
 
           <button
+            onClick={toggleRun}
+            className={`p-1.5 rounded-lg hover:bg-slate-800 transition-colors ${isRunning ? "text-amber-500 hover:text-amber-400" : "text-primary hover:text-blue-400"}`}
+            title={isRunning ? "Pause Timer" : "Start Timer"}
+          >
+            {isRunning ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+          </button>
+
+          <button
             onClick={handleReset}
-            className="p-1.5 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+            className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition-colors"
             title="Reset Timer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -203,28 +211,28 @@ export default function PracticeTimer({
 
       {/* Settings Modal / Popover Menu */}
       {showSettings && (
-        <div className="absolute top-12 left-0 z-50 w-72 bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl p-4 text-slate-200 backdrop-blur-xl animate-in fade-in zoom-in-95 duration-150">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
+        <div className="absolute top-12 left-0 z-50 w-72 bg-slate-900 border border-border/80 rounded-2xl shadow-2xl p-4 text-text-secondary backdrop-blur-xl animate-in fade-in zoom-in-95 duration-150">
+          <div className="flex items-center justify-between pb-3 border-b border-border mb-3">
             <div className="flex items-center space-x-2">
-              <Clock className="w-4 h-4 text-emerald-400" />
-              <span className="text-sm font-bold text-white">Practice Timer</span>
+              <Clock className="w-4 h-4 text-primary" />
+              <span className="text-sm font-bold text-text-inverse">Practice Timer</span>
             </div>
             <button
               onClick={() => setShowSettings(false)}
-              className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white"
+              className="p-1 rounded-lg hover:bg-slate-800 text-text-muted hover:text-text-inverse"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
           {/* Mode switch pills */}
-          <div className="grid grid-cols-2 gap-2 p-1 bg-slate-950 rounded-xl mb-4 border border-slate-800">
+          <div className="grid grid-cols-2 gap-2 p-1 bg-slate-950 rounded-xl mb-4 border border-border">
             <button
               onClick={() => handleModeChange("stopwatch")}
               className={`py-1.5 px-3 rounded-lg text-xs font-bold transition-all ${
                 mode === "stopwatch"
-                  ? "bg-emerald-600 text-white shadow-md"
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-primary text-text-inverse shadow-md"
+                  : "text-text-muted hover:text-text-inverse"
               }`}
             >
               Stopwatch (Up)
@@ -233,8 +241,8 @@ export default function PracticeTimer({
               onClick={() => handleModeChange("countdown")}
               className={`py-1.5 px-3 rounded-lg text-xs font-bold transition-all ${
                 mode === "countdown"
-                  ? "bg-emerald-600 text-white shadow-md"
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-primary text-text-inverse shadow-md"
+                  : "text-text-muted hover:text-text-inverse"
               }`}
             >
               Countdown (Down)
@@ -244,7 +252,7 @@ export default function PracticeTimer({
           {/* Countdown Presets */}
           {mode === "countdown" && (
             <div className="space-y-3">
-              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
+              <span className="text-xs font-semibold text-text-muted uppercase tracking-wider block">
                 Interview Presets
               </span>
               <div className="grid grid-cols-2 gap-2">
@@ -259,19 +267,19 @@ export default function PracticeTimer({
                     onClick={() => handlePresetSelect(preset.mins)}
                     className={`px-3 py-2 rounded-xl border text-xs font-semibold text-left transition-all flex items-center justify-between ${
                       targetMinutes === preset.mins
-                        ? "border-emerald-500 bg-emerald-500/10 text-emerald-400"
-                        : "border-slate-800 bg-slate-800/50 hover:border-slate-700 text-slate-300"
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border bg-slate-800/50 hover:border-border text-text-secondary"
                     }`}
                   >
                     <span>{preset.label}</span>
-                    <Zap className="w-3 h-3 text-emerald-400/70" />
+                    <Zap className="w-3 h-3 text-primary/70" />
                   </button>
                 ))}
               </div>
 
               {/* Custom Input */}
               <form onSubmit={handleCustomApply} className="pt-2">
-                <label className="text-xs font-semibold text-slate-400 block mb-1">
+                <label className="text-xs font-semibold text-text-muted block mb-1">
                   Custom Minutes (1 - 180)
                 </label>
                 <div className="flex space-x-2">
@@ -282,11 +290,11 @@ export default function PracticeTimer({
                     value={customInput}
                     onChange={(e) => setCustomInput(e.target.value)}
                     placeholder="Mins"
-                    className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-950 border border-border rounded-lg px-3 py-1.5 text-sm text-text-inverse focus:outline-none focus:border-primary"
                   />
                   <button
                     type="submit"
-                    className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-lg transition-colors"
+                    className="px-4 py-1.5 bg-primary hover:bg-primary text-text-inverse font-bold text-xs rounded-lg transition-colors"
                   >
                     Set
                   </button>
@@ -295,7 +303,7 @@ export default function PracticeTimer({
             </div>
           )}
 
-          <div className="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-500 text-center">
+          <div className="mt-4 pt-3 border-t border-border text-[11px] text-text-muted text-center">
             Timer state is saved automatically while you practice.
           </div>
         </div>

@@ -10,6 +10,8 @@ interface MemoryCacheItem {
 const memoryCache = new Map<string, MemoryCacheItem>();
 const MAX_MEMORY_CACHE_KEYS = 1000;
 
+const isRedisReady = () => Boolean(redisConnection && redisConnection.status === "ready");
+
 export const cache = (durationInSeconds: number) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     // Only cache GET requests
@@ -20,13 +22,20 @@ export const cache = (durationInSeconds: number) => {
     // Set standard HTTP cache headers for browsers and proxies
     res.setHeader("Cache-Control", `public, max-age=${durationInSeconds}`);
 
-    const key = `cache:${req.originalUrl || req.url}`;
+    // Normalize query parameters to prevent duplicate cache keys
+    const baseUrl = (req.originalUrl || req.url).split('?')[0];
+    const queryParams = new URLSearchParams((req.originalUrl || req.url).split('?')[1] || "");
+    queryParams.sort();
+    const queryString = queryParams.toString();
+    const normalizedUrl = queryString ? `${baseUrl}?${queryString}` : baseUrl;
+
+    const key = `cache:${normalizedUrl}`;
     const now = Date.now();
 
     try {
-      // 1. Try Redis cache if connection is active
-      if (redisConnection) {
-        const cachedData = await redisConnection.get(key).catch((err) => {
+      // 1. Try Redis cache if connection is ready
+      if (isRedisReady()) {
+        const cachedData = await redisConnection!.get(key).catch((err) => {
           logger.warn(`Redis get error, falling back to memory cache: ${err}`);
           return null;
         });
@@ -56,9 +65,9 @@ export const cache = (durationInSeconds: number) => {
         if (res.statusCode >= 200 && res.statusCode < 300) {
           const bodyStr = JSON.stringify(body);
 
-          // Save to Redis if available
-          if (redisConnection) {
-            redisConnection
+          // Save to Redis if ready
+          if (isRedisReady()) {
+            redisConnection!
               .setex(key, durationInSeconds, bodyStr)
               .catch((err) => logger.error(`Redis setex error: ${err}`));
           }
@@ -87,12 +96,12 @@ export const cache = (durationInSeconds: number) => {
 };
 
 export const invalidateCachePattern = async (pattern: string) => {
-  // 1. Invalidate Redis
-  if (redisConnection) {
+  // 1. Invalidate Redis if ready
+  if (isRedisReady()) {
     try {
-      const keys = await redisConnection.keys(`cache:${pattern}*`);
+      const keys = await redisConnection!.keys(`cache:${pattern}*`);
       if (keys.length > 0) {
-        await redisConnection.del(...keys);
+        await redisConnection!.del(...keys);
         logger.info(`Invalidated Redis cache keys: ${keys.join(", ")}`);
       }
     } catch (error) {

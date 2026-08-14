@@ -206,7 +206,7 @@ export default function JobPublishingManagement() {
     <div className="space-y-8 animate-in fade-in duration-300">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed top-20 right-8 z-50 bg-emerald-500 text-slate-950 font-bold px-5 py-3 rounded-xl shadow-2xl flex items-center space-x-2 animate-in slide-in-from-top-2">
+        <div className="fixed top-20 right-8 z-50 bg-primary text-slate-950 font-bold px-5 py-3 rounded-xl shadow-2xl flex items-center space-x-2 animate-in slide-in-from-top-2">
           <CheckCircle2 className="w-5 h-5" />
           <span>{toastMessage}</span>
         </div>
@@ -215,11 +215,11 @@ export default function JobPublishingManagement() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold text-white tracking-tight flex items-center space-x-3">
+          <h1 className="text-3xl font-extrabold text-text-inverse tracking-tight flex items-center space-x-3">
             <Megaphone className="w-8 h-8 text-rose-500" />
             <span>Publish Jobs to Career Portal</span>
           </h1>
-          <p className="text-slate-400 text-sm mt-1">
+          <p className="text-text-muted text-sm mt-1">
             Post open positions with full salary, skills, and details directly to the public Career portal.
           </p>
         </div>
@@ -228,15 +228,15 @@ export default function JobPublishingManagement() {
           <Link
             to="/jobs"
             target="_blank"
-            className="inline-flex items-center space-x-2 px-4 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-xl border border-slate-700 transition-all text-sm"
+            className="inline-flex items-center space-x-2 px-4 py-3 bg-slate-800 hover:bg-slate-700 text-text-secondary font-semibold rounded-xl border border-border transition-all text-sm"
           >
-            <Eye className="w-4 h-4 text-emerald-400" />
+            <Eye className="w-4 h-4 text-primary" />
             <span>View Live Career Site</span>
             <ExternalLink className="w-3.5 h-3.5" />
           </Link>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="inline-flex items-center space-x-2 px-5 py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow-lg hover:shadow-rose-500/20 transition-all"
+            className="inline-flex items-center space-x-2 px-5 py-3 bg-rose-500 hover:bg-rose-600 text-text-inverse font-bold rounded-xl shadow-lg hover:shadow-rose-500/20 transition-all"
           >
             <Plus className="w-5 h-5" />
             <span>+ Publish New Job on Site</span>
@@ -246,57 +246,57 @@ export default function JobPublishingManagement() {
 
       {/* Overview Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-[#111827] border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
+        <div className="bg-[#111827] border border-border rounded-2xl p-5 flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold text-slate-400 uppercase">Total Published Jobs</p>
-            <p className="text-2xl font-extrabold text-white mt-1">{totalPublished}</p>
+            <p className="text-xs font-semibold text-text-muted uppercase">Total Published Jobs</p>
+            <p className="text-2xl font-extrabold text-text-inverse mt-1">{totalPublished}</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-500">
             <Briefcase className="w-6 h-6" />
           </div>
         </div>
 
-        <div className="bg-[#111827] border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
+        <div className="bg-[#111827] border border-border rounded-2xl p-5 flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold text-slate-400 uppercase">Featured Opportunities</p>
-            <p className="text-2xl font-extrabold text-emerald-400 mt-1">{featuredCount}</p>
+            <p className="text-xs font-semibold text-text-muted uppercase">Featured Opportunities</p>
+            <p className="text-2xl font-extrabold text-primary mt-1">{featuredCount}</p>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
             <Sparkles className="w-6 h-6" />
           </div>
         </div>
 
-        <div className="bg-[#111827] border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
+        <div className="bg-[#111827] border border-border rounded-2xl p-5 flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold text-slate-400 uppercase">Applications Received</p>
-            <p className="text-2xl font-extrabold text-blue-400 mt-1">{totalApplicants}</p>
+            <p className="text-xs font-semibold text-text-muted uppercase">Applications Received</p>
+            <p className="text-2xl font-extrabold text-primary mt-1">{totalApplicants}</p>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400">
+          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
             <Layers className="w-6 h-6" />
           </div>
         </div>
       </div>
 
       {/* Search and Filter */}
-      <div className="bg-[#111827] border border-slate-800 rounded-2xl p-5 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="bg-[#111827] border border-border rounded-2xl p-5 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="relative w-full md:w-96">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
           <input
             type="text"
             placeholder="Search title, company, skills..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-11 pr-4 py-2.5 bg-[#0a1128] border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-rose-500 text-sm"
+            className="w-full pl-11 pr-4 py-2.5 bg-[#0a1128] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500 text-sm"
           />
         </div>
 
         <div className="flex items-center space-x-3 w-full md:w-auto">
-          <Filter className="w-4 h-4 text-slate-400" />
-          <span className="text-xs text-slate-400 font-semibold uppercase">Filter Type:</span>
+          <Filter className="w-4 h-4 text-text-muted" />
+          <span className="text-xs text-text-muted font-semibold uppercase">Filter Type:</span>
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="bg-[#0a1128] border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-rose-500"
+            className="bg-[#0a1128] border border-border rounded-xl px-3 py-2 text-sm text-text-inverse focus:outline-none focus:border-rose-500"
           >
             <option value="All">All Job Types</option>
             <option value="Full-time">Full-time</option>
@@ -310,20 +310,20 @@ export default function JobPublishingManagement() {
       {/* Published Jobs Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filteredJobs.length === 0 ? (
-          <div className="col-span-full bg-[#111827] border border-slate-800 rounded-2xl p-12 text-center text-slate-500">
+          <div className="col-span-full bg-[#111827] border border-border rounded-2xl p-12 text-center text-text-muted">
             No published jobs match your filters. Click "+ Publish New Job on Site" to post a new opening.
           </div>
         ) : (
           filteredJobs.map(job => (
             <div
               key={job.id}
-              className="bg-[#111827] border border-slate-800 hover:border-slate-700 rounded-2xl p-6 space-y-4 flex flex-col justify-between transition-all"
+              className="bg-[#111827] border border-border hover:border-border rounded-2xl p-6 space-y-4 flex flex-col justify-between transition-all"
             >
               <div className="space-y-3">
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <div className="flex items-center space-x-2">
-                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
                         LIVE ON SITE
                       </span>
                       {job.featured && (
@@ -333,38 +333,38 @@ export default function JobPublishingManagement() {
                         </span>
                       )}
                     </div>
-                    <h3 className="text-lg font-bold text-white mt-2">{job.title}</h3>
-                    <p className="text-sm font-semibold text-slate-300 flex items-center space-x-1.5 mt-0.5">
-                      <Building2 className="w-4 h-4 text-slate-400" />
+                    <h3 className="text-lg font-bold text-text-inverse mt-2">{job.title}</h3>
+                    <p className="text-sm font-semibold text-text-secondary flex items-center space-x-1.5 mt-0.5">
+                      <Building2 className="w-4 h-4 text-text-muted" />
                       <span>{job.company}</span>
                     </p>
                   </div>
 
                   <button
                     onClick={() => handleDeleteJob(job.id, job.title)}
-                    className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors shrink-0"
+                    className="p-2 text-text-muted hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors shrink-0"
                     title="Unpublish / Delete"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
 
-                <div className="flex flex-wrap gap-2 text-xs text-slate-400">
+                <div className="flex flex-wrap gap-2 text-xs text-text-muted">
                   <span className="flex items-center space-x-1 bg-slate-800/80 px-2.5 py-1 rounded-lg">
-                    <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                    <MapPin className="w-3.5 h-3.5 text-text-muted" />
                     <span>{job.location}</span>
                   </span>
                   <span className="flex items-center space-x-1 bg-slate-800/80 px-2.5 py-1 rounded-lg">
-                    <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
+                    <DollarSign className="w-3.5 h-3.5 text-primary" />
                     <span>{job.salary}</span>
                   </span>
                   <span className="flex items-center space-x-1 bg-slate-800/80 px-2.5 py-1 rounded-lg">
-                    <Briefcase className="w-3.5 h-3.5 text-blue-400" />
+                    <Briefcase className="w-3.5 h-3.5 text-primary" />
                     <span>{job.type} ({job.workplace})</span>
                   </span>
                 </div>
 
-                <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                <p className="text-xs text-text-muted line-clamp-2 leading-relaxed">
                   {job.description}
                 </p>
 
@@ -380,9 +380,9 @@ export default function JobPublishingManagement() {
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-slate-800 flex items-center justify-between text-xs">
-                <span className="text-slate-400">
-                  Applicants: <strong className="text-white">{job.applicantCount || 0}</strong>
+              <div className="pt-4 border-t border-border flex items-center justify-between text-xs">
+                <span className="text-text-muted">
+                  Applicants: <strong className="text-text-inverse">{job.applicantCount || 0}</strong>
                 </span>
 
                 <div className="flex items-center space-x-2">
@@ -391,7 +391,7 @@ export default function JobPublishingManagement() {
                     className={`px-3 py-1.5 rounded-xl font-semibold transition-colors ${
                       job.featured
                         ? 'bg-amber-500/10 text-amber-400 hover:bg-amber-500/20'
-                        : 'bg-slate-800 text-slate-400 hover:text-white'
+                        : 'bg-slate-800 text-text-muted hover:text-text-inverse'
                     }`}
                   >
                     {job.featured ? '★ Featured' : '☆ Make Featured'}
@@ -399,7 +399,7 @@ export default function JobPublishingManagement() {
                   <Link
                     to="/jobs"
                     target="_blank"
-                    className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold transition-colors flex items-center space-x-1"
+                    className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-text-secondary font-semibold transition-colors flex items-center space-x-1"
                   >
                     <span>View</span>
                     <ExternalLink className="w-3 h-3" />
@@ -414,15 +414,15 @@ export default function JobPublishingManagement() {
       {/* Publish New Job Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-[#111827] border border-slate-800 rounded-2xl max-w-2xl w-full p-6 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-              <h3 className="text-xl font-bold text-white flex items-center space-x-2">
+          <div className="bg-[#111827] border border-border rounded-2xl max-w-2xl w-full p-6 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-border pb-4">
+              <h3 className="text-xl font-bold text-text-inverse flex items-center space-x-2">
                 <Megaphone className="w-5 h-5 text-rose-500" />
                 <span>Publish New Job to Site</span>
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-white"
+                className="text-text-muted hover:text-text-inverse"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -431,7 +431,7 @@ export default function JobPublishingManagement() {
             <form onSubmit={handlePublishJob} className="space-y-4 text-sm">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase mb-1.5">
+                  <label className="block text-xs font-semibold text-text-muted uppercase mb-1.5">
                     Job Title *
                   </label>
                   <input
@@ -440,12 +440,12 @@ export default function JobPublishingManagement() {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="e.g. Senior Frontend React Developer"
-                    className="w-full px-4 py-2.5 bg-[#0a1128] border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-rose-500"
+                    className="w-full px-4 py-2.5 bg-[#0a1128] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase mb-1.5">
+                  <label className="block text-xs font-semibold text-text-muted uppercase mb-1.5">
                     Company Name *
                   </label>
                   <input
@@ -454,14 +454,14 @@ export default function JobPublishingManagement() {
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
                     placeholder="e.g. Google India / CodeSkill Labs"
-                    className="w-full px-4 py-2.5 bg-[#0a1128] border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-rose-500"
+                    className="w-full px-4 py-2.5 bg-[#0a1128] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase mb-1.5">
+                  <label className="block text-xs font-semibold text-text-muted uppercase mb-1.5">
                     Location *
                   </label>
                   <input
@@ -470,18 +470,18 @@ export default function JobPublishingManagement() {
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     placeholder="e.g. Bangalore / Remote"
-                    className="w-full px-4 py-2.5 bg-[#0a1128] border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-rose-500"
+                    className="w-full px-4 py-2.5 bg-[#0a1128] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase mb-1.5">
+                  <label className="block text-xs font-semibold text-text-muted uppercase mb-1.5">
                     Job Type
                   </label>
                   <select
                     value={type}
                     onChange={(e) => setType(e.target.value as any)}
-                    className="w-full px-3 py-2.5 bg-[#0a1128] border border-slate-800 rounded-xl text-white focus:outline-none focus:border-rose-500"
+                    className="w-full px-3 py-2.5 bg-[#0a1128] border border-border rounded-xl text-text-inverse focus:outline-none focus:border-rose-500"
                   >
                     <option value="Full-time">Full-time</option>
                     <option value="Internship">Internship</option>
@@ -491,13 +491,13 @@ export default function JobPublishingManagement() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase mb-1.5">
+                  <label className="block text-xs font-semibold text-text-muted uppercase mb-1.5">
                     Workplace Mode
                   </label>
                   <select
                     value={workplace}
                     onChange={(e) => setWorkplace(e.target.value as any)}
-                    className="w-full px-3 py-2.5 bg-[#0a1128] border border-slate-800 rounded-xl text-white focus:outline-none focus:border-rose-500"
+                    className="w-full px-3 py-2.5 bg-[#0a1128] border border-border rounded-xl text-text-inverse focus:outline-none focus:border-rose-500"
                   >
                     <option value="Remote">Remote</option>
                     <option value="Hybrid">Hybrid</option>
@@ -508,7 +508,7 @@ export default function JobPublishingManagement() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase mb-1.5">
+                  <label className="block text-xs font-semibold text-text-muted uppercase mb-1.5">
                     Salary / Stipend *
                   </label>
                   <input
@@ -517,18 +517,18 @@ export default function JobPublishingManagement() {
                     value={salary}
                     onChange={(e) => setSalary(e.target.value)}
                     placeholder="e.g. ₹12,00,000 - ₹18,00,000 PA"
-                    className="w-full px-4 py-2.5 bg-[#0a1128] border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-rose-500"
+                    className="w-full px-4 py-2.5 bg-[#0a1128] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase mb-1.5">
+                  <label className="block text-xs font-semibold text-text-muted uppercase mb-1.5">
                     Experience Level
                   </label>
                   <select
                     value={experience}
                     onChange={(e) => setExperience(e.target.value as any)}
-                    className="w-full px-3 py-2.5 bg-[#0a1128] border border-slate-800 rounded-xl text-white focus:outline-none focus:border-rose-500"
+                    className="w-full px-3 py-2.5 bg-[#0a1128] border border-border rounded-xl text-text-inverse focus:outline-none focus:border-rose-500"
                   >
                     <option value="Fresher">Fresher</option>
                     <option value="0-2 Years">0-2 Years</option>
@@ -539,7 +539,7 @@ export default function JobPublishingManagement() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1.5">
+                <label className="block text-xs font-semibold text-text-muted uppercase mb-1.5">
                   Required Skills (comma separated)
                 </label>
                 <input
@@ -547,12 +547,12 @@ export default function JobPublishingManagement() {
                   value={skillsInput}
                   onChange={(e) => setSkillsInput(e.target.value)}
                   placeholder="React, TypeScript, Next.js, Node.js, AWS"
-                  className="w-full px-4 py-2.5 bg-[#0a1128] border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-rose-500"
+                  className="w-full px-4 py-2.5 bg-[#0a1128] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1.5">
+                <label className="block text-xs font-semibold text-text-muted uppercase mb-1.5">
                   Detailed Job Description & Responsibilities *
                 </label>
                 <textarea
@@ -561,7 +561,7 @@ export default function JobPublishingManagement() {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Describe the role, team culture, responsibilities, and perks..."
-                  className="w-full px-4 py-2.5 bg-[#0a1128] border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-rose-500"
+                  className="w-full px-4 py-2.5 bg-[#0a1128] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500"
                 />
               </div>
 
@@ -571,24 +571,24 @@ export default function JobPublishingManagement() {
                   id="featured-job"
                   checked={featured}
                   onChange={(e) => setFeatured(e.target.checked)}
-                  className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-rose-500 focus:ring-0 cursor-pointer"
+                  className="w-4 h-4 rounded border-border bg-slate-900 text-rose-500 focus:ring-0 cursor-pointer"
                 />
-                <label htmlFor="featured-job" className="text-xs text-slate-300 font-medium cursor-pointer">
+                <label htmlFor="featured-job" className="text-xs text-text-secondary font-medium cursor-pointer">
                   Mark as Featured Opportunity (displays banner badge on site)
                 </label>
               </div>
 
-              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-800">
+              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-border">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-slate-400 hover:text-white transition-colors font-medium"
+                  className="px-4 py-2 rounded-xl text-text-muted hover:text-text-inverse transition-colors font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow-lg hover:shadow-rose-500/20 transition-all"
+                  className="px-6 py-2.5 bg-rose-500 hover:bg-rose-600 text-text-inverse font-bold rounded-xl shadow-lg hover:shadow-rose-500/20 transition-all"
                 >
                   Publish Job to Career Site Now
                 </button>

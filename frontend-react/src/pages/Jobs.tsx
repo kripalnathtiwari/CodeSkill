@@ -60,7 +60,7 @@ interface TrackedApplication {
   appliedDate: string;
   currentStep: number; // 1 to 4
   statusLabel: string;
-  statusColor: 'emerald' | 'blue' | 'amber' | 'purple';
+  statusColor: 'blue' | 'blue' | 'amber' | 'purple';
   nextAction?: string;
   atsScore?: number;
 }
@@ -193,7 +193,7 @@ const INITIAL_TRACKED: TrackedApplication[] = [
     appliedDate: 'July 28, 2026',
     currentStep: 3,
     statusLabel: 'Technical Interview Scheduled',
-    statusColor: 'emerald',
+    statusColor: 'blue',
     nextAction: 'Online Coding Round on Aug 3, 2026',
     atsScore: 92
   },
@@ -286,7 +286,22 @@ export default function Jobs() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<string>('All');
   const [selectedExperience, setSelectedExperience] = useState<string>('All');
-  const [trackedApplications, setTrackedApplications] = useState<TrackedApplication[]>(INITIAL_TRACKED);
+  const [trackedApplications, setTrackedApplications] = useState<TrackedApplication[]>(() => {
+    try {
+      const saved = localStorage.getItem('codeskill_user_applications');
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (e) {}
+    return [];
+  });
+
+  // Save tracked applications to localStorage when changed
+  useEffect(() => {
+    try {
+      localStorage.setItem('codeskill_user_applications', JSON.stringify(trackedApplications));
+    } catch (e) {}
+  }, [trackedApplications]);
   const [activeModalJob, setActiveModalJob] = useState<JobOpportunity | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [pendingJob, setPendingJob] = useState<JobOpportunity | null>(null);
@@ -518,18 +533,18 @@ export default function Jobs() {
   });
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
+    <div className="min-h-screen bg-background dark:bg-background text-text-primary dark:text-text-inverse py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
       <div className="max-w-7xl mx-auto space-y-10">
         {/* Header Hero Section */}
         <div className="text-center space-y-4">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-sm font-medium">
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary dark:text-primary text-sm font-medium">
             <Briefcase className="w-4 h-4" />
             <span>CodeSkill Career Portal</span>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-            Discover Top Tech <span className="text-emerald-600 dark:text-emerald-400">Jobs & Track Progress</span>
+          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-text-primary dark:text-text-primary">
+            Discover Top Tech <span className="text-primary dark:text-primary">Jobs & Track Progress</span>
           </h1>
-          <p className="max-w-2xl mx-auto text-slate-600 dark:text-slate-400 text-base sm:text-lg">
+          <p className="max-w-2xl mx-auto text-text-secondary dark:text-text-muted text-base sm:text-lg">
             Explore curated opportunities matching your skills and monitor every stage of your job application pipeline in real-time.
           </p>
         </div>
@@ -539,31 +554,31 @@ export default function Jobs() {
           {/* Box 1: Browse Jobs */}
           <button
             onClick={() => handleTabChange('browse')}
-            className={`group relative text-left overflow-hidden rounded-2xl bg-white dark:bg-slate-800/80 border p-5 transition-all duration-300 flex flex-col justify-between shadow-md hover:shadow-lg ${activeTab === 'browse'
-                ? 'border-emerald-500 ring-2 ring-emerald-500/20 bg-emerald-50/50 dark:bg-emerald-500/10'
-                : 'border-slate-200 dark:border-slate-700 hover:border-emerald-500/60'
+            className={`group relative text-left overflow-hidden rounded-2xl bg-surface dark:bg-slate-800/80 border p-5 transition-all duration-300 flex flex-col justify-between shadow-md hover:shadow-lg ${activeTab === 'browse'
+                ? 'border-primary ring-2 ring-blue-500/20 bg-blue-50/50 dark:bg-primary/10'
+                : 'border-border dark:border-border hover:border-primary/60'
               }`}
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary dark:text-primary">
                   <Briefcase className="w-5 h-5" />
                 </div>
                 {activeTab === 'browse' ? (
-                  <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500 text-white">
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-primary text-text-inverse">
                     Active
                   </span>
                 ) : (
-                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                  <span className="text-xs font-semibold text-text-muted dark:text-text-muted">
                     {SAMPLE_JOBS.length} Roles
                   </span>
                 )}
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 dark:text-white text-base group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                <h3 className="font-bold text-text-primary dark:text-text-primary text-base group-hover:text-primary dark:group-hover:text-primary transition-colors">
                   Browse Jobs
                 </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                <p className="text-xs text-text-secondary dark:text-text-muted mt-1">
                   Explore & apply to tech jobs
                 </p>
               </div>
@@ -573,25 +588,25 @@ export default function Jobs() {
           {/* Box 2: Track Application Progress */}
           <button
             onClick={() => handleTabChange('tracker')}
-            className={`group relative text-left overflow-hidden rounded-2xl bg-white dark:bg-slate-800/80 border p-5 transition-all duration-300 flex flex-col justify-between shadow-md hover:shadow-lg ${activeTab === 'tracker'
-                ? 'border-emerald-500 ring-2 ring-emerald-500/20 bg-emerald-50/50 dark:bg-emerald-500/10'
-                : 'border-slate-200 dark:border-slate-700 hover:border-emerald-500/60'
+            className={`group relative text-left overflow-hidden rounded-2xl bg-surface dark:bg-slate-800/80 border p-5 transition-all duration-300 flex flex-col justify-between shadow-md hover:shadow-lg ${activeTab === 'tracker'
+                ? 'border-primary ring-2 ring-blue-500/20 bg-blue-50/50 dark:bg-primary/10'
+                : 'border-border dark:border-border hover:border-primary/60'
               }`}
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary dark:text-primary">
                   <TrendingUp className="w-5 h-5" />
                 </div>
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-primary/10 text-primary dark:text-primary border border-primary/20">
                   {trackedApplications.length} Tracked
                 </span>
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 dark:text-white text-base group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                <h3 className="font-bold text-text-primary dark:text-text-primary text-base group-hover:text-primary dark:group-hover:text-primary transition-colors">
                   Track Applications
                 </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                <p className="text-xs text-text-secondary dark:text-text-muted mt-1">
                   Monitor interview progress
                 </p>
               </div>
@@ -601,20 +616,20 @@ export default function Jobs() {
           {/* Box 3: Resume Builder (renamed from iResume) */}
           <Link
             to="/cv-builder?view=editor"
-            className="group relative overflow-hidden rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 p-5 hover:border-emerald-500/60 transition-all duration-300 flex flex-col justify-between shadow-md hover:shadow-lg"
+            className="group relative overflow-hidden rounded-2xl bg-surface dark:bg-slate-800/80 border border-border dark:border-border p-5 hover:border-primary/60 transition-all duration-300 flex flex-col justify-between shadow-md hover:shadow-lg"
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary dark:text-primary">
                   <FileText className="w-5 h-5" />
                 </div>
-                <ArrowRight className="w-5 h-5 text-emerald-600 dark:text-emerald-400 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-5 h-5 text-primary dark:text-primary group-hover:translate-x-1 transition-transform" />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 dark:text-white text-base group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                <h3 className="font-bold text-text-primary dark:text-text-primary text-base group-hover:text-primary dark:group-hover:text-primary transition-colors">
                   Resume Builder
                 </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                <p className="text-xs text-text-secondary dark:text-text-muted mt-1">
                   Create & customize your CV
                 </p>
               </div>
@@ -624,20 +639,20 @@ export default function Jobs() {
           {/* Box 4: Resume Analysis */}
           <Link
             to="/ats-checker"
-            className="group relative overflow-hidden rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 p-5 hover:border-blue-500/60 transition-all duration-300 flex flex-col justify-between shadow-md hover:shadow-lg"
+            className="group relative overflow-hidden rounded-2xl bg-surface dark:bg-slate-800/80 border border-border dark:border-border p-5 hover:border-primary/60 transition-all duration-300 flex flex-col justify-between shadow-md hover:shadow-lg"
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary dark:text-primary">
                   <Sparkles className="w-5 h-5" />
                 </div>
-                <ArrowRight className="w-5 h-5 text-blue-600 dark:text-blue-400 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-5 h-5 text-primary dark:text-primary group-hover:translate-x-1 transition-transform" />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 dark:text-white text-base group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                <h3 className="font-bold text-text-primary dark:text-text-primary text-base group-hover:text-primary dark:group-hover:text-primary transition-colors">
                   Resume Analysis
                 </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                <p className="text-xs text-text-secondary dark:text-text-muted mt-1">
                   Test ATS compatibility
                 </p>
               </div>
@@ -649,22 +664,22 @@ export default function Jobs() {
           /* ================= BROWSE JOBS TAB ================= */
           <div className="space-y-8">
             {/* Upload CV Section Banner */}
-            <div className="bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-md transition-all">
+            <div className="bg-surface dark:bg-slate-800/80 border border-border dark:border-border rounded-2xl p-6 shadow-md transition-all">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary dark:text-primary shrink-0">
                     {uploadedCV ? <FileCheck className="w-6 h-6" /> : <UploadCloud className="w-6 h-6" />}
                   </div>
                   <div className="space-y-1">
-                    <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+                    <h3 className="text-base font-bold text-text-primary dark:text-text-primary flex items-center space-x-2">
                       <span>Upload Your CV to Apply & Match</span>
                       {uploadedCV && (
-                        <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                        <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary dark:text-primary border border-primary/30">
                           Active CV Attached
                         </span>
                       )}
                     </h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                    <p className="text-sm text-text-secondary dark:text-text-muted">
                       {uploadedCV
                         ? `Using ${uploadedCV.name} (${uploadedCV.size}) for 1-click apply and automated ATS screening.`
                         : 'Upload your latest resume (.pdf, .doc, .docx) to enable fast applying across all tech roles.'}
@@ -681,7 +696,7 @@ export default function Jobs() {
                         <Trash2 className="w-4 h-4" />
                         <span>Remove</span>
                       </button>
-                      <label className="px-5 py-2.5 rounded-xl bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 dark:hover:bg-slate-600 text-white text-sm font-semibold transition-colors cursor-pointer flex items-center space-x-2 shadow-sm">
+                      <label className="px-5 py-2.5 rounded-xl bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 dark:hover:bg-slate-600 text-text-inverse text-sm font-semibold transition-colors cursor-pointer flex items-center space-x-2 shadow-sm">
                         <UploadCloud className="w-4 h-4" />
                         <span>Replace CV</span>
                         <input
@@ -693,7 +708,7 @@ export default function Jobs() {
                       </label>
                     </>
                   ) : (
-                    <label className="px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-sm font-bold transition-all cursor-pointer flex items-center space-x-2 shadow-md hover:shadow-emerald-500/20">
+                    <label className="px-6 py-3 rounded-xl bg-primary hover:bg-primary text-slate-950 text-sm font-bold transition-all cursor-pointer flex items-center space-x-2 shadow-md hover:shadow-blue-500/20">
                       <UploadCloud className="w-5 h-5" />
                       <span>Upload CV (.PDF / .DOC)</span>
                       <input
@@ -710,25 +725,25 @@ export default function Jobs() {
 
             {/* Search & Filter Bar */}
             <div>
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+              <h2 className="text-2xl font-bold text-text-primary dark:text-text-primary flex items-center space-x-2">
                 <Megaphone className="w-6 h-6 text-rose-500" />
                 <span>Live Job Opportunities</span>
               </h2>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
+              <p className="text-sm text-text-secondary dark:text-text-muted">
                 Browse all active tech roles posted by companies & recruiters.
               </p>
             </div>
 
-            <div className="bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 rounded-2xl p-6 shadow-xl backdrop-blur-sm space-y-4">
+            <div className="bg-surface dark:bg-slate-800/80 border border-border dark:border-border/80 rounded-2xl p-6 shadow-xl backdrop-blur-sm space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="md:col-span-2 relative">
-                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
                   <input
                     type="text"
                     placeholder="Search by role, company, or skills (e.g. React, Python)..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 text-sm"
+                    className="w-full pl-11 pr-4 py-3 bg-surface-secondary dark:bg-background border border-border dark:border-border rounded-xl text-text-primary dark:text-text-inverse placeholder-slate-500 focus:outline-none focus:border-primary text-sm"
                   />
                 </div>
 
@@ -736,7 +751,7 @@ export default function Jobs() {
                   <select
                     value={selectedType}
                     onChange={(e) => setSelectedType(e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-200 focus:outline-none focus:border-emerald-500 text-sm"
+                    className="w-full px-4 py-3 bg-surface-secondary dark:bg-background border border-border dark:border-border rounded-xl text-text-primary dark:text-text-secondary focus:outline-none focus:border-primary text-sm"
                   >
                     <option value="All">All Job Types</option>
                     <option value="Internship">Internships</option>
@@ -749,7 +764,7 @@ export default function Jobs() {
                   <select
                     value={selectedExperience}
                     onChange={(e) => setSelectedExperience(e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-200 focus:outline-none focus:border-emerald-500 text-sm"
+                    className="w-full px-4 py-3 bg-surface-secondary dark:bg-background border border-border dark:border-border rounded-xl text-text-primary dark:text-text-secondary focus:outline-none focus:border-primary text-sm"
                   >
                     <option value="All">All Experience</option>
                     <option value="Internship">Internship Level</option>
@@ -763,26 +778,26 @@ export default function Jobs() {
             {/* Job Cards Grid */}
             <div className="space-y-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-slate-900 dark:text-slate-200">
+                <h2 className="text-xl font-bold text-text-primary dark:text-text-secondary">
                   Available Opportunities ({filteredJobs.length})
                 </h2>
-                <div className="text-sm text-slate-500 dark:text-slate-400">
+                <div className="text-sm text-text-muted dark:text-text-muted">
                   Showing curated roles for CodeSkill learners
                 </div>
               </div>
 
               {filteredJobs.length === 0 ? (
-                <div className="text-center py-16 bg-white dark:bg-slate-800/40 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md">
-                  <Briefcase className="w-12 h-12 text-slate-400 dark:text-slate-500 mx-auto mb-3" />
-                  <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-300">No matching jobs found</h3>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Try adjusting your filters or search keywords.</p>
+                <div className="text-center py-16 bg-surface dark:bg-slate-800/40 rounded-2xl border border-border dark:border-border shadow-md">
+                  <Briefcase className="w-12 h-12 text-text-muted dark:text-text-muted mx-auto mb-3" />
+                  <h3 className="text-lg font-semibold text-text-primary dark:text-text-secondary">No matching jobs found</h3>
+                  <p className="text-sm text-text-muted dark:text-text-muted mt-1">Try adjusting your filters or search keywords.</p>
                   <button
                     onClick={() => {
                       setSearchQuery('');
                       setSelectedType('All');
                       setSelectedExperience('All');
                     }}
-                    className="mt-4 px-4 py-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 rounded-xl text-sm font-medium transition-colors"
+                    className="mt-4 px-4 py-2 bg-primary/10 text-primary dark:text-primary hover:bg-primary/20 rounded-xl text-sm font-medium transition-colors"
                   >
                     Reset Filters
                   </button>
@@ -794,20 +809,20 @@ export default function Jobs() {
                     return (
                       <div
                         key={job.id}
-                        className="group bg-white dark:bg-slate-800/60 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/80 hover:border-emerald-500/50 rounded-2xl p-6 transition-all duration-300 flex flex-col justify-between space-y-6 shadow-lg"
+                        className="group bg-surface dark:bg-slate-800/60 hover:bg-background dark:hover:bg-slate-800 border border-border dark:border-border/80 hover:border-primary/50 rounded-2xl p-6 transition-all duration-300 flex flex-col justify-between space-y-6 shadow-lg"
                       >
                         <div className="space-y-4">
                           <div className="flex items-start justify-between">
                             <div className="flex items-center space-x-3">
-                              <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 flex items-center justify-center font-bold text-lg text-emerald-600 dark:text-emerald-400">
+                              <div className="w-12 h-12 rounded-xl bg-surface-secondary dark:bg-background border border-border dark:border-border flex items-center justify-center font-bold text-lg text-primary dark:text-primary">
                                 {job.company.charAt(0)}
                               </div>
                               <div>
-                                <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                                <h3 className="text-lg font-bold text-text-primary dark:text-text-primary group-hover:text-primary dark:group-hover:text-primary transition-colors">
                                   {job.title}
                                 </h3>
-                                <p className="text-sm text-slate-600 dark:text-slate-400 font-medium flex items-center space-x-1.5 mt-0.5">
-                                  <Building2 className="w-3.5 h-3.5 text-slate-500" />
+                                <p className="text-sm text-text-secondary dark:text-text-muted font-medium flex items-center space-x-1.5 mt-0.5">
+                                  <Building2 className="w-3.5 h-3.5 text-text-muted" />
                                   <span>{job.company}</span>
                                 </p>
                               </div>
@@ -815,7 +830,7 @@ export default function Jobs() {
 
                             <div className="flex flex-col items-end space-y-1.5">
                               {job.featured && (
-                                <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                                <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary dark:text-primary border border-primary/20">
                                   Featured
                                 </span>
                               )}
@@ -825,29 +840,29 @@ export default function Jobs() {
                                 </span>
                               )}
                               {job.deadline && (
-                                <span className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                                <span className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-surface-secondary dark:bg-slate-800 text-text-secondary dark:text-text-secondary">
                                   Apply by {job.deadline}
                                 </span>
                               )}
                             </div>
                           </div>
 
-                          <div className="flex flex-wrap gap-2 text-xs text-slate-700 dark:text-slate-300">
-                            <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700">
-                              <MapPin className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                          <div className="flex flex-wrap gap-2 text-xs text-text-primary dark:text-text-secondary">
+                            <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-surface-secondary dark:bg-background/80 border border-border dark:border-border">
+                              <MapPin className="w-3.5 h-3.5 text-primary dark:text-primary" />
                               <span>{job.location}</span>
                             </span>
-                            <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700">
-                              <DollarSign className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                            <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-surface-secondary dark:bg-background/80 border border-border dark:border-border">
+                              <DollarSign className="w-3.5 h-3.5 text-primary dark:text-primary" />
                               <span>{job.salary}</span>
                             </span>
-                            <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700">
-                              <Clock className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+                            <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-surface-secondary dark:bg-background/80 border border-border dark:border-border">
+                              <Clock className="w-3.5 h-3.5 text-text-muted dark:text-text-muted" />
                               <span>{job.posted}</span>
                             </span>
                           </div>
 
-                          <p className="text-sm text-slate-600 dark:text-slate-300 line-clamp-2">
+                          <p className="text-sm text-text-secondary dark:text-text-secondary line-clamp-2">
                             {job.description}
                           </p>
 
@@ -855,7 +870,7 @@ export default function Jobs() {
                             {job.skills.map((skill) => (
                               <span
                                 key={skill}
-                                className="px-2.5 py-0.5 rounded-md text-xs font-medium bg-slate-200/70 dark:bg-slate-700/50 text-slate-800 dark:text-slate-200 border border-slate-300/50 dark:border-slate-600/50"
+                                className="px-2.5 py-0.5 rounded-md text-xs font-medium bg-slate-200/70 dark:bg-slate-700/50 text-text-primary dark:text-text-secondary border border-border/50 dark:border-slate-600/50"
                               >
                                 {skill}
                               </span>
@@ -863,9 +878,9 @@ export default function Jobs() {
                           </div>
                         </div>
 
-                        <div className="pt-4 border-t border-slate-200 dark:border-slate-700/80 flex items-center justify-between">
-                          <span className="text-xs text-slate-500 dark:text-slate-400">
-                            Level: <strong className="text-slate-900 dark:text-slate-200">{job.experience}</strong>
+                        <div className="pt-4 border-t border-border dark:border-border/80 flex items-center justify-between">
+                          <span className="text-xs text-text-muted dark:text-text-muted">
+                            Level: <strong className="text-text-primary dark:text-text-secondary">{job.experience}</strong>
                           </span>
 
                           <button
@@ -880,8 +895,8 @@ export default function Jobs() {
                             }}
                             disabled={isApplied}
                             className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2 ${isApplied
-                                ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 cursor-default'
-                                : 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-md hover:shadow-emerald-500/20'
+                                ? 'bg-primary/20 text-primary dark:text-primary border border-primary/30 cursor-default'
+                                : 'bg-primary hover:bg-primary text-slate-950 shadow-md hover:shadow-blue-500/20'
                               }`}
                           >
                             {isApplied ? (
@@ -907,19 +922,19 @@ export default function Jobs() {
         ) : (
           /* ================= TRACK APPLICATION PROGRESS TAB ================= */
           <div className="space-y-8 animate-in fade-in duration-300">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-md gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-surface dark:bg-slate-800/80 border border-border dark:border-border rounded-2xl p-6 shadow-md gap-4">
               <div>
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center space-x-2">
-                  <TrendingUp className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                <h2 className="text-xl font-bold text-text-primary dark:text-text-primary flex items-center space-x-2">
+                  <TrendingUp className="w-5 h-5 text-primary dark:text-primary" />
                   <span>My Application Progress Pipeline</span>
                 </h2>
-                <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                <p className="text-sm text-text-secondary dark:text-text-muted mt-1">
                   Track resume screening, technical rounds, and interview decisions in real-time.
                 </p>
               </div>
               <Link
                 to="/cv-builder"
-                className="inline-flex items-center space-x-2 px-4 py-2.5 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-xl text-emerald-600 dark:text-emerald-400 text-sm font-semibold transition-colors w-fit"
+                className="inline-flex items-center space-x-2 px-4 py-2.5 bg-primary/10 hover:bg-primary/20 border border-primary/30 rounded-xl text-primary dark:text-primary text-sm font-semibold transition-colors w-fit"
               >
                 <FileText className="w-4 h-4" />
                 <span>Update Submitted Resume</span>
@@ -928,15 +943,15 @@ export default function Jobs() {
 
             <div className="space-y-6">
               {trackedApplications.length === 0 ? (
-                <div className="text-center py-16 bg-white dark:bg-slate-800/40 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md">
-                  <TrendingUp className="w-12 h-12 text-slate-400 dark:text-slate-500 mx-auto mb-3" />
-                  <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-300">No applications tracked yet</h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                <div className="text-center py-16 bg-surface dark:bg-slate-800/40 rounded-2xl border border-border dark:border-border shadow-md">
+                  <TrendingUp className="w-12 h-12 text-text-muted dark:text-text-muted mx-auto mb-3" />
+                  <h3 className="text-lg font-semibold text-text-primary dark:text-text-secondary">No applications tracked yet</h3>
+                  <p className="text-sm text-text-secondary dark:text-text-muted mt-1">
                     Start applying from the "Browse Jobs" tab to see your progress pipeline here.
                   </p>
                   <button
                     onClick={() => handleTabChange('browse')}
-                    className="mt-4 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold rounded-xl text-sm transition-colors"
+                    className="mt-4 px-5 py-2.5 bg-primary hover:bg-primary text-slate-950 font-semibold rounded-xl text-sm transition-colors"
                   >
                     Browse Opportunities
                   </button>
@@ -945,10 +960,10 @@ export default function Jobs() {
                 trackedApplications.map((app) => {
                   const getStatusBadgeStyle = (color: string) => {
                     switch (color) {
-                      case 'emerald':
-                        return 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400';
                       case 'blue':
-                        return 'bg-blue-500/10 border-blue-500/30 text-blue-600 dark:text-blue-400';
+                        return 'bg-primary/10 border-primary/30 text-primary dark:text-primary';
+                      case 'blue':
+                        return 'bg-primary/10 border-primary/30 text-primary dark:text-primary';
                       case 'purple':
                         return 'bg-purple-500/10 border-purple-500/30 text-purple-600 dark:text-purple-400';
                       default:
@@ -959,13 +974,13 @@ export default function Jobs() {
                   return (
                     <div
                       key={app.id}
-                      className="bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 rounded-2xl p-6 sm:p-8 shadow-md space-y-6"
+                      className="bg-surface dark:bg-slate-800/80 border border-border dark:border-border/80 rounded-2xl p-6 sm:p-8 shadow-md space-y-6"
                     >
                       {/* Title & Status Bar */}
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-700/80 pb-5">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border dark:border-border/80 pb-5">
                         <div className="space-y-1">
                           <div className="flex items-center space-x-3">
-                            <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
+                            <h3 className="text-lg sm:text-xl font-bold text-text-primary dark:text-text-primary">
                               {app.title}
                             </h3>
                             <span
@@ -976,27 +991,27 @@ export default function Jobs() {
                               {app.statusLabel}
                             </span>
                           </div>
-                          <p className="text-sm text-slate-600 dark:text-slate-400 flex items-center space-x-4">
+                          <p className="text-sm text-text-secondary dark:text-text-muted flex items-center space-x-4">
                             <span className="flex items-center space-x-1">
-                              <Building2 className="w-4 h-4 text-slate-500" />
+                              <Building2 className="w-4 h-4 text-text-muted" />
                               <strong>{app.company}</strong>
                             </span>
                             <span className="flex items-center space-x-1">
-                              <MapPin className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                              <MapPin className="w-4 h-4 text-primary dark:text-primary" />
                               <span>{app.location}</span>
                             </span>
-                            <span className="text-slate-500 text-xs">
+                            <span className="text-text-muted text-xs">
                               Applied: {app.appliedDate}
                             </span>
                           </p>
                         </div>
 
                         {app.atsScore && (
-                          <div className="flex items-center space-x-3 bg-slate-100 dark:bg-slate-900 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700">
-                            <Sparkles className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                          <div className="flex items-center space-x-3 bg-surface-secondary dark:bg-background px-4 py-2 rounded-xl border border-border dark:border-border">
+                            <Sparkles className="w-5 h-5 text-primary dark:text-primary" />
                             <div>
-                              <div className="text-xs text-slate-500 dark:text-slate-400">ATS Match Score</div>
-                              <div className="text-sm font-bold text-emerald-600 dark:text-emerald-400">{app.atsScore}%</div>
+                              <div className="text-xs text-text-muted dark:text-text-muted">ATS Match Score</div>
+                              <div className="text-sm font-bold text-primary dark:text-primary">{app.atsScore}%</div>
                             </div>
                           </div>
                         )}
@@ -1015,7 +1030,7 @@ export default function Jobs() {
                                 {idx < PROGRESS_STEPS.length - 1 && (
                                   <div
                                     className={`absolute top-4 left-1/2 w-full h-1 -z-0 transition-colors duration-300 ${stepItem.step < app.currentStep
-                                        ? 'bg-emerald-500'
+                                        ? 'bg-primary'
                                         : 'bg-slate-200 dark:bg-slate-700'
                                       }`}
                                   />
@@ -1024,10 +1039,10 @@ export default function Jobs() {
                                 {/* Dot / Icon */}
                                 <div
                                   className={`w-9 h-9 rounded-full flex items-center justify-center z-10 transition-all ${isCompleted
-                                      ? 'bg-emerald-500 text-white shadow-md'
+                                      ? 'bg-primary text-text-inverse shadow-md'
                                       : isCurrent
-                                        ? 'bg-white dark:bg-slate-900 border-2 border-emerald-500 text-emerald-600 dark:text-emerald-400 shadow-lg ring-4 ring-emerald-500/20'
-                                        : 'bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-400 dark:text-slate-500'
+                                        ? 'bg-surface dark:bg-background border-2 border-primary text-primary dark:text-primary shadow-lg ring-4 ring-blue-500/20'
+                                        : 'bg-slate-200 dark:bg-slate-800 border border-border dark:border-border text-text-muted dark:text-text-muted'
                                     }`}
                                 >
                                   {isCompleted ? (
@@ -1043,13 +1058,13 @@ export default function Jobs() {
                                 <div className="mt-2 space-y-0.5">
                                   <div
                                     className={`text-xs sm:text-sm font-bold ${isCompleted || isCurrent
-                                        ? 'text-slate-900 dark:text-white'
-                                        : 'text-slate-400 dark:text-slate-500'
+                                        ? 'text-text-primary dark:text-text-primary'
+                                        : 'text-text-muted dark:text-text-muted'
                                       }`}
                                   >
                                     {stepItem.name}
                                   </div>
-                                  <div className="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:block">
+                                  <div className="text-[11px] text-text-muted dark:text-text-muted hidden sm:block">
                                     {stepItem.desc}
                                   </div>
                                 </div>
@@ -1060,10 +1075,10 @@ export default function Jobs() {
                       </div>
 
                       {/* Next Action & Action Buttons */}
-                      <div className="bg-slate-100 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div className="bg-surface-secondary dark:bg-background/80 border border-border dark:border-border rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div className="flex items-center space-x-2 text-sm">
-                          <AlertCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
-                          <span className="text-slate-600 dark:text-slate-300">
+                          <AlertCircle className="w-4 h-4 text-primary dark:text-primary flex-shrink-0" />
+                          <span className="text-text-secondary dark:text-text-secondary">
                             <strong>Next Step:</strong> {app.nextAction || 'Awaiting recruiter feedback'}
                           </span>
                         </div>
@@ -1071,13 +1086,13 @@ export default function Jobs() {
                         <div className="flex items-center space-x-3">
                           <Link
                             to="/ats-checker"
-                            className="px-3.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:border-emerald-500 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+                            className="px-3.5 py-1.5 bg-surface dark:bg-slate-800 border border-border dark:border-border hover:border-primary rounded-lg text-xs font-semibold text-text-primary dark:text-text-secondary hover:text-primary dark:hover:text-primary transition-colors"
                           >
                             Check ATS Match
                           </Link>
                           <Link
                             to="/cv-builder"
-                            className="px-3.5 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-lg text-xs font-semibold transition-colors"
+                            className="px-3.5 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary dark:text-primary rounded-lg text-xs font-semibold transition-colors"
                           >
                             View Submitted CV
                           </Link>
@@ -1095,51 +1110,51 @@ export default function Jobs() {
       {/* Application Confirmation Modal */}
       {activeModalJob && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-6 shadow-2xl">
+          <div className="bg-surface dark:bg-background border border-border dark:border-border rounded-2xl max-w-md w-full p-6 space-y-6 shadow-2xl">
             <div className="space-y-2">
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+              <h3 className="text-xl font-bold text-text-primary dark:text-text-primary">
                 Apply: {activeModalJob.title}
               </h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
+              <p className="text-sm text-text-secondary dark:text-text-muted">
                 You are applying to <strong>{activeModalJob.company}</strong> ({activeModalJob.location}).
               </p>
             </div>
 
             {/* Upload CV Section inside Modal */}
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider block">
+              <label className="text-xs font-bold text-text-primary dark:text-text-secondary uppercase tracking-wider block">
                 Attach Resume / CV
               </label>
               {uploadedCV ? (
-                <div className="flex items-center justify-between bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3">
+                <div className="flex items-center justify-between bg-blue-50 dark:bg-primary/10 border border-primary/30 rounded-xl p-3">
                   <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                    <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary dark:text-primary">
                       <FileCheck className="w-4 h-4" />
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-slate-900 dark:text-white truncate max-w-[180px]">
+                      <p className="text-xs font-bold text-text-primary dark:text-text-primary truncate max-w-[180px]">
                         {uploadedCV.name}
                       </p>
-                      <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
+                      <p className="text-[10px] text-primary dark:text-primary font-medium">
                         {uploadedCV.size} • ATS Checked
                       </p>
                     </div>
                   </div>
                   <button
                     onClick={() => setUploadedCV(null)}
-                    className="p-1.5 text-slate-400 hover:text-red-500 rounded-lg transition-colors"
+                    className="p-1.5 text-text-muted hover:text-red-500 rounded-lg transition-colors"
                     title="Remove uploaded CV"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               ) : (
-                <label className="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500/60 rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer bg-slate-50 dark:bg-slate-800/40 hover:bg-emerald-50/30 dark:hover:bg-emerald-500/5 transition-all group">
-                  <UploadCloud className="w-6 h-6 text-slate-400 group-hover:text-emerald-500 mb-1 transition-colors" />
-                  <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                <label className="border-2 border-dashed border-border dark:border-border hover:border-primary dark:hover:border-primary/60 rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer bg-background dark:bg-slate-800/40 hover:bg-blue-50/30 dark:hover:bg-primary/5 transition-all group">
+                  <UploadCloud className="w-6 h-6 text-text-muted group-hover:text-primary mb-1 transition-colors" />
+                  <span className="text-xs font-semibold text-text-primary dark:text-text-secondary group-hover:text-primary dark:group-hover:text-primary">
                     Click to Upload Custom CV (.PDF / .DOC)
                   </span>
-                  <span className="text-[10px] text-slate-400">
+                  <span className="text-[10px] text-text-muted">
                     Max file size 5MB
                   </span>
                   <input
@@ -1152,16 +1167,16 @@ export default function Jobs() {
               )}
             </div>
 
-            <div className="bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl p-4 space-y-3 text-sm">
+            <div className="bg-surface-secondary dark:bg-slate-800/80 border border-border dark:border-border rounded-xl p-4 space-y-3 text-sm">
               <div className="flex items-center justify-between">
-                <span className="text-slate-600 dark:text-slate-400">Profile Resume:</span>
-                <Link to="/cv-builder" className="text-emerald-600 dark:text-emerald-400 hover:underline font-medium text-xs">
+                <span className="text-text-secondary dark:text-text-muted">Profile Resume:</span>
+                <Link to="/cv-builder" className="text-primary dark:text-primary hover:underline font-medium text-xs">
                   Edit in Resume →
                 </Link>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-slate-600 dark:text-slate-400">ATS Score Check:</span>
-                <Link to="/ats-checker" className="text-blue-600 dark:text-blue-400 hover:underline font-medium text-xs">
+                <span className="text-text-secondary dark:text-text-muted">ATS Score Check:</span>
+                <Link to="/ats-checker" className="text-primary dark:text-primary hover:underline font-medium text-xs">
                   Verify ATS Match →
                 </Link>
               </div>
@@ -1170,13 +1185,13 @@ export default function Jobs() {
             <div className="flex items-center justify-end space-x-3 pt-2">
               <button
                 onClick={() => setActiveModalJob(null)}
-                className="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                className="px-4 py-2 rounded-xl text-sm font-medium text-text-secondary dark:text-text-muted hover:text-text-primary dark:hover:text-text-inverse transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={() => handleApply(activeModalJob)}
-                className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-xl text-sm font-semibold transition-colors shadow-lg"
+                className="px-5 py-2.5 bg-primary hover:bg-primary text-slate-950 rounded-xl text-sm font-semibold transition-colors shadow-lg"
               >
                 Confirm Application
               </button>
@@ -1191,32 +1206,27 @@ export default function Jobs() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl relative overflow-hidden text-white"
+            className="bg-slate-900 border border-border rounded-3xl p-8 max-w-md w-full text-center shadow-2xl relative overflow-hidden text-text-inverse"
           >
-            <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mx-auto mb-5 border border-emerald-500/20">
-              <LockKeyhole className="w-8 h-8 text-emerald-400" />
+            <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto mb-5 border border-primary/20">
+              <LockKeyhole className="w-8 h-8 text-primary" />
             </div>
-            <h2 className="text-2xl font-black text-white mb-2">Login Required to Apply</h2>
-            <p className="text-slate-300 text-sm mb-6 leading-relaxed">
-              Please log in or create a free account to submit your application for <span className="text-emerald-400 font-bold">{pendingJob?.title || 'this position'}</span> at <span className="text-emerald-400 font-bold">{pendingJob?.company || 'the company'}</span>.
+            <h2 className="text-2xl font-black text-text-inverse mb-2">Login Required to Apply</h2>
+            <p className="text-text-secondary text-sm mb-6 leading-relaxed">
+              Please log in to submit your application for <span className="text-primary font-bold">{pendingJob?.title || 'this position'}</span> at <span className="text-primary font-bold">{pendingJob?.company || 'the company'}</span>.
             </p>
             <div className="space-y-3">
               <button
                 onClick={() => navigate('/login', { state: { from: `/jobs?autoApply=${pendingJob?.id || ''}` } })}
-                className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-base shadow-lg transition-all flex items-center justify-center gap-2"
+                className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-primary to-sky-600 hover:from-blue-400 hover:to-sky-500 text-text-inverse font-bold text-base shadow-lg transition-all flex items-center justify-center gap-2"
               >
                 <LogIn className="w-5 h-5" />
                 <span>Log In & Apply</span>
               </button>
-              <button
-                onClick={() => navigate('/register', { state: { from: `/jobs?autoApply=${pendingJob?.id || ''}` } })}
-                className="w-full py-3 px-6 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm transition-all"
-              >
-                Create Free Account
-              </button>
+
               <button
                 onClick={() => setShowAuthModal(false)}
-                className="w-full py-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors"
+                className="w-full py-2 text-xs font-semibold text-text-muted hover:text-text-inverse transition-colors"
               >
                 Continue Browsing
               </button>

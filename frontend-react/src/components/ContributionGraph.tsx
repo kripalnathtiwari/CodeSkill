@@ -67,12 +67,12 @@ export default function ContributionGraph() {
     <motion.div 
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="glass-card bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl border border-slate-200 dark:border-slate-800 p-8 shadow-xl shadow-slate-200/50 dark:shadow-none hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden"
+      className="glass-card bg-surface/80 dark:bg-background/80 backdrop-blur-xl rounded-3xl border border-border dark:border-border p-8 shadow-xl shadow-slate-200/50 dark:shadow-none hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden"
     >
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{totalContributions} contributions in the last year</h2>
-          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Your coding and learning activity on CodeSkill.</p>
+          <h2 className="text-2xl font-bold text-text-primary dark:text-text-primary">{totalContributions} contributions in the last year</h2>
+          <p className="text-text-muted dark:text-text-muted text-sm mt-1">Your coding and learning activity on CodeSkill.</p>
         </div>
       </div>
       

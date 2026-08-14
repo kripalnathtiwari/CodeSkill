@@ -49,7 +49,17 @@ app.use(compression());
 
 // Performance & Cache-Control middleware for public read-only endpoints
 app.use((req, res, next) => {
-  if (req.method === "GET" && (req.path.startsWith("/api/v1/questions") || req.path.startsWith("/api/v1/aptitude-problems") || req.path.startsWith("/api/v1/archives"))) {
+  if (
+    req.method === "GET" &&
+    (req.path.startsWith("/api/v1/questions") ||
+      req.path.startsWith("/api/v1/aptitude-problems") ||
+      req.path.startsWith("/api/v1/archives") ||
+      req.path.startsWith("/api/v1/colleges") ||
+      req.path.startsWith("/api/v1/college-management/public") ||
+      req.path.startsWith("/api/v1/admin/cv/sample-cvs") ||
+      req.path.startsWith("/api/v1/admin/cv/job-skills") ||
+      req.path.startsWith("/api/v1/jobs"))
+  ) {
     res.setHeader("Cache-Control", "public, max-age=60, stale-while-revalidate=300");
   } else if (req.method === "GET" && req.path.startsWith("/public")) {
     res.setHeader("Cache-Control", "public, max-age=86400, immutable");

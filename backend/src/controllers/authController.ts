@@ -18,6 +18,12 @@ const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
 
 async function verifyTurnstile(token: string) {
   if (!token) return false;
+  
+  // Bypass captcha strictly in local development or if using dummy testing keys
+  if (process.env.NODE_ENV === "development" || TURNSTILE_SECRET === "1x0000000000000000000000000000000AA") {
+    return true;
+  }
+
   try {
     const params = new URLSearchParams();
     params.append('secret', TURNSTILE_SECRET);
@@ -459,7 +465,7 @@ export class AuthController {
 
       // Generate 6-digit OTP
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
-      
+
       // Store in Redis (5 mins expiration)
       if (redis) {
         await redis.setex(`otp:${email}`, 300, otp);
@@ -506,7 +512,7 @@ export class AuthController {
         data: { forgotPasswordToken: resetToken },
       });
 
-      return res.status(200).json({ 
+      return res.status(200).json({
         message: "OTP verified successfully",
         resetToken
       });
@@ -525,7 +531,7 @@ export class AuthController {
 
     try {
       const user = await prisma.user.findUnique({ where: { email } });
-      
+
       if (!user || user.forgotPasswordToken !== resetToken) {
         return res.status(400).json({ error: "Invalid or expired reset token" });
       }
@@ -534,7 +540,7 @@ export class AuthController {
 
       await prisma.user.update({
         where: { email },
-        data: { 
+        data: {
           passwordHash,
           forgotPasswordToken: null // Clear token after use
         },
@@ -571,6 +577,76 @@ export class AuthController {
     } catch (err: any) {
       logger.error(`Log activity failed: ${err.message}`);
       return res.status(500).json({ error: "Failed to log activity" });
+    }
+  }
+
+  public static async getDashboardStats(req: AuthenticatedRequest, res: Response) {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    try {
+      // 1. Coding Stats
+      const codingTotal = await prisma.question.count({ where: { type: { not: "MCQ" } } });
+      const codingEasyTotal = await prisma.question.count({ where: { type: { not: "MCQ" }, difficulty: "EASY" } });
+      const codingMediumTotal = await prisma.question.count({ where: { type: { not: "MCQ" }, difficulty: "MEDIUM" } });
+      const codingHardTotal = await prisma.question.count({ where: { type: { not: "MCQ" }, difficulty: "HARD" } });
+
+      // Get solved by current user
+      const solvedSubmissions = await prisma.submission.findMany({
+        where: {
+          userId,
+          status: "ACCEPTED",
+          question: { type: { not: "MCQ" } }
+        },
+        include: { question: true },
+        distinct: ['questionId']
+      });
+
+      const codingSolved = solvedSubmissions.length;
+      let easySolved = 0, mediumSolved = 0, hardSolved = 0;
+      solvedSubmissions.forEach(sub => {
+        const diff = sub.question.difficulty?.toUpperCase();
+        if (diff === "EASY") easySolved++;
+        else if (diff === "MEDIUM") mediumSolved++;
+        else if (diff === "HARD") hardSolved++;
+      });
+
+      // 2. MCQ Stats
+      const mcqQuestionTotal = await prisma.question.count({ where: { type: "MCQ" } });
+      const aptitudeTotal = await prisma.aptitudeProblem.count();
+      const mcqTotal = mcqQuestionTotal + aptitudeTotal;
+      
+      const mcqSubmissions = await prisma.submission.findMany({
+        where: {
+          userId,
+          question: { type: "MCQ" }
+        },
+        distinct: ['questionId']
+      });
+      
+      const mcqSolved = mcqSubmissions.length;
+      const mcqCorrect = mcqSubmissions.filter(s => s.status === "ACCEPTED").length;
+
+      return res.status(200).json({
+        coding: {
+          total: codingTotal,
+          solved: codingSolved,
+          easy: { total: codingEasyTotal, solved: easySolved },
+          medium: { total: codingMediumTotal, solved: mediumSolved },
+          hard: { total: codingHardTotal, solved: hardSolved }
+        },
+        mcq: {
+          total: mcqTotal,
+          solved: mcqSolved,
+          correct: mcqCorrect
+        }
+      });
+
+    } catch (err: any) {
+      logger.error(`Get dashboard stats failed: ${err.message}`);
+      return res.status(500).json({ error: "Failed to fetch dashboard stats" });
     }
   }
 }

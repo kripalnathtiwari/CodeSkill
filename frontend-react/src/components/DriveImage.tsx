@@ -57,21 +57,21 @@ export default function DriveImage({
 
   if (!currentUrl || hasError) {
     return (
-      <div className="w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col items-center justify-center border border-slate-700 relative overflow-hidden group/doc p-4">
-        <div className="absolute -top-12 -right-12 w-36 h-36 bg-emerald-500/10 rounded-full blur-2xl" />
-        <div className="w-16 h-20 bg-slate-800 border-2 border-emerald-500/40 rounded-lg p-2.5 shadow-xl flex flex-col justify-between mb-3 group-hover/doc:-translate-y-1 transition-transform">
+      <div className="w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col items-center justify-center border border-border relative overflow-hidden group/doc p-4">
+        <div className="absolute -top-12 -right-12 w-36 h-36 bg-primary/10 rounded-full blur-2xl" />
+        <div className="w-16 h-20 bg-slate-800 border-2 border-primary/40 rounded-lg p-2.5 shadow-xl flex flex-col justify-between mb-3 group-hover/doc:-translate-y-1 transition-transform">
           <div className="space-y-1">
-            <div className="w-full h-1.5 bg-emerald-500 rounded-full" />
+            <div className="w-full h-1.5 bg-primary rounded-full" />
             <div className="w-3/4 h-1 bg-slate-600 rounded-full" />
             <div className="w-full h-1 bg-slate-700 rounded-full" />
             <div className="w-5/6 h-1 bg-slate-700 rounded-full" />
           </div>
-          <div className="w-1/2 h-1 bg-emerald-500/60 rounded-full" />
+          <div className="w-1/2 h-1 bg-primary/60 rounded-full" />
         </div>
-        <span className="text-xs font-bold text-slate-300 uppercase tracking-wider text-center line-clamp-1">
+        <span className="text-xs font-bold text-text-secondary uppercase tracking-wider text-center line-clamp-1">
           {sample?.category || 'Professional CV'}
         </span>
-        <span className="text-[10px] text-slate-500 mt-1 font-medium text-center line-clamp-1">
+        <span className="text-[10px] text-text-muted mt-1 font-medium text-center line-clamp-1">
           {sample?.title || 'CV Sample Document'}
         </span>
       </div>

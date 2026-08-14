@@ -143,17 +143,17 @@ export default function CourseManagement() {
           <div className="flex items-center space-x-3">
             <button
               onClick={handleCancel}
-              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
+              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-text-muted hover:text-text-inverse transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div>
-              <h2 className="text-2xl font-bold text-white">
+              <h2 className="text-2xl font-bold text-text-inverse">
                 {isEditMode
                   ? isEditingDefault ? "View Course Details" : "Edit Course"
                   : "Create New Course"}
               </h2>
-              <p className="text-slate-400 text-sm">
+              <p className="text-text-muted text-sm">
                 {isEditMode
                   ? isEditingDefault
                     ? "Default courses are read-only. Duplicate to create an editable copy."
@@ -164,13 +164,13 @@ export default function CourseManagement() {
           </div>
 
           <div className="flex space-x-3">
-            <button onClick={handleCancel} className="px-5 py-2.5 rounded-xl font-semibold text-slate-400 hover:text-white border border-slate-700 hover:border-slate-500 transition-colors">
+            <button onClick={handleCancel} className="px-5 py-2.5 rounded-xl font-semibold text-text-muted hover:text-text-inverse border border-border hover:border-slate-500 transition-colors">
               Cancel
             </button>
             {!isEditingDefault && (
               <button
                 onClick={handleSave}
-                className="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2.5 rounded-xl font-bold flex items-center space-x-2 shadow-lg shadow-emerald-500/20 transition-colors"
+                className="bg-primary hover:bg-primary text-text-inverse px-6 py-2.5 rounded-xl font-bold flex items-center space-x-2 shadow-lg shadow-blue-500/20 transition-colors"
               >
                 <Save className="w-4 h-4" />
                 <span>{isEditMode ? "Save Changes" : "Create Course"}</span>
@@ -190,25 +190,25 @@ export default function CourseManagement() {
         )}
 
         {/* Form Card */}
-        <div className="bg-[#111827] rounded-3xl p-8 border border-slate-800 shadow-xl space-y-6">
+        <div className="bg-[#111827] rounded-3xl p-8 border border-border shadow-xl space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Left column */}
             <div className="space-y-5">
               <div>
-                <label className="block text-sm font-bold text-slate-400 mb-2">Course Title *</label>
+                <label className="block text-sm font-bold text-text-muted mb-2">Course Title *</label>
                 <input
                   type="text" value={title} onChange={e => setTitle(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   placeholder="e.g. Master React in 30 Days"
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-400 mb-2">Category</label>
+                <label className="block text-sm font-bold text-text-muted mb-2">Category</label>
                 <select
                   value={category} onChange={e => setCategory(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option value="summer">Summer Training</option>
                   <option value="industrial">Industrial Training</option>
@@ -217,20 +217,20 @@ export default function CourseManagement() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-400 mb-2">Price *</label>
+                <label className="block text-sm font-bold text-text-muted mb-2">Price *</label>
                 <input
                   type="text" value={price} onChange={e => setPrice(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="e.g. ₹2,999"
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-400 mb-2">Duration</label>
+                <label className="block text-sm font-bold text-text-muted mb-2">Duration</label>
                 <input
                   type="text" value={duration} onChange={e => setDuration(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="e.g. 4 Weeks"
                 />
               </div>
@@ -239,11 +239,11 @@ export default function CourseManagement() {
             {/* Right column */}
             <div className="space-y-5">
               <div>
-                <label className="block text-sm font-bold text-slate-400 mb-2">Level</label>
+                <label className="block text-sm font-bold text-text-muted mb-2">Level</label>
                 <select
                   value={level} onChange={e => setLevel(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option>Beginner</option>
                   <option>Intermediate</option>
@@ -254,24 +254,24 @@ export default function CourseManagement() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-400 mb-2">Tags (Comma Separated)</label>
+                <label className="block text-sm font-bold text-text-muted mb-2">Tags (Comma Separated)</label>
                 <input
                   type="text" value={tags} onChange={e => setTags(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="React, Node.js, Web Dev"
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-400 mb-2">Image URL</label>
+                <label className="block text-sm font-bold text-text-muted mb-2">Image URL</label>
                 <input
                   type="text" value={image} onChange={e => setImage(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="https://..."
                 />
                 {image && (
-                  <img src={image} alt="Preview" loading="lazy" className="mt-3 h-28 w-full object-cover rounded-xl border border-slate-700" />
+                  <img src={image} alt="Preview" loading="lazy" className="mt-3 h-28 w-full object-cover rounded-xl border border-border" />
                 )}
               </div>
             </div>
@@ -279,20 +279,20 @@ export default function CourseManagement() {
             {/* Added Fields Row */}
             <div className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <label className="block text-sm font-bold text-slate-400 mb-2">Language</label>
+                <label className="block text-sm font-bold text-text-muted mb-2">Language</label>
                 <input
                   type="text" value={language} onChange={e => setLanguage(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="e.g. English, Hindi"
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-400 mb-2">Visibility</label>
+                <label className="block text-sm font-bold text-text-muted mb-2">Visibility</label>
                 <select
                   value={visibility} onChange={e => setVisibility(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option value="PUBLIC">Public</option>
                   <option value="PRIVATE">Private</option>
@@ -300,11 +300,11 @@ export default function CourseManagement() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-400 mb-2">Publish Status</label>
+                <label className="block text-sm font-bold text-text-muted mb-2">Publish Status</label>
                 <select
                   value={publishStatus} onChange={e => setPublishStatus(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option value="DRAFT">Draft</option>
                   <option value="PUBLISHED">Published</option>
@@ -315,11 +315,11 @@ export default function CourseManagement() {
             
             {/* Added Fields Row 2 */}
             <div className="col-span-1 md:col-span-2">
-              <label className="block text-sm font-bold text-slate-400 mb-2">SEO Title</label>
+              <label className="block text-sm font-bold text-text-muted mb-2">SEO Title</label>
               <input
                 type="text" value={seoTitle} onChange={e => setSeoTitle(e.target.value)}
                 disabled={!!isEditingDefault}
-                className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 placeholder="Title optimized for Search Engines"
               />
             </div>
@@ -327,43 +327,43 @@ export default function CourseManagement() {
 
           {/* Description – full width */}
           <div>
-            <label className="block text-sm font-bold text-slate-400 mb-2">Description *</label>
+            <label className="block text-sm font-bold text-text-muted mb-2">Description *</label>
             <textarea
               value={description} onChange={e => setDescription(e.target.value)}
               rows={4}
               disabled={!!isEditingDefault}
-              className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed resize-none"
+              className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed resize-none"
               placeholder="Detailed course description..."
             />
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-slate-400 mb-2">Course Overview</label>
+            <label className="block text-sm font-bold text-text-muted mb-2">Course Overview</label>
             <textarea
               value={overview} onChange={e => setOverview(e.target.value)}
               rows={4}
               disabled={!!isEditingDefault}
-              className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed resize-none"
+              className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed resize-none"
               placeholder="Provide a high-level overview of the course..."
             />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-bold text-slate-400 mb-2">Skills You Will Learn (Comma Separated)</label>
+              <label className="block text-sm font-bold text-text-muted mb-2">Skills You Will Learn (Comma Separated)</label>
               <input
                 type="text" value={skillsYouWillLearn} onChange={e => setSkillsYouWillLearn(e.target.value)}
                 disabled={!!isEditingDefault}
-                className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 placeholder="e.g. Problem Solving, Web Development"
               />
             </div>
             <div>
-              <label className="block text-sm font-bold text-slate-400 mb-2">Tech Stack (Comma Separated)</label>
+              <label className="block text-sm font-bold text-text-muted mb-2">Tech Stack (Comma Separated)</label>
               <input
                 type="text" value={techStack} onChange={e => setTechStack(e.target.value)}
                 disabled={!!isEditingDefault}
-                className="w-full bg-[#0a1128] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 placeholder="e.g. React, Node.js, MongoDB"
               />
             </div>
@@ -378,34 +378,34 @@ export default function CourseManagement() {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold text-white mb-1">Course Management</h2>
-          <p className="text-slate-400">Add, edit, or remove platform courses.</p>
+          <h2 className="text-3xl font-bold text-text-inverse mb-1">Course Management</h2>
+          <p className="text-text-muted">Add, edit, or remove platform courses.</p>
         </div>
         <button
           onClick={openCreate}
-          className="flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+          className="flex items-center space-x-2 bg-primary hover:bg-primary text-text-inverse px-4 py-2 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)]"
         >
           <Plus className="w-5 h-5" />
           <span>Add New Course</span>
         </button>
       </div>
 
-      <div className="bg-[#111827] border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-        <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
+      <div className="bg-[#111827] border border-border rounded-2xl overflow-hidden shadow-xl">
+        <div className="p-4 border-b border-border flex justify-between items-center bg-slate-900/50">
           <div className="relative w-80">
             <input
               type="text" placeholder="Search courses..."
               value={search} onChange={e => setSearch(e.target.value)}
-              className="w-full bg-[#1a2333] border border-slate-700 rounded-lg pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-inverse focus:outline-none focus:border-primary"
             />
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
           </div>
-          <span className="text-sm font-medium text-slate-400">Total: {filtered.length} courses</span>
+          <span className="text-sm font-medium text-text-muted">Total: {filtered.length} courses</span>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-300">
-            <thead className="bg-[#1a2333] text-slate-400 uppercase text-xs font-semibold">
+          <table className="w-full text-left text-sm text-text-secondary">
+            <thead className="bg-[#1a2333] text-text-muted uppercase text-xs font-semibold">
               <tr>
                 <th className="px-6 py-4">Course</th>
                 <th className="px-6 py-4">Category</th>
@@ -419,36 +419,36 @@ export default function CourseManagement() {
             <tbody className="divide-y divide-slate-800">
               {filtered.map(course => (
                 <tr key={course.id} className="hover:bg-slate-800/30 transition-colors">
-                  <td className="px-6 py-4 font-medium text-white">
+                  <td className="px-6 py-4 font-medium text-text-inverse">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 rounded bg-slate-800 flex items-center justify-center overflow-hidden shrink-0">
-                        {course.image ? <img src={course.image} alt="" loading="lazy" className="w-full h-full object-cover" /> : <ImageIcon className="w-5 h-5 text-slate-500" />}
+                        {course.image ? <img src={course.image} alt="" loading="lazy" className="w-full h-full object-cover" /> : <ImageIcon className="w-5 h-5 text-text-muted" />}
                       </div>
                       <div className="min-w-0">
                         <p className="line-clamp-1 font-semibold">{course.title}</p>
-                        <p className="text-xs text-slate-500">{course.duration || "—"} · {course.level || "—"}</p>
+                        <p className="text-xs text-text-muted">{course.duration || "—"} · {course.level || "—"}</p>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-1 rounded text-xs font-bold ${course.category === 'summer' ? 'bg-amber-500/10 text-amber-500' : course.category === 'featured' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-blue-500/10 text-blue-400'}`}>
+                    <span className={`px-2 py-1 rounded text-xs font-bold ${course.category === 'summer' ? 'bg-amber-500/10 text-amber-500' : course.category === 'featured' ? 'bg-primary/10 text-primary' : 'bg-primary/10 text-primary'}`}>
                       {course.category}
                     </span>
                   </td>
-                  <td className="px-6 py-4 font-mono text-emerald-400">{course.price}</td>
-                  <td className="px-6 py-4 text-slate-300">{course.language || "English"}</td>
+                  <td className="px-6 py-4 font-mono text-primary">{course.price}</td>
+                  <td className="px-6 py-4 text-text-secondary">{course.language || "English"}</td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-1 rounded text-[10px] uppercase font-bold ${course.publishStatus === 'PUBLISHED' ? 'bg-emerald-500/10 text-emerald-400' : course.publishStatus === 'ARCHIVED' ? 'bg-rose-500/10 text-rose-400' : 'bg-slate-700 text-slate-300'}`}>
+                    <span className={`px-2 py-1 rounded text-[10px] uppercase font-bold ${course.publishStatus === 'PUBLISHED' ? 'bg-primary/10 text-primary' : course.publishStatus === 'ARCHIVED' ? 'bg-rose-500/10 text-rose-400' : 'bg-slate-700 text-text-secondary'}`}>
                       {course.publishStatus || "PUBLISHED"}
                     </span>
-                    <span className="block text-[10px] text-slate-500 mt-1">{course.visibility || "PUBLIC"}</span>
+                    <span className="block text-[10px] text-text-muted mt-1">{course.visibility || "PUBLIC"}</span>
                   </td>
                   <td className="px-6 py-4">{course.students ?? "—"}</td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end space-x-1">
                       <button
                         onClick={() => openEdit(course)}
-                        className="p-2 text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
+                        className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
                         title={isDefaultCourse(course.id) ? "View details (read-only)" : "Edit Course"}
                       >
                         <Edit className="w-4 h-4" />
@@ -466,7 +466,7 @@ export default function CourseManagement() {
               ))}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-slate-500">No courses found matching your search.</td>
+                  <td colSpan={5} className="px-6 py-12 text-center text-text-muted">No courses found matching your search.</td>
                 </tr>
               )}
             </tbody>
@@ -478,8 +478,8 @@ export default function CourseManagement() {
       {deleteConfirmId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setDeleteConfirmId(null)} />
-          <div className="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl p-6 w-full max-w-md">
-            <button onClick={() => setDeleteConfirmId(null)} className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">
+          <div className="relative bg-surface dark:bg-background border border-border dark:border-border rounded-2xl shadow-2xl p-6 w-full max-w-md">
+            <button onClick={() => setDeleteConfirmId(null)} className="absolute top-4 right-4 p-1.5 text-text-muted hover:text-text-inverse hover:bg-slate-800 rounded-lg transition-colors">
               <X className="w-4 h-4" />
             </button>
 
@@ -490,12 +490,12 @@ export default function CourseManagement() {
                     <AlertTriangle className="w-6 h-6 text-amber-500" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-white">Protected Course</h3>
-                    <p className="mt-1 text-sm text-slate-400">This is a <span className="text-amber-400 font-semibold">default system course</span> and cannot be deleted. Only courses you've created can be removed.</p>
+                    <h3 className="text-lg font-bold text-text-inverse">Protected Course</h3>
+                    <p className="mt-1 text-sm text-text-muted">This is a <span className="text-amber-400 font-semibold">default system course</span> and cannot be deleted. Only courses you've created can be removed.</p>
                   </div>
                 </div>
                 <div className="mt-6 flex justify-end">
-                  <button onClick={() => setDeleteConfirmId(null)} className="px-5 py-2.5 text-sm font-semibold rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors">Close</button>
+                  <button onClick={() => setDeleteConfirmId(null)} className="px-5 py-2.5 text-sm font-semibold rounded-xl border border-border text-text-secondary hover:bg-slate-800 transition-colors">Close</button>
                 </div>
               </>
             ) : (
@@ -505,13 +505,13 @@ export default function CourseManagement() {
                     <AlertTriangle className="w-6 h-6 text-rose-500" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-white">Delete Course?</h3>
-                    <p className="mt-1 text-sm text-slate-400">This action is <span className="text-rose-400 font-semibold">permanent</span> and cannot be undone. The course will be removed immediately.</p>
+                    <h3 className="text-lg font-bold text-text-inverse">Delete Course?</h3>
+                    <p className="mt-1 text-sm text-text-muted">This action is <span className="text-rose-400 font-semibold">permanent</span> and cannot be undone. The course will be removed immediately.</p>
                   </div>
                 </div>
                 <div className="mt-6 flex items-center justify-end space-x-3">
-                  <button onClick={() => setDeleteConfirmId(null)} className="px-5 py-2.5 text-sm font-semibold rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors">Cancel</button>
-                  <button onClick={confirmDelete} className="px-5 py-2.5 text-sm font-semibold rounded-xl bg-rose-600 hover:bg-rose-500 text-white flex items-center space-x-2 shadow-lg shadow-rose-500/20 transition-colors">
+                  <button onClick={() => setDeleteConfirmId(null)} className="px-5 py-2.5 text-sm font-semibold rounded-xl border border-border text-text-secondary hover:bg-slate-800 transition-colors">Cancel</button>
+                  <button onClick={confirmDelete} className="px-5 py-2.5 text-sm font-semibold rounded-xl bg-rose-600 hover:bg-rose-500 text-text-inverse flex items-center space-x-2 shadow-lg shadow-rose-500/20 transition-colors">
                     <Trash2 className="w-4 h-4" />
                     <span>Delete Course</span>
                   </button>

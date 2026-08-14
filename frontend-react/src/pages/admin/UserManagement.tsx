@@ -251,28 +251,28 @@ export default function UserManagement() {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
-          <h2 className="text-3xl font-bold text-white mb-1">User Management</h2>
-          <p className="text-slate-400">View registered users, change roles, and manage access.</p>
+          <h2 className="text-3xl font-bold text-text-inverse mb-1">User Management</h2>
+          <p className="text-text-muted">View registered users, change roles, and manage access.</p>
         </div>
         <div className="flex items-center space-x-3">
           <div className="relative" ref={roleDropdownRef}>
             <div
               onClick={() => setIsRoleDropdownOpen(!isRoleDropdownOpen)}
-              className="flex items-center bg-[#1a2333] border border-slate-700 rounded-lg p-1 cursor-pointer hover:border-slate-600 transition-colors"
+              className="flex items-center bg-[#1a2333] border border-border rounded-lg p-1 cursor-pointer hover:border-slate-600 transition-colors"
             >
-              <span className="text-xs text-slate-400 px-2 font-bold uppercase">Assign:</span>
-              <div className="flex items-center text-emerald-400 font-bold px-2 py-1 text-sm select-none">
+              <span className="text-xs text-text-muted px-2 font-bold uppercase">Assign:</span>
+              <div className="flex items-center text-primary font-bold px-2 py-1 text-sm select-none">
                 {uploadRole === 'STUDENT' ? 'Student' : uploadRole === 'INSTRUCTOR' ? 'Instructor' : uploadRole === 'COLLEGE_ADMIN' ? 'College Admin' : 'Admin'}
                 <ChevronDown className={`w-4 h-4 ml-1 transition-transform ${isRoleDropdownOpen ? 'rotate-180' : ''}`} />
               </div>
             </div>
 
             {isRoleDropdownOpen && (
-              <div className="absolute top-full left-0 mt-2 w-48 bg-[#1a2333] border border-slate-700 rounded-xl shadow-2xl z-50 overflow-hidden">
-                <button onClick={() => { setUploadRole('STUDENT'); setIsRoleDropdownOpen(false) }} className="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-emerald-400 font-bold transition-colors">Student</button>
-                <button onClick={() => { setUploadRole('INSTRUCTOR'); setIsRoleDropdownOpen(false) }} className="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-emerald-400 font-bold transition-colors">Instructor</button>
-                <button onClick={() => { setUploadRole('COLLEGE_ADMIN'); setIsRoleDropdownOpen(false) }} className="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-emerald-400 font-bold transition-colors">College Admin</button>
-                <button onClick={() => { setUploadRole('ADMIN'); setIsRoleDropdownOpen(false) }} className="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-emerald-400 font-bold transition-colors">Admin</button>
+              <div className="absolute top-full left-0 mt-2 w-48 bg-[#1a2333] border border-border rounded-xl shadow-2xl z-50 overflow-hidden">
+                <button onClick={() => { setUploadRole('STUDENT'); setIsRoleDropdownOpen(false) }} className="w-full text-left px-4 py-2.5 text-sm text-text-secondary hover:bg-slate-800 hover:text-primary font-bold transition-colors">Student</button>
+                <button onClick={() => { setUploadRole('INSTRUCTOR'); setIsRoleDropdownOpen(false) }} className="w-full text-left px-4 py-2.5 text-sm text-text-secondary hover:bg-slate-800 hover:text-primary font-bold transition-colors">Instructor</button>
+                <button onClick={() => { setUploadRole('COLLEGE_ADMIN'); setIsRoleDropdownOpen(false) }} className="w-full text-left px-4 py-2.5 text-sm text-text-secondary hover:bg-slate-800 hover:text-primary font-bold transition-colors">College Admin</button>
+                <button onClick={() => { setUploadRole('ADMIN'); setIsRoleDropdownOpen(false) }} className="w-full text-left px-4 py-2.5 text-sm text-text-secondary hover:bg-slate-800 hover:text-primary font-bold transition-colors">Admin</button>
               </div>
             )}
           </div>
@@ -285,7 +285,7 @@ export default function UserManagement() {
           />
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg font-bold flex items-center space-x-2 transition-colors text-sm shadow-lg shadow-emerald-500/20"
+            className="bg-primary hover:bg-primary text-text-inverse px-4 py-2 rounded-lg font-bold flex items-center space-x-2 transition-colors text-sm shadow-lg shadow-blue-500/20"
           >
             <Upload className="w-4 h-4" />
             <span>Import CSV</span>
@@ -293,7 +293,7 @@ export default function UserManagement() {
           {!isCreatingUser && (
             <button
               onClick={() => setIsCreatingUser(true)}
-              className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg font-bold flex items-center space-x-2 transition-colors text-sm shadow-lg shadow-blue-500/20"
+              className="bg-primary hover:bg-primary text-text-inverse px-4 py-2 rounded-lg font-bold flex items-center space-x-2 transition-colors text-sm shadow-lg shadow-blue-500/20"
             >
               <Plus className="w-4 h-4" />
               <span>Add User</span>
@@ -303,32 +303,32 @@ export default function UserManagement() {
       </div>
 
       {isCreatingUser && (
-        <div className="bg-[#111827] rounded-2xl p-6 border border-slate-800 shadow-xl mb-6">
-          <div className="flex justify-between items-center mb-6 border-b border-slate-800 pb-4">
-            <h3 className="text-lg font-bold text-white flex items-center">
-              <Plus className="w-5 h-5 mr-2 text-blue-500" />
+        <div className="bg-[#111827] rounded-2xl p-6 border border-border shadow-xl mb-6">
+          <div className="flex justify-between items-center mb-6 border-b border-border pb-4">
+            <h3 className="text-lg font-bold text-text-inverse flex items-center">
+              <Plus className="w-5 h-5 mr-2 text-primary" />
               Add New User
             </h3>
-            <button onClick={() => setIsCreatingUser(false)} className="text-slate-500 hover:text-white transition-colors">
+            <button onClick={() => setIsCreatingUser(false)} className="text-text-muted hover:text-text-inverse transition-colors">
               <X className="w-5 h-5" />
             </button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
-              <label className="text-xs font-bold text-slate-400 block mb-1">Full Name *</label>
-              <input type="text" value={newName} onChange={e => setNewName(e.target.value)} placeholder="e.g. John Doe" className="w-full bg-[#1a2333] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500" />
+              <label className="text-xs font-bold text-text-muted block mb-1">Full Name *</label>
+              <input type="text" value={newName} onChange={e => setNewName(e.target.value)} placeholder="e.g. John Doe" className="w-full bg-[#1a2333] border border-border rounded-lg px-3 py-2 text-sm text-text-inverse focus:outline-none focus:border-primary" />
             </div>
             <div>
-              <label className="text-xs font-bold text-slate-400 block mb-1">Email Address *</label>
-              <input type="email" value={newEmail} onChange={e => setNewEmail(e.target.value)} placeholder="e.g. john@example.com" className="w-full bg-[#1a2333] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500" />
+              <label className="text-xs font-bold text-text-muted block mb-1">Email Address *</label>
+              <input type="email" value={newEmail} onChange={e => setNewEmail(e.target.value)} placeholder="e.g. john@example.com" className="w-full bg-[#1a2333] border border-border rounded-lg px-3 py-2 text-sm text-text-inverse focus:outline-none focus:border-primary" />
             </div>
             <div>
-              <label className="text-xs font-bold text-slate-400 block mb-1">Phone Number</label>
-              <input type="tel" value={newPhone} onChange={e => setNewPhone(e.target.value)} placeholder="e.g. +91 9876543210" className="w-full bg-[#1a2333] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500" />
+              <label className="text-xs font-bold text-text-muted block mb-1">Phone Number</label>
+              <input type="tel" value={newPhone} onChange={e => setNewPhone(e.target.value)} placeholder="e.g. +91 9876543210" className="w-full bg-[#1a2333] border border-border rounded-lg px-3 py-2 text-sm text-text-inverse focus:outline-none focus:border-primary" />
             </div>
             <div>
-              <label className="text-xs font-bold text-slate-400 block mb-1">Role</label>
-              <select value={newRole} onChange={e => setNewRole(e.target.value)} className="w-full bg-[#1a2333] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+              <label className="text-xs font-bold text-text-muted block mb-1">Role</label>
+              <select value={newRole} onChange={e => setNewRole(e.target.value)} className="w-full bg-[#1a2333] border border-border rounded-lg px-3 py-2 text-sm text-text-inverse focus:outline-none focus:border-primary">
                 <option value="STUDENT">Student</option>
                 <option value="INSTRUCTOR">Instructor</option>
                 <option value="COLLEGE_ADMIN">College Admin</option>
@@ -337,7 +337,7 @@ export default function UserManagement() {
             </div>
           </div>
           <div className="mt-6 flex justify-end">
-            <button onClick={handleManualCreate} className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-lg font-bold flex items-center shadow-lg transition-colors">
+            <button onClick={handleManualCreate} className="bg-primary hover:bg-primary text-text-inverse px-6 py-2 rounded-lg font-bold flex items-center shadow-lg transition-colors">
               <Save className="w-4 h-4 mr-2" />
               Save User
             </button>
@@ -345,8 +345,8 @@ export default function UserManagement() {
         </div>
       )}
 
-      <div className="bg-[#111827] border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-        <div className="p-4 border-b border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900/50">
+      <div className="bg-[#111827] border border-border rounded-2xl overflow-hidden shadow-xl">
+        <div className="p-4 border-b border-border flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900/50">
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
             <div className="relative w-full sm:w-64">
               <input
@@ -354,16 +354,16 @@ export default function UserManagement() {
                 placeholder="Search name or email..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="w-full bg-[#1a2333] border border-slate-700 rounded-lg pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                className="w-full bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-inverse focus:outline-none focus:border-primary"
               />
-              <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
             </div>
             
             <div className="flex items-center space-x-2 w-full sm:w-auto">
               <select 
                 value={filterRole} 
                 onChange={(e) => setFilterRole(e.target.value)}
-                className="bg-[#1a2333] border border-slate-700 text-slate-300 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-blue-500 w-full sm:w-auto cursor-pointer"
+                className="bg-[#1a2333] border border-border text-text-secondary px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary w-full sm:w-auto cursor-pointer"
               >
                 <option value="ALL">All Roles</option>
                 <option value="STUDENT">Student</option>
@@ -375,7 +375,7 @@ export default function UserManagement() {
               <select 
                 value={filterStatus} 
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="bg-[#1a2333] border border-slate-700 text-slate-300 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-blue-500 w-full sm:w-auto cursor-pointer"
+                className="bg-[#1a2333] border border-border text-text-secondary px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary w-full sm:w-auto cursor-pointer"
               >
                 <option value="ALL">All Statuses</option>
                 <option value="active">Active</option>
@@ -383,12 +383,12 @@ export default function UserManagement() {
               </select>
             </div>
           </div>
-          <span className="text-sm font-medium text-slate-400 whitespace-nowrap">Total: {filtered.length} users</span>
+          <span className="text-sm font-medium text-text-muted whitespace-nowrap">Total: {filtered.length} users</span>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-300">
-            <thead className="bg-[#1a2333] text-slate-400 uppercase text-xs font-semibold">
+          <table className="w-full text-left text-sm text-text-secondary">
+            <thead className="bg-[#1a2333] text-text-muted uppercase text-xs font-semibold">
               <tr>
                 <th className="px-6 py-4">User Details</th>
                 <th className="px-6 py-4">Role</th>
@@ -402,25 +402,25 @@ export default function UserManagement() {
             <tbody className="divide-y divide-slate-800">
               {isLoading ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
-                    <Loader className="w-6 h-6 animate-spin mx-auto mb-2 text-emerald-500" />
+                  <td colSpan={5} className="px-6 py-12 text-center text-text-muted">
+                    <Loader className="w-6 h-6 animate-spin mx-auto mb-2 text-primary" />
                     Loading users...
                   </td>
                 </tr>
               ) : filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-slate-500">No users found matching your search.</td>
+                  <td colSpan={5} className="px-6 py-12 text-center text-text-muted">No users found matching your search.</td>
                 </tr>
               ) : filtered.map(user => (
                 <tr key={user.id} className="hover:bg-slate-800/30 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white font-bold shrink-0">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-indigo-500 flex items-center justify-center text-text-inverse font-bold shrink-0">
                         {user.name.charAt(0)}
                       </div>
                       <div>
-                        <div className="font-semibold text-white">{user.name}</div>
-                        <div className="text-xs text-slate-400">{user.email}</div>
+                        <div className="font-semibold text-text-inverse">{user.name}</div>
+                        <div className="text-xs text-text-muted">{user.email}</div>
                       </div>
                     </div>
                   </td>
@@ -428,9 +428,9 @@ export default function UserManagement() {
                     <button
                       onClick={() => toggleRole(user.id)}
                       className={`px-3 py-1 rounded text-xs font-bold transition-colors ${user.role === 'ADMIN' ? 'bg-rose-500/10 text-rose-500 hover:bg-rose-500/20' :
-                          user.role === 'INSTRUCTOR' ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20' :
+                          user.role === 'INSTRUCTOR' ? 'bg-primary/10 text-primary hover:bg-primary/20' :
                             user.role === 'COLLEGE_ADMIN' ? 'bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20' :
-                              'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                              'bg-slate-700 text-text-secondary hover:bg-slate-600'
                         }`}
                       title="Click to cycle role"
                     >
@@ -438,18 +438,18 @@ export default function UserManagement() {
                     </button>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`flex items-center text-xs font-bold ${user.status === 'active' ? 'text-emerald-400' : 'text-rose-500'}`}>
+                    <span className={`flex items-center text-xs font-bold ${user.status === 'active' ? 'text-primary' : 'text-rose-500'}`}>
                       {user.status === 'active' ? <CheckCircle className="w-4 h-4 mr-1" /> : <Ban className="w-4 h-4 mr-1" />}
                       {user.status.toUpperCase()}
                     </span>
                   </td>
-                  <td className="px-6 py-4 font-mono text-slate-400">{user.phoneNumber || "—"}</td>
-                  <td className="px-6 py-4 font-mono text-slate-400">{user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString() : "Never"}</td>
-                  <td className="px-6 py-4 font-mono text-slate-400">{user.joined}</td>
+                  <td className="px-6 py-4 font-mono text-text-muted">{user.phoneNumber || "—"}</td>
+                  <td className="px-6 py-4 font-mono text-text-muted">{user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString() : "Never"}</td>
+                  <td className="px-6 py-4 font-mono text-text-muted">{user.joined}</td>
                   <td className="px-6 py-4 text-right space-x-2 whitespace-nowrap">
                     <button
                       onClick={() => toggleStatus(user.id)}
-                      className={`p-2 rounded-lg transition-colors inline-block ${user.status === 'active' ? 'text-rose-500 hover:bg-rose-500/10' : 'text-emerald-500 hover:bg-emerald-500/10'}`}
+                      className={`p-2 rounded-lg transition-colors inline-block ${user.status === 'active' ? 'text-rose-500 hover:bg-rose-500/10' : 'text-primary hover:bg-primary/10'}`}
                       title={user.status === 'active' ? 'Ban User' : 'Unban User'}
                     >
                       {user.status === 'active' ? <UserX className="w-4 h-4" /> : <UserCheck className="w-4 h-4" />}

@@ -7,6 +7,7 @@ const router = Router();
 
 // Public lists or user searches
 router.get("/", cache(300), QuestionController.getQuestions);
+router.get("/metadata/aggregates", cache(3600), QuestionController.getTagsAndCompanies); // Cache for 1 hour
 router.get("/:slug", cache(300), QuestionController.getQuestionDetails);
 
 // Instructor and admin authorized configurations

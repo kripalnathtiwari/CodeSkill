@@ -192,7 +192,7 @@ export default function ATSChecker() {
   const COLORS = ['#10B981', '#F59E0B', '#EF4444']; // Green, Yellow, Red
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 pt-20 px-6 pb-20">
+    <div className="min-h-screen bg-background dark:bg-background text-text-primary dark:text-text-inverse pt-20 px-6 pb-20">
       <div className="max-w-7xl mx-auto space-y-8">
 
         {/* Header */}
@@ -201,7 +201,7 @@ export default function ATSChecker() {
             <ShieldCheck className="w-8 h-8" />
           </div>
           <h1 className="text-4xl md:text-5xl font-bold">ATS Resume Scanner</h1>
-          <p className="text-slate-600 dark:text-slate-400 text-lg">
+          <p className="text-text-secondary dark:text-text-muted text-lg">
             AI-powered semantic matching and formatting analysis to beat the ATS.
           </p>
         </div>
@@ -210,7 +210,7 @@ export default function ATSChecker() {
 
           {/* LEFT: Inputs */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm relative overflow-hidden">
+            <div className="bg-surface dark:bg-[#111827] border border-border dark:border-border rounded-2xl p-6 shadow-sm relative overflow-hidden">
               <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500" />
               <h2 className="text-xl font-bold flex items-center gap-2 mb-4">
                 <FileText className="text-indigo-400" />
@@ -220,20 +220,20 @@ export default function ATSChecker() {
                 value={jobDescription}
                 onChange={(e) => setJobDescription(e.target.value)}
                 placeholder="Paste the target job description here..."
-                className="w-full h-48 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl p-4 outline-none focus:border-indigo-500 transition-colors resize-none"
+                className="w-full h-48 bg-surface-secondary dark:bg-background border border-border dark:border-border rounded-xl p-4 outline-none focus:border-indigo-500 transition-colors resize-none"
               ></textarea>
             </div>
 
-            <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm relative overflow-hidden flex flex-col">
-              <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500" />
+            <div className="bg-surface dark:bg-[#111827] border border-border dark:border-border rounded-2xl p-6 shadow-sm relative overflow-hidden flex flex-col">
+              <div className="absolute top-0 left-0 w-1 h-full bg-primary" />
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold flex items-center gap-2">
-                  <Upload className="text-emerald-400" />
+                  <Upload className="text-primary" />
                   2. Your Resume
                 </h2>
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="text-sm bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors font-medium"
+                  className="text-sm bg-primary/10 text-primary dark:text-primary hover:bg-primary/20 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors font-medium"
                 >
                   <FileUp className="w-4 h-4" />
                   Upload File
@@ -248,16 +248,16 @@ export default function ATSChecker() {
               </div>
 
               {resumeFile ? (
-                <div className="p-8 border-2 border-dashed border-emerald-500/50 rounded-xl flex flex-col items-center justify-center text-center space-y-3 bg-emerald-500/5">
-                  <FileText className="w-12 h-12 text-emerald-500" />
+                <div className="p-8 border-2 border-dashed border-primary/50 rounded-xl flex flex-col items-center justify-center text-center space-y-3 bg-primary/5">
+                  <FileText className="w-12 h-12 text-primary" />
                   <div>
                     <p className="font-bold">{resumeFile.name}</p>
-                    <p className="text-sm text-slate-500">{(resumeFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                    <p className="text-sm text-text-muted">{(resumeFile.size / 1024 / 1024).toFixed(2)} MB</p>
                   </div>
                   <button onClick={() => setResumeFile(null)} className="text-red-500 text-sm hover:underline">Remove</button>
                 </div>
               ) : (
-                <div onClick={() => fileInputRef.current?.click()} className="h-48 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl flex flex-col items-center justify-center text-slate-500 cursor-pointer hover:border-emerald-500 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors">
+                <div onClick={() => fileInputRef.current?.click()} className="h-48 border-2 border-dashed border-border dark:border-border rounded-xl flex flex-col items-center justify-center text-text-muted cursor-pointer hover:border-primary hover:bg-background dark:hover:bg-slate-900 transition-colors">
                   <Upload className="w-8 h-8 mb-2 opacity-50" />
                   <p>Drag & Drop or Click to Upload</p>
                   <p className="text-xs mt-1">PDF or DOCX (Max 10MB)</p>
@@ -268,7 +268,7 @@ export default function ATSChecker() {
             <button
               onClick={handleAnalyze}
               disabled={isAnalyzing || !jobDescription || !resumeFile}
-              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold py-4 rounded-xl shadow-[0_0_20px_rgba(99,102,241,0.4)] transition-all disabled:opacity-50 flex justify-center items-center gap-2"
+              className="w-full bg-gradient-to-r from-blue-800 to-green-800 hover:from-blue-700 hover:to-green-700 text-text-inverse font-bold py-4 rounded-xl shadow-[0_0_20px_rgba(6,95,70,0.4)] transition-all disabled:opacity-50 flex justify-center items-center gap-2"
             >
               {isAnalyzing ? (
                 <RefreshCw className="w-6 h-6 animate-spin" />
@@ -280,7 +280,7 @@ export default function ATSChecker() {
           </div>
 
           {/* RIGHT: Results Dashboard */}
-          <div className="lg:col-span-7 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 lg:p-8 shadow-xl relative min-h-[600px] flex flex-col">
+          <div className="lg:col-span-7 bg-surface dark:bg-[#111827] border border-border dark:border-border rounded-2xl p-6 lg:p-8 shadow-xl relative min-h-[600px] flex flex-col">
 
             <AnimatePresence mode="wait">
               {!results && !isAnalyzing && (
@@ -288,7 +288,7 @@ export default function ATSChecker() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="flex-1 flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 space-y-4"
+                  className="flex-1 flex flex-col items-center justify-center text-text-muted dark:text-text-muted space-y-4"
                 >
                   <ShieldCheck className="w-24 h-24 opacity-20" />
                   <p className="text-lg">Upload JD and Resume to view your comprehensive ATS Report.</p>
@@ -303,7 +303,7 @@ export default function ATSChecker() {
                   className="flex-1 flex flex-col items-center justify-center space-y-8"
                 >
                   <div className="relative w-40 h-40">
-                    <div className="absolute inset-0 border-4 border-slate-200 dark:border-slate-800 rounded-full"></div>
+                    <div className="absolute inset-0 border-4 border-border dark:border-border rounded-full"></div>
                     <div className="absolute inset-0 border-4 border-indigo-500 rounded-full border-t-transparent animate-spin"></div>
                     <div className="absolute inset-0 flex items-center justify-center">
                       <Sparkles className="w-10 h-10 text-indigo-500 animate-pulse" />
@@ -313,7 +313,7 @@ export default function ATSChecker() {
                     <h3 className="text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent mb-2">
                       AI is generating your report...
                     </h3>
-                    <p className="text-slate-500">Extracting semantic embeddings and formatting rules</p>
+                    <p className="text-text-muted">Extracting semantic embeddings and formatting rules</p>
                   </div>
                 </motion.div>
               )}
@@ -326,10 +326,10 @@ export default function ATSChecker() {
                 >
 
                   {/* Top Score Section */}
-                  <div className="flex flex-col md:flex-row items-center gap-8 pb-8 border-b border-slate-200 dark:border-slate-800">
+                  <div className="flex flex-col md:flex-row items-center gap-8 pb-8 border-b border-border dark:border-border">
                     <div className="relative w-48 h-48 shrink-0">
                       <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" className="text-slate-200 dark:text-slate-800" strokeWidth="8" />
+                        <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" className="text-text-secondary dark:text-text-primary" strokeWidth="8" />
                         <circle
                           cx="50" cy="50" r="45"
                           fill="none"
@@ -348,7 +348,7 @@ export default function ATSChecker() {
                       </svg>
                       <div className="absolute inset-0 flex flex-col items-center justify-center">
                         <span className="text-5xl font-black">{results.overallScore}</span>
-                        <span className="text-sm text-slate-500 font-bold uppercase tracking-widest mt-1">Overall</span>
+                        <span className="text-sm text-text-muted font-bold uppercase tracking-widest mt-1">Overall</span>
                       </div>
                     </div>
 
@@ -356,7 +356,7 @@ export default function ATSChecker() {
                       <h3 className="text-3xl font-bold mb-3 flex items-center gap-3">
                         {results.overallScore > 80 ? 'Excellent Match 🎉' : results.overallScore > 50 ? 'Good Match 👍' : 'Needs Work ⚠️'}
                       </h3>
-                      <p className="text-slate-600 dark:text-slate-400 text-lg mb-4">
+                      <p className="text-text-secondary dark:text-text-muted text-lg mb-4">
                         {results.overallScore > 80
                           ? 'Your resume is highly optimized for this role and will easily pass ATS systems.'
                           : 'Your resume lacks critical keywords and structure required for this position.'}
@@ -368,9 +368,9 @@ export default function ATSChecker() {
                   </div>
 
                   {/* Breakdown Charts */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-8 border-b border-slate-200 dark:border-slate-800">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-8 border-b border-border dark:border-border">
                     <div className="h-64">
-                      <h4 className="text-center font-bold text-slate-500 mb-2">Score Breakdown</h4>
+                      <h4 className="text-center font-bold text-text-muted mb-2">Score Breakdown</h4>
                       <ResponsiveContainer width="100%" height="100%">
                         <RadarChart cx="50%" cy="50%" outerRadius="70%" data={[
                           { subject: 'Keywords', A: results.keywordMatchScore, fullMark: 100 },
@@ -392,16 +392,16 @@ export default function ATSChecker() {
                         <Award className="text-amber-500" /> Key Insights
                       </h4>
                       <div className="space-y-3">
-                        <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-3 rounded-lg border border-slate-100 dark:border-slate-800">
-                          <span className="text-slate-600 dark:text-slate-400">Semantic Match</span>
+                        <div className="flex justify-between items-center bg-background dark:bg-background p-3 rounded-lg border border-slate-100 dark:border-border">
+                          <span className="text-text-secondary dark:text-text-muted">Semantic Match</span>
                           <span className="font-bold text-indigo-500">{results.semanticMatchScore}%</span>
                         </div>
-                        <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-3 rounded-lg border border-slate-100 dark:border-slate-800">
-                          <span className="text-slate-600 dark:text-slate-400">Keywords Present</span>
-                          <span className="font-bold text-emerald-500">{results.matchedKeywords?.length || 0}</span>
+                        <div className="flex justify-between items-center bg-background dark:bg-background p-3 rounded-lg border border-slate-100 dark:border-border">
+                          <span className="text-text-secondary dark:text-text-muted">Keywords Present</span>
+                          <span className="font-bold text-primary">{results.matchedKeywords?.length || 0}</span>
                         </div>
-                        <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-3 rounded-lg border border-slate-100 dark:border-slate-800">
-                          <span className="text-slate-600 dark:text-slate-400">Missing Keywords</span>
+                        <div className="flex justify-between items-center bg-background dark:bg-background p-3 rounded-lg border border-slate-100 dark:border-border">
+                          <span className="text-text-secondary dark:text-text-muted">Missing Keywords</span>
                           <span className="font-bold text-rose-500">{results.missingKeywords?.length || 0}</span>
                         </div>
                       </div>
@@ -418,7 +418,7 @@ export default function ATSChecker() {
                         {results.aiSuggestions.map((sug: string, i: number) => (
                           <li key={i} className="flex gap-3">
                             <span className="shrink-0 mt-1 flex items-center justify-center w-5 h-5 rounded-full bg-indigo-200 dark:bg-indigo-800 text-indigo-700 dark:text-indigo-300 text-xs font-bold">{i + 1}</span>
-                            <span className="text-slate-700 dark:text-slate-300 leading-relaxed">{sug}</span>
+                            <span className="text-text-primary dark:text-text-secondary leading-relaxed">{sug}</span>
                           </li>
                         ))}
                       </ul>
@@ -433,7 +433,7 @@ export default function ATSChecker() {
                       </h4>
                       <ul className="space-y-2">
                         {results.formattingIssues.map((issue: string, i: number) => (
-                          <li key={i} className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+                          <li key={i} className="flex items-center gap-2 text-text-primary dark:text-text-secondary">
                             <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span> {issue}
                           </li>
                         ))}
@@ -444,16 +444,16 @@ export default function ATSChecker() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Found Keywords */}
                     <div>
-                      <h4 className="font-bold flex items-center gap-2 mb-4 text-emerald-500">
+                      <h4 className="font-bold flex items-center gap-2 mb-4 text-primary">
                         <CheckCircle2 className="w-5 h-5" /> Found Keywords ({results.matchedKeywords?.length || 0})
                       </h4>
                       <div className="flex flex-wrap gap-2">
                         {results.matchedKeywords?.map((kw: string, i: number) => (
-                          <span key={i} className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-md text-sm font-medium">
+                          <span key={i} className="bg-primary/10 text-primary dark:text-primary border border-primary/20 px-2.5 py-1 rounded-md text-sm font-medium">
                             {kw}
                           </span>
                         ))}
-                        {(!results.matchedKeywords || results.matchedKeywords.length === 0) && <span className="text-slate-500 text-sm">No significant keywords found.</span>}
+                        {(!results.matchedKeywords || results.matchedKeywords.length === 0) && <span className="text-text-muted text-sm">No significant keywords found.</span>}
                       </div>
                     </div>
 
@@ -468,7 +468,7 @@ export default function ATSChecker() {
                             {kw}
                           </span>
                         ))}
-                        {(!results.missingKeywords || results.missingKeywords.length === 0) && <span className="text-slate-500 text-sm">No missing keywords!</span>}
+                        {(!results.missingKeywords || results.missingKeywords.length === 0) && <span className="text-text-muted text-sm">No missing keywords!</span>}
                       </div>
                     </div>
                   </div>

@@ -65,12 +65,12 @@ export default function SalesManagement() {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold text-white mb-1">Sales & Enrollments</h2>
-          <p className="text-slate-400">Track course purchases and student registrations.</p>
+          <h2 className="text-3xl font-bold text-text-inverse mb-1">Sales & Enrollments</h2>
+          <p className="text-text-muted">Track course purchases and student registrations.</p>
         </div>
         <button 
           onClick={downloadAllCSV}
-          className="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-xl font-bold transition-all"
+          className="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-text-inverse px-4 py-2 rounded-xl font-bold transition-all"
         >
           <Download className="w-5 h-5" />
           <span>Export All CSV</span>
@@ -78,39 +78,39 @@ export default function SalesManagement() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-[#111827] border border-slate-800 p-6 rounded-2xl shadow-sm">
-          <p className="text-sm text-slate-400 mb-1">Total Enrollments</p>
-          <h3 className="text-3xl font-bold text-white">{sales.length}</h3>
+        <div className="bg-[#111827] border border-border p-6 rounded-2xl shadow-sm">
+          <p className="text-sm text-text-muted mb-1">Total Enrollments</p>
+          <h3 className="text-3xl font-bold text-text-inverse">{sales.length}</h3>
         </div>
-        <div className="bg-[#111827] border border-slate-800 p-6 rounded-2xl shadow-sm">
-          <p className="text-sm text-slate-400 mb-1">Gross Revenue</p>
-          <h3 className="text-3xl font-bold text-emerald-400 flex items-center">
+        <div className="bg-[#111827] border border-border p-6 rounded-2xl shadow-sm">
+          <p className="text-sm text-text-muted mb-1">Gross Revenue</p>
+          <h3 className="text-3xl font-bold text-primary flex items-center">
             ₹{totalRevenue.toLocaleString('en-IN')}
-            <TrendingUp className="w-5 h-5 ml-2 text-emerald-500" />
+            <TrendingUp className="w-5 h-5 ml-2 text-primary" />
           </h3>
         </div>
-        <div className="bg-[#111827] border border-slate-800 p-6 rounded-2xl shadow-sm">
-          <p className="text-sm text-slate-400 mb-1">Recent Activity</p>
-          <h3 className="text-xl font-bold text-white flex items-center h-full">
+        <div className="bg-[#111827] border border-border p-6 rounded-2xl shadow-sm">
+          <p className="text-sm text-text-muted mb-1">Recent Activity</p>
+          <h3 className="text-xl font-bold text-text-inverse flex items-center h-full">
             + {sales.filter(s => new Date(s.dateRegistered) > new Date(Date.now() - 86400000)).length} today
           </h3>
         </div>
       </div>
 
       {/* Course-wise Registrations Section */}
-      <div className="bg-[#111827] border border-slate-800 p-6 rounded-2xl shadow-xl">
-        <h3 className="text-xl font-bold text-white mb-4">Course-wise Registrations</h3>
+      <div className="bg-[#111827] border border-border p-6 rounded-2xl shadow-xl">
+        <h3 className="text-xl font-bold text-text-inverse mb-4">Course-wise Registrations</h3>
         {Object.keys(salesByCourse).length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {Object.keys(salesByCourse).map(courseName => (
-              <div key={courseName} className="bg-[#1a2333] border border-slate-700 p-4 rounded-xl flex flex-col justify-between">
+              <div key={courseName} className="bg-[#1a2333] border border-border p-4 rounded-xl flex flex-col justify-between">
                 <div>
-                  <h4 className="font-bold text-white line-clamp-1" title={courseName}>{courseName}</h4>
-                  <p className="text-sm text-slate-400 mt-1">{salesByCourse[courseName].length} Student(s)</p>
+                  <h4 className="font-bold text-text-inverse line-clamp-1" title={courseName}>{courseName}</h4>
+                  <p className="text-sm text-text-muted mt-1">{salesByCourse[courseName].length} Student(s)</p>
                 </div>
                 <button
                   onClick={() => downloadCSV(courseName, salesByCourse[courseName])}
-                  className="mt-4 flex items-center justify-center space-x-2 bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-400 px-3 py-2 rounded-lg font-semibold transition-colors w-full"
+                  className="mt-4 flex items-center justify-center space-x-2 bg-primary/10 hover:bg-primary/20 text-primary px-3 py-2 rounded-lg font-semibold transition-colors w-full"
                 >
                   <Download className="w-4 h-4" />
                   <span>Download CSV</span>
@@ -119,20 +119,20 @@ export default function SalesManagement() {
             ))}
           </div>
         ) : (
-          <p className="text-slate-500">No course registrations found.</p>
+          <p className="text-text-muted">No course registrations found.</p>
         )}
       </div>
 
       {/* Registered but Not Paid Section */}
-      <div className="bg-[#111827] border border-slate-800 p-6 rounded-2xl shadow-xl">
-        <h3 className="text-xl font-bold text-white mb-4">Registered but Not Paid</h3>
+      <div className="bg-[#111827] border border-border p-6 rounded-2xl shadow-xl">
+        <h3 className="text-xl font-bold text-text-inverse mb-4">Registered but Not Paid</h3>
         {Object.keys(unpaidByCourse).length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {Object.keys(unpaidByCourse).map(courseName => (
-              <div key={courseName} className="bg-[#1a2333] border border-slate-700 p-4 rounded-xl flex flex-col justify-between">
+              <div key={courseName} className="bg-[#1a2333] border border-border p-4 rounded-xl flex flex-col justify-between">
                 <div>
-                  <h4 className="font-bold text-white line-clamp-1" title={courseName}>{courseName}</h4>
-                  <p className="text-sm text-slate-400 mt-1">{unpaidByCourse[courseName].length} Student(s)</p>
+                  <h4 className="font-bold text-text-inverse line-clamp-1" title={courseName}>{courseName}</h4>
+                  <p className="text-sm text-text-muted mt-1">{unpaidByCourse[courseName].length} Student(s)</p>
                 </div>
                 <button
                   onClick={() => downloadCSV(`${courseName}_unpaid`, unpaidByCourse[courseName])}
@@ -145,27 +145,27 @@ export default function SalesManagement() {
             ))}
           </div>
         ) : (
-          <p className="text-slate-500">No pending unpaid registrations.</p>
+          <p className="text-text-muted">No pending unpaid registrations.</p>
         )}
       </div>
 
-      <div className="bg-[#111827] border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-        <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
+      <div className="bg-[#111827] border border-border rounded-2xl overflow-hidden shadow-xl">
+        <div className="p-4 border-b border-border flex justify-between items-center bg-slate-900/50">
           <div className="relative w-80">
             <input 
               type="text" 
               placeholder="Search by student or course..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full bg-[#1a2333] border border-slate-700 rounded-lg pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-inverse focus:outline-none focus:border-primary"
             />
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
           </div>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-300">
-            <thead className="bg-[#1a2333] text-slate-400 uppercase text-xs font-semibold">
+          <table className="w-full text-left text-sm text-text-secondary">
+            <thead className="bg-[#1a2333] text-text-muted uppercase text-xs font-semibold">
               <tr>
                 <th className="px-6 py-4">Transaction Details</th>
                 <th className="px-6 py-4">Student Info</th>
@@ -179,35 +179,35 @@ export default function SalesManagement() {
                 <tr key={idx} className="hover:bg-slate-800/30 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500 shrink-0">
+                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
                         <Receipt className="w-5 h-5" />
                       </div>
                       <div>
-                        <div className="font-semibold text-white line-clamp-1">{sale.courseName}</div>
-                        <div className="text-xs text-slate-500 uppercase tracking-wider">TXN-{Math.random().toString(36).substr(2, 8)}</div>
+                        <div className="font-semibold text-text-inverse line-clamp-1">{sale.courseName}</div>
+                        <div className="text-xs text-text-muted uppercase tracking-wider">TXN-{Math.random().toString(36).substr(2, 8)}</div>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="font-medium text-slate-200">{sale.fullName}</div>
-                    <div className="text-xs text-slate-500">{sale.email}</div>
+                    <div className="font-medium text-text-secondary">{sale.fullName}</div>
+                    <div className="text-xs text-text-muted">{sale.email}</div>
                   </td>
-                  <td className="px-6 py-4 font-mono text-emerald-400 font-medium">₹3,999</td>
+                  <td className="px-6 py-4 font-mono text-primary font-medium">₹3,999</td>
                   <td className="px-6 py-4">
                     {sale.status === "UNPAID" ? (
                       <span className="bg-amber-500/10 text-amber-500 px-2 py-1 rounded text-[10px] font-bold uppercase">Unpaid</span>
                     ) : (
-                      <span className="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded text-[10px] font-bold uppercase">Success</span>
+                      <span className="bg-primary/10 text-primary px-2 py-1 rounded text-[10px] font-bold uppercase">Success</span>
                     )}
                   </td>
-                  <td className="px-6 py-4 font-mono text-slate-400">
+                  <td className="px-6 py-4 font-mono text-text-muted">
                     {new Date(sale.dateRegistered).toLocaleDateString()}
                   </td>
                 </tr>
               ))}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-slate-500">No transactions found.</td>
+                  <td colSpan={5} className="px-6 py-12 text-center text-text-muted">No transactions found.</td>
                 </tr>
               )}
             </tbody>

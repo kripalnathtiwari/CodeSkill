@@ -5,64 +5,146 @@ import { invalidateCachePattern } from "../middlewares/cacheMiddleware";
 
 export class QuestionController {
   public static async getQuestions(req: Request, res: Response) {
-    const { difficulty, type, tag, page = "1", limit = "10" } = req.query;
+    const { difficulty, type, tag, company, page = "1", limit = "20", cursor, search } = req.query;
 
-    const pageNum = parseInt(page as string, 10);
-    const limitNum = parseInt(limit as string, 10);
-    const skip = (pageNum - 1) * limitNum;
+    const parsedLimit = parseInt(limit as string, 10);
+    const limitNum = Number.isNaN(parsedLimit) || parsedLimit <= 0 ? 20 : Math.min(parsedLimit, 50);
+    const take = limitNum;
 
     try {
       const where: any = {};
       if (difficulty) where.difficulty = difficulty;
       if (type) where.type = type;
+      if (tag) where.tags = { contains: `"${tag}"` }; // Database-level filter for serialized JSON tags
+      if (company) where.companies = { contains: `"${company}"` }; // Filter for serialized JSON companies
+      if (search) where.title = { contains: search as string, mode: "insensitive" };
 
-      // Handle in-memory tags filter or SQLite tags match
-      const [questions, total] = await Promise.all([
-        prisma.question.findMany({
+      let rawQuestions: any[];
+      let total: number | undefined = undefined;
+      let nextCursor: string | null = null;
+      const pageNum = parseInt(page as string, 10) || 1;
+
+      const selectObj = {
+        id: true,
+        title: true,
+        slug: true,
+        difficulty: true,
+        type: true,
+        tags: true,
+        companies: true,
+        likes: true,
+        dislikes: true,
+        acceptanceRate: true,
+        createdAt: true,
+      };
+
+      if (cursor) {
+        // Cursor-based pagination (no full table count)
+        rawQuestions = await prisma.question.findMany({
+          where,
+          take: take + 1, // fetch one extra to determine if there's a next page
+          skip: 1, // skip the cursor itself
+          cursor: { id: cursor as string },
+          orderBy: [{ createdAt: "desc" }, { id: "desc" }], // Ensure stable sort
+          select: selectObj,
+        });
+      } else {
+        // Offset-based pagination
+        const skip = (pageNum - 1) * limitNum;
+        rawQuestions = await prisma.question.findMany({
           where,
           skip,
-          take: limitNum,
-          orderBy: { createdAt: "desc" },
-          select: {
-            id: true,
-            title: true,
-            slug: true,
-            difficulty: true,
-            type: true,
-            tags: true,
-            companies: true,
-            likes: true,
-            dislikes: true,
-            acceptanceRate: true,
-            createdAt: true,
-          },
-        }),
-        prisma.question.count({ where }),
-      ]);
-
-      // Parse JSON string fields back to objects for frontend consumption
-      let formattedQuestions = questions.map((q) => ({
-        ...q,
-        tags: JSON.parse((q.tags as string) || "[]"),
-        companies: JSON.parse((q.companies as string) || "[]"),
-      }));
-
-      // Apply tag filter post-query if tag query parameter is set
-      if (tag) {
-        formattedQuestions = formattedQuestions.filter((q) =>
-          q.tags.includes(tag as string)
-        );
+          take: take + 1, // fetch one extra to determine if there's a next page
+          orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+          select: selectObj,
+        });
+        
+        // We only fetch total if explicitly requested by frontend. For performance, skip by default.
+        if (req.query.includeTotal === "true") {
+          total = await prisma.question.count({ where });
+        }
       }
+
+      // Check if there is a next page
+      let hasMore = false;
+      if (rawQuestions.length > take) {
+        hasMore = true;
+        rawQuestions.pop(); // Remove the extra item
+      }
+      
+      if (rawQuestions.length > 0) {
+        nextCursor = rawQuestions[rawQuestions.length - 1].id;
+      }
+
+      // Parse JSON string fields optimally
+      const formattedQuestions = rawQuestions.map((q) => ({
+        ...q,
+        tags: q.tags ? JSON.parse(q.tags as string) : [],
+        companies: q.companies ? JSON.parse(q.companies as string) : [],
+      }));
 
       return res.status(200).json({
         questions: formattedQuestions,
         total,
         page: pageNum,
-        totalPages: Math.ceil(total / limitNum),
+        totalPages: total !== undefined ? Math.ceil(total / limitNum) : undefined,
+        nextCursor,
+        hasMore,
       });
     } catch (err: any) {
       logger.error(`Get questions failed: ${err.message}`);
       return res.status(500).json({ error: "Failed to load questions list" });
+    }
+  }
+
+  public static async getTagsAndCompanies(req: Request, res: Response) {
+    try {
+      const type = req.query.type as string | undefined;
+      
+      const tagAggregations: any[] = await prisma.$queryRaw`
+        SELECT 
+            tag as name, 
+            CAST(COUNT(*) AS INTEGER) as count
+        FROM "Question"
+        LEFT JOIN LATERAL jsonb_array_elements_text(
+            CASE 
+                WHEN tags IS NULL OR tags = '' OR tags = '[]' THEN '["Uncategorized"]'::jsonb 
+                ELSE tags::jsonb 
+            END
+        ) AS tag ON true
+        WHERE (${type || null}::text IS NULL OR type = ${type || null})
+        GROUP BY tag;
+      `;
+
+      const companyAggregations: any[] = await prisma.$queryRaw`
+        SELECT 
+            company as name, 
+            CAST(COUNT(*) AS INTEGER) as count
+        FROM "Question"
+        LEFT JOIN LATERAL jsonb_array_elements_text(
+            CASE 
+                WHEN companies IS NULL OR companies = '' OR companies = '[]' THEN '["Uncategorized"]'::jsonb 
+                ELSE companies::jsonb 
+            END
+        ) AS company ON true
+        WHERE (${type || null}::text IS NULL OR type = ${type || null})
+        GROUP BY company;
+      `;
+
+      const tagCounts: Record<string, number> = {};
+      tagAggregations.forEach(row => {
+        tagCounts[row.name] = row.count;
+      });
+
+      const companyCounts: Record<string, number> = {};
+      companyAggregations.forEach(row => {
+        companyCounts[row.name] = row.count;
+      });
+
+      return res.status(200).json({ tagCounts, companyCounts });
+    } catch (err: any) {
+      logger.error(`Get aggregate metadata failed: ${err.message}`);
+      return res.status(500).json({ error: "Failed to load metadata" });
     }
   }
 
@@ -186,7 +268,7 @@ export class QuestionController {
       });
 
       logger.info(`Question created successfully: ${question.id}`);
-      await invalidateCachePattern("*/api/questions*");
+      await invalidateCachePattern("/api/v1/questions");
       return res.status(201).json(question);
     } catch (err: any) {
       logger.error(`Create question database entry failed: ${err.message}`);
@@ -214,7 +296,7 @@ export class QuestionController {
           testCases: undefined,
         },
       });
-      await invalidateCachePattern("*/api/questions*");
+      await invalidateCachePattern("/api/v1/questions");
       return res.status(200).json(question);
     } catch (err: any) {
       logger.error(`Update question failed: ${err.message}`);
@@ -227,7 +309,7 @@ export class QuestionController {
 
     try {
       await prisma.question.delete({ where: { id } });
-      await invalidateCachePattern("*/api/questions*");
+      await invalidateCachePattern("/api/v1/questions");
       return res.status(200).json({ message: "Question deleted successfully" });
     } catch (err: any) {
       logger.error(`Delete question failed: ${err.message}`);

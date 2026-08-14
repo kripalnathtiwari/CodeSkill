@@ -4,10 +4,13 @@ import compression from 'vite-plugin-compression';
 
 // https://vite.dev/config/
 export default defineConfig({
+  server: {
+    host: '127.0.0.1', // Prevents IPv6 localhost DNS resolution delay
+  },
   plugins: [
     react(),
-    compression({ algorithm: 'gzip', ext: '.gz' }),
-    compression({ algorithm: 'brotliCompress', ext: '.br' })
+    { ...compression({ algorithm: 'gzip', ext: '.gz' }), apply: 'build' },
+    { ...compression({ algorithm: 'brotliCompress', ext: '.br' }), apply: 'build' }
   ],
   build: {
     target: 'esnext',

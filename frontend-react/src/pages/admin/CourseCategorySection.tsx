@@ -139,7 +139,11 @@ export default function CourseCategorySection({
   }, [collegeName]);
 
   const saveToStorageFallback = (updated: CourseCategory[]) => {
-    // No-op: Removed local storage fallback.
+    try {
+      localStorage.setItem(`admin_course_categories_${collegeName}`, JSON.stringify(updated));
+    } catch (err) {
+      console.error("Storage error:", err);
+    }
   };
 
   const fetchCourseCategories = async () => {
@@ -155,8 +159,11 @@ export default function CourseCategorySection({
         saveToStorageFallback(res.data);
       }
     } catch (err) {
-      console.error("API fetch failed:", err);
-      // Removed local storage fallback
+      console.warn("API fetch failed, falling back to local storage:", err);
+      const saved = localStorage.getItem(`admin_course_categories_${collegeName}`);
+      if (saved) {
+        setCourses(JSON.parse(saved));
+      }
     } finally {
       setIsLoading(false);
     }
@@ -193,8 +200,30 @@ export default function CourseCategorySection({
       }
       await fetchCourseCategories();
     } catch (err) {
-      console.error("API request failed:", err);
-      alert("Failed to save course. Please check your connection.");
+      console.warn("API request failed, using local fallback");
+      if (editingCourseId) {
+        const updated = courses.map((c) =>
+          c.id === editingCourseId
+            ? { ...c, courseName: courseNameInput, description: descriptionInput }
+            : c
+        );
+        setCourses(updated);
+        saveToStorageFallback(updated);
+      } else {
+        const newCategory: CourseCategory = {
+          id: `local_${Date.now()}`,
+          collegeName,
+          collegeEmail,
+          courseName: courseNameInput,
+          description: descriptionInput,
+          createdAt: new Date().toISOString(),
+          instructors: [],
+          students: []
+        };
+        const updated = [newCategory, ...courses];
+        setCourses(updated);
+        saveToStorageFallback(updated);
+      }
     } finally {
       setCourseNameInput("");
       setDescriptionInput("");
@@ -218,8 +247,11 @@ export default function CourseCategorySection({
         headers: { Authorization: `Bearer ${token}` }
       });
     } catch (err) {
-      console.error("API delete failed:", err);
-      alert("Failed to delete course.");
+      console.warn("API delete failed, updating local state");
+    } finally {
+      const updated = courses.filter((c) => c.id !== id);
+      setCourses(updated);
+      saveToStorageFallback(updated);
     }
   };
 
@@ -272,8 +304,20 @@ export default function CourseCategorySection({
       );
       await fetchCourseCategories();
     } catch (err) {
-      console.error("API request failed:", err);
-      alert("Failed to assign instructor.");
+      const updated = courses.map((c) => {
+        if (c.id === courseId) {
+          return {
+            ...c,
+            instructors: [
+              ...c.instructors,
+              { id: `inst_${Date.now()}`, ...instructorData!, classId: targetClassId || undefined }
+            ]
+          };
+        }
+        return c;
+      });
+      setCourses(updated);
+      saveToStorageFallback(updated);
     } finally {
       setAssigningToCourseId(null);
       setSelectedTutorId("");
@@ -292,8 +336,17 @@ export default function CourseCategorySection({
       );
       await fetchCourseCategories();
     } catch (err) {
-      console.error("API request failed:", err);
-      alert("Failed to remove instructor.");
+      const updated = courses.map((c) => {
+        if (c.id === courseId) {
+          return {
+            ...c,
+            instructors: c.instructors.filter((i) => i.id !== instructorId)
+          };
+        }
+        return c;
+      });
+      setCourses(updated);
+      saveToStorageFallback(updated);
     }
   };
 
@@ -322,8 +375,20 @@ export default function CourseCategorySection({
       );
       await fetchCourseCategories();
     } catch (err) {
-      console.error("API request failed:", err);
-      alert("Failed to add student.");
+      const updated = courses.map((c) => {
+        if (c.id === courseId) {
+          return {
+            ...c,
+            students: [
+              ...c.students,
+              { id: `stud_${Date.now()}`, ...newStudent, classId: targetClassId || undefined }
+            ]
+          };
+        }
+        return c;
+      });
+      setCourses(updated);
+      saveToStorageFallback(updated);
     } finally {
       setAddingStudentCourseId(null);
       setNewStudent({ name: "", email: "", regNum: "", phone: "" });
@@ -340,8 +405,17 @@ export default function CourseCategorySection({
       );
       await fetchCourseCategories();
     } catch (err) {
-      console.error("API request failed:", err);
-      alert("Failed to remove student.");
+      const updated = courses.map((c) => {
+        if (c.id === courseId) {
+          return {
+            ...c,
+            students: c.students.filter((s) => s.id !== studentId)
+          };
+        }
+        return c;
+      });
+      setCourses(updated);
+      saveToStorageFallback(updated);
     }
   };
 
@@ -396,8 +470,22 @@ export default function CourseCategorySection({
         await fetchCourseCategories();
         alert(`Successfully imported ${parsedStudents.length} students into course!`);
       } catch (err) {
-        console.error("API request failed:", err);
-        alert("Failed to import students.");
+        const updated = courses.map((c) => {
+          if (c.id === csvTargetCourseId) {
+            const added = parsedStudents.map((s, index) => ({
+              id: `csv_${Date.now()}_${index}`,
+              ...s
+            }));
+            return {
+              ...c,
+              students: [...c.students, ...added]
+            };
+          }
+          return c;
+        });
+        setCourses(updated);
+        saveToStorageFallback(updated);
+        alert(`Imported ${parsedStudents.length} students locally!`);
       } finally {
         if (csvInputRef.current) csvInputRef.current.value = "";
         setCsvTargetCourseId(null);
@@ -431,8 +519,27 @@ export default function CourseCategorySection({
       );
       await fetchCourseCategories();
     } catch (err) {
-      console.error("API request failed:", err);
-      alert("Failed to create class.");
+      console.warn("API create class failed, falling back to local state");
+      const updated = courses.map((c) => {
+        if (c.id === courseId) {
+          const newClassObj: CourseClass = {
+            id: `class_${Date.now()}`,
+            categoryId: courseId,
+            className: newClassNameInput,
+            description: newClassDescriptionInput,
+            createdAt: new Date().toISOString(),
+            instructors: [],
+            students: []
+          };
+          return {
+            ...c,
+            classes: [...(c.classes || []), newClassObj]
+          };
+        }
+        return c;
+      });
+      setCourses(updated);
+      saveToStorageFallback(updated);
     } finally {
       setNewClassNameInput("");
       setNewClassDescriptionInput("");
@@ -450,8 +557,19 @@ export default function CourseCategorySection({
       );
       await fetchCourseCategories();
     } catch (err) {
-      console.error("API request failed:", err);
-      alert("Failed to delete class.");
+      const updated = courses.map((c) => {
+        if (c.id === courseId) {
+          return {
+            ...c,
+            classes: (c.classes || []).filter((cls) => cls.id !== classId),
+            students: c.students.map((s) => (s.classId === classId ? { ...s, classId: undefined } : s)),
+            instructors: c.instructors.map((i) => (i.classId === classId ? { ...i, classId: undefined } : i))
+          };
+        }
+        return c;
+      });
+      setCourses(updated);
+      saveToStorageFallback(updated);
     }
   };
 
@@ -929,7 +1047,7 @@ export default function CourseCategorySection({
                           course.classes && course.classes.length > 0
                             ? course.classes
                             : course.students.length > 0 || course.instructors.length > 0
-                            ? [
+                              ? [
                                 {
                                   id: "default_section",
                                   className: "General Section (Default)",
@@ -937,7 +1055,7 @@ export default function CourseCategorySection({
                                     "Default section containing enrolled students & assigned instructors. Click 'New Class / Section' above to create dedicated sections."
                                 }
                               ]
-                            : [];
+                              : [];
 
                         if (displayClasses.length === 0) {
                           return (
@@ -1057,11 +1175,10 @@ export default function CourseCategorySection({
                                                 [cls.id]: "students"
                                               }))
                                             }
-                                            className={`text-xs font-bold uppercase tracking-wider pb-1 border-b-2 transition-all ${
-                                              cTab === "students"
+                                            className={`text-xs font-bold uppercase tracking-wider pb-1 border-b-2 transition-all ${cTab === "students"
                                                 ? "border-purple-500 text-purple-400"
                                                 : "border-transparent text-text-muted hover:text-text-secondary"
-                                            }`}
+                                              }`}
                                           >
                                             Enrolled Students ({classStudents.length})
                                           </button>
@@ -1072,11 +1189,10 @@ export default function CourseCategorySection({
                                                 [cls.id]: "instructors"
                                               }))
                                             }
-                                            className={`text-xs font-bold uppercase tracking-wider pb-1 border-b-2 transition-all ${
-                                              cTab === "instructors"
+                                            className={`text-xs font-bold uppercase tracking-wider pb-1 border-b-2 transition-all ${cTab === "instructors"
                                                 ? "border-primary text-primary"
                                                 : "border-transparent text-text-muted hover:text-text-secondary"
-                                            }`}
+                                              }`}
                                           >
                                             Assigned Instructors ({classInstructors.length})
                                           </button>

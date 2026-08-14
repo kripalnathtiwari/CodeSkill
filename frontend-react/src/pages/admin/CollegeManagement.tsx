@@ -42,7 +42,7 @@ export default function CollegeManagement() {
   const [joiningDate, setJoiningDate] = useState("");
   const [tutorEmail, setTutorEmail] = useState("");
   const [tutorSection, setTutorSection] = useState("");
-  
+
   const tutorCsvRef = useRef<HTMLInputElement>(null);
 
   // Search States
@@ -119,7 +119,7 @@ export default function CollegeManagement() {
   // --- College Actions ---
   const handleSaveCollege = async () => {
     if (!collegeNameInput.trim()) return alert("College Name is required!");
-    
+
     try {
       if (editingCollegeId) {
         const college = colleges.find(c => c.id === editingCollegeId);
@@ -202,23 +202,23 @@ export default function CollegeManagement() {
   const handleSaveTutor = async () => {
     if (!tutorName.trim()) return alert("Tutor Name is required!");
     if (!tutorEmail.trim()) return alert("Email Address is required!");
-    
+
     // Ensure email is unique across all tutors in all colleges
     const emailLower = tutorEmail.toLowerCase();
-    const isDuplicate = colleges.some(c => 
+    const isDuplicate = colleges.some(c =>
       c.tutors.some(t => (t.email || "").toLowerCase() === emailLower && t.id !== editingTutorId)
     );
 
     if (isDuplicate) {
       return alert("This email is already assigned to another tutor! Tutor emails must be unique across all colleges.");
     }
-    
+
     const college = colleges.find(c => c.id === selectedCollegeId);
     if (!college) return;
 
     const newTutor: Tutor = {
       id: editingTutorId || "tut-" + Date.now(),
-      trainerId: editingTutorId 
+      trainerId: editingTutorId
         ? (college.tutors.find(t => t.id === editingTutorId)?.trainerId || `TRN-${Math.floor(100000 + Math.random() * 900000)}`)
         : `TRN-${Math.floor(100000 + Math.random() * 900000)}`,
       name: tutorName, phone: tutorPhone, email: tutorEmail, domain, joiningDate, section: tutorSection
@@ -262,7 +262,7 @@ export default function CollegeManagement() {
     if (window.confirm("Delete this tutor?")) {
       const college = colleges.find(c => c.id === selectedCollegeId);
       if (!college) return;
-      
+
       try {
         await axios.delete(`${API_URL}/api/v1/college-management/${selectedCollegeId}/tutors/${tutorId}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
@@ -282,7 +282,7 @@ export default function CollegeManagement() {
       reader.onload = (event) => {
         const text = event.target?.result as string;
         if (!text) return;
-        
+
         const lines = text.split('\n').filter(line => line.trim() !== '');
         if (lines.length < 2) {
           alert("CSV file seems empty or missing data.");
@@ -295,7 +295,7 @@ export default function CollegeManagement() {
         const phoneIdx = headers.indexOf('phone');
         const domainIdx = headers.indexOf('domain');
         const sectionIdx = headers.indexOf('section');
-        
+
         if (nameIdx === -1 || emailIdx === -1) {
           alert("CSV must contain at least 'name' and 'email' columns.");
           return;
@@ -303,7 +303,7 @@ export default function CollegeManagement() {
 
         let duplicatesSkipped = 0;
         const newTutors: Tutor[] = [];
-        
+
         const allExistingEmails = new Set<string>();
         colleges.forEach(c => c.tutors.forEach(t => {
           if (t.email) allExistingEmails.add(t.email.toLowerCase());
@@ -312,12 +312,12 @@ export default function CollegeManagement() {
         lines.slice(1).forEach((line, idx) => {
           const cols = line.split(',').map(c => c.trim());
           const email = cols[emailIdx]?.toLowerCase();
-          
+
           if (!email || allExistingEmails.has(email)) {
             duplicatesSkipped++;
             return;
           }
-          
+
           allExistingEmails.add(email);
           newTutors.push({
             id: "csv-tut-" + Date.now() + "-" + idx,
@@ -362,14 +362,14 @@ export default function CollegeManagement() {
   };
 
   const selectedCollege = colleges.find(c => c.id === selectedCollegeId);
-  
+
   const searchLower = collegeSearch.toLowerCase();
-  const filteredColleges = colleges.filter(c => 
+  const filteredColleges = colleges.filter(c =>
     c.name.toLowerCase().includes(searchLower) ||
     c.tutors.some(t => t.name.toLowerCase().includes(searchLower)) ||
     c.tutors.some(t => (t.section || "").toLowerCase().includes(searchLower))
   );
-  
+
   const filteredTutors = selectedCollege?.tutors.filter(t => {
     const s = tutorSearch.toLowerCase();
     return (
@@ -388,7 +388,7 @@ export default function CollegeManagement() {
         <>
           <div className="flex justify-between items-center bg-[#111827] p-6 rounded-3xl border border-border shadow-xl">
             <div className="flex items-center space-x-4">
-              <button 
+              <button
                 onClick={() => { setSelectedCollegeId(null); resetTutorForm(); setCollegeTab("tutors"); }}
                 className="p-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-text-muted hover:text-text-inverse transition-colors"
               >
@@ -400,25 +400,25 @@ export default function CollegeManagement() {
                   {selectedCollege.name}
                 </h2>
                 <div className="flex space-x-4 mt-2">
-                  <button 
+                  <button
                     onClick={() => setCollegeTab("tutors")}
                     className={`text-sm font-bold uppercase tracking-widest pb-1 border-b-2 transition-colors ${collegeTab === "tutors" ? "border-primary text-primary" : "border-transparent text-text-muted hover:text-text-secondary"}`}
                   >
                     Instructors
                   </button>
-                  <button 
+                  <button
                     onClick={() => setCollegeTab("results")}
                     className={`text-sm font-bold uppercase tracking-widest pb-1 border-b-2 transition-colors ${collegeTab === "results" ? "border-primary text-primary" : "border-transparent text-text-muted hover:text-text-secondary"}`}
                   >
                     Test Results
                   </button>
-                  <button 
+                  <button
                     onClick={() => setCollegeTab("collections")}
                     className={`text-sm font-bold uppercase tracking-widest pb-1 border-b-2 transition-colors ${collegeTab === "collections" ? "border-primary text-primary" : "border-transparent text-text-muted hover:text-text-secondary"}`}
                   >
                     Student Collections
                   </button>
-                  <button 
+                  <button
                     onClick={() => setCollegeTab("courseCategories")}
                     className={`text-sm font-bold uppercase tracking-widest pb-1 border-b-2 transition-colors ${collegeTab === "courseCategories" ? "border-primary text-primary" : "border-transparent text-text-muted hover:text-text-secondary"}`}
                   >
@@ -429,21 +429,21 @@ export default function CollegeManagement() {
             </div>
             {!isCreatingTutor && collegeTab === "tutors" && (
               <div className="flex items-center space-x-3">
-                <input 
-                  type="file" 
-                  accept=".csv" 
-                  ref={tutorCsvRef} 
-                  onChange={handleTutorCsvUpload} 
-                  className="hidden" 
+                <input
+                  type="file"
+                  accept=".csv"
+                  ref={tutorCsvRef}
+                  onChange={handleTutorCsvUpload}
+                  className="hidden"
                 />
-                <button 
+                <button
                   onClick={() => tutorCsvRef.current?.click()}
                   className="bg-indigo-600 hover:bg-indigo-500 text-text-inverse px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 shadow-lg transition-colors"
                 >
                   <Upload className="w-5 h-5" />
                   <span className="hidden sm:inline">Import CSV</span>
                 </button>
-                <button 
+                <button
                   onClick={() => setIsCreatingTutor(true)}
                   className="bg-primary hover:bg-primary text-text-inverse px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 shadow-lg transition-colors"
                 >
@@ -489,7 +489,7 @@ export default function CollegeManagement() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-1.5">
                   <label className="text-sm font-bold text-text-muted">Tutor Name *</label>
-                  <input 
+                  <input
                     type="text" value={tutorName} onChange={e => setTutorName(e.target.value)}
                     placeholder="e.g. Rahul Sharma"
                     className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
@@ -497,7 +497,7 @@ export default function CollegeManagement() {
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-sm font-bold text-text-muted">Domain / Subject</label>
-                  <input 
+                  <input
                     type="text" value={domain} onChange={e => setDomain(e.target.value)}
                     placeholder="e.g. Full Stack MERN"
                     className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
@@ -505,14 +505,14 @@ export default function CollegeManagement() {
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-sm font-bold text-text-muted">Joining Date</label>
-                  <input 
+                  <input
                     type="date" value={joiningDate} onChange={e => setJoiningDate(e.target.value)}
                     className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary [color-scheme:dark]"
                   />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-sm font-bold text-text-muted">Phone Number</label>
-                  <input 
+                  <input
                     type="tel" value={tutorPhone} onChange={e => setTutorPhone(e.target.value)}
                     placeholder="e.g. +91 98765 43210"
                     className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
@@ -542,11 +542,11 @@ export default function CollegeManagement() {
             <>
               <div className="mb-6 relative max-w-2xl">
                 <Search className="w-5 h-5 absolute left-4 top-3.5 text-text-muted" />
-                <input 
-                  type="text" 
-                  value={tutorSearch} 
-                  onChange={e => setTutorSearch(e.target.value)} 
-                  placeholder="Search instructors by name, domain, email, phone, or ID..." 
+                <input
+                  type="text"
+                  value={tutorSearch}
+                  onChange={e => setTutorSearch(e.target.value)}
+                  placeholder="Search instructors by name, domain, email, phone, or ID..."
                   className="w-full bg-[#111827] border border-border rounded-xl pl-12 pr-4 py-3 text-text-inverse focus:outline-none focus:border-primary shadow-sm"
                 />
               </div>
@@ -559,7 +559,7 @@ export default function CollegeManagement() {
                 ) : (
                   filteredTutors.map(tutor => (
                     <div key={tutor.id} className="bg-[#111827] rounded-2xl p-5 border border-border flex flex-col md:flex-row md:items-center justify-between shadow-lg relative group transition-all hover:border-primary/30 gap-4">
-                      
+
                       {/* Left section: Icon + Name + Domain + Section */}
                       <div className="flex items-center space-x-4 min-w-[250px]">
                         <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 shrink-0">
@@ -622,12 +622,12 @@ export default function CollegeManagement() {
               <h2 className="text-2xl font-bold text-text-inverse">Partner Colleges</h2>
               <p className="text-text-muted">Manage colleges and the tutors dispatched to them.</p>
             </div>
-            
+
             <div className="flex items-center space-x-3 w-full md:w-auto">
               {/* College search bar removed at user request */}
-              
+
               {!isCreatingCollege && (
-                <button 
+                <button
                   onClick={() => setIsCreatingCollege(true)}
                   className="bg-primary hover:bg-primary text-text-inverse px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 shadow-lg transition-colors whitespace-nowrap"
                 >
@@ -640,15 +640,15 @@ export default function CollegeManagement() {
 
           {isCreatingCollege && (
             <div className="bg-[#111827] rounded-3xl p-6 border border-border shadow-xl flex items-center space-x-4 max-w-2xl">
-              <input 
-                type="text" 
-                value={collegeNameInput} 
+              <input
+                type="text"
+                value={collegeNameInput}
                 onChange={e => setCollegeNameInput(e.target.value)}
                 placeholder="Enter College Name..."
                 className="flex-1 bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
                 autoFocus
               />
-              <button onClick={() => {setIsCreatingCollege(false); setCollegeNameInput(""); setEditingCollegeId(null);}} className="p-3 text-text-muted hover:text-text-inverse transition-colors">
+              <button onClick={() => { setIsCreatingCollege(false); setCollegeNameInput(""); setEditingCollegeId(null); }} className="p-3 text-text-muted hover:text-text-inverse transition-colors">
                 <X className="w-6 h-6" />
               </button>
               <button onClick={handleSaveCollege} className="bg-primary hover:bg-primary text-text-inverse px-6 py-3 rounded-xl font-bold shadow-lg transition-colors">
@@ -665,70 +665,71 @@ export default function CollegeManagement() {
               </div>
             ) : (
               filteredColleges.map(college => {
-                const matchingTutors = collegeSearch 
-                  ? college.tutors.filter(t => 
-                      t.name.toLowerCase().includes(searchLower) || 
-                      (t.section || "").toLowerCase().includes(searchLower)
-                    )
+                const matchingTutors = collegeSearch
+                  ? college.tutors.filter(t =>
+                    t.name.toLowerCase().includes(searchLower) ||
+                    (t.section || "").toLowerCase().includes(searchLower)
+                  )
                   : [];
-                
-                return (
-                <div key={college.id} className="bg-[#111827] rounded-2xl p-5 border border-border shadow-lg flex flex-col justify-between group hover:border-primary/30 transition-all">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4 flex-1 cursor-pointer" onClick={() => setSelectedCollegeId(college.id)}>
-                      <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
-                        <Building2 className="w-6 h-6 text-indigo-400" />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-text-inverse text-lg group-hover:text-primary transition-colors">{college.name}</h3>
-                        <p className="text-sm text-text-muted">{college.tutors.length} Tutor{college.tutors.length !== 1 && 's'} Dispatched</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center space-x-2">
-                      <button 
-                        onClick={() => {
-                          setEditingCollegeId(college.id);
-                          setCollegeNameInput(college.name);
-                          setIsCreatingCollege(true);
-                        }}
-                        className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
-                        title="Edit College Name"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </button>
-                      <button 
-                        onClick={() => handleDeleteCollege(college.id)}
-                        className="p-2 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors"
-                        title="Delete College"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                      <button 
-                        onClick={() => setSelectedCollegeId(college.id)}
-                        className="p-2 text-text-muted hover:text-text-inverse hover:bg-slate-800 rounded-lg transition-colors ml-2"
-                      >
-                        <ChevronRight className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </div>
 
-                  {matchingTutors.length > 0 && (
-                    <div className="mt-4 pt-4 border-t border-border/50">
-                      <p className="text-xs font-bold text-text-muted uppercase tracking-wider mb-2 flex items-center">
-                        <User className="w-3 h-3 mr-1" /> Matched Tutors
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {matchingTutors.map(t => (
-                          <span key={t.id} className="text-xs bg-primary/10 text-primary border border-primary/20 px-2 py-1 rounded-md">
-                            {t.name}
-                          </span>
-                        ))}
+                return (
+                  <div key={college.id} className="bg-[#111827] rounded-2xl p-5 border border-border shadow-lg flex flex-col justify-between group hover:border-primary/30 transition-all">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4 flex-1 cursor-pointer" onClick={() => setSelectedCollegeId(college.id)}>
+                        <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
+                          <Building2 className="w-6 h-6 text-indigo-400" />
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-text-inverse text-lg group-hover:text-primary transition-colors">{college.name}</h3>
+                          <p className="text-sm text-text-muted">{college.tutors.length} Tutor{college.tutors.length !== 1 && 's'} Dispatched</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => {
+                            setEditingCollegeId(college.id);
+                            setCollegeNameInput(college.name);
+                            setIsCreatingCollege(true);
+                          }}
+                          className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                          title="Edit College Name"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteCollege(college.id)}
+                          className="p-2 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors"
+                          title="Delete College"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => setSelectedCollegeId(college.id)}
+                          className="p-2 text-text-muted hover:text-text-inverse hover:bg-slate-800 rounded-lg transition-colors ml-2"
+                        >
+                          <ChevronRight className="w-5 h-5" />
+                        </button>
                       </div>
                     </div>
-                  )}
-                </div>
-              )})
+
+                    {matchingTutors.length > 0 && (
+                      <div className="mt-4 pt-4 border-t border-border/50">
+                        <p className="text-xs font-bold text-text-muted uppercase tracking-wider mb-2 flex items-center">
+                          <User className="w-3 h-3 mr-1" /> Matched Tutors
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {matchingTutors.map(t => (
+                            <span key={t.id} className="text-xs bg-primary/10 text-primary border border-primary/20 px-2 py-1 rounded-md">
+                              {t.name}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )
+              })
             )}
           </div>
         </>
@@ -759,20 +760,6 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
   const [editingStudentStats, setEditingStudentStats] = useState<StudentMasterRecord | null>(null);
   const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false);
   const [statsVersion, setStatsVersion] = useState(0);
-  const [courseCategories, setCourseCategories] = useState<any[]>([]);
-
-  useEffect(() => {
-    const fetchCourseCategories = async () => {
-      try {
-        const res = await axios.get(`${API_URL}/api/v1/college-management/courses/public?collegeName=${encodeURIComponent(collegeName)}`);
-        setCourseCategories(res.data || []);
-      } catch (err) {
-        console.error("Failed to fetch course categories", err);
-      }
-    };
-    if (collegeName) fetchCourseCategories();
-  }, [collegeName, statsVersion]);
-
   const [newStudentForm, setNewStudentForm] = useState({
     name: "",
     email: "",
@@ -796,7 +783,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
       // GENERIC MIGRATION: Fix orphaned scores that were saved before the inheritance fix
       const savedTests = localStorage.getItem("admin_custom_tests");
       const allColleges = JSON.parse(localStorage.getItem("admin_colleges_v2") || "[]");
-      
+
       if (savedTests) {
         const tests = JSON.parse(savedTests);
         allScores = allScores.map((s: any) => {
@@ -923,7 +910,48 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
       console.error("Error checking collections for regNum:", e);
     }
 
-    // 2. Check admin_course_categories_* across localStorage (Removed as it's now on backend)
+    // 2. Check admin_course_categories_* across localStorage
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith("admin_course_categories_")) {
+          const catStr = localStorage.getItem(key);
+          if (catStr) {
+            const categories = JSON.parse(catStr);
+            if (Array.isArray(categories)) {
+              for (const cat of categories) {
+                if (Array.isArray(cat.students)) {
+                  for (const stu of cat.students) {
+                    if ((stu.email || "").toLowerCase().trim() === targetEmail) {
+                      const reg = stu.regNum || stu.regNumber || stu.regNo || stu.rollNumber || stu.rollNo || stu.registrationNumber;
+                      if (reg && reg !== "N/A" && String(reg).trim() !== "") {
+                        return String(reg).trim();
+                      }
+                    }
+                  }
+                }
+                if (Array.isArray(cat.classes)) {
+                  for (const cls of cat.classes) {
+                    if (Array.isArray(cls.students)) {
+                      for (const stu of cls.students) {
+                        if ((stu.email || "").toLowerCase().trim() === targetEmail) {
+                          const reg = stu.regNum || stu.regNumber || stu.regNo || stu.rollNumber || stu.rollNo || stu.registrationNumber;
+                          if (reg && reg !== "N/A" && String(reg).trim() !== "") {
+                            return String(reg).trim();
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Error checking categories for regNum:", e);
+    }
 
     // 3. Check scores list for any existing reg number
     try {
@@ -948,6 +976,16 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
 
   // Build categories and sections tree
   const buildCategoryTree = () => {
+    const savedCategoriesStr = localStorage.getItem(`admin_course_categories_${collegeName}`);
+    let courseCategories: any[] = [];
+    if (savedCategoriesStr) {
+      try {
+        courseCategories = JSON.parse(savedCategoriesStr);
+      } catch (e) {
+        courseCategories = [];
+      }
+    }
+
     const sectionToCategoryMap: Record<string, string> = {};
     const tree: Record<string, Record<string, any[]>> = {};
 
@@ -1075,7 +1113,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
     });
 
     const sortedEvents = Array.from(testEventsMap.values()).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-    
+
     const eventToColumnMap = new Map<string, string>();
     sortedEvents.forEach((ev) => {
       const prefix = ev.course && !ev.name.toLowerCase().includes(ev.course.toLowerCase()) && ev.course !== "General Course" ? `${ev.course} - ` : "";
@@ -1091,7 +1129,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
       const email = s.studentEmail || "unknown";
       const name = s.studentName || "N/A";
       const identifier = email === "unknown" ? `${name}-${email}` : email;
-      
+
       if (!studentMap[identifier]) {
         const sReg = s.regNumber || s.regNum || s.regNo || s.rollNumber || s.rollNo;
         const fetchedReg = getStudentRegNumberByEmail(email, targetScores);
@@ -1110,7 +1148,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
           studentMap[identifier].regNumber = bestReg;
         }
       }
-      
+
       const key = `${s.testName}_${s.date}`;
       const colName = eventToColumnMap.get(key) as string;
       // Save their score for this test as an integer (just the score) to prevent Excel from converting fractions (e.g. 1/1) into dates (1-Jan)
@@ -1150,6 +1188,15 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
 
   const buildMasterStudentList = (): StudentMasterRecord[] => {
     const studentMap: Record<string, StudentMasterRecord> = {};
+    const savedCategoriesStr = localStorage.getItem(`admin_course_categories_${collegeName}`);
+    let courseCategories: any[] = [];
+    if (savedCategoriesStr) {
+      try {
+        courseCategories = JSON.parse(savedCategoriesStr);
+      } catch (e) {
+        courseCategories = [];
+      }
+    }
 
     let customStats: Record<string, any> = {};
     try {
@@ -1299,8 +1346,57 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
     e.preventDefault();
     if (!newStudentForm.name.trim() || !newStudentForm.email.trim()) return;
 
-    // Note: Creating categories/sections/students dynamically here has been removed
-    // since categories are now managed via the backend in CourseCategorySection.tsx
+    const savedCategoriesStr = localStorage.getItem(`admin_course_categories_${collegeName}`);
+    let courseCategories: any[] = [];
+    if (savedCategoriesStr) {
+      try {
+        courseCategories = JSON.parse(savedCategoriesStr);
+      } catch (e) {
+        courseCategories = [];
+      }
+    }
+
+    let catIndex = courseCategories.findIndex(
+      (c: any) => c.courseName?.toLowerCase() === newStudentForm.courseName.trim().toLowerCase()
+    );
+    if (catIndex === -1) {
+      courseCategories.push({
+        id: "cat-" + Date.now(),
+        courseName: newStudentForm.courseName.trim(),
+        classes: [],
+      });
+      catIndex = courseCategories.length - 1;
+    }
+
+    let clsIndex = (courseCategories[catIndex].classes || []).findIndex(
+      (cls: any) => cls.className?.toLowerCase() === newStudentForm.sectionName.trim().toLowerCase()
+    );
+    if (clsIndex === -1) {
+      if (!Array.isArray(courseCategories[catIndex].classes)) {
+        courseCategories[catIndex].classes = [];
+      }
+      courseCategories[catIndex].classes.push({
+        id: "cls-" + Date.now(),
+        categoryId: courseCategories[catIndex].id,
+        className: newStudentForm.sectionName.trim(),
+        students: [],
+      });
+      clsIndex = courseCategories[catIndex].classes.length - 1;
+    }
+
+    if (!Array.isArray(courseCategories[catIndex].classes[clsIndex].students)) {
+      courseCategories[catIndex].classes[clsIndex].students = [];
+    }
+
+    const newStu = {
+      id: "stu-" + Date.now(),
+      name: newStudentForm.name.trim(),
+      email: newStudentForm.email.trim(),
+      regNum: newStudentForm.regNum.trim() || "N/A",
+      classId: courseCategories[catIndex].classes[clsIndex].id,
+    };
+    courseCategories[catIndex].classes[clsIndex].students.push(newStu);
+    localStorage.setItem(`admin_course_categories_${collegeName}`, JSON.stringify(courseCategories));
 
     let customStats: Record<string, any> = {};
     try {
@@ -1383,11 +1479,10 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
         <div className="flex items-center space-x-3">
           <button
             onClick={() => setResultsSubTab("categoryWise")}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
-              resultsSubTab === "categoryWise"
+            className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${resultsSubTab === "categoryWise"
                 ? "bg-purple-600 text-text-inverse shadow-md shadow-purple-600/30"
                 : "bg-slate-800/80 hover:bg-slate-800 text-text-secondary hover:text-text-inverse"
-            }`}
+              }`}
           >
             <Layers className="w-4 h-4" />
             <span>Category Wise</span>
@@ -1398,11 +1493,10 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
 
           <button
             onClick={() => setResultsSubTab("allRecord")}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
-              resultsSubTab === "allRecord"
+            className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${resultsSubTab === "allRecord"
                 ? "bg-purple-600 text-text-inverse shadow-md shadow-purple-600/30"
                 : "bg-slate-800/80 hover:bg-slate-800 text-text-secondary hover:text-text-inverse"
-            }`}
+              }`}
           >
             <ListFilter className="w-4 h-4" />
             <span>All Record</span>
@@ -1414,7 +1508,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
 
         {/* Master Export Button */}
         {scores.length > 0 && (
-          <button 
+          <button
             onClick={() => generateAggregatedCSV(scores, `${collegeName.replace(/\s+/g, '_')}_All_Test_Records`)}
             className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-500 text-text-inverse px-5 py-2.5 rounded-xl font-bold transition-all shadow-lg"
           >
@@ -1474,11 +1568,10 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                           generateAggregatedCSV(allCategoryScores, `Course_${categoryName.replace(/\s+/g, "_")}_All_Results`);
                         }}
                         disabled={allCategoryScores.length === 0}
-                        className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-bold text-sm transition-all shadow-md ${
-                          allCategoryScores.length > 0
+                        className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-bold text-sm transition-all shadow-md ${allCategoryScores.length > 0
                             ? "bg-primary hover:bg-primary text-text-inverse shadow-blue-600/20"
                             : "bg-slate-800 text-text-muted cursor-not-allowed border border-border"
-                        }`}
+                          }`}
                         title="Download CSV for this entire Course Category"
                       >
                         <Download className="w-4 h-4" />
@@ -1516,63 +1609,62 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                             return aName.localeCompare(bName);
                           })
                           .map(([sectionName, sectionScores]) => {
-                          const uniqueSectionStudents = new Set(sectionScores.map((s) => s.studentEmail || s.studentName));
+                            const uniqueSectionStudents = new Set(sectionScores.map((s) => s.studentEmail || s.studentName));
 
-                          return (
-                            <div
-                              key={sectionName}
-                              className="bg-slate-900/80 border border-border/80 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-purple-500/30 transition-all"
-                            >
-                              <div className="flex items-center space-x-3">
-                                <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 font-bold">
-                                  <Layers className="w-5 h-5" />
-                                </div>
-                                <div>
-                                  <div className="flex items-center space-x-2">
-                                    <span className="text-xs uppercase tracking-wider font-bold bg-purple-500/20 text-purple-300 px-2.5 py-0.5 rounded-full border border-purple-500/30">
-                                      Assigned Section
-                                    </span>
-                                    <h4 className="text-lg font-bold text-text-inverse">{sectionName}</h4>
+                            return (
+                              <div
+                                key={sectionName}
+                                className="bg-slate-900/80 border border-border/80 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-purple-500/30 transition-all"
+                              >
+                                <div className="flex items-center space-x-3">
+                                  <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 font-bold">
+                                    <Layers className="w-5 h-5" />
                                   </div>
-                                  <p className="text-xs text-text-muted mt-1 font-medium">
-                                    {uniqueSectionStudents.size} Students • {sectionScores.length} Test Records
-                                  </p>
+                                  <div>
+                                    <div className="flex items-center space-x-2">
+                                      <span className="text-xs uppercase tracking-wider font-bold bg-purple-500/20 text-purple-300 px-2.5 py-0.5 rounded-full border border-purple-500/30">
+                                        Assigned Section
+                                      </span>
+                                      <h4 className="text-lg font-bold text-text-inverse">{sectionName}</h4>
+                                    </div>
+                                    <p className="text-xs text-text-muted mt-1 font-medium">
+                                      {uniqueSectionStudents.size} Students • {sectionScores.length} Test Records
+                                    </p>
+                                  </div>
+                                </div>
+
+                                <div className="flex items-center space-x-3">
+                                  <button
+                                    onClick={() =>
+                                      generateAggregatedCSV(
+                                        sectionScores,
+                                        `${categoryName.replace(/\s+/g, "_")}_Section_${sectionName.replace(/\s+/g, "_")}_Results`
+                                      )
+                                    }
+                                    disabled={sectionScores.length === 0}
+                                    className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-bold text-sm transition-all shadow-md ${sectionScores.length > 0
+                                        ? "bg-primary hover:bg-primary text-text-inverse shadow-blue-600/20"
+                                        : "bg-slate-800 text-text-muted cursor-not-allowed border border-border"
+                                      }`}
+                                    title="Download CSV for this assigned section"
+                                  >
+                                    <Download className="w-4 h-4" />
+                                    <span>Download Section CSV</span>
+                                  </button>
+
+                                  {sectionScores.length > 0 && (
+                                    <button
+                                      onClick={() => handleDeleteSectionResults(sectionName)}
+                                      className="flex items-center space-x-2 bg-rose-600/10 hover:bg-rose-600/20 text-rose-400 p-2.5 rounded-xl text-sm font-bold transition-colors border border-rose-500/20"
+                                      title={`Delete all test results for ${sectionName}`}
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </button>
+                                  )}
                                 </div>
                               </div>
-
-                              <div className="flex items-center space-x-3">
-                                <button
-                                  onClick={() =>
-                                    generateAggregatedCSV(
-                                      sectionScores,
-                                      `${categoryName.replace(/\s+/g, "_")}_Section_${sectionName.replace(/\s+/g, "_")}_Results`
-                                    )
-                                  }
-                                  disabled={sectionScores.length === 0}
-                                  className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-bold text-sm transition-all shadow-md ${
-                                    sectionScores.length > 0
-                                      ? "bg-primary hover:bg-primary text-text-inverse shadow-blue-600/20"
-                                      : "bg-slate-800 text-text-muted cursor-not-allowed border border-border"
-                                  }`}
-                                  title="Download CSV for this assigned section"
-                                >
-                                  <Download className="w-4 h-4" />
-                                  <span>Download Section CSV</span>
-                                </button>
-
-                                {sectionScores.length > 0 && (
-                                  <button
-                                    onClick={() => handleDeleteSectionResults(sectionName)}
-                                    className="flex items-center space-x-2 bg-rose-600/10 hover:bg-rose-600/20 text-rose-400 p-2.5 rounded-xl text-sm font-bold transition-colors border border-rose-500/20"
-                                    title={`Delete all test results for ${sectionName}`}
-                                  >
-                                    <Trash2 className="w-4 h-4" />
-                                  </button>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })
+                            );
+                          })
                       )}
                     </div>
                   )}

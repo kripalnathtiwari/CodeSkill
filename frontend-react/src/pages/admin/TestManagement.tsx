@@ -136,10 +136,10 @@ function TestCard({ test, colleges, onDelete, onDownloadCSV, onViewResults }: { 
 
   return (
     <div className={`p-5 flex justify-between items-start rounded-2xl border transition-all ${status === "live"
-        ? "bg-[#111827] border-primary/50 shadow-xl shadow-blue-500/10"
-        : status === "upcoming"
-          ? "bg-[#111827] border-amber-500/40 shadow-xl"
-          : "bg-[#111827] border-border/80 shadow-xl hover:border-slate-600"
+      ? "bg-[#111827] border-primary/50 shadow-xl shadow-blue-500/10"
+      : status === "upcoming"
+        ? "bg-[#111827] border-amber-500/40 shadow-xl"
+        : "bg-[#111827] border-border/80 shadow-xl hover:border-slate-600"
       }`}>
       <div className="flex-1 min-w-0">
         <div className="flex items-center space-x-2 mb-1">
@@ -231,26 +231,6 @@ export default function TestManagement() {
   const [adminSelectedCollegeId, setAdminSelectedCollegeId] = useState<string>("all");
   const [adminSelectedCategory, setAdminSelectedCategory] = useState<string>("all");
   const [adminSelectedSection, setAdminSelectedSection] = useState<string>("all");
-  const [courseCategories, setCourseCategories] = useState<any[]>([]);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      if (adminSelectedCollegeId === "all") {
-        setCourseCategories([]);
-        return;
-      }
-      try {
-        const col = colleges.find(c => String(c.id) === String(adminSelectedCollegeId));
-        if (col) {
-          const res = await axios.get(getApiUrl(`/api/v1/college-management/courses/public?collegeName=${encodeURIComponent(col.name)}`));
-          setCourseCategories(res.data || []);
-        }
-      } catch (err) {
-        console.error("Failed to fetch course categories", err);
-      }
-    };
-    if (colleges.length > 0) fetchCategories();
-  }, [adminSelectedCollegeId, colleges]);
 
   const loadAllColleges = async () => {
     let apiColleges: any[] = [];
@@ -323,6 +303,7 @@ export default function TestManagement() {
     const categories = new Set<string>();
 
     // 1. From course categories
+    const courseCategories = JSON.parse(localStorage.getItem(`admin_course_categories_${col.name}`) || "[]");
     courseCategories.forEach((cat: any) => {
       if (cat.courseName) categories.add(cat.courseName);
     });
@@ -344,6 +325,7 @@ export default function TestManagement() {
     if (!col) return [];
 
     const sections = new Set<string>();
+    const courseCategories = JSON.parse(localStorage.getItem(`admin_course_categories_${col.name}`) || "[]");
 
     if (categoryName && categoryName !== "all") {
       // Find the selected category and add its sections/classes
@@ -837,41 +819,41 @@ export default function TestManagement() {
               <>
                 {/* LIVE */}
                 {liveTests.length > 0 && (
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <Radio className="w-4 h-4 text-primary animate-pulse" />
-                  <h3 className="text-sm font-bold text-primary uppercase tracking-widest">Live Now</h3>
-                  <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">{liveTests.length}</span>
-                </div>
-                <div className="space-y-3">
-                  {liveTests.map(t => <TestCard key={t.id} test={t} colleges={colleges} onDelete={handleDeleteTest} onDownloadCSV={handleDownloadTestCSV} onViewResults={(testObj) => setViewingResultsTest(testObj)} />)}
-                </div>
-              </div>
-            )}
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-2">
+                      <Radio className="w-4 h-4 text-primary animate-pulse" />
+                      <h3 className="text-sm font-bold text-primary uppercase tracking-widest">Live Now</h3>
+                      <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">{liveTests.length}</span>
+                    </div>
+                    <div className="space-y-3">
+                      {liveTests.map(t => <TestCard key={t.id} test={t} colleges={colleges} onDelete={handleDeleteTest} onDownloadCSV={handleDownloadTestCSV} onViewResults={(testObj) => setViewingResultsTest(testObj)} />)}
+                    </div>
+                  </div>
+                )}
 
-            {/* UPCOMING */}
-            {upcomingTests.length > 0 && (
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <CalendarClock className="w-4 h-4 text-amber-400" />
-                  <h3 className="text-sm font-bold text-amber-400 uppercase tracking-widest">Upcoming</h3>
-                  <span className="text-xs bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded-full">{upcomingTests.length}</span>
-                </div>
-                <div className="space-y-3">
-                  {upcomingTests.map(t => <TestCard key={t.id} test={t} colleges={colleges} onDelete={handleDeleteTest} onDownloadCSV={handleDownloadTestCSV} onViewResults={(testObj) => setViewingResultsTest(testObj)} />)}
-                </div>
-              </div>
-            )}
+                {/* UPCOMING */}
+                {upcomingTests.length > 0 && (
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-2">
+                      <CalendarClock className="w-4 h-4 text-amber-400" />
+                      <h3 className="text-sm font-bold text-amber-400 uppercase tracking-widest">Upcoming</h3>
+                      <span className="text-xs bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded-full">{upcomingTests.length}</span>
+                    </div>
+                    <div className="space-y-3">
+                      {upcomingTests.map(t => <TestCard key={t.id} test={t} colleges={colleges} onDelete={handleDeleteTest} onDownloadCSV={handleDownloadTestCSV} onViewResults={(testObj) => setViewingResultsTest(testObj)} />)}
+                    </div>
+                  </div>
+                )}
 
-            {/* ENDED */}
-            {endedTests.length > 0 && (
-              <div className="space-y-3">
-                <h3 className="text-sm font-bold text-text-muted uppercase tracking-widest">Ended</h3>
-                <div className="space-y-3">
-                  {endedTests.map(t => <TestCard key={t.id} test={t} colleges={colleges} onDelete={handleDeleteTest} onDownloadCSV={handleDownloadTestCSV} onViewResults={(testObj) => setViewingResultsTest(testObj)} />)}
-                </div>
-              </div>
-            )}
+                {/* ENDED */}
+                {endedTests.length > 0 && (
+                  <div className="space-y-3">
+                    <h3 className="text-sm font-bold text-text-muted uppercase tracking-widest">Ended</h3>
+                    <div className="space-y-3">
+                      {endedTests.map(t => <TestCard key={t.id} test={t} colleges={colleges} onDelete={handleDeleteTest} onDownloadCSV={handleDownloadTestCSV} onViewResults={(testObj) => setViewingResultsTest(testObj)} />)}
+                    </div>
+                  </div>
+                )}
               </>
             )}
             {viewingResultsTest && (
@@ -1483,48 +1465,48 @@ function ResultsModal({ test, onClose }: { test: any; onClose: () => void }) {
                         return aName.localeCompare(bName);
                       })
                       .map(([sectionName, students]) => (
-                      <div key={sectionName} className="space-y-3">
-                        <h4 className="text-sm font-bold text-text-muted uppercase tracking-widest pl-2">
-                          Section: <span className="text-primary">{sectionName}</span>
-                        </h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                          {students.sort((a, b) => b.score - a.score).map((student: any, idx: number) => (
-                            <div key={idx} className="bg-[#0a1128] border border-border p-4 rounded-xl flex justify-between items-center hover:border-border transition-colors">
-                              <div className="min-w-0 flex-1 pr-4">
-                                <p className="font-bold text-text-secondary truncate">{student.studentName}</p>
-                                <p className="text-xs text-text-muted truncate">{student.studentEmail}</p>
-                                <p className="text-xs text-text-secondary mt-1">{student.date}</p>
-                              </div>
-                              <div className="text-right flex-shrink-0 flex flex-col items-end">
-                                <div className="text-2xl font-black text-primary">
-                                  {student.score}<span className="text-sm text-text-muted">/{student.totalQuestions}</span>
+                        <div key={sectionName} className="space-y-3">
+                          <h4 className="text-sm font-bold text-text-muted uppercase tracking-widest pl-2">
+                            Section: <span className="text-primary">{sectionName}</span>
+                          </h4>
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {students.sort((a, b) => b.score - a.score).map((student: any, idx: number) => (
+                              <div key={idx} className="bg-[#0a1128] border border-border p-4 rounded-xl flex justify-between items-center hover:border-border transition-colors">
+                                <div className="min-w-0 flex-1 pr-4">
+                                  <p className="font-bold text-text-secondary truncate">{student.studentName}</p>
+                                  <p className="text-xs text-text-muted truncate">{student.studentEmail}</p>
+                                  <p className="text-xs text-text-secondary mt-1">{student.date}</p>
                                 </div>
-                                <div className="flex items-center space-x-2 mt-2">
-                                  <button
-                                    onClick={() => setSelectedStudentForSnapshots(student)}
-                                    className="text-xs flex items-center space-x-1 text-text-secondary hover:text-primary bg-slate-800 hover:bg-primary/10 px-2.5 py-1 rounded-lg border border-border/60 transition-colors"
-                                    title="View Camera Log"
-                                  >
-                                    <Video className="w-3 h-3" />
-                                    <span>View Log</span>
-                                  </button>
-                                  {student.date !== "Did not attempt" && (
+                                <div className="text-right flex-shrink-0 flex flex-col items-end">
+                                  <div className="text-2xl font-black text-primary">
+                                    {student.score}<span className="text-sm text-text-muted">/{student.totalQuestions}</span>
+                                  </div>
+                                  <div className="flex items-center space-x-2 mt-2">
                                     <button
-                                      onClick={() => handleDeleteStudentAttempt(student)}
-                                      className="text-xs flex items-center space-x-1 text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 px-2.5 py-1 rounded-lg border border-rose-500/20 transition-colors"
-                                      title="Delete student test attempt to allow re-attempt"
+                                      onClick={() => setSelectedStudentForSnapshots(student)}
+                                      className="text-xs flex items-center space-x-1 text-text-secondary hover:text-primary bg-slate-800 hover:bg-primary/10 px-2.5 py-1 rounded-lg border border-border/60 transition-colors"
+                                      title="View Camera Log"
                                     >
-                                      <Trash2 className="w-3 h-3" />
-                                      <span>Delete</span>
+                                      <Video className="w-3 h-3" />
+                                      <span>View Log</span>
                                     </button>
-                                  )}
+                                    {student.date !== "Did not attempt" && (
+                                      <button
+                                        onClick={() => handleDeleteStudentAttempt(student)}
+                                        className="text-xs flex items-center space-x-1 text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 px-2.5 py-1 rounded-lg border border-rose-500/20 transition-colors"
+                                        title="Delete student test attempt to allow re-attempt"
+                                      >
+                                        <Trash2 className="w-3 h-3" />
+                                        <span>Delete</span>
+                                      </button>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 </div>
               ))}
@@ -1532,7 +1514,7 @@ function ResultsModal({ test, onClose }: { test: any; onClose: () => void }) {
           )}
         </div>
       </div>
-      
+
       {selectedStudentForSnapshots && (
         <SnapshotViewerModal
           testId={test.id}

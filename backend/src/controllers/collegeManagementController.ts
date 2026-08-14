@@ -6,12 +6,12 @@ import prisma from '../config/db';
 const syncTutorUsers = async (tutors: any[]) => {
   if (!tutors || tutors.length === 0) return;
   const hashedPassword = await bcrypt.hash("Pass123@", 10);
-  
+
   for (const t of tutors) {
     if (t.email) {
       const email = t.email.toLowerCase();
       const existingUser = await prisma.user.findUnique({ where: { email } });
-      
+
       if (!existingUser) {
         // Create new user with INSTRUCTOR role
         await prisma.user.create({
@@ -42,12 +42,12 @@ const syncTutorUsers = async (tutors: any[]) => {
 const syncStudentUsers = async (students: any[]) => {
   if (!students || students.length === 0) return;
   const hashedPassword = await bcrypt.hash("Welcome", 10);
-  
+
   for (const s of students) {
     if (s.email) {
       const email = s.email.toLowerCase();
       const existingUser = await prisma.user.findUnique({ where: { email } });
-      
+
       if (!existingUser) {
         let firstName = s.name || "Student";
         let lastName = "";
@@ -113,7 +113,7 @@ export const getPublicInstitutions = async (req: Request, res: Response) => {
 export const createInstitution = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { name, adminEmail, tutors } = req.body;
-    
+
     if (!name) {
       res.status(400).json({ error: 'Name is required' });
       return;
@@ -288,16 +288,10 @@ export const getCourseCategories = async (req: Request, res: Response) => {
 
 export const getPublicCourseCategories = async (req: Request, res: Response) => {
   try {
-    const { collegeName, collegeId } = req.query;
+    const { collegeName } = req.query;
     const whereClause: any = {};
     if (collegeName) {
       whereClause.collegeName = String(collegeName);
-    }
-    if (collegeId && collegeId !== "all") {
-      const college = await prisma.collegeInstitution.findUnique({ where: { id: String(collegeId) } });
-      if (college) {
-        whereClause.collegeName = college.name;
-      }
     }
     const courses = await prisma.collegeCourseCategory.findMany({
       where: whereClause,
@@ -305,19 +299,14 @@ export const getPublicCourseCategories = async (req: Request, res: Response) => 
         id: true,
         collegeName: true,
         courseName: true,
-        description: true,
-        createdAt: true,
         classes: {
           select: {
             id: true,
             className: true,
-            description: true,
-            createdAt: true
-          },
-          orderBy: { createdAt: 'asc' as const }
+          }
         }
       },
-      orderBy: { createdAt: 'desc' as const }
+      orderBy: { createdAt: 'desc' }
     });
     res.status(200).json(courses);
   } catch (error: any) {

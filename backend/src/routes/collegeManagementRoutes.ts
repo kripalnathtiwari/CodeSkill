@@ -8,6 +8,9 @@ const router = Router();
 // Get public institutions (cached for 5 minutes)
 router.get('/public', cache(300), getPublicInstitutions);
 
+// Get public course categories (cached for 5 minutes)
+router.get('/public/courses', cache(300), getPublicCourseCategories);
+
 // Get all institutions
 router.get('/', authenticateJWT, cache(300), getAllInstitutions);
 
@@ -41,7 +44,6 @@ import {
   removeCourseInstructor
 } from '../controllers/collegeManagementController';
 
-router.get('/courses/public', cache(300), getPublicCourseCategories);
 router.get('/courses', authenticateJWT, getCourseCategories);
 router.post('/courses', authenticateJWT, requireRole(['ADMIN']), createCourseCategory);
 router.put('/courses/:id', authenticateJWT, requireRole(['ADMIN']), updateCourseCategory);

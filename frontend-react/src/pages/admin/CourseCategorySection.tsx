@@ -139,11 +139,7 @@ export default function CourseCategorySection({
   }, [collegeName]);
 
   const saveToStorageFallback = (updated: CourseCategory[]) => {
-    try {
-      localStorage.setItem(`admin_course_categories_${collegeName}`, JSON.stringify(updated));
-    } catch (err) {
-      console.error("Storage error:", err);
-    }
+    // No-op: Removed local storage fallback.
   };
 
   const fetchCourseCategories = async () => {
@@ -159,11 +155,8 @@ export default function CourseCategorySection({
         saveToStorageFallback(res.data);
       }
     } catch (err) {
-      console.warn("API fetch failed, falling back to local storage:", err);
-      const saved = localStorage.getItem(`admin_course_categories_${collegeName}`);
-      if (saved) {
-        setCourses(JSON.parse(saved));
-      }
+      console.error("API fetch failed:", err);
+      // Removed local storage fallback
     } finally {
       setIsLoading(false);
     }
@@ -200,30 +193,8 @@ export default function CourseCategorySection({
       }
       await fetchCourseCategories();
     } catch (err) {
-      console.warn("API request failed, using local fallback");
-      if (editingCourseId) {
-        const updated = courses.map((c) =>
-          c.id === editingCourseId
-            ? { ...c, courseName: courseNameInput, description: descriptionInput }
-            : c
-        );
-        setCourses(updated);
-        saveToStorageFallback(updated);
-      } else {
-        const newCategory: CourseCategory = {
-          id: `local_${Date.now()}`,
-          collegeName,
-          collegeEmail,
-          courseName: courseNameInput,
-          description: descriptionInput,
-          createdAt: new Date().toISOString(),
-          instructors: [],
-          students: []
-        };
-        const updated = [newCategory, ...courses];
-        setCourses(updated);
-        saveToStorageFallback(updated);
-      }
+      console.error("API request failed:", err);
+      alert("Failed to save course. Please check your connection.");
     } finally {
       setCourseNameInput("");
       setDescriptionInput("");
@@ -247,11 +218,8 @@ export default function CourseCategorySection({
         headers: { Authorization: `Bearer ${token}` }
       });
     } catch (err) {
-      console.warn("API delete failed, updating local state");
-    } finally {
-      const updated = courses.filter((c) => c.id !== id);
-      setCourses(updated);
-      saveToStorageFallback(updated);
+      console.error("API delete failed:", err);
+      alert("Failed to delete course.");
     }
   };
 
@@ -304,20 +272,8 @@ export default function CourseCategorySection({
       );
       await fetchCourseCategories();
     } catch (err) {
-      const updated = courses.map((c) => {
-        if (c.id === courseId) {
-          return {
-            ...c,
-            instructors: [
-              ...c.instructors,
-              { id: `inst_${Date.now()}`, ...instructorData!, classId: targetClassId || undefined }
-            ]
-          };
-        }
-        return c;
-      });
-      setCourses(updated);
-      saveToStorageFallback(updated);
+      console.error("API request failed:", err);
+      alert("Failed to assign instructor.");
     } finally {
       setAssigningToCourseId(null);
       setSelectedTutorId("");
@@ -336,17 +292,8 @@ export default function CourseCategorySection({
       );
       await fetchCourseCategories();
     } catch (err) {
-      const updated = courses.map((c) => {
-        if (c.id === courseId) {
-          return {
-            ...c,
-            instructors: c.instructors.filter((i) => i.id !== instructorId)
-          };
-        }
-        return c;
-      });
-      setCourses(updated);
-      saveToStorageFallback(updated);
+      console.error("API request failed:", err);
+      alert("Failed to remove instructor.");
     }
   };
 
@@ -375,20 +322,8 @@ export default function CourseCategorySection({
       );
       await fetchCourseCategories();
     } catch (err) {
-      const updated = courses.map((c) => {
-        if (c.id === courseId) {
-          return {
-            ...c,
-            students: [
-              ...c.students,
-              { id: `stud_${Date.now()}`, ...newStudent, classId: targetClassId || undefined }
-            ]
-          };
-        }
-        return c;
-      });
-      setCourses(updated);
-      saveToStorageFallback(updated);
+      console.error("API request failed:", err);
+      alert("Failed to add student.");
     } finally {
       setAddingStudentCourseId(null);
       setNewStudent({ name: "", email: "", regNum: "", phone: "" });
@@ -405,17 +340,8 @@ export default function CourseCategorySection({
       );
       await fetchCourseCategories();
     } catch (err) {
-      const updated = courses.map((c) => {
-        if (c.id === courseId) {
-          return {
-            ...c,
-            students: c.students.filter((s) => s.id !== studentId)
-          };
-        }
-        return c;
-      });
-      setCourses(updated);
-      saveToStorageFallback(updated);
+      console.error("API request failed:", err);
+      alert("Failed to remove student.");
     }
   };
 
@@ -470,22 +396,8 @@ export default function CourseCategorySection({
         await fetchCourseCategories();
         alert(`Successfully imported ${parsedStudents.length} students into course!`);
       } catch (err) {
-        const updated = courses.map((c) => {
-          if (c.id === csvTargetCourseId) {
-            const added = parsedStudents.map((s, index) => ({
-              id: `csv_${Date.now()}_${index}`,
-              ...s
-            }));
-            return {
-              ...c,
-              students: [...c.students, ...added]
-            };
-          }
-          return c;
-        });
-        setCourses(updated);
-        saveToStorageFallback(updated);
-        alert(`Imported ${parsedStudents.length} students locally!`);
+        console.error("API request failed:", err);
+        alert("Failed to import students.");
       } finally {
         if (csvInputRef.current) csvInputRef.current.value = "";
         setCsvTargetCourseId(null);
@@ -519,27 +431,8 @@ export default function CourseCategorySection({
       );
       await fetchCourseCategories();
     } catch (err) {
-      console.warn("API create class failed, falling back to local state");
-      const updated = courses.map((c) => {
-        if (c.id === courseId) {
-          const newClassObj: CourseClass = {
-            id: `class_${Date.now()}`,
-            categoryId: courseId,
-            className: newClassNameInput,
-            description: newClassDescriptionInput,
-            createdAt: new Date().toISOString(),
-            instructors: [],
-            students: []
-          };
-          return {
-            ...c,
-            classes: [...(c.classes || []), newClassObj]
-          };
-        }
-        return c;
-      });
-      setCourses(updated);
-      saveToStorageFallback(updated);
+      console.error("API request failed:", err);
+      alert("Failed to create class.");
     } finally {
       setNewClassNameInput("");
       setNewClassDescriptionInput("");
@@ -557,19 +450,8 @@ export default function CourseCategorySection({
       );
       await fetchCourseCategories();
     } catch (err) {
-      const updated = courses.map((c) => {
-        if (c.id === courseId) {
-          return {
-            ...c,
-            classes: (c.classes || []).filter((cls) => cls.id !== classId),
-            students: c.students.map((s) => (s.classId === classId ? { ...s, classId: undefined } : s)),
-            instructors: c.instructors.map((i) => (i.classId === classId ? { ...i, classId: undefined } : i))
-          };
-        }
-        return c;
-      });
-      setCourses(updated);
-      saveToStorageFallback(updated);
+      console.error("API request failed:", err);
+      alert("Failed to delete class.");
     }
   };
 

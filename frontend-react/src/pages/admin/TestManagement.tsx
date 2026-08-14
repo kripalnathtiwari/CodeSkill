@@ -231,6 +231,26 @@ export default function TestManagement() {
   const [adminSelectedCollegeId, setAdminSelectedCollegeId] = useState<string>("all");
   const [adminSelectedCategory, setAdminSelectedCategory] = useState<string>("all");
   const [adminSelectedSection, setAdminSelectedSection] = useState<string>("all");
+  const [courseCategories, setCourseCategories] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      if (adminSelectedCollegeId === "all") {
+        setCourseCategories([]);
+        return;
+      }
+      try {
+        const col = colleges.find(c => String(c.id) === String(adminSelectedCollegeId));
+        if (col) {
+          const res = await axios.get(getApiUrl(`/api/v1/college-management/courses/public?collegeName=${encodeURIComponent(col.name)}`));
+          setCourseCategories(res.data || []);
+        }
+      } catch (err) {
+        console.error("Failed to fetch course categories", err);
+      }
+    };
+    if (colleges.length > 0) fetchCategories();
+  }, [adminSelectedCollegeId, colleges]);
 
   const loadAllColleges = async () => {
     let apiColleges: any[] = [];
@@ -303,7 +323,6 @@ export default function TestManagement() {
     const categories = new Set<string>();
 
     // 1. From course categories
-    const courseCategories = JSON.parse(localStorage.getItem(`admin_course_categories_${col.name}`) || "[]");
     courseCategories.forEach((cat: any) => {
       if (cat.courseName) categories.add(cat.courseName);
     });
@@ -325,7 +344,6 @@ export default function TestManagement() {
     if (!col) return [];
 
     const sections = new Set<string>();
-    const courseCategories = JSON.parse(localStorage.getItem(`admin_course_categories_${col.name}`) || "[]");
 
     if (categoryName && categoryName !== "all") {
       // Find the selected category and add its sections/classes

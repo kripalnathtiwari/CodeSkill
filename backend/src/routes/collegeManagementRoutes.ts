@@ -28,6 +28,7 @@ router.delete('/:collegeId/tutors/:tutorId', authenticateJWT, requireRole(['ADMI
 // ==========================================
 import {
   getCourseCategories,
+  getPublicCourseCategories,
   createCourseCategory,
   updateCourseCategory,
   deleteCourseCategory,
@@ -40,6 +41,7 @@ import {
   removeCourseInstructor
 } from '../controllers/collegeManagementController';
 
+router.get('/courses/public', cache(300), getPublicCourseCategories);
 router.get('/courses', authenticateJWT, getCourseCategories);
 router.post('/courses', authenticateJWT, requireRole(['ADMIN']), createCourseCategory);
 router.put('/courses/:id', authenticateJWT, requireRole(['ADMIN']), updateCourseCategory);

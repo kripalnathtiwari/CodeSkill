@@ -286,6 +286,46 @@ export const getCourseCategories = async (req: Request, res: Response) => {
   }
 };
 
+export const getPublicCourseCategories = async (req: Request, res: Response) => {
+  try {
+    const { collegeName, collegeId } = req.query;
+    const whereClause: any = {};
+    if (collegeName) {
+      whereClause.collegeName = String(collegeName);
+    }
+    if (collegeId && collegeId !== "all") {
+      const college = await prisma.collegeInstitution.findUnique({ where: { id: String(collegeId) } });
+      if (college) {
+        whereClause.collegeName = college.name;
+      }
+    }
+    const courses = await prisma.collegeCourseCategory.findMany({
+      where: whereClause,
+      select: {
+        id: true,
+        collegeName: true,
+        courseName: true,
+        description: true,
+        createdAt: true,
+        classes: {
+          select: {
+            id: true,
+            className: true,
+            description: true,
+            createdAt: true
+          },
+          orderBy: { createdAt: 'asc' as const }
+        }
+      },
+      orderBy: { createdAt: 'desc' as const }
+    });
+    res.status(200).json(courses);
+  } catch (error: any) {
+    console.error('Error fetching public course categories:', error);
+    res.status(500).json({ error: 'Failed to fetch public course categories', details: error.message });
+  }
+};
+
 export const createCourseCategory = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { collegeName, collegeEmail, courseName, description } = req.body;

@@ -92,6 +92,7 @@ export default function Contests() {
 
   const [customTests, setCustomTests] = useState<any[]>([]);
   const [colleges, setColleges] = useState<any[]>([]);
+  const [courseCategories, setCourseCategories] = useState<any[]>([]);
   
   const [selectedCollegeId, setSelectedCollegeId] = useState<string>(() => {
     return localStorage.getItem("user_selected_college_id") || "all";
@@ -115,6 +116,22 @@ export default function Contests() {
     localStorage.setItem("user_selected_category", selectedCategory);
   }, [selectedCategory]);
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      if (selectedCollegeId === "all") {
+        setCourseCategories([]);
+        return;
+      }
+      try {
+        const res = await axios.get(getApiUrl(`/api/v1/college-management/courses/public?collegeId=${selectedCollegeId}`));
+        setCourseCategories(res.data);
+      } catch (e) {
+        console.error("Failed to fetch course categories", e);
+      }
+    };
+    fetchCategories();
+  }, [selectedCollegeId]);
+
   React.useEffect(() => {
     const savedTests = localStorage.getItem("admin_custom_tests");
     if (savedTests) {
@@ -137,7 +154,6 @@ export default function Contests() {
     if (!col) return [];
 
     const categories = new Set<string>();
-    const courseCategories = JSON.parse(localStorage.getItem(`admin_course_categories_${col.name}`) || "[]");
     courseCategories.forEach((cat: any) => {
       if (cat.courseName) categories.add(cat.courseName);
     });
@@ -157,7 +173,6 @@ export default function Contests() {
     if (!col) return [];
 
     const sections = new Set<string>();
-    const courseCategories = JSON.parse(localStorage.getItem(`admin_course_categories_${col.name}`) || "[]");
 
     if (categoryName && categoryName !== "all") {
       const targetCat = courseCategories.find((cat: any) => cat.courseName === categoryName);

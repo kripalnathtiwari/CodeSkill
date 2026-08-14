@@ -759,6 +759,20 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
   const [editingStudentStats, setEditingStudentStats] = useState<StudentMasterRecord | null>(null);
   const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false);
   const [statsVersion, setStatsVersion] = useState(0);
+  const [courseCategories, setCourseCategories] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchCourseCategories = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/api/v1/college-management/courses/public?collegeName=${encodeURIComponent(collegeName)}`);
+        setCourseCategories(res.data || []);
+      } catch (err) {
+        console.error("Failed to fetch course categories", err);
+      }
+    };
+    if (collegeName) fetchCourseCategories();
+  }, [collegeName, statsVersion]);
+
   const [newStudentForm, setNewStudentForm] = useState({
     name: "",
     email: "",
@@ -909,48 +923,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
       console.error("Error checking collections for regNum:", e);
     }
 
-    // 2. Check admin_course_categories_* across localStorage
-    try {
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith("admin_course_categories_")) {
-          const catStr = localStorage.getItem(key);
-          if (catStr) {
-            const categories = JSON.parse(catStr);
-            if (Array.isArray(categories)) {
-              for (const cat of categories) {
-                if (Array.isArray(cat.students)) {
-                  for (const stu of cat.students) {
-                    if ((stu.email || "").toLowerCase().trim() === targetEmail) {
-                      const reg = stu.regNum || stu.regNumber || stu.regNo || stu.rollNumber || stu.rollNo || stu.registrationNumber;
-                      if (reg && reg !== "N/A" && String(reg).trim() !== "") {
-                        return String(reg).trim();
-                      }
-                    }
-                  }
-                }
-                if (Array.isArray(cat.classes)) {
-                  for (const cls of cat.classes) {
-                    if (Array.isArray(cls.students)) {
-                      for (const stu of cls.students) {
-                        if ((stu.email || "").toLowerCase().trim() === targetEmail) {
-                          const reg = stu.regNum || stu.regNumber || stu.regNo || stu.rollNumber || stu.rollNo || stu.registrationNumber;
-                          if (reg && reg !== "N/A" && String(reg).trim() !== "") {
-                            return String(reg).trim();
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    } catch (e) {
-      console.error("Error checking categories for regNum:", e);
-    }
+    // 2. Check admin_course_categories_* across localStorage (Removed as it's now on backend)
 
     // 3. Check scores list for any existing reg number
     try {
@@ -975,16 +948,6 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
 
   // Build categories and sections tree
   const buildCategoryTree = () => {
-    const savedCategoriesStr = localStorage.getItem(`admin_course_categories_${collegeName}`);
-    let courseCategories: any[] = [];
-    if (savedCategoriesStr) {
-      try {
-        courseCategories = JSON.parse(savedCategoriesStr);
-      } catch (e) {
-        courseCategories = [];
-      }
-    }
-
     const sectionToCategoryMap: Record<string, string> = {};
     const tree: Record<string, Record<string, any[]>> = {};
 
@@ -1187,15 +1150,6 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
 
   const buildMasterStudentList = (): StudentMasterRecord[] => {
     const studentMap: Record<string, StudentMasterRecord> = {};
-    const savedCategoriesStr = localStorage.getItem(`admin_course_categories_${collegeName}`);
-    let courseCategories: any[] = [];
-    if (savedCategoriesStr) {
-      try {
-        courseCategories = JSON.parse(savedCategoriesStr);
-      } catch (e) {
-        courseCategories = [];
-      }
-    }
 
     let customStats: Record<string, any> = {};
     try {
@@ -1345,57 +1299,8 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
     e.preventDefault();
     if (!newStudentForm.name.trim() || !newStudentForm.email.trim()) return;
 
-    const savedCategoriesStr = localStorage.getItem(`admin_course_categories_${collegeName}`);
-    let courseCategories: any[] = [];
-    if (savedCategoriesStr) {
-      try {
-        courseCategories = JSON.parse(savedCategoriesStr);
-      } catch (e) {
-        courseCategories = [];
-      }
-    }
-
-    let catIndex = courseCategories.findIndex(
-      (c: any) => c.courseName?.toLowerCase() === newStudentForm.courseName.trim().toLowerCase()
-    );
-    if (catIndex === -1) {
-      courseCategories.push({
-        id: "cat-" + Date.now(),
-        courseName: newStudentForm.courseName.trim(),
-        classes: [],
-      });
-      catIndex = courseCategories.length - 1;
-    }
-
-    let clsIndex = (courseCategories[catIndex].classes || []).findIndex(
-      (cls: any) => cls.className?.toLowerCase() === newStudentForm.sectionName.trim().toLowerCase()
-    );
-    if (clsIndex === -1) {
-      if (!Array.isArray(courseCategories[catIndex].classes)) {
-        courseCategories[catIndex].classes = [];
-      }
-      courseCategories[catIndex].classes.push({
-        id: "cls-" + Date.now(),
-        categoryId: courseCategories[catIndex].id,
-        className: newStudentForm.sectionName.trim(),
-        students: [],
-      });
-      clsIndex = courseCategories[catIndex].classes.length - 1;
-    }
-
-    if (!Array.isArray(courseCategories[catIndex].classes[clsIndex].students)) {
-      courseCategories[catIndex].classes[clsIndex].students = [];
-    }
-
-    const newStu = {
-      id: "stu-" + Date.now(),
-      name: newStudentForm.name.trim(),
-      email: newStudentForm.email.trim(),
-      regNum: newStudentForm.regNum.trim() || "N/A",
-      classId: courseCategories[catIndex].classes[clsIndex].id,
-    };
-    courseCategories[catIndex].classes[clsIndex].students.push(newStu);
-    localStorage.setItem(`admin_course_categories_${collegeName}`, JSON.stringify(courseCategories));
+    // Note: Creating categories/sections/students dynamically here has been removed
+    // since categories are now managed via the backend in CourseCategorySection.tsx
 
     let customStats: Record<string, any> = {};
     try {

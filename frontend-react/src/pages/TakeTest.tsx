@@ -621,7 +621,7 @@ export default function TakeTest() {
     notVisited: 0
   };
   
-  testQuestions.forEach((_, idx) => {
+  testQuestions.forEach((_: any, idx: number) => {
     const status = getQuestionStatus(idx);
     if (status === 'answered' || status === 'current') {
        if (selectedAnswers[testQuestions[idx].id]) stats.answered++;

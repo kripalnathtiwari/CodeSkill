@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -13,6 +13,17 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [cfToken, setCfToken] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("rememberedEmail");
+    const savedPassword = localStorage.getItem("rememberedPassword");
+    if (savedEmail && savedPassword) {
+      setEmail(savedEmail);
+      setPassword(savedPassword);
+      setRememberMe(true);
+    }
+  }, []);
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -37,6 +48,14 @@ export default function LoginPage() {
     try {
       // Mock Authentication for Admin
       if (email.toLowerCase() === "admin@codeskill.com" && password === "AdminPassword123!") {
+        if (rememberMe) {
+          localStorage.setItem("rememberedEmail", email);
+          localStorage.setItem("rememberedPassword", password);
+        } else {
+          localStorage.removeItem("rememberedEmail");
+          localStorage.removeItem("rememberedPassword");
+        }
+        
         login("mock-token-admin", "mock-refresh", {
           id: "admin-1",
           email: "admin@codeskill.com",
@@ -62,6 +81,15 @@ export default function LoginPage() {
       });
 
       const { accessToken, refreshToken, user } = res.data;
+      
+      if (rememberMe) {
+        localStorage.setItem("rememberedEmail", email);
+        localStorage.setItem("rememberedPassword", password);
+      } else {
+        localStorage.removeItem("rememberedEmail");
+        localStorage.removeItem("rememberedPassword");
+      }
+      
       login(accessToken, refreshToken, user);
       navigate("/dashboard");
     } catch (err: any) {
@@ -138,7 +166,12 @@ export default function LoginPage() {
 
             <div className="flex items-center justify-between mt-2">
               <label className="flex items-center space-x-2 cursor-pointer">
-                <input type="checkbox" className="w-4 h-4 rounded border-slate-300 text-[#0056D2] focus:ring-[#0056D2]" />
+                <input 
+                  type="checkbox" 
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="w-4 h-4 rounded border-slate-300 text-[#0056D2] focus:ring-[#0056D2]" 
+                />
                 <span className="text-xs font-medium text-slate-600">Remember me</span>
               </label>
               <Link to="/forgot-password" className="text-xs font-bold text-[#0056D2] hover:underline">

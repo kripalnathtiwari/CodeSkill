@@ -1,5 +1,24 @@
 import { Router } from 'express';
-import { getAllInstitutions, getPublicInstitutions, createInstitution, updateInstitution, deleteInstitution, deleteTutor } from '../controllers/collegeManagementController';
+import { 
+  getAllInstitutions, 
+  getPublicInstitutions, 
+  createInstitution, 
+  updateInstitution, 
+  deleteInstitution, 
+  deleteTutor,
+  getCourseCategories,
+  getPublicCourseCategories,
+  createCourseCategory,
+  updateCourseCategory,
+  deleteCourseCategory,
+  createCourseClass,
+  updateCourseClass,
+  deleteCourseClass,
+  addCourseStudent,
+  removeCourseStudent,
+  assignCourseInstructor,
+  removeCourseInstructor
+} from '../controllers/collegeManagementController';
 import { authenticateJWT, requireRole } from '../middlewares/authMiddleware';
 import { cache } from '../middlewares/cacheMiddleware';
 
@@ -29,20 +48,6 @@ router.delete('/:collegeId/tutors/:tutorId', authenticateJWT, requireRole(['ADMI
 // ==========================================
 // Course Category Section Routes
 // ==========================================
-import {
-  getCourseCategories,
-  getPublicCourseCategories,
-  createCourseCategory,
-  updateCourseCategory,
-  deleteCourseCategory,
-  createCourseClass,
-  updateCourseClass,
-  deleteCourseClass,
-  addCourseStudent,
-  removeCourseStudent,
-  assignCourseInstructor,
-  removeCourseInstructor
-} from '../controllers/collegeManagementController';
 
 router.get('/courses', authenticateJWT, getCourseCategories);
 router.post('/courses', authenticateJWT, requireRole(['ADMIN']), createCourseCategory);

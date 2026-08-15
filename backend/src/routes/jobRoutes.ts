@@ -5,7 +5,7 @@ import { cache } from "../middlewares/cacheMiddleware";
 const router = Router();
 
 // Public: Browse job opportunities
-router.get('/', cache("job_listings", 60), (req, res) => {
+router.get('/', cache(60), (req, res) => {
   res.status(200).json({ status: 'success', message: 'Job listings' });
 });
 

@@ -6,7 +6,7 @@ import { cache } from '../middlewares/cacheMiddleware';
 const router = Router();
 
 // Get all archived records
-router.get('/', authenticateJWT, requireRole(['ADMIN']), cache("archives", 30), getAllArchives);
+router.get('/', authenticateJWT, requireRole(['ADMIN']), cache(30), getAllArchives);
 
 // Restore an archived record (placeholder)
 router.post('/:id/restore', authenticateJWT, requireRole(['ADMIN']), restoreArchive);

@@ -28,15 +28,15 @@ export default function GlobalApiLoader() {
         timer = setTimeout(() => {
           setIsLoading(true);
           
-          // If stuck for 5 seconds, show a close button
+          // Show close button quickly just in case
           showCloseBtnTimer = setTimeout(() => {
              setShowClose(true);
-          }, 5000);
+          }, 2000);
 
-          // If stuck for 15 seconds, just force close it
+          // Force pop out automatically after 3.5 seconds so the user can see the loaded page
           forceCloseTimer = setTimeout(() => {
              hideLoader();
-          }, 15000);
+          }, 3500);
 
         }, 800);
       }

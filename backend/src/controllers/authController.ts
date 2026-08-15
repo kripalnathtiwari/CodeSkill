@@ -466,12 +466,15 @@ export class AuthController {
       // Generate 6-digit OTP
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-      // Store in Redis (5 mins expiration)
+      // Store in Redis (5 mins expiration) or Fallback to Database
       if (redis) {
         await redis.setex(`otp:${email}`, 300, otp);
       } else {
-        logger.error("Redis is unavailable for OTP storage");
-        return res.status(500).json({ error: "Internal server error" });
+        logger.warn("Redis is unavailable, falling back to database for OTP storage");
+        await prisma.user.update({
+          where: { email },
+          data: { forgotPasswordToken: `OTP:${otp}:${Date.now() + 300000}` } // store OTP with 5m expiry
+        });
       }
 
       // Send Email
@@ -492,17 +495,27 @@ export class AuthController {
     }
 
     try {
-      if (!redis) {
-        return res.status(500).json({ error: "Redis is unavailable" });
+      let isValidOtp = false;
+
+      if (redis) {
+        const storedOtp = await redis.get(`otp:${email}`);
+        if (storedOtp && storedOtp === otp) {
+          isValidOtp = true;
+          await redis.del(`otp:${email}`);
+        }
+      } else {
+        const user = await prisma.user.findUnique({ where: { email } });
+        if (user && user.forgotPasswordToken && user.forgotPasswordToken.startsWith("OTP:")) {
+          const parts = user.forgotPasswordToken.split(":");
+          if (parts.length === 3 && parts[1] === otp && parseInt(parts[2], 10) > Date.now()) {
+            isValidOtp = true;
+          }
+        }
       }
 
-      const storedOtp = await redis.get(`otp:${email}`);
-      if (!storedOtp || storedOtp !== otp) {
+      if (!isValidOtp) {
         return res.status(400).json({ error: "Invalid or expired OTP" });
       }
-
-      // Clear the OTP
-      await redis.del(`otp:${email}`);
 
       // Generate a short-lived reset token
       const resetToken = crypto.randomBytes(32).toString("hex");

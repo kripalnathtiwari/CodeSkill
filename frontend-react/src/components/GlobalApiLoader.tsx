@@ -7,7 +7,7 @@ export default function GlobalApiLoader() {
 
   useEffect(() => {
     let activeRequests = 0;
-    let timer: NodeJS.Timeout | null = null;
+    let timer: ReturnType<typeof setTimeout> | null = null;
 
     const requestInterceptor = axios.interceptors.request.use((config) => {
       activeRequests++;

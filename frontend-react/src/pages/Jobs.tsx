@@ -326,6 +326,11 @@ export default function Jobs() {
   }, [user, searchParams, allJobs]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!user) {
+      e.target.value = '';
+      setShowAuthModal(true);
+      return;
+    }
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       const sizeKB = (file.size / 1024).toFixed(2);

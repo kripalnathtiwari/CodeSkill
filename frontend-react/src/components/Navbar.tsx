@@ -135,10 +135,12 @@ export default function Navbar() {
             </div>
           </div>
         </div>
-        <Link to="/contests" className="hover:text-primary transition-colors flex items-center space-x-1">
-          <Trophy className="h-4 w-4" />
-          <span>Test</span>
-        </Link>
+        {user && (
+          <Link to="/contests" className="hover:text-primary transition-colors flex items-center space-x-1">
+            <Trophy className="h-4 w-4" />
+            <span>Test</span>
+          </Link>
+        )}
         <Link to="/sandbox" className="hover:text-primary transition-colors flex items-center space-x-1">
           <Code2 className="h-4 w-4" />
           <span>Compiler</span>
@@ -357,10 +359,12 @@ export default function Navbar() {
             )}
           </div>
 
-          <Link to="/contests" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-4 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary rounded-lg flex items-center space-x-2 text-text-primary dark:text-text-secondary">
-            <Trophy className="h-4 w-4" />
-            <span>Test</span>
-          </Link>
+          {user && (
+            <Link to="/contests" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-4 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary rounded-lg flex items-center space-x-2 text-text-primary dark:text-text-secondary">
+              <Trophy className="h-4 w-4" />
+              <span>Test</span>
+            </Link>
+          )}
           <Link to="/sandbox" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-4 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary rounded-lg flex items-center space-x-2 text-text-primary dark:text-text-secondary">
             <Code2 className="h-4 w-4" />
             <span>Compiler</span>

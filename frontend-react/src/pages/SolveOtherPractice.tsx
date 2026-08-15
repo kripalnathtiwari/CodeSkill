@@ -224,8 +224,8 @@ export default function SolveOtherPractice() {
           </div>
 
           {/* Options */}
-          <div className="space-y-4 relative z-10 flex-1">
-            {['A', 'B', 'C', 'D'].map((opt) => {
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10 flex-1">
+            {['A', 'B', 'C', 'D'].map((opt, idx) => {
               const optionText = question.options?.[opt];
               if (!optionText) return null;
 
@@ -259,23 +259,28 @@ export default function SolveOtherPractice() {
               }
 
               return (
-                <div
+                <button
                   key={opt}
                   onClick={() => !isSubmitted && setSelectedOption(opt)}
-                  className={`group flex items-center p-5 sm:p-6 rounded-2xl border transition-all duration-300 cursor-pointer ${wrapperClass}`}
+                  className={`group flex items-center text-left p-4 rounded-xl border transition-all duration-300 ${wrapperClass}`}
                 >
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm mr-5 shrink-0 transition-all duration-300 border ${!isSubmitted && 'group-hover:scale-105'} ${labelClass}`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm mr-4 shrink-0 transition-all duration-300 border ${!isSubmitted && 'group-hover:scale-105'} ${labelClass}`}>
                     {opt}
                   </div>
-                  <span className={`text-lg transition-colors duration-300 ${textClass}`}>{optionText}</span>
+                  <span className={`text-base flex-1 transition-colors duration-300 ${textClass}`}>{optionText}</span>
 
+                  {!isSubmitted && (
+                    <div className={`w-5 h-5 rounded-full border-2 ml-4 flex items-center justify-center ${isSelected ? "border-blue-500" : "border-slate-300 dark:border-slate-600"}`}>
+                       {isSelected && <div className="w-2.5 h-2.5 bg-blue-500 rounded-full" />}
+                    </div>
+                  )}
                   {isSubmitted && isCorrectOpt && (
-                    <CheckCircle2 className="w-7 h-7 text-primary ml-auto drop-shadow-sm shrink-0" />
+                    <CheckCircle2 className="w-6 h-6 text-primary ml-auto drop-shadow-sm shrink-0" />
                   )}
                   {isSubmitted && isSelected && !isCorrectOpt && (
-                    <XCircle className="w-7 h-7 text-rose-500 ml-auto drop-shadow-sm shrink-0" />
+                    <XCircle className="w-6 h-6 text-rose-500 ml-auto drop-shadow-sm shrink-0" />
                   )}
-                </div>
+                </button>
               );
             })}
           </div>

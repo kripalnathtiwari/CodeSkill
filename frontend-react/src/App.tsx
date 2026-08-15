@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import { AuthProvider } from './context/AuthContext';
 import GlobalLoader from './components/GlobalLoader';
+import GlobalApiLoader from './components/GlobalApiLoader';
 import NetworkStatus from './components/NetworkStatus';
 import ProtectedRoute from './components/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
@@ -98,6 +99,7 @@ function App() {
       <ScrollToTop />
       <AuthProvider>
         <NetworkStatus />
+        <GlobalApiLoader />
         <AppContent />
       </AuthProvider>
     </BrowserRouter>

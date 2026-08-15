@@ -467,10 +467,17 @@ export class AuthController {
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
       // Store in Redis (5 mins expiration) or Fallback to Database
+      let redisSuccess = false;
       if (redis) {
-        await redis.setex(`otp:${email}`, 300, otp);
-      } else {
-        logger.warn("Redis is unavailable, falling back to database for OTP storage");
+        try {
+          await redis.setex(`otp:${email}`, 300, otp);
+          redisSuccess = true;
+        } catch (redisErr: any) {
+          logger.warn(`Redis setex failed (${redisErr.message}), falling back to database for OTP`);
+        }
+      }
+
+      if (!redisSuccess) {
         await prisma.user.update({
           where: { email },
           data: { forgotPasswordToken: `OTP:${otp}:${Date.now() + 300000}` } // store OTP with 5m expiry
@@ -498,12 +505,19 @@ export class AuthController {
       let isValidOtp = false;
 
       if (redis) {
-        const storedOtp = await redis.get(`otp:${email}`);
-        if (storedOtp && storedOtp === otp) {
-          isValidOtp = true;
-          await redis.del(`otp:${email}`);
+        try {
+          const storedOtp = await redis.get(`otp:${email}`);
+          if (storedOtp && storedOtp === otp) {
+            isValidOtp = true;
+            await redis.del(`otp:${email}`);
+          }
+        } catch (redisErr: any) {
+          logger.warn(`Redis get failed (${redisErr.message}), falling back to database for OTP check`);
         }
-      } else {
+      }
+      
+      // If not valid yet (either Redis failed, or not found in Redis, or Redis is null), check DB
+      if (!isValidOtp) {
         const user = await prisma.user.findUnique({ where: { email } });
         if (user && user.forgotPasswordToken && user.forgotPasswordToken.startsWith("OTP:")) {
           const parts = user.forgotPasswordToken.split(":");

@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import { authenticateJWT } from '../middlewares/authMiddleware';
+import { cache } from "../middlewares/cacheMiddleware";
 
 const router = Router();
 
 // Public: Browse job opportunities
-router.get('/', (req, res) => {
+router.get('/', cache("job_listings", 60), (req, res) => {
   res.status(200).json({ status: 'success', message: 'Job listings' });
 });
 

@@ -708,6 +708,12 @@ export default function Jobs() {
                           type="file"
                           accept=".pdf,.doc,.docx"
                           onChange={handleFileUpload}
+                          onClick={(e) => {
+                            if (!user) {
+                              e.preventDefault();
+                              setShowAuthModal(true);
+                            }
+                          }}
                           className="hidden"
                         />
                       </label>
@@ -720,6 +726,12 @@ export default function Jobs() {
                         type="file"
                         accept=".pdf,.doc,.docx"
                         onChange={handleFileUpload}
+                        onClick={(e) => {
+                          if (!user) {
+                            e.preventDefault();
+                            setShowAuthModal(true);
+                          }
+                        }}
                         className="hidden"
                       />
                     </label>
@@ -1166,6 +1178,12 @@ export default function Jobs() {
                     type="file"
                     accept=".pdf,.doc,.docx"
                     onChange={handleFileUpload}
+                    onClick={(e) => {
+                      if (!user) {
+                        e.preventDefault();
+                        setShowAuthModal(true);
+                      }
+                    }}
                     className="hidden"
                   />
                 </label>

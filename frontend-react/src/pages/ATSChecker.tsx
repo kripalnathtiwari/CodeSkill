@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ShieldCheck, FileText, Upload, Sparkles, CheckCircle2,
-  AlertCircle, RefreshCw, FileUp, Download, Briefcase, Award, ArrowLeft
+  AlertCircle, RefreshCw, FileUp, Download, Briefcase, Award, ArrowLeft, LockKeyhole, LogIn
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   ResponsiveContainer, PieChart, Pie, Cell, Tooltip
@@ -15,14 +17,25 @@ import { extractTextFromFile, parseResumeContent } from '../utils/cvParser';
 const API_URL = getApiUrl('/api/v1/ats');
 
 export default function ATSChecker() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [jobDescription, setJobDescription] = useState('');
   const [resumeFile, setResumeFile] = useState<File | null>(null);
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisId, setAnalysisId] = useState<string | null>(null);
   const [results, setResults] = useState<any>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleUploadClick = () => {
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+    fileInputRef.current?.click();
+  };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -232,7 +245,7 @@ export default function ATSChecker() {
                   2. Your Resume
                 </h2>
                 <button
-                  onClick={() => fileInputRef.current?.click()}
+                  onClick={handleUploadClick}
                   className="text-sm bg-primary/10 text-primary dark:text-primary hover:bg-primary/20 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors font-medium"
                 >
                   <FileUp className="w-4 h-4" />
@@ -257,7 +270,7 @@ export default function ATSChecker() {
                   <button onClick={() => setResumeFile(null)} className="text-red-500 text-sm hover:underline">Remove</button>
                 </div>
               ) : (
-                <div onClick={() => fileInputRef.current?.click()} className="h-48 border-2 border-dashed border-border dark:border-border rounded-xl flex flex-col items-center justify-center text-text-muted cursor-pointer hover:border-primary hover:bg-background dark:hover:bg-slate-900 transition-colors">
+                <div onClick={handleUploadClick} className="h-48 border-2 border-dashed border-border dark:border-border rounded-xl flex flex-col items-center justify-center text-text-muted cursor-pointer hover:border-primary hover:bg-background dark:hover:bg-slate-900 transition-colors">
                   <Upload className="w-8 h-8 mb-2 opacity-50" />
                   <p>Drag & Drop or Click to Upload</p>
                   <p className="text-xs mt-1">PDF or DOCX (Max 10MB)</p>
@@ -480,6 +493,41 @@ export default function ATSChecker() {
           </div>
         </div>
       </div>
+      
+      {/* Login Required Modal */}
+      {showAuthModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-slate-900 border border-border rounded-3xl p-8 max-w-md w-full text-center shadow-2xl relative overflow-hidden text-text-inverse"
+          >
+            <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto mb-5 border border-primary/20">
+              <LockKeyhole className="w-8 h-8" />
+            </div>
+            <h2 className="text-2xl font-black text-text-inverse mb-2">Login Required</h2>
+            <p className="text-text-secondary text-sm mb-6 leading-relaxed">
+              Please log in to upload your resume and run the AI ATS Scanner.
+            </p>
+            <div className="space-y-3">
+              <button
+                onClick={() => navigate('/login', { state: { from: '/ats-checker' } })}
+                className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-primary to-sky-600 hover:from-blue-400 hover:to-sky-500 text-text-inverse font-bold text-base shadow-lg transition-all flex items-center justify-center gap-2"
+              >
+                <LogIn className="w-5 h-5" />
+                <span>Log In</span>
+              </button>
+
+              <button
+                onClick={() => setShowAuthModal(false)}
+                className="w-full py-2 text-xs font-semibold text-text-muted hover:text-text-inverse transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

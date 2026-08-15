@@ -7,7 +7,7 @@ export default function GlobalLoader() {
       {/* Background ambient glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/20 blur-[100px] rounded-full pointer-events-none"></div>
       
-      <div className="relative flex flex-col items-center justify-center p-8 bg-slate-900/50 backdrop-blur-sm border border-border rounded-3xl shadow-2xl animate-in fade-in zoom-in duration-500">
+      <div className="relative flex flex-col items-center justify-center p-8 bg-slate-900/50 backdrop-blur-sm border border-border rounded-3xl shadow-2xl animate-in fade-in zoom-in">
         
         {/* Animated Icons Container */}
         <div className="relative flex items-center justify-center w-24 h-24 mb-6">
@@ -17,8 +17,8 @@ export default function GlobalLoader() {
             <Settings className="w-10 h-10 text-primary animate-spin z-20" style={{ animationDuration: '3s' }} />
           </div>
           
-          {/* Wrench swinging back and forth */}
-          <div className="absolute bottom-2 -right-2 z-30 animate-pulse origin-bottom-left" style={{ animation: 'swing 2s ease-in-out infinite' }}>
+          {/* Wrench swinging back and forth - Delayed to prevent render blocking */}
+          <div className="absolute bottom-2 -right-2 z-30 animate-pulse origin-bottom-left" style={{ animation: 'swing 2s ease-in-out infinite', animationDelay: '500ms' }}>
             <Wrench className="w-8 h-8 text-amber-500 drop-shadow-lg" />
           </div>
 

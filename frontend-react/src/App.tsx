@@ -7,7 +7,7 @@ import NetworkStatus from './components/NetworkStatus';
 import ProtectedRoute from './components/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
 
-const Home = lazy(() => import('./pages/Home'));
+import Home from './pages/Home';
 const Login = lazy(() => import('./pages/Login'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
 const ChangePassword = lazy(() => import('./pages/ChangePassword'));

@@ -43,7 +43,12 @@ initSocketServer(server);
 
 // Security and Logging middleware
 app.use(helmet());
-app.use(cors({ origin: "*" })); // Adjust origin dynamically in prod config
+app.use(cors({
+  origin: function (origin, callback) {
+    callback(null, true);
+  },
+  credentials: true
+}));
 app.use(express.json());
 app.use(compression());
 

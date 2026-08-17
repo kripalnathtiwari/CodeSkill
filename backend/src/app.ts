@@ -44,7 +44,7 @@ initSocketServer(server);
 // Security and Logging middleware
 app.use(helmet());
 app.use(cors({
-  origin: "https://frontend-react-ecru-six.vercel.app",
+  origin: "https://frontend-react-kk1fq8j7b-saurabh15.vercel.app",
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]

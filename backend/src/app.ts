@@ -44,10 +44,10 @@ initSocketServer(server);
 // Security and Logging middleware
 app.use(helmet());
 app.use(cors({
-  origin: function (origin, callback) {
-    callback(null, true);
-  },
-  credentials: true
+  origin: "https://frontend-react-ecru-six.vercel.app",
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
 app.use(express.json());
 app.use(compression());

@@ -19,7 +19,7 @@ import {
 import axios from "axios";
 import { getApiUrl } from "../utils/apiConfig";
 
-const DIFFICULTIES = ["EASY", "MEDIUM", "HARD"];
+const SECTIONS = ["MCQ", "CODING"];
 const CATEGORIES = ["All", "Product Based", "Service Based", "Fintech", "Startups"];
 
 export interface CompanyCardData {
@@ -215,7 +215,7 @@ export default function CompanyProblems() {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [problemSearchQuery, setProblemSearchQuery] = useState("");
-  const [selectedDifficulty, setSelectedDifficulty] = useState("EASY");
+  const [selectedSection, setSelectedSection] = useState("MCQ");
   
   // Pagination for problems view
   const [loadingMore, setLoadingMore] = useState(false);
@@ -270,7 +270,7 @@ export default function CompanyProblems() {
     if (activeView === "problems" && selectedCompany) {
       fetchCompanyQuestions(false);
     }
-  }, [activeView, selectedCompany, selectedDifficulty, problemSearchQuery]);
+  }, [activeView, selectedCompany, selectedSection, problemSearchQuery]);
 
   const fetchCompanyQuestions = async (isLoadMore = false) => {
     try {
@@ -280,11 +280,8 @@ export default function CompanyProblems() {
         setIsLoading(true);
       }
 
-      let url = `/api/v1/questions?limit=20&type=INTERVIEW&company=${encodeURIComponent(selectedCompany)}`;
+      let url = `/api/v1/questions?limit=50&type=INTERVIEW&company=${encodeURIComponent(selectedCompany)}`;
       
-      if (selectedDifficulty) {
-        url += `&difficulty=${selectedDifficulty}`;
-      }
       if (problemSearchQuery.trim()) {
         url += `&search=${encodeURIComponent(problemSearchQuery.trim())}`;
       }
@@ -302,14 +299,11 @@ export default function CompanyProblems() {
           if (savedCustom) {
             let customQuestions = JSON.parse(savedCustom);
             
-            // Filter custom ones by company and difficulty
+            // Filter custom ones by company
             customQuestions = customQuestions.filter((q: any) => {
               const tags = q.companyTags || q.companies || [];
               return tags.some((t: any) => (t.name || t).toLowerCase() === selectedCompany.toLowerCase());
             });
-            if (selectedDifficulty) {
-              customQuestions = customQuestions.filter((q: any) => (q.difficulty || "EASY").toUpperCase() === selectedDifficulty);
-            }
             
             fetchedQuestions = [...customQuestions, ...fetchedQuestions];
           }
@@ -346,20 +340,14 @@ export default function CompanyProblems() {
     });
   }, [companiesList, selectedCategory, searchQuery]);
 
-  // Active questions is directly the state since server handles filtering
-  const activeQuestions = questions;
-
-  const getDifficultyCount = (diff: string) => {
-    if (!selectedCompany) return 0;
-    const companyQuestions = questions.filter((q: any) => {
-      const tags = q.companyTags || q.companies || [];
-      return tags.some((t: any) => (t.name || t).toLowerCase() === selectedCompany.toLowerCase());
+  // Active questions filtered by section
+  const activeQuestions = useMemo(() => {
+    return questions.filter((q: any) => {
+      const isMcq = q.questionType === "MCQ" || q.type === "MCQ";
+      if (selectedSection === "MCQ") return isMcq;
+      return !isMcq;
     });
-    return companyQuestions.filter((q: any) => {
-      const qDiff = (q.difficulty || "EASY").toUpperCase();
-      return qDiff === diff;
-    }).length;
-  };
+  }, [questions, selectedSection]);
 
   const handleStartPreparing = (companyName: string) => {
     setSelectedCompany(companyName);
@@ -557,23 +545,21 @@ export default function CompanyProblems() {
           </div>
 
           <div className="space-y-6">
-            {/* Difficulty Tabs */}
-            <div className="flex bg-surface-secondary dark:bg-background p-1 rounded-xl border border-border dark:border-border w-full overflow-x-auto">
-              {DIFFICULTIES.map((diff) => (
+            {/* Section Tabs */}
+            <div className="flex bg-surface-secondary dark:bg-background p-1 rounded-xl border border-border dark:border-border w-full overflow-x-auto max-w-md mx-auto">
+              {SECTIONS.map((sec) => (
                 <button
-                  key={diff}
-                  onClick={() => setSelectedDifficulty(diff)}
+                  key={sec}
+                  onClick={() => setSelectedSection(sec)}
                   className={`flex-1 py-2.5 px-4 text-xs font-bold rounded-lg transition-all ${
-                    selectedDifficulty === diff
-                      ? diff === "EASY"
-                        ? "bg-primary text-text-inverse shadow-md"
-                        : diff === "MEDIUM"
-                        ? "bg-amber-500 text-text-inverse shadow-md"
-                        : "bg-rose-500 text-text-inverse shadow-md"
+                    selectedSection === sec
+                      ? sec === "MCQ"
+                        ? "bg-purple-600 text-white shadow-md"
+                        : "bg-primary text-text-inverse shadow-md"
                       : "text-text-primary dark:text-text-muted hover:bg-slate-200 dark:hover:bg-slate-800"
                   }`}
                 >
-                  {diff}
+                  {sec}
                 </button>
               ))}
             </div>
@@ -583,7 +569,7 @@ export default function CompanyProblems() {
               <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
               <input
                 type="text"
-                placeholder={`Search ${selectedCompany} ${selectedDifficulty.toLowerCase()} questions...`}
+                placeholder={`Search ${selectedCompany} ${selectedSection === "MCQ" ? "MCQ" : "coding"} questions...`}
                 value={problemSearchQuery}
                 onChange={(e) => setProblemSearchQuery(e.target.value)}
                 className="w-full bg-surface dark:bg-background border border-border dark:border-border rounded-lg pl-10 pr-4 py-2 text-sm outline-none focus:border-primary transition-all text-slate-950 dark:text-text-inverse"

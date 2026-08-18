@@ -634,7 +634,7 @@ export default function TakeTest() {
 
   // 3. Active Test Screen - Redesigned CBT Layout
   return (
-    <div ref={testContainerRef} className="bg-slate-50 min-h-screen flex flex-col w-full absolute inset-0 z-50 font-sans text-slate-800">
+    <div ref={testContainerRef} className="bg-slate-50 h-screen max-h-screen overflow-hidden flex flex-col w-full absolute inset-0 z-50 font-sans text-slate-800">
       
       {/* Top Header */}
       <div className="bg-white border-b border-slate-200 px-6 py-3 flex justify-between items-center shadow-sm">

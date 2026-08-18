@@ -628,7 +628,10 @@ export default function CompanyProblems() {
                         {(q.questionType === "MCQ" || q.type === "MCQ") ? (
                           <Link
                             to={`/aptitude/${q._id || q.id}`}
-                            onClick={() => sessionStorage.setItem("current_aptitude_list", JSON.stringify([q]))}
+                            onClick={() => {
+                              const mcqList = activeQuestions.filter((x: any) => x.questionType === "MCQ" || x.type === "MCQ");
+                              sessionStorage.setItem("current_aptitude_list", JSON.stringify(mcqList));
+                            }}
                             className="inline-flex items-center justify-center space-x-1 bg-purple-600/10 hover:bg-purple-600 border border-purple-500/20 hover:border-purple-500 px-3.5 py-1.5 rounded-lg text-xs font-bold text-purple-600 dark:text-purple-400 hover:text-text-inverse transition-all duration-200"
                           >
                             <span>Solve MCQ</span>

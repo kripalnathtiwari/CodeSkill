@@ -80,15 +80,15 @@ export default function Problems() {
   const tags = Object.keys(tagCounts).sort();
 
   return (
-    <div className="min-h-screen bg-background dark:bg-black py-12 px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="max-w-7xl mx-auto space-y-10">
+    <div className="min-h-screen bg-background dark:bg-black py-8 px-4 sm:px-6 lg:px-8 font-sans">
+      <div className="max-w-5xl mx-auto space-y-8">
         
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h1 className="text-4xl font-extrabold text-text-primary dark:text-text-primary tracking-tight mb-4">
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <h1 className="text-3xl font-extrabold text-text-primary dark:text-text-primary tracking-tight mb-3">
             DSA Topic <span className="text-primary">Preparation</span>
           </h1>
-          <p className="text-lg text-text-secondary dark:text-text-muted leading-relaxed">
+          <p className="text-base text-text-secondary dark:text-text-muted leading-relaxed">
             Select a topic category to start practicing. Master core concepts through tailored algorithmic challenges.
           </p>
         </div>
@@ -105,34 +105,34 @@ export default function Problems() {
                 {/* Main Content Area */}
                 <div className="p-5 flex gap-5">
                   {/* Left Colored Box */}
-                  <div className="w-1/2 bg-amber-500 rounded-xl p-4 flex flex-col items-center justify-center text-center space-y-3 shrink-0 shadow-inner">
-                    <h2 className="text-xl font-black text-text-primary leading-tight">{tag}</h2>
-                    <div className="text-[10px] font-bold text-text-primary/80 uppercase tracking-widest">
+                  <div className="w-2/5 bg-amber-500 rounded-xl p-4 flex flex-col items-center justify-center text-center space-y-2 shrink-0 shadow-inner">
+                    <h2 className="text-lg font-black text-text-primary leading-tight">{tag}</h2>
+                    <div className="text-[9px] font-bold text-text-primary/80 uppercase tracking-widest">
                       Preparation
                     </div>
-                    <div className="w-16 h-16 rounded-full bg-primary border-4 border-white dark:border-[#151a23] flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform">
+                    <div className="w-12 h-12 rounded-full bg-primary border-4 border-white dark:border-[#151a23] flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform">
                       {getTagIcon(tag)}
                     </div>
                   </div>
                   
                   {/* Right Details List */}
-                  <div className="w-1/2 py-2 flex flex-col justify-center">
-                    <h3 className="text-text-primary dark:text-text-primary font-bold text-lg mb-4 truncate" title={tag}>{tag}</h3>
-                    <div className="text-[10px] font-bold text-text-muted dark:text-text-muted uppercase tracking-wider mb-3">
+                  <div className="w-3/5 py-1 flex flex-col justify-center">
+                    <h3 className="text-text-primary dark:text-text-primary font-bold text-base mb-3 truncate" title={tag}>{tag}</h3>
+                    <div className="text-[9px] font-bold text-text-muted dark:text-text-muted uppercase tracking-wider mb-2">
                       Preparation Includes:
                     </div>
                     <ul className="space-y-3">
                       <li className="flex items-start gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                        <span className="text-sm text-text-secondary dark:text-text-secondary font-medium">Coding Assessments</span>
+                        <CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+                        <span className="text-xs text-text-secondary dark:text-text-secondary font-medium">Coding Assessments</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                        <span className="text-sm text-text-secondary dark:text-text-secondary font-medium">Algorithmic Logic</span>
+                        <CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+                        <span className="text-xs text-text-secondary dark:text-text-secondary font-medium">Algorithmic Logic</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                        <span className="text-sm text-text-secondary dark:text-text-secondary font-medium">{tagCounts[tag]} Questions</span>
+                        <CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+                        <span className="text-xs text-text-secondary dark:text-text-secondary font-medium">{tagCounts[tag]} Questions</span>
                       </li>
                     </ul>
                   </div>

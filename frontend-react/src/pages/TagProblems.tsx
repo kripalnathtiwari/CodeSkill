@@ -139,8 +139,8 @@ export default function TagProblems() {
   const decodedTag = tag ? decodeURIComponent(tag) : '';
 
   return (
-    <div className="min-h-screen bg-background dark:bg-black py-12 px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="max-w-6xl mx-auto space-y-10">
+    <div className="min-h-screen bg-background dark:bg-black py-8 px-4 sm:px-6 lg:px-8 font-sans">
+      <div className="max-w-5xl mx-auto space-y-8">
         
         {/* Top Navigation */}
         <button 
@@ -152,11 +152,11 @@ export default function TagProblems() {
         </button>
 
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-10">
-          <h1 className="text-4xl font-extrabold text-text-primary dark:text-text-primary tracking-tight flex items-center justify-center gap-3">
+        <div className="text-center max-w-2xl mx-auto mb-8">
+          <h1 className="text-3xl font-extrabold text-text-primary dark:text-text-primary tracking-tight flex items-center justify-center gap-2">
             {decodedTag} <span className="text-primary">Challenges</span>
           </h1>
-          <p className="text-lg text-text-secondary dark:text-text-muted mt-4 leading-relaxed">
+          <p className="text-base text-text-secondary dark:text-text-muted mt-3 leading-relaxed">
             Select a difficulty level below to filter the {decodedTag.toLowerCase()} problems and begin your preparation.
           </p>
         </div>
@@ -167,17 +167,17 @@ export default function TagProblems() {
           {/* Easy Box */}
           <button 
             onClick={() => setSelectedDifficulty(selectedDifficulty === 'EASY' ? null : 'EASY')}
-            className={`relative overflow-hidden group p-6 rounded-3xl border-2 transition-all duration-300 text-left ${selectedDifficulty === 'EASY' ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 shadow-[0_0_30px_rgba(16,185,129,0.2)]' : 'border-border dark:border-border bg-surface dark:bg-[#151a23] hover:border-emerald-500/50 hover:bg-emerald-50 dark:hover:bg-emerald-500/5 shadow-sm dark:shadow-none'}`}
+            className={`relative overflow-hidden group p-5 rounded-3xl border-2 transition-all duration-300 text-left ${selectedDifficulty === 'EASY' ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 shadow-[0_0_20px_rgba(16,185,129,0.2)]' : 'border-border dark:border-border bg-surface dark:bg-[#151a23] hover:border-emerald-500/50 hover:bg-emerald-50 dark:hover:bg-emerald-500/5 shadow-sm dark:shadow-none'}`}
           >
-            <div className="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all"></div>
-            <div className="flex justify-between items-start mb-6">
-              <div className="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center border border-emerald-200 dark:border-emerald-500/30">
-                <Target className="w-6 h-6 text-emerald-500 dark:text-emerald-400" />
+            <div className="absolute -right-4 -top-4 w-20 h-20 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all"></div>
+            <div className="flex justify-between items-start mb-4">
+              <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center border border-emerald-200 dark:border-emerald-500/30">
+                <Target className="w-5 h-5 text-emerald-500 dark:text-emerald-400" />
               </div>
-              <span className="text-3xl font-black text-emerald-500/10 dark:text-emerald-500/20 group-hover:text-emerald-500/30 dark:group-hover:text-emerald-500/40 transition-colors">01</span>
+              <span className="text-2xl font-black text-emerald-500/10 dark:text-emerald-500/20 group-hover:text-emerald-500/30 dark:group-hover:text-emerald-500/40 transition-colors">01</span>
             </div>
-            <h3 className="text-2xl font-bold text-text-primary dark:text-text-primary mb-2">Easy</h3>
-            <p className="text-text-secondary dark:text-text-muted text-sm mb-6 line-clamp-2">Master the fundamentals and build a strong foundation in {decodedTag.toLowerCase()}.</p>
+            <h3 className="text-xl font-bold text-text-primary dark:text-text-primary mb-1">Easy</h3>
+            <p className="text-text-secondary dark:text-text-muted text-xs mb-4 line-clamp-2">Master the fundamentals and build a strong foundation in {decodedTag.toLowerCase()}.</p>
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold uppercase tracking-wider text-emerald-500 dark:text-emerald-500">Explore Easy</span>
               {selectedDifficulty === 'EASY' && <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>}
@@ -187,17 +187,17 @@ export default function TagProblems() {
           {/* Medium Box */}
           <button 
             onClick={() => setSelectedDifficulty(selectedDifficulty === 'MEDIUM' ? null : 'MEDIUM')}
-            className={`relative overflow-hidden group p-6 rounded-3xl border-2 transition-all duration-300 text-left ${selectedDifficulty === 'MEDIUM' ? 'border-amber-500 bg-amber-50 dark:bg-amber-500/10 shadow-[0_0_30px_rgba(245,158,11,0.2)]' : 'border-border dark:border-border bg-surface dark:bg-[#151a23] hover:border-amber-500/50 hover:bg-amber-50 dark:hover:bg-amber-500/5 shadow-sm dark:shadow-none'}`}
+            className={`relative overflow-hidden group p-5 rounded-3xl border-2 transition-all duration-300 text-left ${selectedDifficulty === 'MEDIUM' ? 'border-amber-500 bg-amber-50 dark:bg-amber-500/10 shadow-[0_0_20px_rgba(245,158,11,0.2)]' : 'border-border dark:border-border bg-surface dark:bg-[#151a23] hover:border-amber-500/50 hover:bg-amber-50 dark:hover:bg-amber-500/5 shadow-sm dark:shadow-none'}`}
           >
-            <div className="absolute -right-4 -top-4 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-all"></div>
-            <div className="flex justify-between items-start mb-6">
-              <div className="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center border border-amber-200 dark:border-amber-500/30">
-                <Flame className="w-6 h-6 text-amber-600 dark:text-amber-500" />
+            <div className="absolute -right-4 -top-4 w-20 h-20 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-all"></div>
+            <div className="flex justify-between items-start mb-4">
+              <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center border border-amber-200 dark:border-amber-500/30">
+                <Flame className="w-5 h-5 text-amber-600 dark:text-amber-500" />
               </div>
-              <span className="text-3xl font-black text-amber-500/10 dark:text-amber-500/20 group-hover:text-amber-500/30 dark:group-hover:text-amber-500/40 transition-colors">02</span>
+              <span className="text-2xl font-black text-amber-500/10 dark:text-amber-500/20 group-hover:text-amber-500/30 dark:group-hover:text-amber-500/40 transition-colors">02</span>
             </div>
-            <h3 className="text-2xl font-bold text-text-primary dark:text-text-primary mb-2">Medium</h3>
-            <p className="text-text-secondary dark:text-text-muted text-sm mb-6 line-clamp-2">Challenge yourself with intermediate problems commonly asked in interviews.</p>
+            <h3 className="text-xl font-bold text-text-primary dark:text-text-primary mb-1">Medium</h3>
+            <p className="text-text-secondary dark:text-text-muted text-xs mb-4 line-clamp-2">Challenge yourself with intermediate problems commonly asked in interviews.</p>
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-500">Explore Medium</span>
               {selectedDifficulty === 'MEDIUM' && <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>}
@@ -207,17 +207,17 @@ export default function TagProblems() {
           {/* Hard Box */}
           <button 
             onClick={() => setSelectedDifficulty(selectedDifficulty === 'HARD' ? null : 'HARD')}
-            className={`relative overflow-hidden group p-6 rounded-3xl border-2 transition-all duration-300 text-left ${selectedDifficulty === 'HARD' ? 'border-rose-500 bg-rose-50 dark:bg-rose-500/10 shadow-[0_0_30px_rgba(225,29,72,0.2)]' : 'border-border dark:border-border bg-surface dark:bg-[#151a23] hover:border-rose-500/50 hover:bg-rose-50 dark:hover:bg-rose-500/5 shadow-sm dark:shadow-none'}`}
+            className={`relative overflow-hidden group p-5 rounded-3xl border-2 transition-all duration-300 text-left ${selectedDifficulty === 'HARD' ? 'border-rose-500 bg-rose-50 dark:bg-rose-500/10 shadow-[0_0_20px_rgba(225,29,72,0.2)]' : 'border-border dark:border-border bg-surface dark:bg-[#151a23] hover:border-rose-500/50 hover:bg-rose-50 dark:hover:bg-rose-500/5 shadow-sm dark:shadow-none'}`}
           >
-            <div className="absolute -right-4 -top-4 w-24 h-24 bg-rose-500/10 rounded-full blur-2xl group-hover:bg-rose-500/20 transition-all"></div>
-            <div className="flex justify-between items-start mb-6">
-              <div className="w-12 h-12 rounded-xl bg-rose-100 dark:bg-rose-500/20 flex items-center justify-center border border-rose-200 dark:border-rose-500/30">
-                <Trophy className="w-6 h-6 text-rose-600 dark:text-rose-500" />
+            <div className="absolute -right-4 -top-4 w-20 h-20 bg-rose-500/10 rounded-full blur-2xl group-hover:bg-rose-500/20 transition-all"></div>
+            <div className="flex justify-between items-start mb-4">
+              <div className="w-10 h-10 rounded-xl bg-rose-100 dark:bg-rose-500/20 flex items-center justify-center border border-rose-200 dark:border-rose-500/30">
+                <Trophy className="w-5 h-5 text-rose-600 dark:text-rose-500" />
               </div>
-              <span className="text-3xl font-black text-rose-500/10 dark:text-rose-500/20 group-hover:text-rose-500/30 dark:group-hover:text-rose-500/40 transition-colors">03</span>
+              <span className="text-2xl font-black text-rose-500/10 dark:text-rose-500/20 group-hover:text-rose-500/30 dark:group-hover:text-rose-500/40 transition-colors">03</span>
             </div>
-            <h3 className="text-2xl font-bold text-text-primary dark:text-text-primary mb-2">Hard</h3>
-            <p className="text-text-secondary dark:text-text-muted text-sm mb-6 line-clamp-2">Tackle complex algorithmic puzzles to prepare for top-tier tech companies.</p>
+            <h3 className="text-xl font-bold text-text-primary dark:text-text-primary mb-1">Hard</h3>
+            <p className="text-text-secondary dark:text-text-muted text-xs mb-4 line-clamp-2">Tackle complex algorithmic puzzles to prepare for top-tier tech companies.</p>
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold uppercase tracking-wider text-rose-600 dark:text-rose-500">Explore Hard</span>
               {selectedDifficulty === 'HARD' && <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>}

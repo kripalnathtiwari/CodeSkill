@@ -792,30 +792,30 @@ export default function TakeTest() {
           
           {/* Status Legends Grid */}
           <div className="p-4 border-b border-slate-200 bg-white">
-            <div className="grid grid-cols-2 gap-2 text-xs font-medium text-slate-700">
-              <div className="flex items-center border border-slate-200 rounded px-2 py-1.5 bg-white">
-                <div className="w-5 h-5 rounded flex items-center justify-center bg-blue-500 text-white font-bold text-[10px] mr-2">1</div>
-                Current
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex items-center gap-2 border border-gray-200 rounded px-2 py-1.5 bg-white">
+                <div className="w-5 h-5 rounded-full border-2 border-blue-500 bg-blue-50 flex items-center justify-center text-[10px] font-bold text-blue-700">1</div>
+                <span className="text-xs font-medium text-gray-600">Current</span>
               </div>
-              <div className="flex items-center border border-slate-200 rounded px-2 py-1.5 bg-white">
-                <div className="w-5 h-5 rounded-t-lg rounded-b-md flex items-center justify-center bg-emerald-500 text-white font-bold text-[10px] mr-2">{stats.answered}</div>
-                Answered
+              <div className="flex items-center gap-2 border border-gray-200 rounded px-2 py-1.5 bg-white">
+                <div className="w-5 h-5 rounded-t-[10px] rounded-b-[2px] bg-green-500 flex items-center justify-center text-[10px] font-bold text-white">{stats.answered}</div>
+                <span className="text-xs font-medium text-gray-600">Answered</span>
               </div>
-              <div className="flex items-center border border-slate-200 rounded px-2 py-1.5 bg-white">
-                <div className="w-5 h-5 rounded-full flex items-center justify-center bg-purple-500 text-white font-bold text-[10px] mr-2">{stats.review}</div>
-                Review
+              <div className="flex items-center gap-2 border border-gray-200 rounded px-2 py-1.5 bg-white">
+                <div className="w-5 h-5 rounded-full bg-purple-500 flex items-center justify-center text-[10px] font-bold text-white">{stats.review}</div>
+                <span className="text-xs font-medium text-gray-600">Review</span>
               </div>
-              <div className="flex items-center border border-slate-200 rounded px-2 py-1.5 bg-white">
-                <div className="w-5 h-5 rounded-md border border-slate-300 flex items-center justify-center bg-white text-slate-500 font-bold text-[10px] mr-2">{stats.notVisited}</div>
-                Not Visited
+              <div className="flex items-center gap-2 border border-gray-200 rounded px-2 py-1.5 bg-white">
+                <div className="w-5 h-5 rounded-full border border-gray-300 bg-white flex items-center justify-center text-[10px] font-bold text-gray-500">{stats.notVisited}</div>
+                <span className="text-xs font-medium text-gray-600">Not Visited</span>
               </div>
-              <div className="flex items-center border border-slate-200 rounded px-2 py-1.5 bg-white">
-                <div className="w-5 h-5 rounded-t-lg rounded-b-sm flex items-center justify-center bg-rose-500 text-white font-bold text-[10px] mr-2">{stats.notAttempted}</div>
-                Not Attempted
+              <div className="flex items-center gap-2 border border-gray-200 rounded px-2 py-1.5 bg-white">
+                <div className="w-5 h-5 rounded-t-[10px] rounded-b-[2px] bg-red-500 flex items-center justify-center text-[10px] font-bold text-white">{stats.notAttempted}</div>
+                <span className="text-xs font-medium text-gray-600">Not Attempted</span>
               </div>
-              <div className="flex items-center border border-slate-200 rounded px-2 py-1.5 bg-white">
-                <div className="w-5 h-5 rounded border border-cyan-300 flex items-center justify-center bg-cyan-100 text-cyan-600 font-bold text-[10px] mr-2">0</div>
-                Unsaved
+              <div className="flex items-center gap-2 border border-gray-200 rounded px-2 py-1.5 bg-white">
+                <div className="w-5 h-5 rounded border border-cyan-300 bg-cyan-100 flex items-center justify-center text-[10px] font-bold text-cyan-600">0</div>
+                <span className="text-xs font-medium text-gray-600">Unsaved</span>
               </div>
             </div>
             
@@ -834,20 +834,20 @@ export default function TakeTest() {
                 let shapeClass = "";
 
                 if (status === 'current') {
-                  badgeStyle = "bg-blue-500 text-white border-blue-500 outline outline-2 outline-offset-2 outline-blue-400";
+                  badgeStyle = "border-blue-500 bg-blue-50 text-blue-700 font-bold border-2";
                   shapeClass = "rounded-full";
                 } else if (status === 'answered') {
-                  badgeStyle = "bg-emerald-500 text-white border-emerald-500";
-                  shapeClass = "rounded-t-[10px] rounded-b-[4px]";
+                  badgeStyle = "bg-green-500 text-white border-transparent";
+                  shapeClass = "rounded-t-[16px] rounded-b-[4px]";
                 } else if (status === 'review') {
-                  badgeStyle = "bg-purple-500 text-white border-purple-500";
+                  badgeStyle = "bg-purple-500 text-white border-transparent";
                   shapeClass = "rounded-full";
                 } else if (status === 'not_attempted') {
-                  badgeStyle = "bg-rose-500 text-white border-rose-500";
-                  shapeClass = "rounded-t-[10px] rounded-b-[2px]";
+                  badgeStyle = "bg-red-500 text-white border-transparent";
+                  shapeClass = "rounded-t-[16px] rounded-b-[4px]";
                 } else {
-                  badgeStyle = "bg-white text-slate-600 border-slate-300 hover:bg-slate-100";
-                  shapeClass = "rounded-md";
+                  badgeStyle = "bg-white text-slate-600 border-slate-300 hover:bg-slate-50";
+                  shapeClass = "rounded-full";
                 }
                 
                 return (

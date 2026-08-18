@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, CheckCircle2, XCircle, BrainCircuit, ChevronLeft, ChevronRight, Award } from "lucide-react";
+import { ArrowLeft, CheckCircle2, XCircle, BrainCircuit, ChevronLeft, ChevronRight, Award, LogOut, Info, AlertTriangle, Clock, Heart, CheckSquare, Save, HelpCircle, CloudUpload, Check } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { getApiUrl } from "../utils/apiConfig";
-import PracticeTimer from "../components/PracticeTimer";
 
 export default function SolveAptitude() {
   const { user } = useAuth();
@@ -13,14 +12,18 @@ export default function SolveAptitude() {
   const [question, setQuestion] = useState<any>(null);
   const [allQuestions, setAllQuestions] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  
+  // Test State
+  const [answered, setAnswered] = useState<Record<number, string>>({});
+  const [visited, setVisited] = useState<Record<number, boolean>>({});
+  const [reviewStatus, setReviewStatus] = useState<Record<number, boolean>>({});
+  const [timeLeft, setTimeLeft] = useState(30 * 60); // 30 minutes mock timer
+  const [showSolution, setShowSolution] = useState<Record<number, boolean>>({});
+  
+  // Temporary selection before saving
+  const [currentSelection, setCurrentSelection] = useState<string | null>(null);
 
   useEffect(() => {
-    // Reset state for new question
-    setSelectedOption(null);
-    setIsSubmitted(false);
-
     const loadQuestion = async () => {
       let parsedAll: any[] = [];
       const storedList = sessionStorage.getItem("current_aptitude_list");
@@ -72,27 +75,8 @@ export default function SolveAptitude() {
         if (index !== -1) {
           setCurrentIndex(index);
           setQuestion(parsedAll[index]);
+          setVisited(prev => ({ ...prev, [index]: true }));
         } else {
-          // Fallback if not found in list but present in session
-          const stored = sessionStorage.getItem("current_aptitude");
-          if (stored) {
-            const parsed = JSON.parse(stored);
-            let opts = parsed.options;
-            try {
-              while (typeof opts === 'string') {
-                const innerParsed = JSON.parse(opts);
-                if (innerParsed === opts || typeof innerParsed !== 'string' && typeof innerParsed !== 'object') break;
-                opts = innerParsed;
-              }
-            } catch(e) {}
-            parsed.options = opts;
-            parsed.correctOption = parsed.correctAnswer || parsed.correctOption;
-            if (String(parsed._id) === String(id) || String(parsed.id) === String(id)) {
-              setQuestion(parsed);
-              return;
-            }
-          }
-          alert("Question not found!");
           navigate("/aptitude");
         }
       } else {
@@ -103,271 +87,345 @@ export default function SolveAptitude() {
     loadQuestion();
   }, [id, navigate]);
 
+  // Timer Effect
+  useEffect(() => {
+    const timerId = setInterval(() => {
+      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(timerId);
+  }, []);
+
+  const formatTime = (seconds: number) => {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    if (h > 0) {
+      return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  };
+
   if (!question) {
     return (
-      <div className="min-h-screen bg-background dark:bg-background text-text-primary dark:text-text-primary flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
-  const handleSubmit = () => {
-    if (!selectedOption) return;
-    setIsSubmitted(true);
+  const navigateToQuestion = (index: number) => {
+    if (index >= 0 && index < allQuestions.length) {
+      setCurrentIndex(index);
+      setQuestion(allQuestions[index]);
+      setVisited(prev => ({ ...prev, [index]: true }));
+      setCurrentSelection(answered[index] || null);
+    }
+  };
 
+  const handleSaveAndNext = () => {
+    if (currentSelection) {
+      setAnswered(prev => ({ ...prev, [currentIndex]: currentSelection }));
+      // Clear review status if they save an answer
+      setReviewStatus(prev => ({ ...prev, [currentIndex]: false }));
+    }
+    navigateToQuestion(currentIndex + 1);
+  };
+
+  const handleMarkForReview = () => {
+    if (currentSelection) {
+      setAnswered(prev => ({ ...prev, [currentIndex]: currentSelection }));
+    }
+    setReviewStatus(prev => ({ ...prev, [currentIndex]: !prev[currentIndex] }));
+    navigateToQuestion(currentIndex + 1);
+  };
+
+  const handleCheckSolution = () => {
+    setShowSolution(prev => ({ ...prev, [currentIndex]: true }));
+  };
+
+  const handleSubmitTest = () => {
+    // Log activity for all correctly answered questions
     if (user?.email) {
-      const isCorrect = selectedOption?.trim().toUpperCase() === question.correctOption?.trim().toUpperCase();
-      const key = `aptitude_analytics_${user.email.toLowerCase()}`;
-      const saved = JSON.parse(localStorage.getItem(key) || "[]");
-
-      const questionId = question._id || question.id;
-      const recordIndex = saved.findIndex((q: any) => String(q.id) === String(questionId));
-      if (recordIndex === -1) {
-        saved.push({ id: questionId, difficulty: question.difficulty, correct: isCorrect });
-      } else {
-        if (isCorrect) saved[recordIndex].correct = true;
-      }
-      localStorage.setItem(key, JSON.stringify(saved));
-
-      if (isCorrect) {
-        const token = localStorage.getItem("accessToken");
-        if (token) {
-          axios.post(getApiUrl("/api/v1/auth/log-activity"), {
-            action: `APTITUDE_SOLVED_${questionId}`
-          }, {
-            headers: { Authorization: `Bearer ${token}` }
-          }).catch(err => console.error("Failed to log aptitude", err));
+      const token = localStorage.getItem("accessToken");
+      let correctCount = 0;
+      
+      allQuestions.forEach((q, idx) => {
+        const isCorrect = answered[idx]?.trim().toUpperCase() === q.correctOption?.trim().toUpperCase();
+        if (isCorrect) {
+          correctCount++;
+          if (token) {
+            axios.post(getApiUrl("/api/v1/auth/log-activity"), {
+              action: `APTITUDE_SOLVED_${q._id || q.id}`
+            }, {
+              headers: { Authorization: `Bearer ${token}` }
+            }).catch(err => console.error("Failed to log aptitude", err));
+          }
         }
-      }
+      });
+      alert(`Test Submitted! You scored ${correctCount} out of ${allQuestions.length}.`);
     }
+    navigate(`/aptitude/topic/${encodeURIComponent(question?.topic || "Uncategorized")}`);
   };
 
-  const isCorrect = selectedOption?.trim().toUpperCase() === question.correctOption?.trim().toUpperCase();
-  const prevQuestion = currentIndex > 0 ? allQuestions[currentIndex - 1] : null;
-  const nextQuestion = currentIndex >= 0 && currentIndex < allQuestions.length - 1 ? allQuestions[currentIndex + 1] : null;
-
-  const handleNavigateQuestion = (targetQ: any, index: number) => {
-    if (!targetQ) {
-      navigate(`/aptitude/topic/${encodeURIComponent(question?.topic || "Uncategorized")}`);
-      return;
+  // Helper to determine button color and shape in grid
+  const getGridButtonClass = (idx: number) => {
+    let classes = "";
+    if (currentIndex === idx) {
+      classes = "border-blue-500 bg-blue-50 text-blue-700 font-bold border-2 rounded-full"; // Current
+    } else if (reviewStatus[idx]) {
+      classes = "bg-purple-500 text-white border-transparent rounded-full"; // Review
+    } else if (answered[idx]) {
+      classes = "bg-green-500 text-white border-transparent rounded-t-[16px] rounded-b-[4px]"; // Answered
+    } else if (visited[idx] && !answered[idx]) {
+      classes = "bg-red-500 text-white border-transparent rounded-t-[16px] rounded-b-[4px]"; // Not Attempted
+    } else {
+      classes = "bg-white border-gray-300 text-gray-600 hover:bg-gray-50 rounded-full border"; // Not visited
     }
-    sessionStorage.setItem("current_aptitude", JSON.stringify(targetQ));
-    setCurrentIndex(index);
-    setQuestion(targetQ);
-    setSelectedOption(null);
-    setIsSubmitted(false);
-    navigate(`/aptitude/${targetQ._id || targetQ.id}`);
+    return classes;
   };
+
+  // Calculate stats
+  const answeredCount = Object.keys(answered).length;
+  const reviewCount = Object.values(reviewStatus).filter(Boolean).length;
+  const visitedCount = Object.keys(visited).length;
+  const notAttemptedCount = visitedCount - answeredCount;
+  const notVisitedCount = allQuestions.length - visitedCount;
 
   return (
-    <div className="min-h-screen bg-background dark:bg-background text-text-primary dark:text-text-secondary font-sans flex flex-col transition-colors selection:bg-primary/30">
-      <main className="flex-1 max-w-5xl w-full mx-auto p-4 md:p-8 mt-16 flex flex-col">
+    <div className="min-h-screen bg-[#f8f9fa] font-sans flex flex-col text-gray-800">
+      {/* Top Header */}
+      <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between shadow-sm z-10">
+        <div className="flex items-center gap-3">
+          <div className="bg-blue-600 p-1.5 rounded text-white">
+            <CheckSquare className="w-5 h-5" />
+          </div>
+          <h1 className="text-lg font-bold text-slate-800">Aptitude [{question.topic || "All Topics"}] - Set</h1>
+        </div>
+        <button 
+          onClick={() => navigate("/aptitude")}
+          className="flex items-center gap-2 px-4 py-1.5 text-red-500 border border-red-500 hover:bg-red-50 rounded font-semibold text-sm transition-colors"
+        >
+          <LogOut className="w-4 h-4" />
+          Exit Mock
+        </button>
+      </header>
+
+      {/* Sub Header (Action Bar) */}
+      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between shadow-sm z-10">
+        <div className="flex items-center gap-4">
+          <button className="flex items-center gap-1.5 text-gray-600 hover:text-gray-900 text-sm font-medium bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded transition-colors">
+            <Info className="w-4 h-4" />
+            Instructions
+          </button>
+          <button className="flex items-center gap-1.5 text-amber-600 hover:text-amber-700 text-sm font-medium bg-amber-50 hover:bg-amber-100 px-3 py-1.5 rounded transition-colors border border-amber-200">
+            <AlertTriangle className="w-4 h-4" />
+            Report Question
+          </button>
+        </div>
+        <div className="flex items-center gap-2 bg-gray-50 px-4 py-1.5 rounded-full border border-gray-200">
+          <Clock className="w-4 h-4 text-gray-500" />
+          <span className="text-sm font-semibold text-gray-700">Time Left:</span>
+          <span className="text-sm font-bold text-blue-600 tracking-wider font-mono">{formatTime(timeLeft)}</span>
+        </div>
+      </div>
+
+      {/* Main Content Split */}
+      <div className="flex flex-1 overflow-hidden">
         
-        {/* Top Header */}
-        <div className="flex items-center justify-between mb-8 z-10 relative">
-          <Link 
-            to={`/aptitude/topic/${encodeURIComponent(question?.topic || "Uncategorized")}`} 
-            className="group flex items-center text-sm font-semibold text-text-muted dark:text-text-muted hover:text-text-primary dark:hover:text-text-inverse transition-all bg-surface dark:bg-slate-800/80 px-5 py-2.5 rounded-full border border-border dark:border-border shadow-sm hover:shadow-md"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-            Back to Practice
-          </Link>
-          <div className="bg-surface dark:bg-slate-800/80 rounded-full shadow-sm border border-border dark:border-border p-1">
-            <PracticeTimer storageKey={`solve_aptitude_${question?.id || "default"}`} defaultMode="stopwatch" className="!border-0 !bg-transparent !shadow-none" />
-          </div>
-        </div>
-
-        {/* Main Card */}
-        <div className="bg-surface dark:bg-[#1e293b] border border-border/80 dark:border-border/80 rounded-[2.5rem] p-6 sm:p-10 md:p-14 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] flex-1 mb-12 relative overflow-hidden flex flex-col">
+        {/* Left Pane (Question Area) */}
+        <div className="flex-1 flex flex-col bg-white m-4 rounded-lg shadow-sm border border-gray-200 overflow-hidden">
           
-          {/* Subtle Background Elements */}
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 dark:bg-primary/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-primary/5 dark:bg-primary/10 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/3 pointer-events-none" />
-
-          {/* Card Header */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 pb-8 border-b border-slate-100 dark:border-border/50 relative z-10 gap-6">
-            <div className="flex items-center space-x-5">
-              <div className="p-4 bg-blue-50 dark:bg-primary/10 text-primary dark:text-primary rounded-2xl shadow-sm border border-blue-100 dark:border-primary/20">
-                <BrainCircuit className="w-8 h-8" />
-              </div>
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-black text-text-primary dark:text-text-primary tracking-tight mb-2">
-                  {question.topic || "Aptitude Question"}
-                </h1>
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className="px-3 py-1 text-xs font-bold bg-surface-secondary dark:bg-slate-800/80 text-text-secondary dark:text-text-secondary rounded-md border border-border dark:border-border">
-                    Question {currentIndex + 1} of {allQuestions.length || 1}
-                  </span>
-                  <span className={`px-3 py-1 rounded-md text-xs font-extrabold uppercase tracking-wider border ${
-                    question.difficulty === "Easy" ? "bg-blue-50 dark:bg-primary/10 text-primary dark:text-primary border-blue-200 dark:border-primary/20" :
-                    question.difficulty === "Medium" ? "bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-500/20" :
-                    "bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-500/20"
-                  }`}>
-                    {question.difficulty}
-                  </span>
-                  {question.company && (
-                    <span className="px-3 py-1 rounded-md text-xs font-bold text-text-secondary dark:text-text-muted bg-surface-secondary dark:bg-slate-800/80 border border-border dark:border-border">
-                      🏢 {question.company}
-                    </span>
-                  )}
-                </div>
-              </div>
+          <div className="p-6 flex-1 overflow-y-auto">
+            <div className="inline-block bg-blue-50 text-blue-600 font-bold text-xs px-3 py-1 rounded-full border border-blue-200 mb-4">
+              QUESTION {currentIndex + 1}
             </div>
-          </div>
+            
+            <div className="text-lg text-gray-800 font-medium whitespace-pre-wrap mb-8">
+              {question.description || question.title}
+            </div>
 
-          {/* Question Text */}
-          <div className="mb-12 text-text-primary dark:text-text-secondary text-xl sm:text-2xl font-medium leading-relaxed whitespace-pre-wrap relative z-10">
-            {question.description || question.title}
-          </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+              {['A', 'B', 'C', 'D'].map((opt) => {
+                const optionText = question.options?.[opt];
+                if (!optionText) return null;
 
-          {/* Options */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10 flex-1">
-            {['A', 'B', 'C', 'D'].map((opt, idx) => {
-              const optionText = question.options?.[opt];
-              if (!optionText) return null;
+                const isSelected = currentSelection === opt;
+                const isCorrect = showSolution[currentIndex] && question.correctOption === opt;
+                const isWrong = showSolution[currentIndex] && isSelected && question.correctOption !== opt;
 
-              const isSelected = selectedOption === opt;
-              const isCorrectOpt = question.correctOption === opt;
-
-              let wrapperClass = "border-border dark:border-border hover:border-border dark:hover:border-slate-600 hover:shadow-md bg-surface dark:bg-slate-800/50 hover:bg-background dark:hover:bg-slate-800";
-              let labelClass = "bg-surface-secondary dark:bg-slate-700 text-text-secondary dark:text-text-secondary border-border dark:border-slate-600";
-              let textClass = "text-text-primary dark:text-text-secondary";
-
-              if (isSelected && !isSubmitted) {
-                wrapperClass = "border-primary bg-blue-50/50 dark:bg-blue-900/20 shadow-[0_4px_20px_rgba(16,185,129,0.1)] ring-1 ring-blue-500";
-                labelClass = "bg-primary text-text-inverse border-primary shadow-md shadow-blue-500/30";
-                textClass = "text-blue-900 dark:text-blue-100 font-semibold";
-              }
-
-              if (isSubmitted) {
-                if (isCorrectOpt) {
-                  wrapperClass = "border-primary bg-blue-50 dark:bg-blue-900/30 shadow-[0_4px_20px_rgba(16,185,129,0.15)] ring-1 ring-blue-500";
-                  labelClass = "bg-primary text-text-inverse border-primary shadow-md shadow-blue-500/30";
-                  textClass = "text-blue-900 dark:text-blue-100 font-bold";
-                } else if (isSelected) {
-                  wrapperClass = "border-rose-500 bg-rose-50 dark:bg-rose-900/30 ring-1 ring-rose-500";
-                  labelClass = "bg-rose-500 text-text-inverse border-rose-500 shadow-md shadow-rose-500/30";
-                  textClass = "text-rose-900 dark:text-rose-100 font-bold";
-                } else {
-                  wrapperClass = "border-border dark:border-border opacity-50 bg-background dark:bg-background/50";
-                  labelClass = "bg-slate-200 dark:bg-slate-800 text-text-muted border-border dark:border-border";
-                  textClass = "text-text-muted";
+                let borderClass = "border-gray-200 hover:border-gray-300";
+                let bgClass = "bg-white";
+                
+                if (isSelected) {
+                  borderClass = "border-blue-400";
+                  bgClass = "bg-blue-50/50";
                 }
-              }
+                
+                if (isCorrect) {
+                  borderClass = "border-green-500";
+                  bgClass = "bg-green-50";
+                } else if (isWrong) {
+                  borderClass = "border-red-500";
+                  bgClass = "bg-red-50";
+                }
 
-              return (
-                <button
-                  key={opt}
-                  onClick={() => !isSubmitted && setSelectedOption(opt)}
-                  className={`group flex items-center text-left p-4 rounded-xl border transition-all duration-300 ${wrapperClass}`}
-                >
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm mr-4 shrink-0 transition-all duration-300 border ${!isSubmitted && 'group-hover:scale-105'} ${labelClass}`}>
-                    {opt}
-                  </div>
-                  <span className={`text-base flex-1 transition-colors duration-300 ${textClass}`}>{optionText}</span>
-
-                  {!isSubmitted && (
-                    <div className={`w-5 h-5 rounded-full border-2 ml-4 flex items-center justify-center ${isSelected ? "border-blue-500" : "border-slate-300 dark:border-slate-600"}`}>
-                       {isSelected && <div className="w-2.5 h-2.5 bg-blue-500 rounded-full" />}
+                return (
+                  <label 
+                    key={opt}
+                    className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all ${borderClass} ${bgClass}`}
+                    onClick={() => !showSolution[currentIndex] && setCurrentSelection(opt)}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0 border
+                        ${isSelected ? 'bg-blue-500 text-white border-blue-500' : 'bg-gray-100 text-gray-600 border-gray-300'}
+                        ${isCorrect ? '!bg-green-500 !text-white !border-green-500' : ''}
+                        ${isWrong ? '!bg-red-500 !text-white !border-red-500' : ''}
+                      `}>
+                        {opt}
+                      </div>
+                      <span className={`text-base font-medium ${isSelected ? 'text-blue-900' : 'text-gray-700'}`}>
+                        {optionText}
+                      </span>
                     </div>
-                  )}
-                  {isSubmitted && isCorrectOpt && (
-                    <CheckCircle2 className="w-6 h-6 text-primary ml-auto drop-shadow-sm shrink-0" />
-                  )}
-                  {isSubmitted && isSelected && !isCorrectOpt && (
-                    <XCircle className="w-6 h-6 text-rose-500 ml-auto drop-shadow-sm shrink-0" />
-                  )}
-                </button>
-              );
-            })}
+                    
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0
+                      ${isSelected ? 'border-blue-500' : 'border-gray-300'}
+                      ${isCorrect ? '!border-green-500' : ''}
+                      ${isWrong ? '!border-red-500' : ''}
+                    `}>
+                      {isSelected && <div className={`w-2.5 h-2.5 rounded-full ${isCorrect ? 'bg-green-500' : isWrong ? 'bg-red-500' : 'bg-blue-500'}`} />}
+                    </div>
+                  </label>
+                );
+              })}
+            </div>
+            
+            <div className="mt-8 flex items-center gap-2 text-sm text-gray-500 font-medium">
+              <HelpCircle className="w-4 h-4" />
+              Choose Any 1 Option(s).
+            </div>
           </div>
 
-          {/* Submission Result */}
-          {isSubmitted && (
-            <div className={`mt-10 p-6 rounded-2xl border flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl relative z-10 animate-in slide-in-from-bottom-4 duration-500 ${
-              isCorrect
-                ? "bg-emerald-50 dark:bg-gradient-to-r dark:from-emerald-500/10 dark:to-teal-500/10 border-emerald-200 dark:border-emerald-500/40"
-                : "bg-rose-50 dark:bg-gradient-to-r dark:from-rose-500/10 dark:to-pink-500/10 border-rose-200 dark:border-rose-500/40"
-            }`}>
-              <div className="flex items-start sm:items-center space-x-5">
-                <div className={`p-4 rounded-full shrink-0 shadow-sm ${isCorrect ? "bg-emerald-100 dark:bg-emerald-500/20" : "bg-rose-100 dark:bg-rose-500/20"}`}>
-                  {isCorrect ? <Award className="w-8 h-8 text-emerald-600 dark:text-emerald-400" /> : <XCircle className="w-8 h-8 text-rose-600 dark:text-rose-400" />}
-                </div>
-                <div>
-                  <h4 className={`text-xl font-black ${isCorrect ? 'text-emerald-900 dark:text-emerald-300' : 'text-rose-900 dark:text-rose-300'}`}>
-                    {isCorrect ? "Correct Answer! Exceptional reasoning." : `Incorrect — The correct answer was Option ${question.correctOption}.`}
-                  </h4>
-                  <p className={`text-sm mt-1.5 ${isCorrect ? 'text-emerald-700 dark:text-emerald-400/80' : 'text-rose-700 dark:text-rose-400/80'}`}>
-                    {isCorrect ? "Your response has been verified and recorded to your practice analytics." : "Review the question logic and try the next question in this topic."}
-                  </p>
-                </div>
-              </div>
+          {/* Left Pane Footer */}
+          <div className="bg-gray-50 border-t border-gray-200 p-4 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={handleMarkForReview}
+                className="flex items-center gap-2 px-4 py-2 text-purple-600 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded font-semibold text-sm transition-colors"
+              >
+                <Heart className="w-4 h-4" />
+                Mark for Review & Next
+              </button>
+              <button 
+                onClick={handleSaveAndNext}
+                className="flex items-center gap-2 px-4 py-2 text-green-700 bg-green-50 hover:bg-green-100 border border-green-200 rounded font-semibold text-sm transition-colors"
+              >
+                <Save className="w-4 h-4" />
+                Save & Next
+              </button>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={() => navigateToQuestion(currentIndex - 1)}
+                disabled={currentIndex === 0}
+                className="flex items-center gap-1 px-4 py-2 text-gray-600 bg-white border border-gray-300 hover:bg-gray-50 rounded font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                Previous
+              </button>
+              <button 
+                onClick={() => navigateToQuestion(currentIndex + 1)}
+                disabled={currentIndex === allQuestions.length - 1}
+                className="flex items-center gap-1 px-4 py-2 text-gray-600 bg-white border border-gray-300 hover:bg-gray-50 rounded font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+                <ChevronRight className="w-4 h-4" />
+              </button>
               
-              {/* Only show "Topic Directory" button here on mobile, otherwise it's handled in the bottom bar */}
-              <div className="w-full md:w-auto md:hidden">
-                <button
-                  onClick={() => navigate(`/aptitude/topic/${encodeURIComponent(question?.topic || "Uncategorized")}`)}
-                  className="w-full px-6 py-3 rounded-xl bg-surface dark:bg-slate-800 text-text-primary dark:text-text-secondary border border-border dark:border-border text-sm font-bold shadow-sm"
-                >
-                  Topic Directory
-                </button>
+              <button 
+                onClick={handleCheckSolution}
+                className="flex items-center gap-2 px-4 py-2 text-cyan-700 bg-cyan-50 hover:bg-cyan-100 border border-cyan-200 rounded font-semibold text-sm transition-colors ml-2"
+              >
+                <Check className="w-4 h-4" />
+                Check Solution
+              </button>
+
+              <button 
+                onClick={handleSubmitTest}
+                className="flex items-center gap-2 px-6 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded font-bold text-sm transition-colors shadow-sm ml-4"
+              >
+                <CloudUpload className="w-4 h-4" />
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Pane (Grid & Legend) */}
+        <div className="w-80 bg-white m-4 ml-0 rounded-lg shadow-sm border border-gray-200 flex flex-col overflow-hidden">
+          
+          {/* Legend */}
+          <div className="p-4 border-b border-gray-200 bg-gray-50">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex items-center gap-2 border border-gray-200 rounded px-2 py-1.5 bg-white">
+                <div className="w-5 h-5 rounded-full border-2 border-blue-500 bg-blue-50 flex items-center justify-center text-[10px] font-bold text-blue-700">1</div>
+                <span className="text-xs font-medium text-gray-600">Current</span>
+              </div>
+              <div className="flex items-center gap-2 border border-gray-200 rounded px-2 py-1.5 bg-white">
+                <div className="w-5 h-5 rounded-t-[10px] rounded-b-[2px] bg-green-500 flex items-center justify-center text-[10px] font-bold text-white">{answeredCount}</div>
+                <span className="text-xs font-medium text-gray-600">Answered</span>
+              </div>
+              <div className="flex items-center gap-2 border border-gray-200 rounded px-2 py-1.5 bg-white">
+                <div className="w-5 h-5 rounded-full bg-purple-500 flex items-center justify-center text-[10px] font-bold text-white">{reviewCount}</div>
+                <span className="text-xs font-medium text-gray-600">Review</span>
+              </div>
+              <div className="flex items-center gap-2 border border-gray-200 rounded px-2 py-1.5 bg-white">
+                <div className="w-5 h-5 rounded-full border border-gray-300 bg-white flex items-center justify-center text-[10px] font-bold text-gray-500">{notVisitedCount}</div>
+                <span className="text-xs font-medium text-gray-600">Not Visited</span>
+              </div>
+              <div className="flex items-center gap-2 border border-gray-200 rounded px-2 py-1.5 bg-white">
+                <div className="w-5 h-5 rounded-t-[10px] rounded-b-[2px] bg-red-500 flex items-center justify-center text-[10px] font-bold text-white">{notAttemptedCount}</div>
+                <span className="text-xs font-medium text-gray-600">Not Attempted</span>
+              </div>
+              <div className="flex items-center gap-2 border border-gray-200 rounded px-2 py-1.5 bg-white">
+                <div className="w-5 h-5 rounded border border-cyan-300 bg-cyan-100 flex items-center justify-center text-[10px] font-bold text-cyan-600">0</div>
+                <span className="text-xs font-medium text-gray-600">Unsaved</span>
               </div>
             </div>
-          )}
-
-          {/* Bottom Actions */}
-          <div className="mt-10 pt-8 border-t border-slate-100 dark:border-border/50 flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
-            <button
-              onClick={() => handleNavigateQuestion(prevQuestion, currentIndex - 1)}
-              disabled={!prevQuestion}
-              className="w-full sm:w-auto flex items-center justify-center space-x-2 px-6 py-3.5 bg-background dark:bg-slate-800/80 hover:bg-surface-secondary dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed text-text-secondary dark:text-text-secondary hover:text-text-primary dark:hover:text-text-inverse rounded-xl text-sm font-bold transition-all border border-border dark:border-border/80"
-            >
-              <ChevronLeft className="w-5 h-5" />
-              <span>Previous Question</span>
-            </button>
-
-            <div className="flex flex-col sm:flex-row items-center w-full sm:w-auto gap-4">
-              {isSubmitted && (
-                 <button
-                 onClick={() => navigate(`/aptitude/topic/${encodeURIComponent(question?.topic || "Uncategorized")}`)}
-                 className="hidden md:block px-6 py-3.5 rounded-xl bg-surface dark:bg-slate-800 hover:bg-background dark:hover:bg-slate-700 text-text-primary dark:text-text-secondary border border-border dark:border-border text-sm font-bold transition-colors shadow-sm"
-               >
-                 Topic Directory
-               </button>
-              )}
-
-              {!isSubmitted ? (
-                <button
-                  onClick={() => handleNavigateQuestion(nextQuestion, currentIndex + 1)}
-                  className="w-full sm:w-auto flex items-center justify-center space-x-2 px-6 py-3.5 bg-surface dark:bg-slate-800/80 hover:bg-background dark:hover:bg-slate-700 text-text-secondary dark:text-text-secondary hover:text-text-primary dark:hover:text-text-inverse rounded-xl text-sm font-bold transition-all border border-border dark:border-border/80 shadow-sm"
-                >
-                  <span>Skip / Next</span>
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-              ) : null}
-
-              {!isSubmitted ? (
-                <button
-                  onClick={handleSubmit}
-                  disabled={!selectedOption}
-                  className="w-full sm:w-auto bg-primary hover:bg-primary disabled:bg-slate-200 disabled:dark:bg-slate-800 disabled:text-text-muted disabled:cursor-not-allowed text-text-inverse px-10 py-3.5 rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] disabled:shadow-none text-base"
-                >
-                  Submit Answer
-                </button>
-              ) : (
-                <button
-                  onClick={() => handleNavigateQuestion(nextQuestion, currentIndex + 1)}
-                  className="w-full sm:w-auto flex items-center justify-center space-x-2 bg-primary hover:bg-primary text-text-inverse px-8 py-3.5 rounded-xl font-bold transition-all text-base shadow-[0_0_20px_rgba(16,185,129,0.3)]"
-                >
-                  <span>{nextQuestion ? "Next Question" : "Finish Practice"}</span>
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-              )}
+            <div className="mt-2 w-full flex items-center border border-gray-200 rounded px-3 py-2 bg-white text-xs font-medium text-gray-700">
+              <div className="w-5 h-5 rounded border-2 border-gray-800 flex items-center justify-center text-gray-800 font-bold text-[10px] mr-2">i</div>
+              Full Screen Exit
             </div>
           </div>
 
+          {/* Grid */}
+          <div className="p-4 flex-1 overflow-y-auto">
+            <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Question Grid</h3>
+            <div className="grid grid-cols-5 gap-3">
+              {allQuestions.map((q, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => navigateToQuestion(idx)}
+                  className={`w-10 h-10 flex items-center justify-center text-sm transition-all shadow-sm
+                    ${getGridButtonClass(idx)}
+                  `}
+                >
+                  {idx + 1}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Grid Footer (Pagination Mock) */}
+          <div className="p-3 border-t border-gray-200 bg-gray-50 flex items-center justify-center gap-4 text-xs font-semibold text-gray-500">
+            <button className="hover:text-gray-800 transition-colors">« Previous</button>
+            <div className="w-6 h-6 rounded bg-blue-600 text-white flex items-center justify-center">1</div>
+            <button className="hover:text-gray-800 transition-colors">Next »</button>
+          </div>
         </div>
-      </main>
+
+      </div>
     </div>
   );
 }

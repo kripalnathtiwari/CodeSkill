@@ -1,40 +1,23 @@
 import logger from "../config/logger";
-import nodemailer from "nodemailer";
 import axios from "axios";
 
 export class EmailService {
-  private transporter: nodemailer.Transporter | null = null;
   private brevoApiKey: string | null = null;
 
   constructor() {
     this.brevoApiKey = process.env.BREVO_API_KEY || null;
 
-    // If SMTP credentials are provided, setup real transporter
-    if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
-      this.transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: parseInt(process.env.SMTP_PORT || "587"),
-        secure: process.env.SMTP_SECURE === "true",
-        auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS,
-        },
-      });
-      if (this.brevoApiKey) {
-        logger.info("EmailService initialized with Brevo API Key (preferred).");
-      } else {
-        logger.info("EmailService initialized with SMTP credentials.");
-      }
-    } else if (this.brevoApiKey) {
-       logger.info("EmailService initialized with Brevo API Key.");
+    if (this.brevoApiKey) {
+       logger.info("EmailService initialized with Brevo HTTP API Key.");
     } else {
-      logger.info("EmailService initialized without SMTP credentials (MOCK MODE).");
+      logger.info("EmailService initialized without Brevo API Key (MOCK MODE).");
     }
   }
 
   public async sendOtpEmail(to: string, otp: string): Promise<boolean> {
     try {
       if (this.brevoApiKey) {
+        // Railway blocks SMTP ports, so we use the HTTP API which is also much faster
         const response = await axios.post(
           "https://api.brevo.com/v3/smtp/email",
           {
@@ -53,17 +36,7 @@ export class EmailService {
             }
           }
         );
-        logger.info(`OTP email sent via Brevo API to ${to}`);
-        return true;
-      } else if (this.transporter) {
-        await this.transporter.sendMail({
-          from: `"CodeSklii Security" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
-          to,
-          subject: "Your Password Reset OTP",
-          text: `Your One-Time Password (OTP) for password reset is: ${otp}. It will expire in 5 minutes.`,
-          html: `<p>Your One-Time Password (OTP) for password reset is: <strong>${otp}</strong>.</p><p>It will expire in 5 minutes.</p>`,
-        });
-        logger.info(`OTP email sent via SMTP to ${to}`);
+        logger.info(`OTP email sent via Brevo HTTP API to ${to}`);
         return true;
       } else {
         // MOCK MODE: Just log to console

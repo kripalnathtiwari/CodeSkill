@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import nodemailer from 'nodemailer';
+import axios from 'axios';
 import logger from '../config/logger';
 
 export const submitContactForm = async (req: Request, res: Response) => {
@@ -10,44 +10,45 @@ export const submitContactForm = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Name, email, and message are required." });
     }
 
-    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-      logger.error("SMTP credentials not configured in environment variables.");
+    const brevoApiKey = process.env.BREVO_API_KEY;
+
+    if (!brevoApiKey) {
+      logger.error("BREVO_API_KEY not configured in environment variables.");
       return res.status(500).json({ error: "Email service is not configured on the server." });
     }
 
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: parseInt(process.env.SMTP_PORT || '587'),
-      secure: process.env.SMTP_SECURE === 'true',
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
+    const response = await axios.post(
+      "https://api.brevo.com/v3/smtp/email",
+      {
+        sender: {
+          name: name,
+          email: process.env.SMTP_FROM || process.env.SMTP_USER || "no-reply@codesklii.com"
+        },
+        replyTo: { email: email },
+        to: [{ email: 'saurabhtiwari08071999@gmail.com' }],
+        subject: `New Contact Us Message from ${name}`,
+        htmlContent: `
+          <div style="font-family: sans-serif; padding: 20px; color: #333;">
+            <h2 style="color: #10b981;">New Contact Us Submission</h2>
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <hr />
+            <h3>Message:</h3>
+            <p style="white-space: pre-wrap;">${message}</p>
+          </div>
+        `
       },
-    });
-
-    const mailOptions = {
-      from: `"${name}" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
-      replyTo: email,
-      to: 'saurabhtiwari08071999@gmail.com',
-      subject: `New Contact Us Message from ${name}`,
-      text: `You have received a new message from the CodeSkill Contact Us form.\n\nName: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
-      html: `
-        <div style="font-family: sans-serif; padding: 20px; color: #333;">
-          <h2 style="color: #10b981;">New Contact Us Submission</h2>
-          <p><strong>Name:</strong> ${name}</p>
-          <p><strong>Email:</strong> ${email}</p>
-          <hr />
-          <h3>Message:</h3>
-          <p style="white-space: pre-wrap;">${message}</p>
-        </div>
-      `
-    };
-
-    await transporter.sendMail(mailOptions);
+      {
+        headers: {
+          "api-key": brevoApiKey,
+          "Content-Type": "application/json"
+        }
+      }
+    );
 
     res.status(200).json({ message: "Your message has been sent successfully!" });
-  } catch (error) {
-    logger.error("Error sending contact email:", error);
+  } catch (error: any) {
+    logger.error("Error sending contact email:", error.response?.data || error.message);
     res.status(500).json({ error: "Failed to send email. Please try again later." });
   }
 };

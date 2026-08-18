@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, CheckCircle2, XCircle, BrainCircuit, ChevronLeft, ChevronRight, Award, LogOut, Info, AlertTriangle, Clock, Heart, CheckSquare, Save, HelpCircle, CloudUpload, Check } from "lucide-react";
+import { ArrowLeft, CheckCircle2, XCircle, BrainCircuit, ChevronLeft, ChevronRight, Award, LogOut, Info, AlertTriangle, Clock, Heart, CheckSquare, Save, HelpCircle, CloudUpload, Check, Maximize } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { getApiUrl } from "../utils/apiConfig";
@@ -21,7 +21,7 @@ export default function SolveAptitude() {
   const [showSolution, setShowSolution] = useState<Record<number, boolean>>({});
   
   // Temporary selection before saving
-  const [currentSelection, setCurrentSelection] = useState<string | null>(null);
+  // Removed in favor of direct auto-save to `answered` state
 
   useEffect(() => {
     const loadQuestion = async () => {
@@ -118,25 +118,17 @@ export default function SolveAptitude() {
       setCurrentIndex(index);
       setQuestion(allQuestions[index]);
       setVisited(prev => ({ ...prev, [index]: true }));
-      setCurrentSelection(answered[index] || null);
     }
   };
 
-  const handleSaveAndNext = () => {
-    if (currentSelection) {
-      setAnswered(prev => ({ ...prev, [currentIndex]: currentSelection }));
-      // Clear review status if they save an answer
-      setReviewStatus(prev => ({ ...prev, [currentIndex]: false }));
+  const toggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(err => {
+        console.error(`Error attempting to enable fullscreen: ${err.message}`);
+      });
+    } else {
+      document.exitFullscreen();
     }
-    navigateToQuestion(currentIndex + 1);
-  };
-
-  const handleMarkForReview = () => {
-    if (currentSelection) {
-      setAnswered(prev => ({ ...prev, [currentIndex]: currentSelection }));
-    }
-    setReviewStatus(prev => ({ ...prev, [currentIndex]: !prev[currentIndex] }));
-    navigateToQuestion(currentIndex + 1);
   };
 
   const handleCheckSolution = () => {
@@ -213,13 +205,12 @@ export default function SolveAptitude() {
       {/* Sub Header (Action Bar) */}
       <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between shadow-sm z-10">
         <div className="flex items-center gap-4">
-          <button className="flex items-center gap-1.5 text-gray-600 hover:text-gray-900 text-sm font-medium bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded transition-colors">
-            <Info className="w-4 h-4" />
-            Instructions
-          </button>
-          <button className="flex items-center gap-1.5 text-amber-600 hover:text-amber-700 text-sm font-medium bg-amber-50 hover:bg-amber-100 px-3 py-1.5 rounded transition-colors border border-amber-200">
-            <AlertTriangle className="w-4 h-4" />
-            Report Question
+          <button 
+            onClick={toggleFullScreen}
+            className="flex items-center gap-1.5 text-gray-600 hover:text-gray-900 text-sm font-medium bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded transition-colors"
+          >
+            <Maximize className="w-4 h-4" />
+            Full Screen Mode
           </button>
         </div>
         <div className="flex items-center gap-2 bg-gray-50 px-4 py-1.5 rounded-full border border-gray-200">
@@ -249,7 +240,7 @@ export default function SolveAptitude() {
                 const optionText = question.options?.[opt];
                 if (!optionText) return null;
 
-                const isSelected = currentSelection === opt;
+                const isSelected = answered[currentIndex] === opt;
                 const isCorrect = showSolution[currentIndex] && question.correctOption === opt;
                 const isWrong = showSolution[currentIndex] && isSelected && question.correctOption !== opt;
 
@@ -273,7 +264,11 @@ export default function SolveAptitude() {
                   <label 
                     key={opt}
                     className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all ${borderClass} ${bgClass}`}
-                    onClick={() => !showSolution[currentIndex] && setCurrentSelection(opt)}
+                    onClick={() => {
+                      if (!showSolution[currentIndex]) {
+                        setAnswered(prev => ({ ...prev, [currentIndex]: opt }));
+                      }
+                    }}
                   >
                     <div className="flex items-center gap-4">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0 border
@@ -309,20 +304,7 @@ export default function SolveAptitude() {
           {/* Left Pane Footer */}
           <div className="bg-gray-50 border-t border-gray-200 p-4 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <button 
-                onClick={handleMarkForReview}
-                className="flex items-center gap-2 px-4 py-2 text-purple-600 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded font-semibold text-sm transition-colors"
-              >
-                <Heart className="w-4 h-4" />
-                Mark for Review & Next
-              </button>
-              <button 
-                onClick={handleSaveAndNext}
-                className="flex items-center gap-2 px-4 py-2 text-green-700 bg-green-50 hover:bg-green-100 border border-green-200 rounded font-semibold text-sm transition-colors"
-              >
-                <Save className="w-4 h-4" />
-                Save & Next
-              </button>
+              {/* Removed Mark for Review and Save & Next buttons */}
             </div>
             
             <div className="flex items-center gap-3">
@@ -417,12 +399,7 @@ export default function SolveAptitude() {
             </div>
           </div>
 
-          {/* Grid Footer (Pagination Mock) */}
-          <div className="p-3 border-t border-gray-200 bg-gray-50 flex items-center justify-center gap-4 text-xs font-semibold text-gray-500">
-            <button className="hover:text-gray-800 transition-colors">« Previous</button>
-            <div className="w-6 h-6 rounded bg-blue-600 text-white flex items-center justify-center">1</div>
-            <button className="hover:text-gray-800 transition-colors">Next »</button>
-          </div>
+          {/* Removed Pagination Mock Footer */}
         </div>
 
       </div>

@@ -4,7 +4,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { recordContribution } from "../utils/contributions";
 import { getApiUrl } from "../utils/apiConfig";
-import { AlertTriangle, Clock, CheckCircle, ShieldAlert, Award, ChevronLeft, ChevronRight, Trophy, Minus, XCircle, LogOut, Info, AlertOctagon, Bookmark } from "lucide-react";
+import { AlertTriangle, Clock, CheckCircle, ShieldAlert, Award, ChevronLeft, ChevronRight, Trophy, Minus, XCircle, LogOut, Info, AlertOctagon, Bookmark, Maximize } from "lucide-react";
 
 // Mock Python Questions
 const PYTHON_QUESTIONS = [
@@ -659,13 +659,20 @@ export default function TakeTest() {
       {/* Sub Header */}
       <div className="bg-white border-b border-slate-200 px-6 py-2 flex justify-between items-center text-sm shadow-sm z-10">
         <div className="flex space-x-3">
-          <button className="flex items-center space-x-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded font-medium border border-slate-200 transition-colors">
-            <Info className="w-4 h-4" />
-            <span>Instructions</span>
-          </button>
-          <button className="flex items-center space-x-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 px-3 py-1.5 rounded font-medium border border-amber-200 transition-colors">
-            <AlertOctagon className="w-4 h-4" />
-            <span>Report Question</span>
+          <button 
+            onClick={() => {
+              if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                  console.error(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+              } else {
+                document.exitFullscreen();
+              }
+            }}
+            className="flex items-center space-x-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded font-medium border border-slate-200 transition-colors"
+          >
+            <Maximize className="w-4 h-4" />
+            <span>Full Screen Mode</span>
           </button>
         </div>
         <div className="flex items-center space-x-2 bg-slate-50 px-4 py-1.5 rounded-full border border-slate-200 font-bold text-slate-700">
@@ -734,28 +741,7 @@ export default function TakeTest() {
           {/* Bottom Action Bar */}
           <div className="absolute bottom-0 left-0 w-full bg-white border-t border-slate-200 p-4 flex justify-between items-center shadow-[0_-4px_10px_rgba(0,0,0,0.02)]">
              <div className="flex space-x-3">
-               <button 
-                 onClick={handleMarkForReview}
-                 className={`flex items-center space-x-2 border font-semibold px-4 py-2.5 rounded-lg transition-colors text-sm ${
-                   reviewStatus[currentQ.id] ? "bg-purple-100 text-purple-700 border-purple-300" : "text-purple-600 bg-purple-50 hover:bg-purple-100 border-purple-200"
-                 }`}
-               >
-                 <span>{reviewStatus[currentQ.id] ? "Unmark Review" : "Mark for Review"}</span>
-                 <Bookmark className="w-4 h-4" />
-               </button>
-               <button 
-                 onClick={handleClearResponse}
-                 className="flex items-center space-x-2 text-slate-600 bg-slate-100 hover:bg-slate-200 border border-slate-200 font-semibold px-4 py-2.5 rounded-lg transition-colors text-sm"
-               >
-                 Clear
-               </button>
-               <button 
-                 onClick={handleSaveAndNext}
-                 className="flex items-center space-x-2 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 font-semibold px-4 py-2.5 rounded-lg transition-colors text-sm"
-               >
-                 <span>Save & Next</span>
-                 <ChevronRight className="w-4 h-4" />
-               </button>
+               {/* Removed Mark for Review, Clear, and Save & Next buttons */}
              </div>
 
              <div className="flex space-x-3">

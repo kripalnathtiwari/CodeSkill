@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import prisma from '../config/db';
-import { atsQueue } from '../jobs/atsQueue';
+import { atsQueue } from '../jobs/queues/atsQueue';
 import { PdfParserService } from '../services/ats/PdfParserService';
 
 export const uploadResume = async (req: Request, res: Response) => {
@@ -80,6 +80,20 @@ export const triggerAnalysis = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Resume or Job Description not found' });
     }
 
+    // Prevent double-clicks from creating duplicate analysis records
+    const existingAnalysis = await prisma.atsAnalysis.findFirst({
+      where: {
+        userId,
+        resumeId,
+        jobDescriptionId,
+        status: { in: ['PENDING', 'PROCESSING'] }
+      }
+    });
+
+    if (existingAnalysis) {
+      return res.status(200).json({ message: 'Analysis already in progress', analysisId: existingAnalysis.id });
+    }
+
     const analysis = await prisma.atsAnalysis.create({
       data: {
         userId,
@@ -89,12 +103,14 @@ export const triggerAnalysis = async (req: Request, res: Response) => {
       }
     });
 
-    // Add to BullMQ
-    await atsQueue.add('analyze-resume', {
+    const jobId = `ats-${analysis.id}`;
+
+    // Add to BullMQ with deduplication ID
+    await atsQueue.add('ats-analysis', {
       analysisId: analysis.id,
       resumeId,
       jobDescriptionId
-    });
+    }, { jobId });
 
     res.status(202).json({ message: 'Analysis started', analysisId: analysis.id });
   } catch (error) {

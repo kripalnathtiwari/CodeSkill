@@ -1,12 +1,9 @@
-import { Queue, Worker, Job } from 'bullmq';
-import IORedis from 'ioredis';
-import { AtsAnalysisService } from '../services/ats/AtsAnalysisService';
-import prisma from '../config/db';
-const connection = new IORedis(process.env.REDIS_URL || 'redis://127.0.0.1:6379', { maxRetriesPerRequest: null });
+import { Job } from 'bullmq';
+import { AtsAnalysisService } from '../../services/ats/AtsAnalysisService';
+import prisma from '../../config/db';
+import logger from '../../config/logger';
 
-export const atsQueue = new Queue('ats-analysis', { connection: connection as any });
-
-export const atsWorker = new Worker('ats-analysis', async (job: Job) => {
+export async function processAtsAnalysis(job: Job) {
   const { analysisId, resumeId, jobDescriptionId } = job.data;
   
   try {
@@ -50,8 +47,6 @@ export const atsWorker = new Worker('ats-analysis', async (job: Job) => {
       : 100;
 
     // 4. Semantic Similarity (Embeddings)
-    // In a real prod environment, we would chunk and average embeddings. 
-    // We will do a single embedding for the whole text (or top skills) here.
     const resumeEmbed = await AtsAnalysisService.generateEmbedding(resumeSkills.join(' '));
     const jdEmbed = await AtsAnalysisService.generateEmbedding(jdKeywords.join(' '));
     const semanticSimilarity = AtsAnalysisService.cosineSimilarity(resumeEmbed, jdEmbed);
@@ -59,17 +54,15 @@ export const atsWorker = new Worker('ats-analysis', async (job: Job) => {
     const semanticMatchScore = Math.max(0, Math.min(100, Math.round(semanticSimilarity * 100)));
 
     // 5. Formatting & Experience Analysis (Mock heuristics)
-    // Check if required sections exist
     const requiredSections = ["summary", "experience", "education"];
     const foundSections = (resumeData.sections || []).map((s: string) => s.toLowerCase());
-    const missingSections = requiredSections.filter(s => !foundSections.some((fs: string) => fs.includes(s)));
+    const missingSections = requiredSections.filter((s: string) => !foundSections.some((fs: string) => fs.includes(s)));
     
     const formattingScore = Math.max(0, 100 - (missingSections.length * 15));
     const experienceScore = resumeData.experience?.length > 0 ? 80 : 40; // simplified
     const grammarScore = 90; // mock grammar score
 
     // 6. Overall Weighted Score Calculation
-    // Keyword Match (35%), Semantic Match (20%), Experience (15%), Formatting (10%), Grammar (5%), Projects/Ed/Cert (15% distributed)
     const overallScore = Math.round(
       (keywordMatchScore * 0.35) +
       (semanticMatchScore * 0.20) +
@@ -96,13 +89,13 @@ export const atsWorker = new Worker('ats-analysis', async (job: Job) => {
         matchedKeywords: matchedKeywords,
         missingKeywords: missingKeywords,
         aiSuggestions: suggestions,
-        formattingIssues: missingSections.map(s => `Missing required section: ${s}`),
+        formattingIssues: missingSections.map((s: string) => `Missing required section: ${s}`),
       }
     });
 
-    console.log(`[ATS] Analysis ${analysisId} completed. Score: ${overallScore}`);
+    logger.info(`[ATS] Analysis ${analysisId} completed. Score: ${overallScore}`);
   } catch (error: any) {
-    console.error(`[ATS] Analysis ${analysisId} failed:`, error);
+    logger.error(`[ATS] Analysis ${analysisId} failed: ${error.message}`);
     await prisma.atsAnalysis.update({
       where: { id: analysisId },
       data: { 
@@ -110,9 +103,7 @@ export const atsWorker = new Worker('ats-analysis', async (job: Job) => {
         errorMessage: error.message || 'Unknown error occurred during analysis.'
       }
     });
+    // Rethrow error so BullMQ knows it failed and can apply retry strategies
+    throw error;
   }
-}, { connection: connection as any });
-
-atsWorker.on('failed', (job, err) => {
-  console.error(`Job ${job?.id} failed with error ${err.message}`);
-});
+}

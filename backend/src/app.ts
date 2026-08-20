@@ -33,7 +33,7 @@ import cvRoutes from "./routes/cvRoutes";
 
 // Background Jobs
 // import "./jobs/submissionWorker";
-import "./jobs/atsQueue";
+// import "./jobs/atsQueue";
 import { initBackupCronJob } from "./jobs/backupJob";
 
 const app = express();

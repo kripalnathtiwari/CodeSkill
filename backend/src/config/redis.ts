@@ -34,4 +34,11 @@ if (redisUrl) {
   logger.warn("Redis URL not provided. Caching will be bypassed.");
 }
 
+export const createRedisConnection = () => {
+  return new Redis(redisUrl || 'redis://127.0.0.1:6379', {
+    maxRetriesPerRequest: null,
+    enableReadyCheck: false,
+  });
+};
+
 export default redisConnection;

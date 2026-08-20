@@ -12,10 +12,8 @@ export const atsWorker = new Worker(
     connection: connection as any,
     // Start conservatively for SaaS production to prevent AI API / Redis limits
     concurrency: 2,
-    limiter: {
-      max: 5,
-      duration: 1000,
-    },
+    // Increase stalledInterval to 5 minutes to prevent frequent Redis polling scripts
+    stalledInterval: 300000,
   }
 );
 

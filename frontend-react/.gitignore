@@ -24,4 +24,3 @@ dist-ssr
 *.sw?
 
 .vercel
-src/assets/toggle-logo.svg

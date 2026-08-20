@@ -2,14 +2,13 @@ import { Server as HttpServer } from "http";
 import { Server as SocketIOServer } from "socket.io";
 import logger from "../config/logger";
 
+import { corsOptions } from "../config/corsConfig";
+
 let io: SocketIOServer | null = null;
 
 export const initSocketServer = (server: HttpServer) => {
   io = new SocketIOServer(server, {
-    cors: {
-      origin: "*", // Adjust origins in production environments
-      methods: ["GET", "POST"],
-    },
+    cors: corsOptions, // Enforce identical CORS rules for WebSocket and HTTP
   });
 
   io.on("connection", (socket) => {

@@ -10,6 +10,7 @@ dotenv.config();
 
 // Config & Middlewares
 import logger from "./config/logger";
+import { corsOptions } from "./config/corsConfig";
 import { errorHandler } from "./middlewares/errorMiddleware";
 import { initSocketServer } from "./sockets/socketServer";
 import compression from "compression";
@@ -52,16 +53,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(cors({
-  origin: function (origin, callback) {
-    // Reflect the requested origin dynamically to prevent CORS mismatches
-    // Allow all origins since Vercel generates unique subdomains for preview deployments
-    callback(null, origin || true);
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
-}));
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions)); // Explicit preflight handling
 app.use(express.json());
 app.use(compression());
 

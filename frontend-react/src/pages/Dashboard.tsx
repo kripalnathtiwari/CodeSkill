@@ -1,235 +1,208 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { Award, BookOpen, Lock } from "lucide-react";
 import CertificateModal from "../components/CertificateModal";
 import { useAuth } from "../context/AuthContext";
 import { getApiUrl } from "../utils/apiConfig";
+import { useQuery } from "@tanstack/react-query";
 
-// New Components
 import DashboardLayout from "../components/dashboard/DashboardLayout";
 import WelcomeBanner from "../components/dashboard/WelcomeBanner";
-import AnalyticsCharts from "../components/dashboard/AnalyticsCharts";
-import ActivitySection from "../components/dashboard/ActivitySection";
-import StudentPerformance from "../components/dashboard/StudentPerformance";
+
+const AnalyticsCharts = lazy(() => import("../components/dashboard/AnalyticsCharts"));
+const ActivitySection = lazy(() => import("../components/dashboard/ActivitySection"));
+const StudentPerformance = lazy(() => import("../components/dashboard/StudentPerformance"));
+
+// Skeletons
+const ChartSkeleton = () => (
+  <div className="bg-surface rounded-2xl border border-border p-6 shadow-sm h-64 animate-pulse" />
+);
+const ActivitySkeleton = () => (
+  <div className="bg-surface rounded-2xl border border-border p-6 shadow-sm h-96 animate-pulse" />
+);
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const [enrollments, setEnrollments] = useState<any[]>([]);
+  
   const [selectedCert, setSelectedCert] = useState<{ name: string, course: string, id: string } | null>(null);
-  const [solvedCount, setSolvedCount] = useState(0);
-  const [dsaStats, setDsaStats] = useState({ easy: 0, medium: 0, hard: 0, total: 0 });
-  const [testStats, setTestStats] = useState({ attempted: 0, correct: 0 });
   const [generatingCertIdx, setGeneratingCertIdx] = useState<number | null>(null);
   const [certNameInput, setCertNameInput] = useState("");
-  const [courseSettings, setCourseSettings] = useState<Record<string, any>>({});
-  const [mcqTotal, setMcqTotal] = useState(0);
-  const [mcqStats, setMcqStats] = useState({ attempted: 0, correct: 0 });
-  const [userRank, setUserRank] = useState<number | null>(null);
-
+  
   // Password Change State
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordMsg, setPasswordMsg] = useState({ text: "", type: "" });
-  const [trainerId, setTrainerId] = useState<string | null>(null);
 
-  useEffect(() => {
-    const loadData = () => {
-      // Load enrollments
-      setTimeout(() => {
-        const existingStr = localStorage.getItem("enrolledCourses");
-        if (existingStr && user?.email) {
-          try {
-            const parsed = JSON.parse(existingStr);
-            const bestEnrollments = new Map();
-            for (const e of parsed) {
-              const matchEmail = e.email?.toLowerCase().trim() === user.email?.toLowerCase().trim();
-              const matchAccountEmail = e.accountEmail?.toLowerCase().trim() === user.email?.toLowerCase().trim();
-              if (matchEmail || matchAccountEmail) {
-                const existing = bestEnrollments.get(e.courseId);
-                if (!existing) {
-                  bestEnrollments.set(e.courseId, e);
-                } else {
-                  const isPaid = (status: string) => ["PAID", "completed", "active", "Success"].includes(status);
-                  const existingPaid = isPaid(existing.status);
-                  const currentPaid = isPaid(e.status);
-                  if (currentPaid && !existingPaid) {
-                    bestEnrollments.set(e.courseId, e);
-                  } else if (currentPaid === existingPaid) {
-                    bestEnrollments.set(e.courseId, e);
-                  }
-                }
-              }
-            }
-            const sortedEnrollments = Array.from(bestEnrollments.values()).sort((a: any, b: any) =>
-              new Date(b.dateRegistered).getTime() - new Date(a.dateRegistered).getTime()
-            );
-            setEnrollments(sortedEnrollments);
-            const settingsStr = localStorage.getItem("courseSettings");
-            if (settingsStr) {
-              try { setCourseSettings(JSON.parse(settingsStr)); } catch (e) { }
-            }
-          } catch (e) { }
-        }
-      }, 0);
-
-      // Load solved problems
-      setTimeout(() => {
-        const fetchDsaStats = async () => {
-          let solvedArr: string[] = [];
-          const solvedStr = localStorage.getItem(`solved_problems_progress_${user?.email || "guest"}`);
-          if (solvedStr) {
-            try {
-              solvedArr = JSON.parse(solvedStr);
-              setSolvedCount(solvedArr.length);
-              let easy = 0, medium = 0, hard = 0;
-              solvedArr.forEach((qId: string) => {
-                const d = localStorage.getItem(`q_difficulty_${qId}`);
-                if (d === "Easy" || d === "easy") easy++;
-                else if (d === "Medium" || d === "medium") medium++;
-                else if (d === "Hard" || d === "hard") hard++;
-                else easy++;
-              });
-              setDsaStats({ easy, medium, hard, total: solvedArr.length });
-            } catch (e) { }
-          }
-        };
-        fetchDsaStats();
-      }, 0);
-
-      // Load test statistics
-      setTimeout(() => {
-        if (user?.email) {
-          try {
-            const allScores = JSON.parse(localStorage.getItem("all_student_scores") || "[]");
-            const myScores = allScores.filter((s: any) => s.studentEmail === user.email);
-            let totalCorrect = 0;
-            let totalAttempted = 0;
-            myScores.forEach((s: any) => {
-              totalCorrect += (s.score || 0);
-              const testResult = localStorage.getItem(`testResult_${s.testId}`);
-              if (testResult) {
-                const parsedResult = JSON.parse(testResult);
-                if (parsedResult.selectedAnswers) {
-                  totalAttempted += Object.keys(parsedResult.selectedAnswers).length;
-                } else {
-                  totalAttempted += (s.totalQuestions || 0);
-                }
-              } else {
-                totalAttempted += (s.totalQuestions || 0);
-              }
-            });
-            setTestStats({ attempted: totalAttempted, correct: totalCorrect });
-          } catch (e) { }
-        }
-      }, 0);
-
-      // Load aptitude (MCQ) statistics
-      setTimeout(() => {
-        if (user?.email) {
-          try {
-            const key = `aptitude_analytics_${user.email.toLowerCase()}`;
-            const saved = JSON.parse(localStorage.getItem(key) || "[]");
-            let correctCount = 0;
-            saved.forEach((q: any) => {
-              if (q.correct) correctCount++;
-            });
-            setMcqStats({ attempted: saved.length, correct: correctCount });
-          } catch (e) { }
-        }
-      }, 0);
-
-      // Load User Rank
-      setTimeout(() => {
-        if (user?.email) {
-          try {
-            const allScores = JSON.parse(localStorage.getItem("all_student_scores") || "[]");
-            const studentTotals: Record<string, { score: number }> = {};
-            
-            allScores.forEach((s: any) => {
-              const email = s.studentEmail || s.studentName;
-              if (email) {
-                if (!studentTotals[email]) {
-                  studentTotals[email] = { score: 0 };
-                }
-                studentTotals[email].score += (Number(s.score) || 0);
-              }
-            });
-            
-            if (!studentTotals[user.email]) {
-              studentTotals[user.email] = { score: 0 };
-            }
-
-            const sortedEmails = Object.keys(studentTotals).sort((a, b) => studentTotals[b].score - studentTotals[a].score);
-            const myRankIndex = sortedEmails.indexOf(user.email);
-            
-            setUserRank(myRankIndex !== -1 ? myRankIndex + 1 : null);
-          } catch (e) { }
-        }
-      }, 0);
-
-      // Load trainer ID
-      setTimeout(() => {
-        if (user?.role === "INSTRUCTOR") {
-          const savedColleges = localStorage.getItem("admin_colleges_v2");
-          if (savedColleges) {
-            try {
-              const colleges = JSON.parse(savedColleges);
-              for (const college of colleges) {
-                const tutor = college.tutors.find((t: any) => t.email === user.email);
-                if (tutor && tutor.trainerId) {
-                  setTrainerId(tutor.trainerId);
-                  break;
-                }
-              }
-            } catch (e) { }
-          }
-        }
-      }, 0);
-
-      // Fetch MCQ total from database
-      setTimeout(() => {
-        const fetchDbStats = async () => {
-          try {
-            const token = localStorage.getItem('accessToken');
-            if (token) {
-              const res = await axios.get(getApiUrl('/api/v1/auth/dashboard-stats'), {
-                headers: { Authorization: `Bearer ${token}` }
-              });
-              if (res.data && res.data.mcq && res.data.mcq.total) {
-                setMcqTotal(res.data.mcq.total);
-              }
-            }
-          } catch (e) {
-            console.error("Failed to fetch dashboard stats from DB", e);
-          }
-        };
-        fetchDbStats();
-      }, 0);
-    };
-    loadData();
-    window.addEventListener("storage", loadData);
-    return () => window.removeEventListener("storage", loadData);
-  }, [user]);
-
-  const cancelRegistration = (index: number) => {
-    if (window.confirm("Are you sure you want to cancel this registration?")) {
-      const updated = [...enrollments];
-      const canceled = updated.splice(index, 1)[0];
-      setEnrollments(updated);
+  // Use React Query for data fetching to prevent main thread blocking and get caching
+  const { data: enrollmentsData = [] } = useQuery({
+    queryKey: ['enrollments', user?.email],
+    queryFn: async () => {
+      if (!user?.email) return [];
       const existingStr = localStorage.getItem("enrolledCourses");
-      if (existingStr) {
-        const parsed = JSON.parse(existingStr);
-        const newParsed = parsed.filter((e: any) =>
-          !(e.courseId === canceled.courseId &&
-            (e.email?.toLowerCase().trim() === user?.email?.toLowerCase().trim() || e.accountEmail?.toLowerCase().trim() === user?.email?.toLowerCase().trim()))
-        );
-        localStorage.setItem("enrolledCourses", JSON.stringify(newParsed));
+      if (!existingStr) return [];
+      
+      const parsed = JSON.parse(existingStr);
+      const bestEnrollments = new Map();
+      for (const e of parsed) {
+        const matchEmail = e.email?.toLowerCase().trim() === user.email?.toLowerCase().trim();
+        const matchAccountEmail = e.accountEmail?.toLowerCase().trim() === user.email?.toLowerCase().trim();
+        if (matchEmail || matchAccountEmail) {
+          const existing = bestEnrollments.get(e.courseId);
+          if (!existing) {
+            bestEnrollments.set(e.courseId, e);
+          } else {
+            const isPaid = (status: string) => ["PAID", "completed", "active", "Success"].includes(status);
+            const existingPaid = isPaid(existing.status);
+            const currentPaid = isPaid(e.status);
+            if (currentPaid && !existingPaid) {
+              bestEnrollments.set(e.courseId, e);
+            } else if (currentPaid === existingPaid) {
+              bestEnrollments.set(e.courseId, e);
+            }
+          }
+        }
       }
-    }
-  };
+      return Array.from(bestEnrollments.values()).sort((a: any, b: any) =>
+        new Date(b.dateRegistered).getTime() - new Date(a.dateRegistered).getTime()
+      );
+    },
+    enabled: !!user?.email
+  });
 
+  const { data: courseSettings = {} } = useQuery({
+    queryKey: ['courseSettings'],
+    queryFn: async () => {
+      const settingsStr = localStorage.getItem("courseSettings");
+      return settingsStr ? JSON.parse(settingsStr) : {};
+    }
+  });
+
+  const { data: dsaStats = { easy: 0, medium: 0, hard: 0, total: 0 } } = useQuery({
+    queryKey: ['dsaStats', user?.email],
+    queryFn: async () => {
+      if (!user?.email) return { easy: 0, medium: 0, hard: 0, total: 0 };
+      const solvedStr = localStorage.getItem(`solved_problems_progress_${user.email}`);
+      if (!solvedStr) return { easy: 0, medium: 0, hard: 0, total: 0 };
+      
+      const solvedArr = JSON.parse(solvedStr);
+      let easy = 0, medium = 0, hard = 0;
+      solvedArr.forEach((qId: string) => {
+        const d = localStorage.getItem(`q_difficulty_${qId}`);
+        if (d === "Easy" || d === "easy") easy++;
+        else if (d === "Medium" || d === "medium") medium++;
+        else if (d === "Hard" || d === "hard") hard++;
+        else easy++;
+      });
+      return { easy, medium, hard, total: solvedArr.length };
+    },
+    enabled: !!user?.email
+  });
+
+  const { data: testStats = { attempted: 0, correct: 0 } } = useQuery({
+    queryKey: ['testStats', user?.email],
+    queryFn: async () => {
+      if (!user?.email) return { attempted: 0, correct: 0 };
+      const allScores = JSON.parse(localStorage.getItem("all_student_scores") || "[]");
+      const myScores = allScores.filter((s: any) => s.studentEmail === user.email);
+      let totalCorrect = 0;
+      let totalAttempted = 0;
+      myScores.forEach((s: any) => {
+        totalCorrect += (s.score || 0);
+        const testResult = localStorage.getItem(`testResult_${s.testId}`);
+        if (testResult) {
+          const parsedResult = JSON.parse(testResult);
+          if (parsedResult.selectedAnswers) {
+            totalAttempted += Object.keys(parsedResult.selectedAnswers).length;
+          } else {
+            totalAttempted += (s.totalQuestions || 0);
+          }
+        } else {
+          totalAttempted += (s.totalQuestions || 0);
+        }
+      });
+      return { attempted: totalAttempted, correct: totalCorrect };
+    },
+    enabled: !!user?.email
+  });
+
+  const { data: mcqStats = { attempted: 0, correct: 0 } } = useQuery({
+    queryKey: ['mcqStats', user?.email],
+    queryFn: async () => {
+      if (!user?.email) return { attempted: 0, correct: 0 };
+      const key = `aptitude_analytics_${user.email.toLowerCase()}`;
+      const saved = JSON.parse(localStorage.getItem(key) || "[]");
+      let correctCount = 0;
+      saved.forEach((q: any) => {
+        if (q.correct) correctCount++;
+      });
+      return { attempted: saved.length, correct: correctCount };
+    },
+    enabled: !!user?.email
+  });
+
+  const { data: userRank = null } = useQuery({
+    queryKey: ['userRank', user?.email],
+    queryFn: async () => {
+      if (!user?.email) return null;
+      const allScores = JSON.parse(localStorage.getItem("all_student_scores") || "[]");
+      const studentTotals: Record<string, { score: number }> = {};
+      
+      allScores.forEach((s: any) => {
+        const email = s.studentEmail || s.studentName;
+        if (email) {
+          if (!studentTotals[email]) {
+            studentTotals[email] = { score: 0 };
+          }
+          studentTotals[email].score += (Number(s.score) || 0);
+        }
+      });
+      
+      if (!studentTotals[user.email]) {
+        studentTotals[user.email] = { score: 0 };
+      }
+
+      const sortedEmails = Object.keys(studentTotals).sort((a, b) => studentTotals[b].score - studentTotals[a].score);
+      const myRankIndex = sortedEmails.indexOf(user.email);
+      
+      return myRankIndex !== -1 ? myRankIndex + 1 : null;
+    },
+    enabled: !!user?.email
+  });
+
+  const { data: trainerId = null } = useQuery({
+    queryKey: ['trainerId', user?.email],
+    queryFn: async () => {
+      if (user?.role !== "INSTRUCTOR") return null;
+      const savedColleges = localStorage.getItem("admin_colleges_v2");
+      if (savedColleges) {
+        const colleges = JSON.parse(savedColleges);
+        for (const college of colleges) {
+          const tutor = college.tutors?.find((t: any) => t.email === user?.email);
+          if (tutor && tutor.trainerId) {
+            return tutor.trainerId;
+          }
+        }
+      }
+      return null;
+    },
+    enabled: user?.role === "INSTRUCTOR"
+  });
+
+  const { data: mcqTotal = 0 } = useQuery({
+    queryKey: ['mcqTotal'],
+    queryFn: async () => {
+      const token = localStorage.getItem('accessToken');
+      if (!token) return 0;
+      const res = await axios.get(getApiUrl('/api/v1/auth/dashboard-stats'), {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      return res.data?.mcq?.total || 0;
+    }
+  });
+
+  // Actions
   const handleGenerateSubmit = () => {
     if (!certNameInput.trim()) return;
     const idx = generatingCertIdx;
@@ -239,22 +212,19 @@ export default function Dashboard() {
     const randomPart = Math.random().toString(36).substring(2, 6).toUpperCase();
     const newCertId = `CS-${datePart}-${randomPart}`;
 
-    const updated = [...enrollments];
-    updated[idx].certificateName = certNameInput;
-    updated[idx].certificateId = newCertId;
-    setEnrollments(updated);
-
     const existingStr = localStorage.getItem("enrolledCourses");
     if (existingStr) {
       const parsed = JSON.parse(existingStr);
       const globalIndex = parsed.findIndex((e: any) =>
-        e.courseId === updated[idx].courseId &&
+        e.courseId === enrollmentsData[idx].courseId &&
         (e.email?.toLowerCase().trim() === user?.email?.toLowerCase().trim() || e.accountEmail?.toLowerCase().trim() === user?.email?.toLowerCase().trim())
       );
       if (globalIndex > -1) {
         parsed[globalIndex].certificateName = certNameInput;
         parsed[globalIndex].certificateId = newCertId;
         localStorage.setItem("enrolledCourses", JSON.stringify(parsed));
+        // Note: we ideally invalidate queries here, but to avoid prop drilling the client, we'll reload or let the user refresh.
+        window.location.reload(); 
       }
     }
     setGeneratingCertIdx(null);
@@ -288,26 +258,32 @@ export default function Dashboard() {
   return (
     <DashboardLayout>
       <div className="space-y-8 pb-12">
-        {/* Top Banner */}
-        <WelcomeBanner solvedCount={solvedCount} totalCount={100} userRank={userRank} />
+        {/* Top Banner - Eager loaded */}
+        <WelcomeBanner solvedCount={dsaStats.total} totalCount={100} userRank={userRank} />
 
-        {/* Analytics Section - Visible to all roles */}
-        <AnalyticsCharts dsaStats={dsaStats} testStats={testStats} mcqTotal={mcqTotal} mcqStats={mcqStats} />
+        {/* Analytics Section - Lazy loaded */}
+        <Suspense fallback={<ChartSkeleton />}>
+          <AnalyticsCharts dsaStats={dsaStats} testStats={testStats} mcqTotal={mcqTotal} mcqStats={mcqStats} />
+        </Suspense>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
           {/* Left Column: Activity & Courses */}
           <div className="xl:col-span-2 space-y-8">
-            <ActivitySection 
-              enrollments={enrollments} 
-              onGenerateCert={(idx, name) => { setGeneratingCertIdx(idx); setCertNameInput(name); }} 
-              onViewCert={setSelectedCert} 
-            />
+            <Suspense fallback={<ActivitySkeleton />}>
+              <ActivitySection 
+                enrollments={enrollmentsData} 
+                onGenerateCert={(idx: number, name: string) => { setGeneratingCertIdx(idx); setCertNameInput(name); }} 
+                onViewCert={setSelectedCert} 
+              />
+            </Suspense>
           </div>
 
           {/* Right Column: Calendar & Performance */}
           <div className="space-y-8">
             {(!user?.role || user?.role === "STUDENT") && (
-              <StudentPerformance />
+              <Suspense fallback={<ActivitySkeleton />}>
+                <StudentPerformance />
+              </Suspense>
             )}
           </div>
         </div>

@@ -13,7 +13,9 @@ const allowedOrigins = [
   ...getFrontendUrls(),
   "http://localhost:5173",
   "http://localhost:3000",
-  "https://codeskill.vercel.app" // Main intended production URL
+  "https://codeskill.vercel.app",
+  "https://frontend-react-4npwrt5dk-saurabh15.vercel.app",
+  // Main intended production URL
 ].filter(Boolean) as string[];
 
 export const corsOptions: CorsOptions = {

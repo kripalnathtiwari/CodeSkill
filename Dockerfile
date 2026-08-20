@@ -31,4 +31,4 @@ COPY --from=builder /usr/src/app/backend/dist ./backend/dist
 ENV PATH="/usr/src/app/node_modules/.bin:/usr/src/app/backend/node_modules/.bin:${PATH}"
 EXPOSE 5000
 
-CMD ["sh", "-c", "npx prisma db push --schema=backend/prisma/schema.prisma --accept-data-loss && node backend/dist/src/app.js"]
+CMD ["sh", "-c", "npx prisma db push --schema=backend/prisma/schema.prisma --accept-data-loss && node backend/dist/app.js"]

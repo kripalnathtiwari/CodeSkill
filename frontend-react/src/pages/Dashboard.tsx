@@ -1,5 +1,4 @@
 import React, { useState, lazy, Suspense } from "react";
-import { Link } from "react-router-dom";
 import axios from "axios";
 import { Award, BookOpen, Lock } from "lucide-react";
 import CertificateModal from "../components/CertificateModal";
@@ -64,8 +63,8 @@ export default function Dashboard() {
           }
         }
       }
-      return Array.from(bestEnrollments.values()).sort((a: any, b: any) =>
-        new Date(b.dateRegistered).getTime() - new Date(a.dateRegistered).getTime()
+      return Array.from(bestEnrollments.values()).sort((a: { dateRegistered?: string }, b: { dateRegistered?: string }) =>
+        new Date(b.dateRegistered || "").getTime() - new Date(a.dateRegistered || "").getTime()
       );
     },
     enabled: !!user?.email
@@ -105,10 +104,10 @@ export default function Dashboard() {
     queryFn: async () => {
       if (!user?.email) return { attempted: 0, correct: 0 };
       const allScores = JSON.parse(localStorage.getItem("all_student_scores") || "[]");
-      const myScores = allScores.filter((s: any) => s.studentEmail === user.email);
+      const myScores = allScores.filter((s: { studentEmail?: string }) => s.studentEmail === user.email);
       let totalCorrect = 0;
       let totalAttempted = 0;
-      myScores.forEach((s: any) => {
+      myScores.forEach((s: { score?: number, testId?: string, totalQuestions?: number }) => {
         totalCorrect += (s.score || 0);
         const testResult = localStorage.getItem(`testResult_${s.testId}`);
         if (testResult) {
@@ -134,7 +133,7 @@ export default function Dashboard() {
       const key = `aptitude_analytics_${user.email.toLowerCase()}`;
       const saved = JSON.parse(localStorage.getItem(key) || "[]");
       let correctCount = 0;
-      saved.forEach((q: any) => {
+      saved.forEach((q: { correct?: boolean }) => {
         if (q.correct) correctCount++;
       });
       return { attempted: saved.length, correct: correctCount };
@@ -149,7 +148,7 @@ export default function Dashboard() {
       const allScores = JSON.parse(localStorage.getItem("all_student_scores") || "[]");
       const studentTotals: Record<string, { score: number }> = {};
       
-      allScores.forEach((s: any) => {
+      allScores.forEach((s: { studentEmail?: string, studentName?: string, score?: string | number }) => {
         const email = s.studentEmail || s.studentName;
         if (email) {
           if (!studentTotals[email]) {
@@ -179,7 +178,7 @@ export default function Dashboard() {
       if (savedColleges) {
         const colleges = JSON.parse(savedColleges);
         for (const college of colleges) {
-          const tutor = college.tutors?.find((t: any) => t.email === user?.email);
+          const tutor = college.tutors?.find((t: { email?: string, trainerId?: string }) => t.email === user?.email);
           if (tutor && tutor.trainerId) {
             return tutor.trainerId;
           }
@@ -215,7 +214,7 @@ export default function Dashboard() {
     const existingStr = localStorage.getItem("enrolledCourses");
     if (existingStr) {
       const parsed = JSON.parse(existingStr);
-      const globalIndex = parsed.findIndex((e: any) =>
+      const globalIndex = parsed.findIndex((e: { courseId?: string, email?: string, accountEmail?: string }) =>
         e.courseId === enrollmentsData[idx].courseId &&
         (e.email?.toLowerCase().trim() === user?.email?.toLowerCase().trim() || e.accountEmail?.toLowerCase().trim() === user?.email?.toLowerCase().trim())
       );

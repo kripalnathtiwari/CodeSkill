@@ -39,6 +39,7 @@ const CVBuilder = lazy(() => import('./pages/CVBuilder'));
 const CVTemplates = lazy(() => import('./pages/CVTemplates'));
 const ATSChecker = lazy(() => import('./pages/ATSChecker'));
 const Jobs = lazy(() => import('./pages/Jobs'));
+const TestSeries = lazy(() => import('./pages/TestSeries'));
 
 function AppContent() {
   const location = useLocation();

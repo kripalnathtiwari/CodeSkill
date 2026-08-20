@@ -330,7 +330,7 @@ export default function TestSeries() {
 
   // Filtered companies for directory grid
   const filteredTests = useMemo(() => {
-    return testList.filter((company) => {
+    return testList.filter((test) => {
       const matchCategory = selectedCategory === "All" || test.category === selectedCategory;
       const matchSearch =
         !searchQuery ||
@@ -435,7 +435,7 @@ export default function TestSeries() {
                 No tests found matching your filter.
               </div>
             ) : (
-              filteredTests.map((company) => (
+              filteredTests.map((test) => (
                 <div
                   key={test.name}
                   className="bg-surface dark:bg-background rounded-2xl border border-border dark:border-border/80 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between overflow-hidden"

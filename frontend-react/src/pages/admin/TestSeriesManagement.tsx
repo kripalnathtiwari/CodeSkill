@@ -119,7 +119,7 @@ export default function TestSeriesManagement() {
 
   // Company Form state
   const [newTestName, setNewCompanyName] = useState("");
-  const [newTestCategory (Optional), setNewCompanyCategory (Optional)] = useState<"Product Based" | "Service Based" | "Fintech" | "Startups">("Product Based");
+  const [newTestCategory, setNewCompanyCategory] = useState<"Product Based" | "Service Based" | "Fintech" | "Startups">("Product Based");
   const [newTestLogoUrl, setNewCompanyLogoUrl] = useState("");
 
 
@@ -271,7 +271,7 @@ export default function TestSeriesManagement() {
     }
     const newComp: TestCardData = {
       name: newTestName.trim(),
-      category: newTestCategory (Optional),
+      category: newTestCategory,
       iconType: "default",
       logoUrl: newTestLogoUrl.trim() || undefined
     };
@@ -806,8 +806,8 @@ export default function TestSeriesManagement() {
                   Category (Optional)
                 </label>
                 <select
-                  value={newTestCategory (Optional)}
-                  onChange={(e) => setNewCompanyCategory (Optional)(e.target.value as any)}
+                  value={newTestCategory}
+                  onChange={(e) => setNewCompanyCategory(e.target.value as any)}
                   className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-inverse focus:outline-none focus:border-rose-500"
                 >
                   <option value="Product Based">Product Based</option>

@@ -27,6 +27,7 @@ export default function TakeTest() {
   const { user, token } = useAuth();
 
   const testQuestions = React.useMemo(() => {
+    // 1. Try to fetch from old Test Management logic
     const saved = localStorage.getItem("admin_custom_tests");
     if (saved && id) {
       const tests = JSON.parse(saved);
@@ -35,6 +36,26 @@ export default function TakeTest() {
         return customTest.questions;
       }
     }
+
+    // 2. Try to fetch from new Test Series logic
+    const testSeriesRaw = localStorage.getItem("admin_test_series_problems");
+    if (testSeriesRaw && id) {
+      const allProblems = JSON.parse(testSeriesRaw);
+      const matched = allProblems.filter((q: any) => {
+        const tags = q.testSeriesTags || q.testSeries || [];
+        return tags.some((t: any) => (t.name || t).toLowerCase() === id.toLowerCase());
+      });
+      if (matched.length > 0) {
+        return matched.map((q: any) => ({
+          id: q._id || q.id,
+          text: q.title || q.statement,
+          options: [q.options?.A, q.options?.B, q.options?.C, q.options?.D].filter(Boolean),
+          answer: q.options?.[q.correctOption] || q.options?.A
+        }));
+      }
+    }
+
+    // 3. Fallback
     return PYTHON_QUESTIONS;
   }, [id]);
   

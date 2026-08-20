@@ -66,8 +66,8 @@ function AppContent() {
             <Route path="/problems/:tag" element={<TagProblems />} />
             <Route path="/aptitude" element={<Aptitude />} />
             <Route path="/aptitude/topic/:topic" element={<AptitudeTopic />} />
-            <Route path="/company-problems" element={<CompanyProblems />} />
             <Route path="/company-preparation" element={<CompanyProblems />} />
+            <Route path="/test-series" element={<TestSeries />} />
             <Route path="/courses-training" element={<CoursesTraining />} />
             <Route path="/course/:id" element={<CourseDetails />} />
             <Route path="/register/:id" element={<ProtectedRoute><CourseRegistration /></ProtectedRoute>} />

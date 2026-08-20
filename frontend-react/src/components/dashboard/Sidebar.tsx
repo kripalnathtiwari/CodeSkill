@@ -8,10 +8,10 @@ import {
   Briefcase,
   Settings,
   LogOut,
-  Target
+  Target,
+  Menu
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import toggleLogo from '../../assets/toggle-logo.svg';
 
 const NAV_ITEMS = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -35,7 +35,7 @@ export default function Sidebar() {
           <span>CodeSkill</span>
         </Link>
         <button onClick={() => setIsCollapsed(!isCollapsed)} className="p-2 rounded-lg hover:bg-background text-text-secondary flex-shrink-0 mx-auto">
-          <img src={toggleLogo} alt="Toggle Sidebar" className="h-5 w-5" />
+          <Menu className="h-5 w-5" />
         </button>
       </div>
 

@@ -1,8 +1,16 @@
 import { CorsOptions } from "cors";
 import logger from "./logger";
 
+const getFrontendUrls = () => {
+  const url = process.env.FRONTEND_URL;
+  if (!url) return [];
+  // Split by comma in case multiple URLs are provided in FRONTEND_URL
+  return url.split(",").map((u) => u.
+  trim());
+};
+
 const allowedOrigins = [
-  process.env.FRONTEND_URL,
+  ...getFrontendUrls(),
   "http://localhost:5173",
   "http://localhost:3000",
   "https://codeskill.vercel.app" // Main intended production URL
@@ -20,11 +28,11 @@ export const corsOptions: CorsOptions = {
       return callback(null, true);
     }
 
-    // 3. Strict validation for Vercel preview URLs specific to this project
+    // 3. Relaxed validation for Vercel preview URLs to allow any vercel deployment for this project
     // Examples:
     // https://frontend-react-i8vluda9w-saurabh15.vercel.app
-    // https://frontend-react-[hash]-saurabh15.vercel.app
-    const isAllowedVercelPreview = /^https:\/\/frontend-react-[a-z0-9-]+-saurabh15\.vercel\.app$/.test(origin);
+    // https://frontend-react-ecru-six.vercel.app
+    const isAllowedVercelPreview = origin.endsWith(".vercel.app") || origin.endsWith(".railway.app");
 
     if (isAllowedVercelPreview) {
       return callback(null, true);

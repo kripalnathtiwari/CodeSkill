@@ -43,16 +43,24 @@ initSocketServer(server);
 
 // Security and Logging middleware
 app.use(helmet());
+// Prevent proxy caching of CORS preflight requests
+app.use((req, res, next) => {
+  res.setHeader("Vary", "Origin");
+  if (req.method === "OPTIONS") {
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, proxy-revalidate");
+  }
+  next();
+});
+
 app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "http://localhost:3000",
-    "https://codeskill.vercel.app",
-    /\.vercel\.app$/
-  ],
+  origin: function (origin, callback) {
+    // Reflect the requested origin dynamically to prevent CORS mismatches
+    // Allow all origins since Vercel generates unique subdomains for preview deployments
+    callback(null, origin || true);
+  },
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
 }));
 app.use(express.json());
 app.use(compression());

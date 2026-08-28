@@ -38,16 +38,18 @@ export default function TakeTest() {
     }
 
     // 2. Try to fetch from new Test Series logic
-    const testSeriesRaw = localStorage.getItem("admin_test_series_problems");
+    const testSeriesRaw = localStorage.getItem("admin_custom_interview_problems");
     if (testSeriesRaw && id) {
       const allProblems = JSON.parse(testSeriesRaw);
       const matched = allProblems.filter((q: any) => {
         const tags = q.testSeriesTags || q.testSeries || [];
-        return tags.some((t: any) => (t.name || t).toLowerCase() === id.toLowerCase());
+        const isMatch = tags.some((t: any) => (t.name || t).toLowerCase() === id.toLowerCase());
+        const isMcq = q.questionType === "MCQ" || q.type === "MCQ";
+        return isMatch && isMcq;
       });
       if (matched.length > 0) {
         return matched.map((q: any) => ({
-          id: q._id || q.id,
+          id: q._id || q.id || Math.random().toString(),
           text: q.title || q.statement,
           options: [q.options?.A, q.options?.B, q.options?.C, q.options?.D].filter(Boolean),
           answer: q.options?.[q.correctOption] || q.options?.A

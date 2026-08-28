@@ -103,6 +103,16 @@ export default function InterviewManagement() {
 
   // Selected Company for managing its questions (null = directory view)
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
+  
+  // Level 3 Selected Test Series
+  const [selectedTestSeries, setSelectedTestSeries] = useState<string | null>(null);
+
+  // Test Series Form state
+  const [showAddTestSeriesModal, setShowAddTestSeriesModal] = useState(false);
+  const [newTestSeriesName, setNewTestSeriesName] = useState("");
+
+  // Custom Test Series stored in localStorage
+  const [customTestSeries, setCustomTestSeries] = useState<{companyName: string, name: string}[]>([]);
 
   // Search filter states
   const [searchCompanyQuery, setSearchCompanyQuery] = useState("");
@@ -178,6 +188,11 @@ export default function InterviewManagement() {
         });
 
         // Add locally stored custom companies
+        const savedTS = localStorage.getItem("admin_company_test_series");
+        if (savedTS) {
+          setCustomTestSeries(JSON.parse(savedTS));
+        }
+        
         const savedCompanies = localStorage.getItem("admin_custom_companies");
         if (savedCompanies) {
           const parsed = JSON.parse(savedCompanies);
@@ -251,11 +266,57 @@ export default function InterviewManagement() {
     }
   };
 
-  const companyQuestions = problems;
+  const level2Items = useMemo(() => {
+    const tsItems = customTestSeries
+      .filter(ts => ts.companyName === selectedCompany)
+      .map(ts => ({
+        _id: `ts-${ts.name}`,
+        id: `ts-${ts.name}`,
+        title: ts.name,
+        type: "INTERVIEW",
+        questionType: "TEST_SERIES",
+        difficulty: "N/A",
+        topicTags: [],
+        isTestSeries: true
+      }));
+
+    const standaloneCoding = problems.filter(q => 
+      (q.questionType === "CODING" || q.type === "CODING") && 
+      !(q.testSeriesTags && q.testSeriesTags.length > 0)
+    );
+
+    return [...tsItems, ...standaloneCoding];
+  }, [customTestSeries, problems, selectedCompany]);
+
+  const level3Items = useMemo(() => {
+    return problems.filter(q => 
+      q.testSeriesTags?.some((t: any) => t.name === selectedTestSeries)
+    );
+  }, [problems, selectedTestSeries]);
+
+  const companyQuestions = selectedTestSeries ? level3Items : level2Items;
 
   // We skip detailed counts in directory view for performance.
   const getCompanyStats = (companyName: string) => {
     return { mcqCount: "N/A", codingCount: "N/A", totalCount: "N/A" };
+  };
+
+  // Handle saving a new test series
+  const handleAddTestSeries = () => {
+    if (!newTestSeriesName.trim() || !selectedCompany) {
+      alert("Please enter a test series name!");
+      return;
+    }
+    const exists = customTestSeries.some(ts => ts.companyName === selectedCompany && ts.name.toLowerCase() === newTestSeriesName.trim().toLowerCase());
+    if (exists) {
+      alert("This test series already exists for this company!");
+      return;
+    }
+    const updated = [...customTestSeries, { companyName: selectedCompany, name: newTestSeriesName.trim() }];
+    setCustomTestSeries(updated);
+    localStorage.setItem("admin_company_test_series", JSON.stringify(updated));
+    setNewTestSeriesName("");
+    setShowAddTestSeriesModal(false);
   };
 
   // Handle saving a new custom company
@@ -386,6 +447,7 @@ export default function InterviewManagement() {
       topicTags: mcqTopics.split(",").map(t => ({ name: t.trim() })).filter(t => t.name),
       companyTags: [{ name: selectedCompany }],
       companies: [{ name: selectedCompany }],
+      testSeriesTags: selectedTestSeries ? [{ name: selectedTestSeries }] : [],
       options: {
         A: optionA.trim(),
         B: optionB.trim(),
@@ -441,6 +503,7 @@ export default function InterviewManagement() {
       topicTags: codingTopics.split(",").map(t => ({ name: t.trim() })).filter(t => t.name),
       companyTags: [{ name: selectedCompany }],
       companies: [{ name: selectedCompany }],
+      testSeriesTags: selectedTestSeries ? [{ name: selectedTestSeries }] : [],
       content: codingDescription.trim(),
       constraints: codingConstraints.split("\n").filter(Boolean),
       examples: codingExamples,
@@ -598,16 +661,16 @@ export default function InterviewManagement() {
           )}
         </>
       ) : (
-        /* LEVEL 2: INSIDE SELECTED COMPANY -> ADD & MANAGE QUESTIONS (MCQ / CODING) */
+        /* LEVEL 2 & 3 */
         <>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
             <div className="space-y-2">
               <button
-                onClick={() => setSelectedCompany(null)}
+                onClick={() => selectedTestSeries ? setSelectedTestSeries(null) : setSelectedCompany(null)}
                 className="inline-flex items-center space-x-2 text-xs font-semibold text-text-muted hover:text-text-inverse transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span>Back to Companies List</span>
+                <span>{selectedTestSeries ? "Back to " + selectedCompany + " Test Series" : "Back to Companies List"}</span>
               </button>
               <div className="flex items-center space-x-3">
                 <h1 className="text-2xl font-bold text-text-inverse flex items-center">
@@ -617,27 +680,39 @@ export default function InterviewManagement() {
                     logoUrl={allCompaniesState.find(c => c.name.toLowerCase() === selectedCompany.toLowerCase())?.logoUrl}
                   />
                   <span className="ml-3 text-xs px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20">
-                    Interview Preparation
+                    {selectedTestSeries ? `${selectedTestSeries}` : "Interview Preparation"}
                   </span>
                 </h1>
               </div>
               <p className="text-sm text-text-muted">
-                Add and manage MCQ questions or Coding problems specifically for {selectedCompany}.
+                {selectedTestSeries 
+                  ? `Add and manage MCQ questions or Coding problems specifically for ${selectedTestSeries}.`
+                  : `Manage Test Series and Coding problems for ${selectedCompany}.`}
               </p>
             </div>
 
-            {/* Action buttons for MCQ & Coding */}
+            {/* Action buttons */}
             <div className="flex flex-wrap items-center gap-3">
-              <button
-                onClick={() => {
-                  resetMCQForm();
-                  setShowAddMCQModal(true);
-                }}
-                className="inline-flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 text-text-inverse font-semibold px-4 py-2.5 rounded-xl shadow-lg shadow-purple-600/20 transition-all text-sm"
-              >
-                <HelpCircle className="w-4 h-4" />
-                <span>+ Add MCQ Question</span>
-              </button>
+              {selectedTestSeries ? (
+                <button
+                  onClick={() => {
+                    resetMCQForm();
+                    setShowAddMCQModal(true);
+                  }}
+                  className="inline-flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 text-text-inverse font-semibold px-4 py-2.5 rounded-xl shadow-lg shadow-purple-600/20 transition-all text-sm"
+                >
+                  <HelpCircle className="w-4 h-4" />
+                  <span>+ Add MCQ Question</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => setShowAddTestSeriesModal(true)}
+                  className="inline-flex items-center space-x-2 bg-rose-600 hover:bg-rose-700 text-text-inverse font-semibold px-4 py-2.5 rounded-xl shadow-lg shadow-rose-600/20 transition-all text-sm"
+                >
+                  <Layers className="w-4 h-4" />
+                  <span>+ Add Test Series</span>
+                </button>
+              )}
 
               <button
                 onClick={() => {
@@ -699,10 +774,12 @@ export default function InterviewManagement() {
                         : (q.topicTags ? q.topicTags.split(",") : []);
 
                       return (
-                        <tr key={q._id || q.id} className="hover:bg-slate-800/40 transition-colors">
+                        <tr key={q._id || q.id} className="hover:bg-slate-800/40 transition-colors cursor-pointer" onClick={() => { if (q.isTestSeries) setSelectedTestSeries(q.title) }}>
                           <td className="px-6 py-4 font-medium text-text-inverse">
                             <div className="flex items-center space-x-2">
-                              {isMcq ? (
+                              {q.isTestSeries ? (
+                                <Layers className="w-4 h-4 text-rose-400 shrink-0" />
+                              ) : isMcq ? (
                                 <HelpCircle className="w-4 h-4 text-purple-400 shrink-0" />
                               ) : (
                                 <Code2 className="w-4 h-4 text-primary shrink-0" />
@@ -711,7 +788,11 @@ export default function InterviewManagement() {
                             </div>
                           </td>
                           <td className="px-6 py-4">
-                            {isMcq ? (
+                            {q.isTestSeries ? (
+                              <span className="text-xs px-2.5 py-1 rounded-md bg-rose-500/10 text-rose-400 font-semibold border border-rose-500/20">
+                                Test Series
+                              </span>
+                            ) : isMcq ? (
                               <span className="text-xs px-2.5 py-1 rounded-md bg-purple-500/10 text-purple-400 font-semibold border border-purple-500/20">
                                 MCQ
                               </span>
@@ -746,20 +827,20 @@ export default function InterviewManagement() {
                           </td>
                           <td className="px-6 py-4 text-right">
                             <div className="flex items-center justify-end space-x-2">
-                              <button
-                                onClick={() => handleOpenEditProblem(q)}
+                              {!q.isTestSeries && <button
+                                onClick={(e) => { e.stopPropagation(); handleOpenEditProblem(q); }}
                                 className="p-1.5 text-text-muted hover:text-primary hover:bg-slate-800 rounded-lg transition-colors"
                                 title="Edit Question"
                               >
                                 <Edit className="w-4 h-4" />
-                              </button>
-                              <button
-                                onClick={() => setDeleteConfirmId(q._id || q.id)}
+                              </button>}
+                              {!q.isTestSeries && <button
+                                onClick={(e) => { e.stopPropagation(); setDeleteConfirmId(q._id || q.id); }}
                                 className="p-1.5 text-text-muted hover:text-rose-400 hover:bg-slate-800 rounded-lg transition-colors"
                                 title="Delete Question"
                               >
                                 <Trash2 className="w-4 h-4" />
-                              </button>
+                              </button>}
                             </div>
                           </td>
                         </tr>
@@ -771,6 +852,53 @@ export default function InterviewManagement() {
             </div>
           </div>
         </>
+      )}
+
+
+      {showAddTestSeriesModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+          <div className="bg-slate-900 border border-border rounded-2xl max-w-md w-full p-6 space-y-6 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-border pb-4">
+              <h3 className="text-lg font-bold text-text-inverse flex items-center">
+                <Layers className="w-5 h-5 mr-2 text-rose-500" />
+                Add Test Series
+              </h3>
+              <button onClick={() => setShowAddTestSeriesModal(false)} className="text-text-muted hover:text-text-inverse">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold uppercase text-text-muted mb-1.5">
+                  Test Series Name
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Mock Test 1"
+                  value={newTestSeriesName}
+                  onChange={(e) => setNewTestSeriesName(e.target.value)}
+                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-inverse focus:outline-none focus:border-rose-500"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end space-x-3 pt-4 border-t border-border">
+              <button
+                onClick={() => setShowAddTestSeriesModal(false)}
+                className="px-4 py-2 text-sm font-semibold text-text-muted hover:text-text-inverse transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAddTestSeries}
+                className="bg-rose-600 hover:bg-rose-700 text-text-inverse font-semibold px-6 py-2 rounded-xl transition-all shadow-lg shadow-rose-600/20"
+              >
+                Save Test Series
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* MODAL: ADD COMPANY */}

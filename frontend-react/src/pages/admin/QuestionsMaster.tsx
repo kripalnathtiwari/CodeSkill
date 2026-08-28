@@ -4,7 +4,6 @@ import ProblemManagement from "./ProblemManagement";
 import InterviewManagement from "./InterviewManagement";
 import AptitudeManagement from "./AptitudeManagement";
 import OtherPracticeManagement from "./OtherPracticeManagement";
-import TestSeriesManagement from "./TestSeriesManagement";
 import { FolderGit2 } from "lucide-react";
 
 export default function QuestionsMaster() {
@@ -61,17 +60,6 @@ export default function QuestionsMaster() {
           <span>Other Practice</span>
         </button>
 
-        <button
-          onClick={() => setActiveTab("test_series")}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all ${
-            activeTab === "test_series"
-              ? "bg-rose-500 text-text-inverse"
-              : "bg-slate-800 text-text-secondary hover:bg-slate-700"
-          }`}
-        >
-          <FolderGit2 className="w-5 h-5" />
-          <span>Test Series</span>
-        </button>
       </div>
 
       <div className="flex-1 overflow-y-auto min-h-0 hide-scrollbar pb-10">
@@ -79,7 +67,6 @@ export default function QuestionsMaster() {
         {activeTab === "interview" && <InterviewManagement />}
         {activeTab === "aptitude" && <AptitudeManagement />}
         {activeTab === "other" && <OtherPracticeManagement />}
-        {activeTab === "test_series" && <TestSeriesManagement />}
       </div>
     </div>
   );

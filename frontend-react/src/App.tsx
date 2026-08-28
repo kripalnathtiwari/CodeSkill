@@ -41,6 +41,8 @@ const ATSChecker = lazy(() => import('./pages/ATSChecker'));
 const Jobs = lazy(() => import('./pages/Jobs'));
 const TestSeries = lazy(() => import('./pages/TestSeries'));
 
+import ErrorBoundary from './components/ErrorBoundary';
+
 function AppContent() {
   const location = useLocation();
   const isDashboard = location.pathname.startsWith('/dashboard');
@@ -51,43 +53,45 @@ function AppContent() {
     <div className={`min-h-screen flex flex-col ${isDashboard ? 'bg-background' : 'bg-background dark:bg-background text-slate-950 dark:text-text-inverse'}`}>
       {!hideNavbar && <Navbar />}
       <main className="flex-grow flex flex-col">
-        <Suspense fallback={<GlobalLoader />}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/change-password" element={<ChangePassword />} />
-            <Route path="/sandbox" element={<Sandbox />} />
-            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
-            <Route path="/my-courses" element={<ProtectedRoute><MyCourses /></ProtectedRoute>} />
-            <Route path="/problems" element={<Problems />} />
-            <Route path="/problems/:tag" element={<TagProblems />} />
-            <Route path="/aptitude" element={<Aptitude />} />
-            <Route path="/aptitude/topic/:topic" element={<AptitudeTopic />} />
-            <Route path="/company-preparation" element={<CompanyProblems />} />
-            <Route path="/test-series" element={<TestSeries />} />
-            <Route path="/courses-training" element={<CoursesTraining />} />
-            <Route path="/course/:id" element={<CourseDetails />} />
-            <Route path="/register/:id" element={<ProtectedRoute><CourseRegistration /></ProtectedRoute>} />
-            <Route path="/payment/:id" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
-            <Route path="/admin" element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>} />
-            <Route path="/contests" element={<Contests />} />
-            <Route path="/take-test/:id" element={<ProtectedRoute><TakeTest /></ProtectedRoute>} />
-            <Route path="/solve/:id" element={<ProtectedRoute><SolveProblem /></ProtectedRoute>} />
-            <Route path="/aptitude/:id" element={<ProtectedRoute><SolveAptitude /></ProtectedRoute>} />
-            <Route path="/other-practice" element={<OtherPractice />} />
-            <Route path="/other-practice/topic/:topic" element={<OtherPracticeTopic />} />
-            <Route path="/other-practice/solve/:id" element={<ProtectedRoute><SolveOtherPractice /></ProtectedRoute>} />
-            <Route path="/verify" element={<VerifyCertificate />} />
-            <Route path="/cv-builder" element={<CVBuilder />} />
-            <Route path="/cv-templates" element={<CVTemplates />} />
-            <Route path="/ats-checker" element={<ATSChecker />} />
-            <Route path="/jobs" element={<Jobs />} />
-          </Routes>
-        </Suspense>
+        <ErrorBoundary>
+          <Suspense fallback={<GlobalLoader />}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/change-password" element={<ChangePassword />} />
+              <Route path="/sandbox" element={<Sandbox />} />
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
+              <Route path="/my-courses" element={<ProtectedRoute><MyCourses /></ProtectedRoute>} />
+              <Route path="/problems" element={<Problems />} />
+              <Route path="/problems/:tag" element={<TagProblems />} />
+              <Route path="/aptitude" element={<Aptitude />} />
+              <Route path="/aptitude/topic/:topic" element={<AptitudeTopic />} />
+              <Route path="/company-problems" element={<CompanyProblems />} />
+              <Route path="/test-series" element={<TestSeries />} />
+              <Route path="/courses-training" element={<CoursesTraining />} />
+              <Route path="/course/:id" element={<CourseDetails />} />
+              <Route path="/register/:id" element={<ProtectedRoute><CourseRegistration /></ProtectedRoute>} />
+              <Route path="/payment/:id" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
+              <Route path="/admin" element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>} />
+              <Route path="/contests" element={<Contests />} />
+              <Route path="/take-test/:id" element={<ProtectedRoute><TakeTest /></ProtectedRoute>} />
+              <Route path="/solve/:id" element={<ProtectedRoute><SolveProblem /></ProtectedRoute>} />
+              <Route path="/aptitude/:id" element={<ProtectedRoute><SolveAptitude /></ProtectedRoute>} />
+              <Route path="/other-practice" element={<OtherPractice />} />
+              <Route path="/other-practice/topic/:topic" element={<OtherPracticeTopic />} />
+              <Route path="/other-practice/solve/:id" element={<ProtectedRoute><SolveOtherPractice /></ProtectedRoute>} />
+              <Route path="/verify" element={<VerifyCertificate />} />
+              <Route path="/cv-builder" element={<CVBuilder />} />
+              <Route path="/cv-templates" element={<CVTemplates />} />
+              <Route path="/ats-checker" element={<ATSChecker />} />
+              <Route path="/jobs" element={<Jobs />} />
+            </Routes>
+          </Suspense>
+        </ErrorBoundary>
       </main>
     </div>
   );

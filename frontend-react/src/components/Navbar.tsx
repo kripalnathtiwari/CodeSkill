@@ -27,6 +27,15 @@ export default function Navbar() {
 
   const toggleTheme = () => setIsDark(!isDark);
 
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileCoursesOpen, setIsMobileCoursesOpen] = useState(false);
   const [isMobileProblemsOpen, setIsMobileProblemsOpen] = useState(false);
@@ -43,6 +52,10 @@ export default function Navbar() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  if (isFullscreen) {
+    return null;
+  }
 
   return (
     <header className="sticky top-0 z-50 glass border-b border-border dark:border-border px-6 py-3 flex items-center justify-between transition-colors">

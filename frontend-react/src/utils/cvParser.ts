@@ -1,13 +1,4 @@
-import * as pdfjsLib from "pdfjs-dist";
-import mammoth from "mammoth";
 import type { UserCVEntry } from "../pages/admin/CvManagement";
-
-// Initialize pdfjs worker
-try {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
-} catch (e) {
-  console.warn("Could not set PDF worker:", e);
-}
 
 const TECH_SKILLS_CATALOG = [
   "React", "TypeScript", "JavaScript", "Node.js", "Python", "Java", "C++", "C#", "C",
@@ -30,6 +21,8 @@ export async function extractTextFromFile(file: File): Promise<string> {
   // Handle PDF files
   if (fileType === "pdf" || fileMime === "application/pdf") {
     try {
+      const pdfjsLib = await import("pdfjs-dist");
+      pdfjsLib.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
       const arrayBuffer = await file.arrayBuffer();
       const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
       let fullText = "";
@@ -57,8 +50,9 @@ export async function extractTextFromFile(file: File): Promise<string> {
   // Handle DOCX / DOC files
   if (fileType === "docx" || fileType === "doc" || fileMime.includes("wordprocessingml")) {
     try {
+      const mammoth = await import("mammoth");
       const arrayBuffer = await file.arrayBuffer();
-      const result = await mammoth.extractRawText({ arrayBuffer });
+      const result = await mammoth.default.extractRawText({ arrayBuffer });
       const cleanText = (result.value || "").trim();
       if (cleanText) {
         return cleanText;

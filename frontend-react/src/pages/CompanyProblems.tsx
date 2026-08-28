@@ -206,6 +206,7 @@ function CompanyCircleIllustration({ iconType, name, logoUrl }: { iconType: stri
 
 export default function CompanyProblems() {
   const [questions, setQuestions] = useState<any[]>([]);
+  const [testSeriesList, setTestSeriesList] = useState<any[]>([]);
   const [companiesList, setCompaniesList] = useState<CompanyCardData[]>(DEFAULT_COMPANIES);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -265,13 +266,6 @@ export default function CompanyProblems() {
     fetchCompanies();
   }, []);
 
-  // Fetch questions for the selected company
-  useEffect(() => {
-    if (activeView === "problems" && selectedCompany) {
-      fetchCompanyQuestions(false);
-    }
-  }, [activeView, selectedCompany, selectedSection, problemSearchQuery]);
-
   const fetchCompanyQuestions = async (isLoadMore = false) => {
     try {
       if (isLoadMore) {
@@ -327,6 +321,26 @@ export default function CompanyProblems() {
       setLoadingMore(false);
     }
   };
+
+
+  // Fetch questions for the selected company
+  useEffect(() => {
+    if (activeView === "problems" && selectedCompany) {
+      fetchCompanyQuestions(false);
+    }
+  }, [activeView, selectedCompany, selectedSection, problemSearchQuery]);
+
+  // Fetch test series for the selected company
+  useEffect(() => {
+    if (activeView === "problems" && selectedCompany) {
+      const savedTS = localStorage.getItem("admin_company_test_series");
+      if (savedTS) {
+        const allTS = JSON.parse(savedTS);
+        const filteredTS = allTS.filter((ts: any) => (ts.companyName || ts.company || '').toLowerCase() === selectedCompany.toLowerCase());
+        setTestSeriesList(filteredTS);
+      }
+    }
+  }, [activeView, selectedCompany]);
 
   // Filtered companies for directory grid
   const filteredCompanies = useMemo(() => {
@@ -545,134 +559,36 @@ export default function CompanyProblems() {
           </div>
 
           <div className="space-y-6">
-            {/* Section Tabs */}
-            <div className="flex bg-surface-secondary dark:bg-background p-1 rounded-xl border border-border dark:border-border w-full overflow-x-auto max-w-md mx-auto">
-              {SECTIONS.map((sec) => (
-                <button
-                  key={sec}
-                  onClick={() => setSelectedSection(sec)}
-                  className={`flex-1 py-2.5 px-4 text-xs font-bold rounded-lg transition-all ${
-                    selectedSection === sec
-                      ? sec === "MCQ"
-                        ? "bg-purple-600 text-white shadow-md"
-                        : "bg-primary text-text-inverse shadow-md"
-                      : "text-text-primary dark:text-text-muted hover:bg-slate-200 dark:hover:bg-slate-800"
-                  }`}
-                >
-                  {sec}
-                </button>
-              ))}
-            </div>
-
-            {/* Search bar for problems */}
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
-              <input
-                type="text"
-                placeholder={`Search ${selectedCompany} ${selectedSection === "MCQ" ? "MCQ" : "coding"} questions...`}
-                value={problemSearchQuery}
-                onChange={(e) => setProblemSearchQuery(e.target.value)}
-                className="w-full bg-surface dark:bg-background border border-border dark:border-border rounded-lg pl-10 pr-4 py-2 text-sm outline-none focus:border-primary transition-all text-slate-950 dark:text-text-inverse"
-              />
-            </div>
-
-            {/* Questions List Table */}
-            <div className="glass rounded-2xl overflow-x-auto border border-border dark:border-border">
-              <table className="w-full text-left border-collapse min-w-[500px]">
-                <thead>
-                  <tr className="border-b border-border dark:border-border bg-background dark:bg-background/40 text-text-primary dark:text-text-muted text-xs font-semibold uppercase tracking-wider">
-                    <th className="p-4 pl-6">Problem</th>
-                    <th className="p-4">Acceptance</th>
-                    <th className="p-4">Frequency</th>
-                    <th className="p-4 pr-6 text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50 text-sm">
-                  {isLoading ? (
-                    <tr>
-                      <td colSpan={4} className="text-center py-12 text-text-muted text-sm">
-                        Loading questions...
-                      </td>
-                    </tr>
-                  ) : activeQuestions.map((q) => (
-                    <tr
-                      key={q._id || q.id || q.slug}
-                      className="hover:bg-background dark:hover:bg-slate-800 transition-colors"
-                    >
-                      <td className="p-4 pl-6 font-semibold text-slate-950 dark:text-text-inverse">
-                        <div className="flex items-center space-x-2.5">
-                          <span>{q.title || q.statement}</span>
-                          {(q.questionType === "MCQ" || q.type === "MCQ") ? (
-                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-500 font-semibold border border-purple-500/20 shrink-0">
-                              MCQ
-                            </span>
-                          ) : (
-                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-semibold border border-primary/20 shrink-0">
-                              Coding
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="p-4 font-mono text-text-secondary dark:text-text-secondary">
-                        {q.acceptanceRate || (Math.random() * 40 + 40).toFixed(1)}%
-                      </td>
-                      <td className="p-4">
-                        <div className="flex items-center space-x-1 text-amber-500">
-                          <Flame className="h-4 w-4" />
-                          <span className="text-text-primary dark:text-text-secondary">
-                            {q.likes || Math.floor(Math.random() * 500) + 50}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="p-4 pr-6 text-right">
-                        {(q.questionType === "MCQ" || q.type === "MCQ") ? (
-                          <Link
-                            to={`/aptitude/${q._id || q.id}`}
-                            onClick={() => {
-                              const mcqList = activeQuestions.filter((x: any) => x.questionType === "MCQ" || x.type === "MCQ");
-                              sessionStorage.setItem("current_aptitude_list", JSON.stringify(mcqList));
-                            }}
-                            className="inline-flex items-center justify-center space-x-1 bg-purple-600/10 hover:bg-purple-600 border border-purple-500/20 hover:border-purple-500 px-3.5 py-1.5 rounded-lg text-xs font-bold text-purple-600 dark:text-purple-400 hover:text-text-inverse transition-all duration-200"
-                          >
-                            <span>Solve MCQ</span>
-                            <ChevronRight className="h-3 w-3" />
-                          </Link>
-                        ) : (
-                          <Link
-                            to={`/solve/${q._id || q.id || q.slug}`}
-                            onClick={() => sessionStorage.setItem("current_problem", JSON.stringify(q))}
-                            className="inline-flex items-center justify-center space-x-1 bg-primary/10 hover:bg-primary border border-primary/20 hover:border-primary px-3.5 py-1.5 rounded-lg text-xs font-bold text-primary dark:text-primary hover:text-text-inverse transition-all duration-200"
-                          >
-                            <span>Solve</span>
-                            <ChevronRight className="h-3 w-3" />
-                          </Link>
-                        )}
-                      </td>
-
-                    </tr>
+            {/* Available Test Series */}
+            <div className="space-y-4 mb-8">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white">Available Test Series</h3>
+              {testSeriesList.length === 0 ? (
+                <div className="glass-card rounded-2xl p-8 text-center border border-border dark:border-border/40">
+                  <p className="text-text-muted text-sm">No test series available for this company yet.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {testSeriesList.map((ts, idx) => (
+                    <div key={idx} className="bg-surface dark:bg-background rounded-2xl border border-border dark:border-border/80 p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-all">
+                      <div>
+                        <h4 className="text-lg font-bold text-text-primary dark:text-text-inverse mb-2">{ts.name}</h4>
+                        <p className="text-sm text-text-muted">Targeted practice test for {ts.companyName || ts.company}</p>
+                      </div>
+                      <div className="mt-6 pt-4 border-t border-border dark:border-border/50">
+                        <Link
+                          to={`/take-test/${encodeURIComponent(ts.name)}`}
+                          className="w-full inline-flex items-center justify-center space-x-2 bg-[#0066cc] hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition-colors"
+                        >
+                          <span>Take Test</span>
+                          <ChevronRight className="w-4 h-4" />
+                        </Link>
+                      </div>
+                    </div>
                   ))}
-                  {!isLoading && activeQuestions.length === 0 && (
-                    <tr>
-                      <td colSpan={4} className="text-center py-12 text-text-primary text-sm">
-                        No matching questions found.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-              {hasMore && (
-                <div className="flex justify-center py-6 bg-surface dark:bg-background border-t border-border dark:border-border">
-                  <button 
-                    onClick={() => fetchCompanyQuestions(true)}
-                    disabled={loadingMore}
-                    className="px-6 py-2.5 bg-surface dark:bg-[#151a23] hover:bg-slate-100 dark:hover:bg-slate-800 text-text-primary dark:text-text-primary border border-border dark:border-border font-medium rounded-lg transition-colors flex items-center gap-2"
-                  >
-                    {loadingMore ? <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" /> : null}
-                    {loadingMore ? 'Loading...' : 'Load More Questions'}
-                  </button>
                 </div>
               )}
             </div>
+            
           </div>
         </div>
       )}

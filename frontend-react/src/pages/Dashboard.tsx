@@ -194,10 +194,32 @@ export default function Dashboard() {
     queryFn: async () => {
       const token = localStorage.getItem('accessToken');
       if (!token) return 0;
-      const res = await axios.get(getApiUrl('/api/v1/auth/dashboard-stats'), {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      return res.data?.mcq?.total || 0;
+      
+      let localCount = 0;
+      try {
+        const customTests = JSON.parse(localStorage.getItem("admin_custom_tests") || "[]");
+        customTests.forEach((t: any) => { if (t.questions) localCount += t.questions.length; });
+        const tsProblems = JSON.parse(localStorage.getItem("admin_test_series_problems") || "[]");
+        localCount += tsProblems.filter((p: any) => p.questionType === "MCQ" || p.type === "MCQ").length;
+        const intProblems = JSON.parse(localStorage.getItem("admin_custom_interview_problems") || "[]");
+        localCount += intProblems.filter((p: any) => p.questionType === "MCQ" || p.type === "MCQ").length;
+        const prob = JSON.parse(localStorage.getItem("admin_custom_problems") || "[]");
+        localCount += prob.filter((p: any) => p.questionType === "MCQ" || p.type === "MCQ").length;
+        const opt = JSON.parse(localStorage.getItem("admin_other_practice_data") || "[]");
+        opt.forEach((topic: any) => { if (topic.questions) localCount += topic.questions.length; });
+      } catch (e) {
+        console.error("Error parsing local mcq count", e);
+      }
+
+      try {
+        const res = await axios.get(getApiUrl('/api/v1/auth/dashboard-stats'), {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const backendTotal = res.data?.mcq?.total || 0;
+        return backendTotal + localCount;
+      } catch (e) {
+        return localCount;
+      }
     }
   });
 

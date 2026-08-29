@@ -698,6 +698,7 @@ export default function CompanyProblems() {
                 )}
               </div>
             </div>
+          </div>
         </div>
       )}
     </div>

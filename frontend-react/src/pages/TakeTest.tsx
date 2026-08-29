@@ -291,9 +291,7 @@ export default function TakeTest() {
 
     const handleFullscreenChange = () => {
       // If user exits fullscreen, treat it as a violation
-      if (!document.fullscreenElement) {
-        handleViolation();
-      }
+      // Disabled per user request
     };
 
     // Aggressive polling to catch OS-level overlays (Win+Tab, Start Menu) that swallow blur events
@@ -330,11 +328,7 @@ export default function TakeTest() {
             clearInterval(timer);
             setShowWarningModal(false);
             
-            if (!document.fullscreenElement && testContainerRef.current) {
-              testContainerRef.current.requestFullscreen().catch(() => {
-                setShowFullscreenPrompt(true);
-              });
-            }
+            // Fullscreen enforcement removed
             return 0;
           }
           return prev - 1;
@@ -346,33 +340,15 @@ export default function TakeTest() {
 
   const startTest = async () => {
     try {
-      // 1. Request webcam permission
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      setMediaStream(stream);
-      setWebcamPermission(true);
-
       // 2. Request Notification Permission for OS-level anti-cheat popups
       if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
         await Notification.requestPermission();
       }
 
-      if (testContainerRef.current) {
-        await testContainerRef.current.requestFullscreen();
-      }
       setHasStarted(true);
     } catch (err: any) {
-      console.warn("Permission or Fullscreen request failed.", err);
-      
-      // If the error is related to webcam permission
-      if (err.name === 'NotAllowedError' || err.name === 'NotFoundError') {
-        setWebcamPermission(false);
-        alert("Webcam permission is required to start the test. Please allow camera access and try again.");
-        return; // Prevent test from starting
-      } else {
-        // If it's just fullscreen failing, proceed anyway
-        setShowFullscreenPrompt(true);
-        setHasStarted(true);
-      }
+      console.warn("Permission request failed.", err);
+      setHasStarted(true);
     }
   };
 
@@ -617,7 +593,6 @@ export default function TakeTest() {
           <div className="bg-amber-500/10 text-amber-600 dark:text-amber-400 p-4 rounded-xl text-left mb-8 text-sm space-y-2 border border-amber-500/20">
             <p className="font-bold flex items-center text-lg"><AlertTriangle className="h-5 w-5 mr-2" /> Anti-Cheat Enforced</p>
             <ul className="list-disc pl-6 space-y-1 mt-2">
-              <li>Test will open in Full Screen mode.</li>
               <li>Do not switch tabs or minimize the browser.</li>
               <li>Switching tabs more than 2 times will result in auto-submission.</li>
             </ul>

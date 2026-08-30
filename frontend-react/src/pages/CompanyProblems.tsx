@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import { getApiUrl } from "../utils/apiConfig";
+import { useAuth } from "../context/AuthContext";
 
 const SECTIONS = ["MCQ", "CODING"];
 const CATEGORIES = ["All", "Product Based", "Service Based", "Fintech", "Startups"];
@@ -205,6 +206,7 @@ function CompanyCircleIllustration({ iconType, name, logoUrl }: { iconType: stri
 }
 
 export default function CompanyProblems() {
+  const { user } = useAuth();
   const [questions, setQuestions] = useState<any[]>([]);
   const [testSeriesList, setTestSeriesList] = useState<any[]>([]);
   const [companiesList, setCompaniesList] = useState<CompanyCardData[]>(DEFAULT_COMPANIES);
@@ -222,6 +224,17 @@ export default function CompanyProblems() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(false);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
+
+  const takenTests = useMemo(() => {
+    if (!user?.email) return new Set<string>();
+    try {
+      const allScores = JSON.parse(localStorage.getItem("all_student_scores") || "[]");
+      const myScores = allScores.filter((s: any) => s.studentEmail === user.email);
+      return new Set(myScores.map((s: any) => String(s.testId)));
+    } catch {
+      return new Set<string>();
+    }
+  }, [user]);
 
   // Fetch company metadata for the directory grid
   useEffect(() => {
@@ -575,13 +588,20 @@ export default function CompanyProblems() {
                         <p className="text-sm text-text-muted">Targeted practice test for {ts.companyName || ts.company}</p>
                       </div>
                       <div className="mt-6 pt-4 border-t border-border dark:border-border/50">
-                        <Link
-                          to={`/take-test/${encodeURIComponent(ts.name)}`}
-                          className="w-full inline-flex items-center justify-center space-x-2 bg-[#0066cc] hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition-colors"
-                        >
-                          <span>Take Test</span>
-                          <ChevronRight className="w-4 h-4" />
-                        </Link>
+                        {takenTests.has(ts.name) ? (
+                          <div className="w-full inline-flex items-center justify-center space-x-2 bg-green-600 text-white font-semibold py-2.5 rounded-lg cursor-default">
+                            <span>Test Taken</span>
+                            <CheckCircle2 className="w-4 h-4" />
+                          </div>
+                        ) : (
+                          <Link
+                            to={`/take-test/${encodeURIComponent(ts.name)}`}
+                            className="w-full inline-flex items-center justify-center space-x-2 bg-[#0066cc] hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition-colors"
+                          >
+                            <span>Take Test</span>
+                            <ChevronRight className="w-4 h-4" />
+                          </Link>
+                        )}
                       </div>
                     </div>
                   ))}

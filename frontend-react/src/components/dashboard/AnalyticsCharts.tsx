@@ -170,7 +170,7 @@ export default function AnalyticsCharts({ dsaStats, testStats, mcqTotal, mcqStat
       {/* MCQ Card */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col h-full">
         <h3 className="text-[15px] font-bold text-slate-800 mb-1">MCQ</h3>
-        <div className="text-3xl font-black text-slate-900 mb-6">{mcq.total}</div>
+        <div className="text-3xl font-black text-slate-900 mb-6">{mcq.solved}</div>
         
         <div className="flex items-center justify-start mt-auto">
           {/* Left: Circular Chart */}

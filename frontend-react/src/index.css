@@ -92,7 +92,7 @@
     --error-color: #EF4444;
     --info-color: #0EA5E9;
 
-    --bg-color: #0B1120;
+    --bg-color: #0B0F19;
     --surface-color: #0F172A;
     --surface-secondary: #1E293B;
     --border-color: #334155;
@@ -103,7 +103,7 @@
     --text-inverse: #FFFFFF;
 
     /* Fallback HSL for Shadcn */
-    --background: 222.2 84% 4.9%;
+    --background: 222.9 38.9% 7.1%;
     --foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
     --primary: 223 89% 60%;

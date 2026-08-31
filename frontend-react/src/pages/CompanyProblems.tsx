@@ -589,10 +589,13 @@ export default function CompanyProblems() {
                       </div>
                       <div className="mt-6 pt-4 border-t border-border dark:border-border/50">
                         {takenTests.has(ts.name) ? (
-                          <div className="w-full inline-flex items-center justify-center space-x-2 bg-green-600 text-white font-semibold py-2.5 rounded-lg cursor-default">
-                            <span>Test Taken</span>
+                          <Link
+                            to={`/take-test/${encodeURIComponent(ts.name)}`}
+                            className="w-full inline-flex items-center justify-center space-x-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg transition-colors"
+                          >
+                            <span>Show Result</span>
                             <CheckCircle2 className="w-4 h-4" />
-                          </div>
+                          </Link>
                         ) : (
                           <Link
                             to={`/take-test/${encodeURIComponent(ts.name)}`}

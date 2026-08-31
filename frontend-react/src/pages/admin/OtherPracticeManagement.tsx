@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Plus, Edit, Trash2, Search, Target, ArrowLeft, Save, X, BookOpen } from "lucide-react";
 
 export default function OtherPracticeManagement() {
@@ -189,6 +189,17 @@ export default function OtherPracticeManagement() {
     );
   }
 
+  const existingTopicsForSubject = React.useMemo(() => {
+    if (!subject) return [];
+    const topics = new Set<string>();
+    problems.forEach(p => {
+      if (p.subject === subject && p.topic) {
+        topics.add(p.topic.trim());
+      }
+    });
+    return Array.from(topics).sort();
+  }, [problems, subject]);
+
   if (isCreating) {
     return (
       <div className="bg-[#111827] rounded-3xl border border-border p-8 animate-in fade-in zoom-in-95 duration-300">
@@ -238,9 +249,15 @@ export default function OtherPracticeManagement() {
                 <label className="block text-text-secondary text-sm font-semibold mb-2">Topic</label>
                 <input 
                   value={topic} onChange={e => setTopic(e.target.value)}
+                  list="topic-suggestions"
                   className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-rose-500 transition-colors"
                   placeholder="e.g. Web Dev"
                 />
+                <datalist id="topic-suggestions">
+                  {existingTopicsForSubject.map(t => (
+                    <option key={t} value={t} />
+                  ))}
+                </datalist>
               </div>
               <div>
                 <label className="block text-text-secondary text-sm font-semibold mb-2">Difficulty</label>

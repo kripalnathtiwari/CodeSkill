@@ -130,13 +130,24 @@ export default function Dashboard() {
     queryKey: ['mcqStats', user?.email],
     queryFn: async () => {
       if (!user?.email) return { attempted: 0, correct: 0 };
-      const key = `aptitude_analytics_${user.email.toLowerCase()}`;
-      const saved = JSON.parse(localStorage.getItem(key) || "[]");
+      const aptKey = `aptitude_analytics_${user.email.toLowerCase()}`;
+      const opKey = `other_practice_analytics_${user.email.toLowerCase()}`;
+      
+      const savedApt = JSON.parse(localStorage.getItem(aptKey) || "[]");
+      const savedOp = JSON.parse(localStorage.getItem(opKey) || "[]");
+      
       let correctCount = 0;
-      saved.forEach((q: { correct?: boolean }) => {
+      savedApt.forEach((q: { correct?: boolean }) => {
         if (q.correct) correctCount++;
       });
-      return { attempted: saved.length, correct: correctCount };
+      savedOp.forEach((q: { correct?: boolean }) => {
+        if (q.correct) correctCount++;
+      });
+      
+      return { 
+        attempted: savedApt.length + savedOp.length, 
+        correct: correctCount 
+      };
     },
     enabled: !!user?.email
   });
@@ -206,7 +217,7 @@ export default function Dashboard() {
         const prob = JSON.parse(localStorage.getItem("admin_custom_problems") || "[]");
         localCount += prob.filter((p: any) => p.questionType === "MCQ" || p.type === "MCQ").length;
         const opt = JSON.parse(localStorage.getItem("admin_other_practice_data") || "[]");
-        opt.forEach((topic: any) => { if (topic.questions) localCount += topic.questions.length; });
+        localCount += opt.length;
       } catch (e) {
         console.error("Error parsing local mcq count", e);
       }

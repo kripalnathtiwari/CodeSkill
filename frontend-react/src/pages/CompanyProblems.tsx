@@ -719,21 +719,46 @@ export default function CompanyProblems() {
                         </span>
                       </div>
                       <span className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-bold whitespace-nowrap hidden sm:block">
-                        {testSeriesList.length} Lessons
+                        0 Lessons
                       </span>
                     </button>
                     
                     {modulesExpanded && (
                       <div className="border-t border-slate-100 dark:border-border/50 divide-y divide-slate-100 dark:divide-slate-800 bg-slate-50/30 dark:bg-transparent">
+                        <div className="p-6 text-center text-sm text-text-muted">No coding test series available for this company yet.</div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* MCQ ASSESSMENT ACCORDION */}
+                  <div className="rounded-xl border border-border dark:border-border/60 overflow-hidden bg-white dark:bg-slate-900/30">
+                    <button 
+                      onClick={() => setMcqModulesExpanded(!mcqModulesExpanded)}
+                      className="w-full p-4 sm:p-5 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <ChevronRight className={`w-5 h-5 text-blue-600 transition-transform ${mcqModulesExpanded ? 'rotate-90' : ''}`} />
+                        <FileText className="w-5 h-5 text-blue-600" />
+                        <span className="font-bold text-base sm:text-lg text-slate-900 dark:text-white truncate">
+                          {selectedCompany} MCQ Assessment
+                        </span>
+                      </div>
+                      <span className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-bold whitespace-nowrap hidden sm:block">
+                        {testSeriesList.length} Lessons
+                      </span>
+                    </button>
+                    
+                    {mcqModulesExpanded && (
+                      <div className="border-t border-slate-100 dark:border-border/50 divide-y divide-slate-100 dark:divide-slate-800 bg-slate-50/30 dark:bg-transparent">
                         {testSeriesList.length === 0 ? (
-                          <div className="p-6 text-center text-sm text-text-muted">No coding test series available.</div>
+                          <div className="p-6 text-center text-sm text-text-muted">No MCQ test series available.</div>
                         ) : (
                           testSeriesList.map((ts, idx) => {
                             const qCount = questions.filter(q => q.testSeriesTags?.some((t:any) => t.name === ts.name)).length;
                             return (
                               <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 pl-12 hover:bg-white dark:hover:bg-slate-800/40 transition-colors gap-4">
                                 <div className="flex items-center space-x-3 min-w-0">
-                                  <Code2 className="w-4 h-4 text-blue-400 shrink-0" />
+                                  <FileText className="w-4 h-4 text-blue-400 shrink-0" />
                                   <span className="font-semibold text-sm sm:text-base text-slate-800 dark:text-text-inverse truncate">{ts.name}</span>
                                 </div>
                                 <div className="flex items-center justify-between sm:justify-end sm:space-x-6 w-full sm:w-auto">
@@ -753,31 +778,6 @@ export default function CompanyProblems() {
                             );
                           })
                         )}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* MCQ ASSESSMENT ACCORDION */}
-                  <div className="rounded-xl border border-border dark:border-border/60 overflow-hidden bg-white dark:bg-slate-900/30">
-                    <button 
-                      onClick={() => setMcqModulesExpanded(!mcqModulesExpanded)}
-                      className="w-full p-4 sm:p-5 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
-                    >
-                      <div className="flex items-center space-x-3">
-                        <ChevronRight className={`w-5 h-5 text-blue-600 transition-transform ${mcqModulesExpanded ? 'rotate-90' : ''}`} />
-                        <FileText className="w-5 h-5 text-blue-600" />
-                        <span className="font-bold text-base sm:text-lg text-slate-900 dark:text-white truncate">
-                          {selectedCompany} MCQ Assessment
-                        </span>
-                      </div>
-                      <span className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-bold whitespace-nowrap hidden sm:block">
-                        0 Lessons
-                      </span>
-                    </button>
-                    
-                    {mcqModulesExpanded && (
-                      <div className="border-t border-slate-100 dark:border-border/50 bg-slate-50/30 dark:bg-transparent">
-                        <div className="p-6 text-center text-sm text-text-muted">No MCQ test series available for this company yet.</div>
                       </div>
                     )}
                   </div>

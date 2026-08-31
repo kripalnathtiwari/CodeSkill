@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { 
   Building2, 
   Search, 
   ChevronRight, 
+  ChevronDown,
   Flame, 
   Home, 
   CheckCircle2, 
@@ -15,7 +15,11 @@ import {
   Users, 
   Globe, 
   Sparkles,
-  BookOpen
+  Menu,
+  X,
+  FileText,
+  Eye,
+  Maximize2
 } from "lucide-react";
 import axios from "axios";
 import { getApiUrl } from "../utils/apiConfig";
@@ -213,15 +217,19 @@ export default function CompanyProblems() {
   const [companiesList, setCompaniesList] = useState<CompanyCardData[]>(DEFAULT_COMPANIES);
   const [isLoading, setIsLoading] = useState(true);
 
-  // View state: "directory" (card grid), "topics" (topic cards), or "problems" (company practice view)
-  const [activeView, setActiveView] = useState<"directory" | "topics" | "problems">("directory");
+  // View state: "directory" (card grid) or "problems" (company practice view)
+  const [activeView, setActiveView] = useState<"directory" | "problems">("directory");
   const [selectedCompany, setSelectedCompany] = useState<string>("");
-  const [selectedTopic, setSelectedTopic] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [problemSearchQuery, setProblemSearchQuery] = useState("");
   const [selectedSection, setSelectedSection] = useState("MCQ");
   
+  // New UI states
+  const [selectedTestSeries, setSelectedTestSeries] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [modulesExpanded, setModulesExpanded] = useState(true);
+
   // Pagination for problems view
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(false);
@@ -233,6 +241,16 @@ export default function CompanyProblems() {
       const allScores = JSON.parse(localStorage.getItem("all_student_scores") || "[]");
       const myScores = allScores.filter((s: any) => s.studentEmail === user.email);
       return new Set(myScores.map((s: any) => String(s.testId)));
+    } catch {
+      return new Set<string>();
+    }
+  }, [user]);
+
+  const solvedCodingProblems = useMemo(() => {
+    if (!user?.email) return new Set<string>();
+    try {
+      const solved = JSON.parse(localStorage.getItem(`solved_problems_progress_${user.email}`) || "[]");
+      return new Set<string>(solved.map(String));
     } catch {
       return new Set<string>();
     }
@@ -340,14 +358,14 @@ export default function CompanyProblems() {
 
   // Fetch questions for the selected company
   useEffect(() => {
-    if ((activeView === "topics" || activeView === "problems") && selectedCompany) {
+    if (activeView === "problems" && selectedCompany) {
       fetchCompanyQuestions(false);
     }
-  }, [activeView, selectedCompany, problemSearchQuery]);
+  }, [activeView, selectedCompany, selectedSection, problemSearchQuery]);
 
   // Fetch test series for the selected company
   useEffect(() => {
-    if ((activeView === "topics" || activeView === "problems") && selectedCompany) {
+    if (activeView === "problems" && selectedCompany) {
       const savedTS = localStorage.getItem("admin_company_test_series");
       if (savedTS) {
         const allTS = JSON.parse(savedTS);
@@ -369,64 +387,23 @@ export default function CompanyProblems() {
     });
   }, [companiesList, selectedCategory, searchQuery]);
 
-  // Active questions filtered by topic and section
+  // Active questions filtered by section
   const activeQuestions = useMemo(() => {
     return questions.filter((q: any) => {
-      // Must match selected topic
-      let matchesTopic = false;
-      const topicList = Array.isArray(q.topicTags) 
-        ? q.topicTags.map((t: any) => t.name || t)
-        : (q.topicTags ? q.topicTags.split(",") : []);
-      
-      matchesTopic = topicList.some((t: string) => t.trim().toLowerCase() === selectedTopic.toLowerCase());
-
-      if (!matchesTopic) return false;
-
       const isMcq = q.questionType === "MCQ" || q.type === "MCQ";
       if (selectedSection === "MCQ") return isMcq;
       return !isMcq;
     });
-  }, [questions, selectedSection, selectedTopic]);
-
-  // Unique topics within the standalone questions
-  const uniqueTopics = useMemo(() => {
-    const topicsMap = new Map<string, number>();
-    questions.forEach((q: any) => {
-      if (!q.testSeriesTags || q.testSeriesTags.length === 0) {
-        const topicList = Array.isArray(q.topicTags) 
-          ? q.topicTags.map((t: any) => t.name || t)
-          : (q.topicTags ? q.topicTags.split(",") : []);
-          
-        topicList.forEach((t: string) => {
-          const cleanTopic = t.trim();
-          if (cleanTopic) {
-            topicsMap.set(cleanTopic, (topicsMap.get(cleanTopic) || 0) + 1);
-          }
-        });
-      }
-    });
-    return Array.from(topicsMap.entries()).sort((a, b) => a[0].localeCompare(b[0]));
-  }, [questions]);
+  }, [questions, selectedSection]);
 
   const handleStartPreparing = (companyName: string) => {
     setSelectedCompany(companyName);
-    setActiveView("topics");
+    setActiveView("problems");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleBackToDirectory = () => {
     setActiveView("directory");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const handleStartTopic = (topic: string) => {
-    setSelectedTopic(topic);
-    setActiveView("problems");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const handleBackToTopics = () => {
-    setActiveView("topics");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -445,17 +422,6 @@ export default function CompanyProblems() {
           <span>/</span>
           {activeView === "directory" ? (
             <span className="text-primary dark:text-primary font-semibold">Company Preparation</span>
-          ) : activeView === "topics" ? (
-            <>
-              <button
-                onClick={handleBackToDirectory}
-                className="hover:text-primary dark:hover:text-primary transition-colors"
-              >
-                Company Preparation
-              </button>
-              <span>/</span>
-              <span className="text-primary dark:text-primary font-semibold">{selectedCompany}</span>
-            </>
           ) : (
             <>
               <button
@@ -465,14 +431,7 @@ export default function CompanyProblems() {
                 Company Preparation
               </button>
               <span>/</span>
-              <button
-                onClick={handleBackToTopics}
-                className="hover:text-primary dark:hover:text-primary transition-colors"
-              >
-                {selectedCompany}
-              </button>
-              <span>/</span>
-              <span className="text-primary dark:text-primary font-semibold">{selectedTopic}</span>
+              <span className="text-primary dark:text-primary font-semibold">{selectedCompany}</span>
             </>
           )}
         </div>
@@ -594,8 +553,8 @@ export default function CompanyProblems() {
             )}
           </div>
         </>
-      ) : activeView === "topics" ? (
-        /* Company Topics View (when a user clicks "Start Preparing" on a company) */
+      ) : (
+        /* Company Problems Practice View (when a user clicks "Start Preparing") */
         <div className="space-y-6">
           {/* Back button */}
           <div>
@@ -632,200 +591,221 @@ export default function CompanyProblems() {
             </div>
           </div>
 
-          <div className="space-y-6">
-            {/* Available Test Series */}
-            <div className="space-y-4 mb-8">
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white">Available Test Series</h3>
-              {testSeriesList.length === 0 ? (
-                <div className="glass-card rounded-2xl p-8 text-center border border-border dark:border-border/40">
-                  <p className="text-text-muted text-sm">No test series available for this company yet.</p>
+          <div className="flex flex-col md:flex-row gap-6 mt-6 items-start">
+            {/* Sidebar Modules Pane */}
+            <div className={`md:w-72 w-full shrink-0 ${sidebarOpen ? 'block' : 'hidden md:block'}`}>
+              <div className="bg-surface dark:bg-background rounded-2xl border border-border dark:border-border/80 overflow-hidden shadow-sm">
+                <div className="p-4 border-b border-border dark:border-border/50 flex items-center justify-between">
+                  <h3 className="font-bold text-text-primary dark:text-text-inverse text-lg">Modules</h3>
+                  <button onClick={() => setSidebarOpen(false)} className="md:hidden p-1 text-text-muted hover:text-text-primary dark:hover:text-text-inverse">
+                    <X className="w-5 h-5" />
+                  </button>
+                  <button className="hidden md:block p-1 text-text-muted hover:text-text-primary dark:hover:text-text-inverse">
+                    <Menu className="w-5 h-5" />
+                  </button>
                 </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {testSeriesList.map((ts, idx) => (
-                    <div key={idx} className="bg-surface dark:bg-background rounded-2xl border border-border dark:border-border/80 p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-all">
-                      <div>
-                        <h4 className="text-lg font-bold text-text-primary dark:text-text-inverse mb-2">{ts.name}</h4>
-                        <p className="text-sm text-text-muted">Targeted practice test for {ts.companyName || ts.company}</p>
-                      </div>
-                      <div className="mt-6 pt-4 border-t border-border dark:border-border/50">
-                        {takenTests.has(ts.name) ? (
-                          <Link
-                            to={`/take-test/${encodeURIComponent(ts.name)}`}
-                            className="w-full inline-flex items-center justify-center space-x-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg transition-colors"
-                          >
-                            <span>Show Result</span>
-                            <CheckCircle2 className="w-4 h-4" />
-                          </Link>
-                        ) : (
-                          <Link
-                            to={`/take-test/${encodeURIComponent(ts.name)}`}
-                            className="w-full inline-flex items-center justify-center space-x-2 bg-[#0066cc] hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition-colors"
-                          >
-                            <span>Take Test</span>
-                            <ChevronRight className="w-4 h-4" />
-                          </Link>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-
-            {/* Practice by Topic */}
-            <div className="space-y-4 mb-8">
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white">Practice by Topic</h3>
-              {uniqueTopics.length === 0 ? (
-                  <div className="glass-card rounded-2xl p-8 text-center border border-border dark:border-border/40">
-                    <p className="text-text-muted text-sm">No topic-wise questions available for this company yet.</p>
-                  </div>
-              ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {uniqueTopics.map(([topic, count]) => (
-                      <div
-                        key={topic}
-                        className="bg-surface dark:bg-background rounded-2xl border border-border dark:border-border/80 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between overflow-hidden group"
-                      >
-                        {/* Card Body */}
-                        <div className="p-5 sm:p-6 flex gap-4 sm:gap-5 items-start">
-                          {/* Left Box */}
-                          <div className="w-32 h-36 shrink-0 rounded-2xl bg-gradient-to-br from-orange-400 via-orange-500 to-amber-500 p-3 sm:p-3.5 flex flex-col items-center justify-between text-center relative overflow-hidden shadow-sm">
-                            <div className="flex items-center justify-center font-bold text-white text-sm sm:text-base tracking-tight truncate px-1">
-                              <span className="truncate">{topic}</span>
-                            </div>
-                            <span className="text-[10px] font-extrabold text-white uppercase tracking-tight mt-0.5">
-                              PREPARATION
-                            </span>
-                            <div className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center shadow-lg border-2 border-white/40 text-white relative overflow-hidden">
-                               <Code2 className="w-6 h-6" />
-                            </div>
-                          </div>
-  
-                          {/* Right Side */}
-                          <div className="flex-1 min-w-0 pt-0.5">
-                            <h2 className="text-lg font-bold text-text-primary dark:text-text-inverse truncate">
-                              {topic}
-                            </h2>
-                            <div className="text-[10px] font-bold text-text-muted uppercase tracking-wider mt-2 mb-2">
-                              PREPARATION INCLUDES:
-                            </div>
-                            <ul className="space-y-1.5">
-                              <li className="flex items-center text-xs text-text-primary dark:text-text-secondary font-medium">
-                                <CheckCircle2 className="text-blue-500 shrink-0 h-4 w-4 mr-2" />
-                                <span>Coding Assessments</span>
-                              </li>
-                              <li className="flex items-center text-xs text-text-primary dark:text-text-secondary font-medium">
-                                <CheckCircle2 className="text-blue-500 shrink-0 h-4 w-4 mr-2" />
-                                <span>Algorithmic Logic</span>
-                              </li>
-                              <li className="flex items-center text-xs text-text-primary dark:text-text-secondary font-medium">
-                                <CheckCircle2 className="text-blue-500 shrink-0 h-4 w-4 mr-2" />
-                                <span>{count} Questions</span>
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-  
-                        {/* Card Footer */}
-                        <div className="px-5 py-3.5 bg-background/70 dark:bg-background/70 border-t border-border/80 flex items-center justify-between">
-                          <div className="inline-flex items-center justify-center p-2 rounded-lg border border-border bg-surface text-primary">
-                            <Award className="w-4 h-4" />
-                          </div>
+                <div>
+                  <button 
+                    onClick={() => setModulesExpanded(!modulesExpanded)}
+                    className="w-full p-4 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                  >
+                    <span className="font-semibold text-sm text-text-primary dark:text-text-inverse truncate pr-2">
+                      {selectedCompany} Coding Assessment
+                    </span>
+                    <ChevronDown className={`w-4 h-4 text-text-muted transition-transform ${modulesExpanded ? 'rotate-180' : ''}`} />
+                  </button>
+                  {modulesExpanded && (
+                    <div className="bg-slate-50/50 dark:bg-slate-900/30">
+                      {testSeriesList.length === 0 ? (
+                        <div className="p-4 text-center text-xs text-text-muted">No modules available.</div>
+                      ) : (
+                        testSeriesList.map((ts, idx) => (
                           <button
-                            onClick={() => handleStartTopic(topic)}
-                            className="bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg inline-flex items-center space-x-1.5 transition-all"
+                            key={idx}
+                            onClick={() => { setSelectedTestSeries(ts.name); setSidebarOpen(false); }}
+                            className={`w-full p-3.5 pl-6 flex items-center space-x-3 text-left transition-colors border-l-4 ${
+                              selectedTestSeries === ts.name 
+                                ? "border-blue-600 bg-blue-50/50 dark:bg-blue-900/20 text-[#0066cc] dark:text-blue-400" 
+                                : "border-transparent text-text-secondary dark:text-text-muted hover:bg-slate-100 dark:hover:bg-slate-800/50"
+                            }`}
                           >
-                            <span>Start Preparing</span>
-                            <ArrowUpRight className="h-4 w-4" />
+                            <Code2 className="w-4 h-4 shrink-0" />
+                            <span className="text-[13px] font-medium truncate">{ts.name}</span>
                           </button>
-                        </div>
-                      </div>
-                    ))}
+                        ))
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Main Content Area */}
+            <div className="flex-1 w-full min-w-0">
+              {/* Mobile Sidebar Toggle */}
+              <div className="md:hidden mb-4 flex items-center justify-between bg-surface dark:bg-background p-3 rounded-xl border border-border dark:border-border/80">
+                <span className="font-semibold text-text-primary dark:text-text-inverse text-sm">
+                  {selectedTestSeries || "View Modules"}
+                </span>
+                <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                  {sidebarOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+                </button>
+              </div>
+
+              {!selectedTestSeries ? (
+                // ACCORDION VIEW (Screenshot 1)
+                <div className="bg-white dark:bg-background rounded-2xl border border-blue-100 dark:border-border/80 shadow-sm overflow-hidden">
+                  <div className="p-4 sm:p-5 bg-blue-50/50 dark:bg-slate-900/40 border-b border-blue-100 dark:border-border/50 flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <ChevronDown className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                      <Code2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                      <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white truncate max-w-[200px] sm:max-w-md">
+                        {selectedCompany} Coding Assessment
+                      </h2>
+                    </div>
+                    <span className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-bold whitespace-nowrap">
+                      {testSeriesList.length} Lessons
+                    </span>
                   </div>
+                  
+                  <div className="p-4 sm:p-6 space-y-3">
+                    {testSeriesList.length === 0 ? (
+                      <p className="text-text-muted text-sm text-center py-8">No test series available for this company.</p>
+                    ) : (
+                      testSeriesList.map((ts, idx) => {
+                        // Count questions in this TS
+                        const qCount = questions.filter(q => q.testSeriesTags?.some((t:any) => t.name === ts.name)).length;
+                        return (
+                          <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border border-blue-100 dark:border-border/60 hover:border-blue-300 dark:hover:border-blue-500/50 transition-colors bg-white dark:bg-slate-900/20 gap-4">
+                            <div className="flex items-center space-x-3 min-w-0">
+                              <div className="p-2 bg-blue-50 dark:bg-slate-800 rounded-lg text-blue-600 dark:text-blue-400 shrink-0">
+                                <Code2 className="w-4 h-4" />
+                              </div>
+                              <span className="font-bold text-sm sm:text-base text-slate-800 dark:text-text-inverse truncate">{ts.name}</span>
+                            </div>
+                            <div className="flex items-center justify-between sm:justify-end sm:space-x-8 w-full sm:w-auto">
+                              <div className="flex items-center space-x-2 text-text-muted text-xs sm:text-sm font-medium">
+                                <FileText className="w-4 h-4" />
+                                <span>{qCount} Questions</span>
+                              </div>
+                              <button 
+                                onClick={() => setSelectedTestSeries(ts.name)}
+                                className="bg-[#0066cc] hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-semibold flex items-center space-x-2 transition-colors shadow-sm shrink-0"
+                              >
+                                <Eye className="w-4 h-4" />
+                                <span>Preview</span>
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+              ) : (
+                // TABLE VIEW (Screenshot 2)
+                <div className="bg-white dark:bg-background rounded-2xl border border-border dark:border-border/80 shadow-sm overflow-hidden">
+                  <div className="p-4 sm:p-5 border-b border-border dark:border-border/50 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/40">
+                    <h2 className="text-xs sm:text-sm font-bold text-slate-500 dark:text-text-muted uppercase tracking-wider">
+                      Practice Problems
+                    </h2>
+                    <button 
+                      onClick={() => setSelectedTestSeries(null)}
+                      className="flex items-center space-x-1.5 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors"
+                    >
+                      <ArrowLeft className="w-3.5 h-3.5" />
+                      <span>Back to Modules</span>
+                    </button>
+                  </div>
+                  
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse min-w-[700px]">
+                      <thead>
+                        <tr className="bg-[#e6f2ff] dark:bg-slate-800/80 text-[#0066cc] dark:text-blue-300 text-[11px] sm:text-xs font-extrabold uppercase tracking-wide">
+                          <th className="px-6 py-4">Name</th>
+                          <th className="px-6 py-4 text-center">Difficulty</th>
+                          <th className="px-6 py-4 text-center">Score</th>
+                          <th className="px-6 py-4 text-center">Status</th>
+                          <th className="px-6 py-4 text-center">Latest Submission</th>
+                          <th className="px-6 py-4 text-center">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-sm">
+                        {(() => {
+                          const tsQuestions = questions.filter(q => q.testSeriesTags?.some((t:any) => t.name === selectedTestSeries));
+                          if (tsQuestions.length === 0) {
+                            return (
+                              <tr>
+                                <td colSpan={6} className="px-6 py-12 text-center text-text-muted">
+                                  No practice problems found in this set.
+                                </td>
+                              </tr>
+                            );
+                          }
+                          return tsQuestions.map((q) => {
+                            const isCoding = q.questionType === "CODING" || q.type === "CODING";
+                            const isSolved = isCoding ? solvedCodingProblems.has(String(q._id || q.id)) : false;
+                            const diff = (q.difficulty || "EASY").toUpperCase();
+                            
+                            return (
+                              <tr key={q._id || q.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                                <td className="px-6 py-4 font-bold text-slate-800 dark:text-text-inverse truncate max-w-xs">
+                                  {q.title || q.statement}
+                                </td>
+                                <td className="px-6 py-4 text-center">
+                                  <span className={`text-[10px] font-extrabold px-2.5 py-1 rounded uppercase ${
+                                    diff === "EASY" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" :
+                                    diff === "MEDIUM" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400" :
+                                    "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400"
+                                  }`}>
+                                    {diff}
+                                  </span>
+                                </td>
+                                <td className="px-6 py-4 text-center font-bold text-slate-800 dark:text-text-inverse">
+                                  0
+                                </td>
+                                <td className="px-6 py-4 text-center">
+                                  {isSolved ? (
+                                    <span className="text-[10px] font-bold px-2 py-1 rounded bg-green-50 text-green-600 border border-green-200">
+                                      Solved
+                                    </span>
+                                  ) : (
+                                    <span className="text-[10px] font-bold px-2 py-1 rounded bg-rose-50 text-rose-500 border border-rose-200">
+                                      Unsolved
+                                    </span>
+                                  )}
+                                </td>
+                                <td className="px-6 py-4 text-center text-text-muted font-medium">
+                                  -
+                                </td>
+                                <td className="px-6 py-4 text-center">
+                                  {isCoding ? (
+                                    <Link 
+                                      to={`/solve/${q._id || q.id}`}
+                                      className="inline-flex items-center justify-center bg-[#0066cc] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2 rounded-lg transition-colors shadow-sm"
+                                    >
+                                      Solve
+                                    </Link>
+                                  ) : (
+                                    <Link 
+                                      to={`/take-test/${encodeURIComponent(selectedTestSeries)}`}
+                                      className="inline-flex items-center justify-center bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-5 py-2 rounded-lg transition-colors shadow-sm"
+                                      title="Take Full Test"
+                                    >
+                                      Take Test
+                                    </Link>
+                                  )}
+                                </td>
+                              </tr>
+                            );
+                          });
+                        })()}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               )}
             </div>
-          </div>
-        </div>
-      ) : (
-        /* PROBLEMS VIEW (when a user clicks "Start Preparing" on a topic) */
-        <div className="space-y-6 animate-in fade-in duration-500">
-          {/* Back button */}
-          <div>
-            <button
-              onClick={handleBackToTopics}
-              className="inline-flex items-center space-x-2 text-sm font-semibold text-primary dark:text-primary hover:underline transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Back to {selectedCompany} Topics</span>
-            </button>
-          </div>
-          
-          {/* Topic Header */}
-          <div className="relative rounded-2xl overflow-hidden glass-card p-6 flex flex-col border border-border dark:border-border/40 gap-2">
-             <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-               <Flame className="w-6 h-6 text-orange-500" />
-               {selectedTopic} Problems
-             </h2>
-             <p className="text-text-muted text-sm">Practice MCQ and Coding problems specifically for {selectedTopic}.</p>
-          </div>
-          
-          {/* Section Tabs */}
-          <div className="flex border-b border-border/80">
-            {SECTIONS.map((section) => (
-              <button
-                key={section}
-                onClick={() => setSelectedSection(section)}
-                className={`py-3 px-6 text-sm font-semibold transition-all ${
-                  selectedSection === section
-                    ? "border-b-2 border-primary text-primary"
-                    : "text-text-muted hover:text-text-primary"
-                }`}
-              >
-                {section === "MCQ" ? "MCQ Questions" : "Coding Problems"}
-              </button>
-            ))}
-          </div>
-          
-          {/* Render Active Questions */}
-          <div className="space-y-4">
-             {activeQuestions.length === 0 ? (
-               <div className="py-12 text-center text-text-muted text-sm glass-card rounded-xl border border-border/50">
-                 No {selectedSection === "MCQ" ? "MCQ" : "Coding"} questions found for this topic.
-               </div>
-             ) : (
-               activeQuestions.map((q: any) => (
-                 <div key={q._id || q.id} className="bg-surface dark:bg-background rounded-xl border border-border/80 p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
-                   <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
-                      <div className="flex items-center space-x-2">
-                        {selectedSection === "MCQ" ? <BookOpen className="w-5 h-5 text-purple-500" /> : <Code2 className="w-5 h-5 text-primary" />}
-                        <span className="font-semibold text-text-primary dark:text-text-inverse">{q.title || q.statement}</span>
-                      </div>
-                      <span className={`text-[10px] sm:text-xs px-2 py-0.5 rounded-md font-bold uppercase w-fit ${
-                        (q.difficulty || 'Easy').toLowerCase() === 'easy' ? 'bg-green-500/10 text-green-600 dark:text-green-400' : 
-                        (q.difficulty || 'Medium').toLowerCase() === 'medium' ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' : 
-                        'bg-rose-500/10 text-rose-600 dark:text-rose-400'
-                      }`}>
-                        {q.difficulty || 'Easy'}
-                      </span>
-                   </div>
-                   <Link 
-                     to={selectedSection === "MCQ" ? `/other-practice/solve/${q._id || q.id}` : `/solve/${q.slug}`}
-                     onClick={() => {
-                        if (selectedSection === "MCQ") {
-                          // Pass all MCQs for this topic to the solver for sequential navigation
-                          sessionStorage.setItem("current_other_practice_list", JSON.stringify(activeQuestions));
-                          sessionStorage.setItem("current_other_practice", JSON.stringify(q));
-                        }
-                     }}
-                     className="shrink-0 px-4 py-2 bg-[#0066cc] text-white rounded-lg text-xs sm:text-sm font-semibold hover:bg-blue-700 transition-colors ml-4"
-                   >
-                     {selectedSection === "MCQ" ? "Practice MCQ" : "Solve Problem"}
-                   </Link>
-                 </div>
-               ))
-             )}
           </div>
         </div>
       )}

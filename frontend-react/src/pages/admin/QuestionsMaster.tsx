@@ -57,7 +57,7 @@ export default function QuestionsMaster() {
           }`}
         >
           <FolderGit2 className="w-5 h-5" />
-          <span>Other Practice</span>
+          <span>More Practice</span>
         </button>
 
       </div>

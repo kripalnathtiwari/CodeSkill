@@ -42,7 +42,7 @@ export default function OtherPractice() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <h1 className="text-3xl font-black text-text-primary dark:text-text-inverse flex items-center gap-3">
           <Target className="w-10 h-10 text-rose-500" />
-          Other Practice
+          More Practice
         </h1>
 
         <div className="relative w-full md:w-96">

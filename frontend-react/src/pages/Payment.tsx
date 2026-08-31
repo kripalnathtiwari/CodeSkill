@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { CreditCard, ShieldCheck, Lock, CheckCircle2, Building, Smartphone, ChevronRight, Loader2, Tag, AlertCircle } from "lucide-react";
 import { getCourseById } from "../data/coursesData";
@@ -12,7 +12,7 @@ export default function Payment() {
   const course = getCourseById(newEnrollment?.courseId || "c-1");
   
   // Parse base price
-  const basePriceStr = course?.price || "₹3,999";
+  const basePriceStr = course?.price || "â‚¹3,999";
   const basePriceNum = parseInt(basePriceStr.replace(/[^0-9]/g, "")) || 3999;
 
   const [paymentMethod, setPaymentMethod] = useState("card"); // card, upi, netbanking
@@ -49,10 +49,10 @@ export default function Payment() {
   const applyPromoCode = () => {
     if (promoCode.toUpperCase() === "CODESKILL50") {
       setDiscount(500);
-      setPromoMessage("₹500 discount applied successfully!");
+      setPromoMessage("â‚¹500 discount applied successfully!");
     } else if (promoCode.toUpperCase() === "WELCOME") {
       setDiscount(200);
-      setPromoMessage("₹200 discount applied!");
+      setPromoMessage("â‚¹200 discount applied!");
     } else {
       setDiscount(0);
       setPromoMessage("Invalid or expired promo code.");
@@ -160,7 +160,7 @@ export default function Payment() {
   // ---------------- SUCCESS SCREEN ----------------
   if (isSuccess) {
     return (
-      <div className="flex-1 bg-[#0a1128] w-full min-h-screen py-20 px-6 flex items-center justify-center">
+      <div className="flex-1 bg-[#0B0F19] w-full min-h-screen py-20 px-6 flex items-center justify-center">
         <motion.div 
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -186,7 +186,7 @@ export default function Payment() {
   // ---------------- OTP SCREEN ----------------
   if (showOTP) {
     return (
-      <div className="flex-1 bg-[#0a1128] w-full min-h-screen py-20 px-6 flex items-center justify-center">
+      <div className="flex-1 bg-[#0B0F19] w-full min-h-screen py-20 px-6 flex items-center justify-center">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -199,7 +199,7 @@ export default function Payment() {
               <ShieldCheck className="w-6 h-6 text-primary mr-2" />
               Secure Banking
             </h3>
-            <span className="text-sm text-text-muted">₹{finalAmount.toLocaleString('en-IN')}</span>
+            <span className="text-sm text-text-muted">â‚¹{finalAmount.toLocaleString('en-IN')}</span>
           </div>
 
           <p className="text-text-secondary text-sm leading-relaxed mb-6">
@@ -215,7 +215,7 @@ export default function Payment() {
                 required
                 value={otp}
                 onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-                placeholder="• • • • • •"
+                placeholder="â€¢ â€¢ â€¢ â€¢ â€¢ â€¢"
                 className="w-full bg-[#1a2333] border border-border rounded-xl px-4 py-4 text-center text-2xl tracking-widest text-text-inverse focus:outline-none focus:border-primary transition-colors"
               />
             </div>
@@ -239,7 +239,7 @@ export default function Payment() {
 
   // ---------------- MAIN CHECKOUT SCREEN ----------------
   return (
-    <div className="flex-1 bg-[#0a1128] w-full min-h-screen py-16 px-6">
+    <div className="flex-1 bg-[#0B0F19] w-full min-h-screen py-16 px-6">
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-8">
         
         {/* Left: Payment Methods */}
@@ -362,7 +362,7 @@ export default function Payment() {
                       ) : (
                         <>
                           <ShieldCheck className="h-5 w-5" />
-                          <span>Pay ₹{finalAmount.toLocaleString('en-IN')} Securely</span>
+                          <span>Pay â‚¹{finalAmount.toLocaleString('en-IN')} Securely</span>
                         </>
                       )}
                     </button>
@@ -516,12 +516,12 @@ export default function Payment() {
             <div className="space-y-4 text-sm mb-6 border-b border-border/50 pb-6">
               <div className="flex justify-between text-text-secondary">
                 <span>Course Price</span>
-                <span>₹{basePriceNum.toLocaleString('en-IN')}</span>
+                <span>â‚¹{basePriceNum.toLocaleString('en-IN')}</span>
               </div>
               {discount > 0 && (
                 <div className="flex justify-between text-primary">
                   <span>Discount Applied</span>
-                  <span>-₹{discount.toLocaleString('en-IN')}</span>
+                  <span>-â‚¹{discount.toLocaleString('en-IN')}</span>
                 </div>
               )}
               <div className="flex justify-between text-text-secondary">
@@ -532,7 +532,7 @@ export default function Payment() {
 
             <div className="flex justify-between items-center mb-8">
               <span className="text-lg text-text-secondary font-medium">Total Amount</span>
-              <span className="text-3xl font-extrabold text-primary">₹{finalAmount.toLocaleString('en-IN')}</span>
+              <span className="text-3xl font-extrabold text-primary">â‚¹{finalAmount.toLocaleString('en-IN')}</span>
             </div>
 
             <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 flex items-start space-x-3">

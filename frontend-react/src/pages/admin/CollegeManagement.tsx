@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+﻿import React, { useState, useEffect, useRef } from "react";
 import { Building2, Plus, Trash2, Edit2, Save, X, Phone, Mail, Calendar, User, BookOpen, ArrowLeft, ChevronRight, ChevronDown, ChevronUp, Search, Upload, Award, Download, Layers, ListFilter, FileText, CheckCircle2, XCircle, BarChart2 } from "lucide-react";
 import CollegeCollection from "./CollegeCollection";
 import CourseCategorySection from "./CourseCategorySection";
@@ -492,7 +492,7 @@ export default function CollegeManagement() {
                   <input
                     type="text" value={tutorName} onChange={e => setTutorName(e.target.value)}
                     placeholder="e.g. Rahul Sharma"
-                    className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+                    className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -500,14 +500,14 @@ export default function CollegeManagement() {
                   <input
                     type="text" value={domain} onChange={e => setDomain(e.target.value)}
                     placeholder="e.g. Full Stack MERN"
-                    className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+                    className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
                   />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-sm font-bold text-text-muted">Joining Date</label>
                   <input
                     type="date" value={joiningDate} onChange={e => setJoiningDate(e.target.value)}
-                    className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary [color-scheme:dark]"
+                    className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary [color-scheme:dark]"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -515,7 +515,7 @@ export default function CollegeManagement() {
                   <input
                     type="tel" value={tutorPhone} onChange={e => setTutorPhone(e.target.value)}
                     placeholder="e.g. +91 98765 43210"
-                    className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+                    className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
                   />
                 </div>
                 <div>
@@ -645,7 +645,7 @@ export default function CollegeManagement() {
                 value={collegeNameInput}
                 onChange={e => setCollegeNameInput(e.target.value)}
                 placeholder="Enter College Name..."
-                className="flex-1 bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+                className="flex-1 bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
                 autoFocus
               />
               <button onClick={() => { setIsCreatingCollege(false); setCollegeNameInput(""); setEditingCollegeId(null); }} className="p-3 text-text-muted hover:text-text-inverse transition-colors">
@@ -1628,7 +1628,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                                       <h4 className="text-lg font-bold text-text-inverse">{sectionName}</h4>
                                     </div>
                                     <p className="text-xs text-text-muted mt-1 font-medium">
-                                      {uniqueSectionStudents.size} Students • {sectionScores.length} Test Records
+                                      {uniqueSectionStudents.size} Students â€¢ {sectionScores.length} Test Records
                                     </p>
                                   </div>
                                 </div>
@@ -1758,10 +1758,10 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                           Att: {s.dsaAttempted}
                         </span>
                         <span className="px-2 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded text-xs font-bold">
-                          ✓ {s.dsaCorrect}
+                          âœ“ {s.dsaCorrect}
                         </span>
                         <span className="px-2 py-0.5 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded text-xs font-bold">
-                          ✗ {s.dsaWrong}
+                          âœ— {s.dsaWrong}
                         </span>
                       </div>
                     </td>
@@ -1771,10 +1771,10 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                           Att: {s.aptAttempted}
                         </span>
                         <span className="px-2 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded text-xs font-bold">
-                          ✓ {s.aptCorrect}
+                          âœ“ {s.aptCorrect}
                         </span>
                         <span className="px-2 py-0.5 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded text-xs font-bold">
-                          ✗ {s.aptWrong}
+                          âœ— {s.aptWrong}
                         </span>
                       </div>
                     </td>

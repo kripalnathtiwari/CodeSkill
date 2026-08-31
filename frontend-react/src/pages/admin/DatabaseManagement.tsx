@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_BASE_URL as API_URL } from '../../utils/apiConfig';
 import { Archive, Search, RefreshCw, Eye, Trash2, ArrowLeft, AlertTriangle, Undo } from 'lucide-react';
@@ -105,7 +105,7 @@ export default function DatabaseManagement() {
   };
 
   return (
-    <div className="p-6 bg-[#0a1128] min-h-screen text-text-inverse font-sans">
+    <div className="p-6 bg-[#0B0F19] min-h-screen text-text-inverse font-sans">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-3">

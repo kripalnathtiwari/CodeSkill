@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import { Play, Check, ChevronLeft, ChevronRight, Terminal, AlertTriangle, Code2, Clock, Cpu, Zap, CheckCircle2, XCircle } from "lucide-react";
@@ -247,7 +247,7 @@ export default function SolveProblem() {
             // C++, Java, Python: cannot run in browser
             // Detect if user has not written anything meaningful
             if (isUnchangedStarter(code)) {
-              actualOutput = '(no output — code is empty or unchanged)';
+              actualOutput = '(no output â€” code is empty or unchanged)';
               passed = false;
             } else {
               // User has written code but we can't verify without backend
@@ -385,7 +385,7 @@ if (Array.isArray(result)) console.log(result.join(' '));
   if (!problem) return <div className="p-10 text-text-inverse">Loading...</div>;
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-[calc(100vh-64px)] lg:h-[calc(100vh-64px)] bg-[#0a1128] text-text-inverse font-sans w-full overflow-y-auto lg:overflow-hidden">
+    <div className="flex flex-col lg:flex-row min-h-[calc(100vh-64px)] lg:h-[calc(100vh-64px)] bg-[#0B0F19] text-text-inverse font-sans w-full overflow-y-auto lg:overflow-hidden">
       
       {/* Left Pane: Description */}
       <div className="w-full lg:w-[45%] flex flex-col border-b lg:border-r lg:border-b-0 border-border bg-[#0f172a] h-auto lg:h-full overflow-y-visible lg:overflow-y-auto shrink-0">
@@ -682,7 +682,7 @@ if (Array.isArray(result)) console.log(result.join(' '));
                   {testResults[activeTestTab].hidden && (
                     <div className="bg-[#1a2032] border border-border/80 rounded-xl p-6 text-center">
                       <p className="text-text-muted text-xs font-sans">
-                        🔒 <span className="font-bold text-text-secondary">Secret Evaluation Test Case</span> — Inputs and expected outputs are hidden for fair assessment.
+                        ðŸ”’ <span className="font-bold text-text-secondary">Secret Evaluation Test Case</span> â€” Inputs and expected outputs are hidden for fair assessment.
                       </p>
                     </div>
                   )}

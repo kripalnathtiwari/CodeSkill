@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+﻿import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { Upload, Trash2, Edit2, Save, X, Search, FileText, Users, Building2, ChevronDown, ChevronUp, Download } from "lucide-react";
 
@@ -355,7 +355,7 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
                 value={categoryInput}
                 onChange={e => setCategoryInput(e.target.value)}
                 placeholder="e.g., B.Tech CSE, MCA, Full Stack Batch 1"
-                className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500"
+                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500"
                 autoFocus
               />
               <p className="text-xs text-text-muted mt-1">This will group the students under this category. Re-uploading with the same category will overwrite it.</p>
@@ -369,7 +369,7 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
                   accept=".csv"
                   onChange={handleFileUpload}
                   ref={fileInputRef}
-                  className="block w-full text-sm text-text-muted file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-600/20 file:text-indigo-400 hover:file:bg-indigo-600/30 transition-all cursor-pointer bg-[#0a1128] border border-border rounded-xl"
+                  className="block w-full text-sm text-text-muted file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-600/20 file:text-indigo-400 hover:file:bg-indigo-600/30 transition-all cursor-pointer bg-[#0B0F19] border border-border rounded-xl"
                 />
               </div>
               <p className="text-xs text-text-muted mt-1">Ensure the CSV has headers like Name, Email, Phone, RegNum.</p>
@@ -407,7 +407,7 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
                   value={adminCollegeEmailInput}
                   onChange={e => setAdminCollegeEmailInput(e.target.value)}
                   placeholder="e.g., admin@college.edu"
-                  className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500"
                 />
               </div>
             )}
@@ -418,7 +418,7 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
                 value={categoryInput}
                 onChange={e => setCategoryInput(e.target.value)}
                 placeholder="e.g., B.Tech CSE"
-                className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500"
+                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500"
                 autoFocus
               />
             </div>
@@ -491,7 +491,7 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
 
               {/* Expanded Student List */}
               {expandedId === collection.id && (
-                <div className="border-t border-border bg-[#0a1128] p-4">
+                <div className="border-t border-border bg-[#0B0F19] p-4">
                   <div className="overflow-x-auto rounded-xl border border-border">
                     <table className="w-full text-left text-sm text-text-muted">
                       <thead className="bg-[#111827] text-xs uppercase text-text-secondary">
@@ -525,10 +525,10 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
                     {isAddingStudentTo === collection.id ? (
                       <div className="bg-[#1a2333] p-4 rounded-xl border border-border">
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
-                          <input type="text" placeholder="Name *" value={newStudent.name} onChange={e => setNewStudent({ ...newStudent, name: e.target.value })} className="bg-[#0a1128] border border-border rounded-lg px-3 py-2 text-sm text-text-inverse" />
-                          <input type="email" placeholder="Email *" value={newStudent.email} onChange={e => setNewStudent({ ...newStudent, email: e.target.value })} className="bg-[#0a1128] border border-border rounded-lg px-3 py-2 text-sm text-text-inverse" />
-                          <input type="text" placeholder="Reg Num" value={newStudent.regNum} onChange={e => setNewStudent({ ...newStudent, regNum: e.target.value })} className="bg-[#0a1128] border border-border rounded-lg px-3 py-2 text-sm text-text-inverse" />
-                          <input type="text" placeholder="Phone" value={newStudent.phone} onChange={e => setNewStudent({ ...newStudent, phone: e.target.value })} className="bg-[#0a1128] border border-border rounded-lg px-3 py-2 text-sm text-text-inverse" />
+                          <input type="text" placeholder="Name *" value={newStudent.name} onChange={e => setNewStudent({ ...newStudent, name: e.target.value })} className="bg-[#0B0F19] border border-border rounded-lg px-3 py-2 text-sm text-text-inverse" />
+                          <input type="email" placeholder="Email *" value={newStudent.email} onChange={e => setNewStudent({ ...newStudent, email: e.target.value })} className="bg-[#0B0F19] border border-border rounded-lg px-3 py-2 text-sm text-text-inverse" />
+                          <input type="text" placeholder="Reg Num" value={newStudent.regNum} onChange={e => setNewStudent({ ...newStudent, regNum: e.target.value })} className="bg-[#0B0F19] border border-border rounded-lg px-3 py-2 text-sm text-text-inverse" />
+                          <input type="text" placeholder="Phone" value={newStudent.phone} onChange={e => setNewStudent({ ...newStudent, phone: e.target.value })} className="bg-[#0B0F19] border border-border rounded-lg px-3 py-2 text-sm text-text-inverse" />
                         </div>
                         <div className="flex justify-end space-x-2">
                           <button onClick={() => setIsAddingStudentTo(null)} className="px-4 py-1.5 text-sm text-text-muted hover:text-text-inverse border border-border rounded-lg">Cancel</button>

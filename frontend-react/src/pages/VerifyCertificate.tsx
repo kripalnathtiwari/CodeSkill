@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { Search, CheckCircle, XCircle, Award, Calendar, User } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -34,7 +34,7 @@ export default function VerifyCertificate() {
   };
 
   return (
-    <div className="flex-1 bg-[#0a1128] text-text-secondary w-full min-h-screen py-20 px-6 flex flex-col items-center">
+    <div className="flex-1 bg-[#0B0F19] text-text-secondary w-full min-h-screen py-20 px-6 flex flex-col items-center">
       <div className="max-w-2xl w-full text-center mb-12">
         <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
           <Award className="w-10 h-10 text-primary" />

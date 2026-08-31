@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { API_BASE_URL as API_URL } from "../../utils/apiConfig";
 import {
@@ -338,7 +338,7 @@ export default function AptitudeManagement() {
     }
   };
 
-  // ─── Bulk Review View ─────────────────────────────────────────────────────
+  // â”€â”€â”€ Bulk Review View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (isReviewingBulk) {
     return (
       <div className="max-w-5xl mx-auto space-y-6 animate-in fade-in duration-500">
@@ -380,7 +380,7 @@ export default function AptitudeManagement() {
                     className={`p-4 border-2 rounded-xl flex items-center space-x-3 cursor-pointer transition-all ${
                       q.correctOption === opt 
                         ? 'bg-primary/10 border-primary shadow-[0_0_15px_rgba(16,185,129,0.15)]' 
-                        : 'bg-[#0a1128] border-border hover:border-slate-500 hover:bg-slate-800'
+                        : 'bg-[#0B0F19] border-border hover:border-slate-500 hover:bg-slate-800'
                     }`} 
                     onClick={() => {
                       const newQs = [...pendingBulkQuestions];
@@ -405,7 +405,7 @@ export default function AptitudeManagement() {
     );
   }
 
-  // ─── Editor / Create View ────────────────────────────────────────────────
+  // â”€â”€â”€ Editor / Create View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (isCreating) {
     const isEditMode = !!editingProblem;
 
@@ -444,7 +444,7 @@ export default function AptitudeManagement() {
               <label className="block text-sm font-bold text-text-muted mb-2">Question Title *</label>
               <input
                 type="text" value={title} onChange={e => setTitle(e.target.value)}
-                className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
                 placeholder="e.g. Percentage Problem 1"
               />
             </div>
@@ -452,7 +452,7 @@ export default function AptitudeManagement() {
               <label className="block text-sm font-bold text-text-muted mb-2">Difficulty</label>
               <select
                 value={difficulty} onChange={e => setDifficulty(e.target.value)}
-                className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
               >
                 <option value="Easy">Easy</option>
                 <option value="Medium">Medium</option>
@@ -463,7 +463,7 @@ export default function AptitudeManagement() {
               <label className="block text-sm font-bold text-text-muted mb-2">Topic</label>
               <input
                 type="text" value={topic} onChange={e => setTopic(e.target.value)}
-                className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
                 placeholder="e.g. Percentages, Algebra"
               />
             </div>
@@ -471,7 +471,7 @@ export default function AptitudeManagement() {
               <label className="block text-sm font-bold text-text-muted mb-2">Company (Optional)</label>
               <input
                 type="text" value={company} onChange={e => setCompany(e.target.value)}
-                className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
                 placeholder="e.g. TCS, Infosys"
               />
             </div>
@@ -482,7 +482,7 @@ export default function AptitudeManagement() {
             <textarea
               value={description} onChange={e => setDescription(e.target.value)}
               rows={4}
-              className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary text-sm resize-none"
+              className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary text-sm resize-none"
               placeholder="Write the full question statement..."
             />
           </div>
@@ -494,7 +494,7 @@ export default function AptitudeManagement() {
                 <label className="block text-xs font-bold text-text-muted mb-1.5">Option A</label>
                 <input
                   type="text" value={optionA} onChange={e => setOptionA(e.target.value)}
-                  className="w-full bg-[#0a1128] border border-border rounded-xl px-3 py-2.5 text-text-inverse focus:outline-none focus:border-primary text-sm"
+                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-3 py-2.5 text-text-inverse focus:outline-none focus:border-primary text-sm"
                   placeholder="e.g. 15%"
                 />
               </div>
@@ -502,7 +502,7 @@ export default function AptitudeManagement() {
                 <label className="block text-xs font-bold text-text-muted mb-1.5">Option B</label>
                 <input
                   type="text" value={optionB} onChange={e => setOptionB(e.target.value)}
-                  className="w-full bg-[#0a1128] border border-border rounded-xl px-3 py-2.5 text-text-inverse focus:outline-none focus:border-primary text-sm"
+                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-3 py-2.5 text-text-inverse focus:outline-none focus:border-primary text-sm"
                   placeholder="e.g. 20%"
                 />
               </div>
@@ -510,7 +510,7 @@ export default function AptitudeManagement() {
                 <label className="block text-xs font-bold text-text-muted mb-1.5">Option C</label>
                 <input
                   type="text" value={optionC} onChange={e => setOptionC(e.target.value)}
-                  className="w-full bg-[#0a1128] border border-border rounded-xl px-3 py-2.5 text-text-inverse focus:outline-none focus:border-primary text-sm"
+                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-3 py-2.5 text-text-inverse focus:outline-none focus:border-primary text-sm"
                   placeholder="e.g. 25%"
                 />
               </div>
@@ -518,7 +518,7 @@ export default function AptitudeManagement() {
                 <label className="block text-xs font-bold text-text-muted mb-1.5">Option D</label>
                 <input
                   type="text" value={optionD} onChange={e => setOptionD(e.target.value)}
-                  className="w-full bg-[#0a1128] border border-border rounded-xl px-3 py-2.5 text-text-inverse focus:outline-none focus:border-primary text-sm"
+                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-3 py-2.5 text-text-inverse focus:outline-none focus:border-primary text-sm"
                   placeholder="e.g. 30%"
                 />
               </div>
@@ -528,7 +528,7 @@ export default function AptitudeManagement() {
               <label className="block text-sm font-bold text-text-muted mb-2">Correct Option</label>
               <select
                 value={correctOption} onChange={e => setCorrectOption(e.target.value)}
-                className="w-full md:w-64 bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+                className="w-full md:w-64 bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
               >
                 <option value="A">Option A</option>
                 <option value="B">Option B</option>
@@ -542,7 +542,7 @@ export default function AptitudeManagement() {
     );
   }
 
-  // ─── List View ────────────────────────────────────────────────────────────
+  // â”€â”€â”€ List View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
@@ -773,7 +773,7 @@ export default function AptitudeManagement() {
                         value={apiKey}
                         onChange={(e) => setApiKey(e.target.value)}
                         placeholder="AIzaSy..."
-                        className="w-full bg-[#0a1128] border border-border rounded-lg px-3 py-2 text-sm text-text-inverse focus:outline-none focus:border-primary"
+                        className="w-full bg-[#0B0F19] border border-border rounded-lg px-3 py-2 text-sm text-text-inverse focus:outline-none focus:border-primary"
                         disabled={isUploading}
                       />
                     </div>

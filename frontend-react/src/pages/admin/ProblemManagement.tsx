@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { getApiUrl } from "../../utils/apiConfig";
 import {
@@ -254,10 +254,10 @@ export default function ProblemManagement() {
       const existing: any[] = savedCustom ? JSON.parse(savedCustom) : [];
       const idx = existing.findIndex((p: any) => p._id === editingProblem._id);
       if (idx >= 0) {
-        // Already in custom list — update it
+        // Already in custom list â€” update it
         existing[idx] = { ...existing[idx], ...updatedProblem };
       } else {
-        // Default/backend problem — save as override with same ID
+        // Default/backend problem â€” save as override with same ID
         existing.push({ ...editingProblem, ...updatedProblem, _id: editingProblem._id });
       }
       localStorage.setItem("admin_custom_problems", JSON.stringify(existing));
@@ -358,7 +358,7 @@ export default function ProblemManagement() {
     }
   };
 
-  // ─── Editor / Create View ────────────────────────────────────────────────
+  // â”€â”€â”€ Editor / Create View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (isCreating) {
     const isEditMode = !!editingProblem;
 
@@ -397,7 +397,7 @@ export default function ProblemManagement() {
               <label className="block text-sm font-bold text-text-muted mb-2">Problem Title *</label>
               <input
                 type="text" value={title} onChange={e => setTitle(e.target.value)}
-                className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
                 placeholder="e.g. Merge K Sorted Lists"
               />
             </div>
@@ -405,7 +405,7 @@ export default function ProblemManagement() {
               <label className="block text-sm font-bold text-text-muted mb-2">Difficulty</label>
               <select
                 value={difficulty} onChange={e => setDifficulty(e.target.value)}
-                className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
               >
                 <option value="Easy">Easy</option>
                 <option value="Medium">Medium</option>
@@ -419,7 +419,7 @@ export default function ProblemManagement() {
             <textarea
               value={description} onChange={e => setDescription(e.target.value)}
               rows={6}
-              className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary font-mono text-sm resize-none"
+              className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary font-mono text-sm resize-none"
               placeholder="Write the problem statement, input/output format, constraints, and examples..."
             />
           </div>
@@ -429,7 +429,7 @@ export default function ProblemManagement() {
               <label className="block text-sm font-bold text-text-muted mb-2">Topic Tags (comma separated)</label>
               <input
                 type="text" value={topics} onChange={e => setTopics(e.target.value)}
-                className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
                 placeholder="Array, Dynamic Programming"
               />
             </div>
@@ -437,7 +437,7 @@ export default function ProblemManagement() {
               <label className="block text-sm font-bold text-text-muted mb-2">Company Tags (comma separated)</label>
               <input
                 type="text" value={companies} onChange={e => setCompanies(e.target.value)}
-                className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
                 placeholder="Google, Amazon, Meta"
               />
             </div>
@@ -529,7 +529,7 @@ export default function ProblemManagement() {
                   <textarea
                     value={code} onChange={e => setStarterCodes(prev => ({ ...prev, [lang]: e.target.value }))}
                     rows={5}
-                    className="w-full bg-[#0a1128] border border-border rounded-xl px-3 py-2.5 text-text-inverse focus:outline-none focus:border-primary font-mono text-xs resize-none"
+                    className="w-full bg-[#0B0F19] border border-border rounded-xl px-3 py-2.5 text-text-inverse focus:outline-none focus:border-primary font-mono text-xs resize-none"
                     placeholder={`Write starter code for ${lang}...`}
                   />
                 </div>
@@ -593,7 +593,7 @@ export default function ProblemManagement() {
                           setTestCases(newTc);
                         }}
                         rows={2}
-                        className="w-full bg-[#0a1128] border border-border rounded-lg px-3 py-2 text-text-inverse focus:outline-none focus:border-primary font-mono text-sm resize-y min-h-[60px]"
+                        className="w-full bg-[#0B0F19] border border-border rounded-lg px-3 py-2 text-text-inverse focus:outline-none focus:border-primary font-mono text-sm resize-y min-h-[60px]"
                         placeholder="e.g. nums = [2,7,11,15], target = 9"
                       />
                     </div>
@@ -607,7 +607,7 @@ export default function ProblemManagement() {
                           setTestCases(newTc);
                         }}
                         rows={2}
-                        className="w-full bg-[#0a1128] border border-border rounded-lg px-3 py-2 text-text-inverse focus:outline-none focus:border-primary font-mono text-sm resize-y min-h-[60px]"
+                        className="w-full bg-[#0B0F19] border border-border rounded-lg px-3 py-2 text-text-inverse focus:outline-none focus:border-primary font-mono text-sm resize-y min-h-[60px]"
                         placeholder="e.g. [0,1]"
                       />
                     </div>
@@ -627,7 +627,7 @@ export default function ProblemManagement() {
     );
   }
 
-  // ─── List View ────────────────────────────────────────────────────────────
+  // â”€â”€â”€ List View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
@@ -830,7 +830,7 @@ export default function ProblemManagement() {
             <div className="p-6 space-y-5">
                <div>
                 <label className="block text-sm font-bold text-text-muted mb-2">Gemini API Key (Required for PDF)</label>
-                <input type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary" placeholder="AIzaSy..." disabled={isUploading} />
+                <input type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary" placeholder="AIzaSy..." disabled={isUploading} />
               </div>
               <div className="border-2 border-dashed border-border hover:border-primary transition-colors rounded-2xl p-8 flex flex-col items-center justify-center text-center group cursor-pointer relative overflow-hidden">
                 <input 
@@ -883,12 +883,12 @@ export default function ProblemManagement() {
             <div className="p-6 space-y-5">
               <div>
                 <label className="block text-sm font-bold text-text-muted mb-2">Topic</label>
-                <input type="text" value={genTopic} onChange={e => setGenTopic(e.target.value)} className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500" placeholder="e.g. Arrays, Dynamic Programming" />
+                <input type="text" value={genTopic} onChange={e => setGenTopic(e.target.value)} className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500" placeholder="e.g. Arrays, Dynamic Programming" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-bold text-text-muted mb-2">Difficulty</label>
-                  <select value={genDifficulty} onChange={e => setGenDifficulty(e.target.value)} className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500">
+                  <select value={genDifficulty} onChange={e => setGenDifficulty(e.target.value)} className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500">
                     <option value="Easy">Easy</option>
                     <option value="Medium">Medium</option>
                     <option value="Hard">Hard</option>
@@ -896,16 +896,16 @@ export default function ProblemManagement() {
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-text-muted mb-2">Count</label>
-                  <input type="number" min="1" max="100" value={genCount} onChange={e => setGenCount(e.target.value)} className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500" />
+                  <input type="number" min="1" max="100" value={genCount} onChange={e => setGenCount(e.target.value)} className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500" />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-bold text-text-muted mb-2">Gemini API Key</label>
-                <input type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500" placeholder="AIzaSy..." />
+                <input type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500" placeholder="AIzaSy..." />
                 <p className="text-xs text-text-muted mt-2">Your API key is used only locally in your browser.</p>
               </div>
             </div>
-            <div className="p-6 border-t border-border bg-[#0a1128]/50 flex justify-end space-x-3">
+            <div className="p-6 border-t border-border bg-[#0B0F19]/50 flex justify-end space-x-3">
               <button onClick={() => setShowGeneratorModal(false)} disabled={isGenerating} className="px-5 py-2.5 rounded-xl font-bold text-text-muted hover:text-text-inverse transition-colors">Cancel</button>
               <button onClick={handleGenerate} disabled={isGenerating} className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-text-inverse px-6 py-2.5 rounded-xl font-bold flex items-center shadow-lg shadow-indigo-500/20 disabled:opacity-50 transition-all">
                 {isGenerating ? <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Generating...</> : <><Wand2 className="w-5 h-5 mr-2" /> Generate Now</>}

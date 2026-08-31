@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+﻿import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import { getApiUrl } from "../../utils/apiConfig";
@@ -697,7 +697,7 @@ export default function TestManagement() {
   const upcomingTests = visibleTests.filter(t => getTestStatus(t) === "upcoming");
   const endedTests = visibleTests.filter(t => getTestStatus(t) === "ended");
 
-  // ─── List View ────────────────────────────────────────────────────────────
+  // â”€â”€â”€ List View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (!isCreating) {
     return (
       <div className="space-y-8" key={tick}>
@@ -740,7 +740,7 @@ export default function TestManagement() {
                   placeholder="Search tests by title, course category, or section name..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-[#0a1128] border border-border/80 rounded-xl pl-11 pr-10 py-2.5 text-sm text-text-secondary placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
+                  className="w-full bg-[#0B0F19] border border-border/80 rounded-xl pl-11 pr-10 py-2.5 text-sm text-text-secondary placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
                 />
                 {searchQuery && (
                   <button
@@ -763,7 +763,7 @@ export default function TestManagement() {
                       mainDateInputRef.current?.focus();
                     }
                   }}
-                  className="flex items-center space-x-2 bg-[#0a1128] border border-border/80 hover:border-indigo-500/60 px-3 py-2 rounded-xl cursor-pointer transition-colors"
+                  className="flex items-center space-x-2 bg-[#0B0F19] border border-border/80 hover:border-indigo-500/60 px-3 py-2 rounded-xl cursor-pointer transition-colors"
                 >
                   <Calendar className="w-4 h-4 text-indigo-400 shrink-0 cursor-pointer" />
                   <span className="text-xs font-semibold text-text-muted hidden sm:inline select-none">Filter Date:</span>
@@ -868,7 +868,7 @@ export default function TestManagement() {
     );
   }
 
-  // ─── Create Form ──────────────────────────────────────────────────────────
+  // â”€â”€â”€ Create Form â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const hours12 = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"));
   const minutes = ["00", "05", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55"];
 
@@ -922,7 +922,7 @@ export default function TestManagement() {
                   setAdminSelectedCategory("all");
                   setAdminSelectedSection("all");
                 }}
-                className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-2.5 text-text-inverse focus:outline-none focus:border-primary text-sm"
+                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-2.5 text-text-inverse focus:outline-none focus:border-primary text-sm"
               >
                 <option value="all">All Colleges (Global Test)</option>
                 {colleges.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -935,7 +935,7 @@ export default function TestManagement() {
                   setAdminSelectedSection("all");
                 }}
                 disabled={adminSelectedCollegeId === "all"}
-                className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-2.5 text-text-inverse focus:outline-none focus:border-primary text-sm disabled:opacity-50"
+                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-2.5 text-text-inverse focus:outline-none focus:border-primary text-sm disabled:opacity-50"
               >
                 <option value="all">All Categories</option>
                 {adminSelectedCollegeId !== "all" && getCategoriesForCollege(adminSelectedCollegeId).map((cat: any) => (
@@ -947,7 +947,7 @@ export default function TestManagement() {
                 value={adminSelectedSection}
                 onChange={e => setAdminSelectedSection(e.target.value)}
                 disabled={adminSelectedCollegeId === "all"}
-                className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-2.5 text-text-inverse focus:outline-none focus:border-primary text-sm disabled:opacity-50"
+                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-2.5 text-text-inverse focus:outline-none focus:border-primary text-sm disabled:opacity-50"
               >
                 <option value="all">All Sections</option>
                 {adminSelectedCollegeId !== "all" && getSectionsForCollege(adminSelectedCollegeId, adminSelectedCategory).map((s: any) => (
@@ -962,7 +962,7 @@ export default function TestManagement() {
           <label className="block text-sm font-bold text-text-muted mb-2">Test Title *</label>
           <input
             type="text" value={title} onChange={e => setTitle(e.target.value)}
-            className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+            className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
             placeholder="e.g. Advanced React Architecture"
           />
         </div>
@@ -970,7 +970,7 @@ export default function TestManagement() {
         <div className="grid grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-bold text-text-muted mb-2">Duration</label>
-            <select value={duration} onChange={e => setDuration(e.target.value)} className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary">
+            <select value={duration} onChange={e => setDuration(e.target.value)} className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary">
               <option>15 Mins</option>
               <option>30 Mins</option>
               <option>1 Hour</option>
@@ -979,11 +979,11 @@ export default function TestManagement() {
           </div>
           <div>
             <label className="block text-sm font-bold text-text-muted mb-2">Prize / Reward</label>
-            <input type="text" value={prize} onChange={e => setPrize(e.target.value)} className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary" placeholder="e.g. ₹5,000 or Skill Badge" />
+            <input type="text" value={prize} onChange={e => setPrize(e.target.value)} className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary" placeholder="e.g. â‚¹5,000 or Skill Badge" />
           </div>
         </div>
 
-        {/* ── Scheduling ────────────────────────────────────── */}
+        {/* â”€â”€ Scheduling â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <div className="bg-slate-800/50 rounded-2xl border border-border p-5 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -993,7 +993,7 @@ export default function TestManagement() {
             <label className="flex items-center space-x-2 cursor-pointer">
               <input
                 type="checkbox" checked={startNow} onChange={e => setStartNow(e.target.checked)}
-                className="w-4 h-4 rounded border-slate-600 text-primary focus:ring-blue-500 bg-[#0a1128]"
+                className="w-4 h-4 rounded border-slate-600 text-primary focus:ring-blue-500 bg-[#0B0F19]"
               />
               <span className="text-sm text-text-secondary font-medium">Start Immediately</span>
             </label>
@@ -1009,7 +1009,7 @@ export default function TestManagement() {
                   value={scheduleDate}
                   min={new Date().toISOString().split("T")[0]}
                   onChange={e => setScheduleDate(e.target.value)}
-                  className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary [color-scheme:dark]"
+                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary [color-scheme:dark]"
                 />
               </div>
 
@@ -1019,14 +1019,14 @@ export default function TestManagement() {
                 <div className="flex space-x-2">
                   <select
                     value={scheduleHour} onChange={e => setScheduleHour(e.target.value)}
-                    className="flex-1 bg-[#0a1128] border border-border rounded-xl px-3 py-3 text-text-inverse focus:outline-none focus:border-primary text-center"
+                    className="flex-1 bg-[#0B0F19] border border-border rounded-xl px-3 py-3 text-text-inverse focus:outline-none focus:border-primary text-center"
                   >
                     {hours12.map(h => <option key={h} value={h}>{h}</option>)}
                   </select>
                   <span className="text-text-muted self-center text-lg font-bold">:</span>
                   <select
                     value={scheduleMinute} onChange={e => setScheduleMinute(e.target.value)}
-                    className="flex-1 bg-[#0a1128] border border-border rounded-xl px-3 py-3 text-text-inverse focus:outline-none focus:border-primary text-center"
+                    className="flex-1 bg-[#0B0F19] border border-border rounded-xl px-3 py-3 text-text-inverse focus:outline-none focus:border-primary text-center"
                   >
                     {minutes.map(m => <option key={m} value={m}>{m}</option>)}
                   </select>
@@ -1034,12 +1034,12 @@ export default function TestManagement() {
                     <button
                       type="button"
                       onClick={() => setScheduleAmPm("AM")}
-                      className={`px-3 py-3 text-sm font-bold transition-colors ${scheduleAmPm === "AM" ? "bg-primary text-text-inverse" : "bg-[#0a1128] text-text-muted hover:text-text-inverse"}`}
+                      className={`px-3 py-3 text-sm font-bold transition-colors ${scheduleAmPm === "AM" ? "bg-primary text-text-inverse" : "bg-[#0B0F19] text-text-muted hover:text-text-inverse"}`}
                     >AM</button>
                     <button
                       type="button"
                       onClick={() => setScheduleAmPm("PM")}
-                      className={`px-3 py-3 text-sm font-bold transition-colors ${scheduleAmPm === "PM" ? "bg-primary text-text-inverse" : "bg-[#0a1128] text-text-muted hover:text-text-inverse"}`}
+                      className={`px-3 py-3 text-sm font-bold transition-colors ${scheduleAmPm === "PM" ? "bg-primary text-text-inverse" : "bg-[#0B0F19] text-text-muted hover:text-text-inverse"}`}
                     >PM</button>
                   </div>
                 </div>
@@ -1058,12 +1058,12 @@ export default function TestManagement() {
         {/* Access Code */}
         <div className="bg-slate-800/50 p-5 rounded-2xl border border-border">
           <label className="flex items-center space-x-3 cursor-pointer">
-            <input type="checkbox" checked={requiresCode} onChange={e => setRequiresCode(e.target.checked)} className="w-5 h-5 rounded border-slate-600 text-primary focus:ring-blue-500 bg-[#0a1128]" />
+            <input type="checkbox" checked={requiresCode} onChange={e => setRequiresCode(e.target.checked)} className="w-5 h-5 rounded border-slate-600 text-primary focus:ring-blue-500 bg-[#0B0F19]" />
             <span className="font-bold text-text-inverse">Require Access Code</span>
           </label>
           {requiresCode && (
             <div className="mt-4">
-              <input type="text" value={accessCode} onChange={e => setAccessCode(e.target.value)} className="w-full bg-[#0a1128] border border-rose-500/50 rounded-xl px-4 py-3 text-rose-400 font-mono tracking-widest focus:outline-none focus:border-rose-500" placeholder="Enter Secret Code" />
+              <input type="text" value={accessCode} onChange={e => setAccessCode(e.target.value)} className="w-full bg-[#0B0F19] border border-rose-500/50 rounded-xl px-4 py-3 text-rose-400 font-mono tracking-widest focus:outline-none focus:border-rose-500" placeholder="Enter Secret Code" />
             </div>
           )}
         </div>
@@ -1103,13 +1103,13 @@ export default function TestManagement() {
 
             <input
               type="text" value={q.text} onChange={e => setQuestions(prev => prev.map(x => x.id === q.id ? { ...x, text: e.target.value } : x))}
-              className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-4 text-text-inverse font-bold text-base mb-5 focus:outline-none focus:border-primary"
+              className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-4 text-text-inverse font-bold text-base mb-5 focus:outline-none focus:border-primary"
               placeholder="What is the output of..."
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {q.options.map((opt, oIdx) => (
-                <div key={oIdx} className={`flex items-center space-x-3 bg-[#0a1128] border rounded-xl p-3 transition-colors ${q.answer === opt && opt !== "" ? "border-primary" : "border-border"}`}>
+                <div key={oIdx} className={`flex items-center space-x-3 bg-[#0B0F19] border rounded-xl p-3 transition-colors ${q.answer === opt && opt !== "" ? "border-primary" : "border-border"}`}>
                   <button
                     onClick={() => setQuestions(prev => prev.map(x => x.id === q.id ? { ...x, answer: opt } : x))}
                     className={`flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${q.answer === opt && opt !== "" ? "border-primary" : "border-slate-500"}`}
@@ -1191,7 +1191,7 @@ function SnapshotViewerModal({ testId, studentEmail, studentName, onClose }: { t
           </button>
         </div>
 
-        <div className="p-6 overflow-y-auto custom-scrollbar flex-1 bg-[#0a1128]">
+        <div className="p-6 overflow-y-auto custom-scrollbar flex-1 bg-[#0B0F19]">
           {loading ? (
             <div className="flex flex-col items-center justify-center h-64 text-primary">
               <Loader2 className="w-12 h-12 animate-spin mb-4" />
@@ -1380,7 +1380,7 @@ function ResultsModal({ test, onClose }: { test: any; onClose: () => void }) {
               placeholder="Search results by section name, category, test name, or student..."
               value={resultSearchQuery}
               onChange={(e) => setResultSearchQuery(e.target.value)}
-              className="w-full bg-[#0a1128] border border-border/80 rounded-xl pl-9 pr-8 py-2 text-xs sm:text-sm text-text-secondary placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
+              className="w-full bg-[#0B0F19] border border-border/80 rounded-xl pl-9 pr-8 py-2 text-xs sm:text-sm text-text-secondary placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
             />
             {resultSearchQuery && (
               <button
@@ -1402,7 +1402,7 @@ function ResultsModal({ test, onClose }: { test: any; onClose: () => void }) {
                   modalDateInputRef.current?.focus();
                 }
               }}
-              className="flex items-center space-x-2 bg-[#0a1128] border border-border/80 hover:border-indigo-500/60 px-3 py-1.5 rounded-xl cursor-pointer transition-colors"
+              className="flex items-center space-x-2 bg-[#0B0F19] border border-border/80 hover:border-indigo-500/60 px-3 py-1.5 rounded-xl cursor-pointer transition-colors"
             >
               <Calendar className="w-4 h-4 text-indigo-400 shrink-0 cursor-pointer" />
               <span className="text-xs font-semibold text-text-muted hidden sm:inline select-none">Filter Date:</span>
@@ -1440,7 +1440,7 @@ function ResultsModal({ test, onClose }: { test: any; onClose: () => void }) {
           </div>
         </div>
 
-        <div className="p-6 overflow-y-auto custom-scrollbar flex-1 bg-[#0a1128]">
+        <div className="p-6 overflow-y-auto custom-scrollbar flex-1 bg-[#0B0F19]">
           {filteredScores.length === 0 ? (
             <div className="text-center py-12 text-text-muted">
               <Award className="w-12 h-12 mx-auto mb-4 opacity-20" />
@@ -1471,7 +1471,7 @@ function ResultsModal({ test, onClose }: { test: any; onClose: () => void }) {
                           </h4>
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {students.sort((a, b) => b.score - a.score).map((student: any, idx: number) => (
-                              <div key={idx} className="bg-[#0a1128] border border-border p-4 rounded-xl flex justify-between items-center hover:border-border transition-colors">
+                              <div key={idx} className="bg-[#0B0F19] border border-border p-4 rounded-xl flex justify-between items-center hover:border-border transition-colors">
                                 <div className="min-w-0 flex-1 pr-4">
                                   <p className="font-bold text-text-secondary truncate">{student.studentName}</p>
                                   <p className="text-xs text-text-muted truncate">{student.studentEmail}</p>

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Plus, Edit, Trash2, Search, Target, ArrowLeft, Save, X } from "lucide-react";
+﻿import React, { useState, useEffect } from "react";
+import { Plus, Edit, Trash2, Search, Target, ArrowLeft, Save, X, BookOpen } from "lucide-react";
 
 export default function OtherPracticeManagement() {
   const [problems, setProblems] = useState<any[]>([]);
@@ -18,9 +18,15 @@ export default function OtherPracticeManagement() {
   const [optionD, setOptionD] = useState("");
   const [correctOption, setCorrectOption] = useState("A");
   const [topic, setTopic] = useState("");
+  const [subject, setSubject] = useState("");
   const [company, setCompany] = useState("");
 
+  const [subjects, setSubjects] = useState<string[]>([]);
+  const [isManagingSubjects, setIsManagingSubjects] = useState(false);
+  const [newSubject, setNewSubject] = useState("");
+
   const STORAGE_KEY = "admin_other_practice_data";
+  const SUBJECTS_KEY = "admin_subjects_data";
 
   const fetchProblems = () => {
     try {
@@ -35,6 +41,10 @@ export default function OtherPracticeManagement() {
 
   useEffect(() => {
     fetchProblems();
+    const storedSubjects = localStorage.getItem(SUBJECTS_KEY);
+    if (storedSubjects) {
+      setSubjects(JSON.parse(storedSubjects));
+    }
   }, []);
 
   const saveProblems = (updatedProblems: any[]) => {
@@ -58,7 +68,8 @@ export default function OtherPracticeManagement() {
         C: optionC,
         D: optionD,
       },
-      correctOption
+      correctOption,
+      subject
     };
 
     let updated = [...problems];
@@ -89,6 +100,7 @@ export default function OtherPracticeManagement() {
     setOptionD(p.options?.D || "");
     setCorrectOption(p.correctOption || "A");
     setTopic(p.topic || "");
+    setSubject(p.subject || "");
     setCompany(p.company || "");
     setIsCreating(true);
   };
@@ -105,13 +117,77 @@ export default function OtherPracticeManagement() {
     setOptionD("");
     setCorrectOption("A");
     setTopic("");
+    setSubject("");
     setCompany("");
   };
 
   const filteredProblems = problems.filter(p => 
     p.title?.toLowerCase().includes(search.toLowerCase()) || 
-    p.topic?.toLowerCase().includes(search.toLowerCase())
+    p.topic?.toLowerCase().includes(search.toLowerCase()) ||
+    p.subject?.toLowerCase().includes(search.toLowerCase())
   );
+
+  if (isManagingSubjects) {
+    return (
+      <div className="bg-[#111827] rounded-3xl border border-border p-8 animate-in fade-in zoom-in-95 duration-300">
+        <div className="flex items-center justify-between mb-8">
+          <button 
+            onClick={() => setIsManagingSubjects(false)}
+            className="flex items-center gap-2 text-text-muted hover:text-text-inverse transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span>Back to List</span>
+          </button>
+          <h2 className="text-2xl font-bold text-text-inverse">Manage Subjects</h2>
+          <div className="w-24"></div>
+        </div>
+
+        <div className="max-w-xl mx-auto space-y-6">
+          <div className="flex gap-4">
+            <input 
+              value={newSubject} onChange={e => setNewSubject(e.target.value)}
+              className="flex-1 bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-rose-500 transition-colors"
+              placeholder="New Subject Name"
+            />
+            <button 
+              onClick={() => {
+                if (newSubject.trim() && !subjects.includes(newSubject.trim())) {
+                  const updated = [...subjects, newSubject.trim()];
+                  setSubjects(updated);
+                  localStorage.setItem(SUBJECTS_KEY, JSON.stringify(updated));
+                  setNewSubject("");
+                }
+              }}
+              className="px-6 py-3 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-bold transition-all shadow-md"
+            >
+              Add
+            </button>
+          </div>
+          <div className="bg-[#0B0F19] rounded-xl border border-border divide-y divide-border overflow-hidden">
+            {subjects.length === 0 ? (
+              <div className="p-8 text-center text-text-muted">No subjects added yet.</div>
+            ) : (
+              subjects.map(s => (
+                <div key={s} className="flex justify-between items-center p-4 hover:bg-slate-800/30 transition-colors">
+                  <span className="text-text-inverse font-medium">{s}</span>
+                  <button 
+                    onClick={() => {
+                      const updated = subjects.filter(sub => sub !== s);
+                      setSubjects(updated);
+                      localStorage.setItem(SUBJECTS_KEY, JSON.stringify(updated));
+                    }}
+                    className="p-2 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (isCreating) {
     return (
@@ -142,17 +218,27 @@ export default function OtherPracticeManagement() {
               <label className="block text-text-secondary text-sm font-semibold mb-2">Question Title</label>
               <input 
                 value={title} onChange={e => setTitle(e.target.value)}
-                className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-rose-500 transition-colors"
+                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-rose-500 transition-colors"
                 placeholder="e.g. Basic HTML Tags"
               />
             </div>
             
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-text-secondary text-sm font-semibold mb-2">Topic (Category Box)</label>
+                <label className="block text-text-secondary text-sm font-semibold mb-2">Subject</label>
+                <select 
+                  value={subject} onChange={e => setSubject(e.target.value)}
+                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-rose-500 transition-colors"
+                >
+                  <option value="">Select Subject</option>
+                  {subjects.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-text-secondary text-sm font-semibold mb-2">Topic</label>
                 <input 
                   value={topic} onChange={e => setTopic(e.target.value)}
-                  className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-rose-500 transition-colors"
+                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-rose-500 transition-colors"
                   placeholder="e.g. Web Dev"
                 />
               </div>
@@ -160,7 +246,7 @@ export default function OtherPracticeManagement() {
                 <label className="block text-text-secondary text-sm font-semibold mb-2">Difficulty</label>
                 <select 
                   value={difficulty} onChange={e => setDifficulty(e.target.value)}
-                  className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-rose-500 transition-colors"
+                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-rose-500 transition-colors"
                 >
                   <option value="Easy">Easy</option>
                   <option value="Medium">Medium</option>
@@ -173,7 +259,7 @@ export default function OtherPracticeManagement() {
               <label className="block text-text-secondary text-sm font-semibold mb-2">Question Description</label>
               <textarea 
                 value={description} onChange={e => setDescription(e.target.value)}
-                className="w-full h-32 bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-rose-500 transition-colors resize-none"
+                className="w-full h-32 bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-rose-500 transition-colors resize-none"
                 placeholder="Enter the question text here..."
               />
             </div>
@@ -182,13 +268,13 @@ export default function OtherPracticeManagement() {
               <label className="block text-text-secondary text-sm font-semibold mb-2">Company (Optional)</label>
               <input 
                 value={company} onChange={e => setCompany(e.target.value)}
-                className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-rose-500 transition-colors"
+                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-rose-500 transition-colors"
                 placeholder="e.g. Google, Amazon"
               />
             </div>
           </div>
 
-          <div className="space-y-6 bg-[#0a1128] p-6 rounded-2xl border border-border">
+          <div className="space-y-6 bg-[#0B0F19] p-6 rounded-2xl border border-border">
             <h3 className="text-lg font-bold text-text-inverse mb-4">Options</h3>
             
             <div className="space-y-4">
@@ -224,18 +310,27 @@ export default function OtherPracticeManagement() {
         <div>
           <h2 className="text-2xl font-bold text-text-inverse flex items-center gap-2">
             <Target className="w-8 h-8 text-rose-500" />
-            Other Practice Management
+            More Practice Management
           </h2>
-          <p className="text-text-secondary mt-1">Manage custom topics and questions for the Other Practice section.</p>
+          <p className="text-text-secondary mt-1">Manage custom topics and questions for the More Practice section.</p>
         </div>
 
-        <button 
-          onClick={() => setIsCreating(true)}
-          className="flex items-center gap-2 px-6 py-2.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(244,63,94,0.3)] hover:shadow-[0_0_25px_rgba(244,63,94,0.5)]"
-        >
-          <Plus className="w-5 h-5" />
-          <span>Add Question</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={() => setIsManagingSubjects(true)}
+            className="flex items-center gap-2 px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-bold transition-all border border-border shadow-sm"
+          >
+            <BookOpen className="w-5 h-5" />
+            <span>Manage Subjects</span>
+          </button>
+          <button 
+            onClick={() => setIsCreating(true)}
+            className="flex items-center gap-2 px-6 py-2.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(244,63,94,0.3)] hover:shadow-[0_0_25px_rgba(244,63,94,0.5)]"
+          >
+            <Plus className="w-5 h-5" />
+            <span>Add Question</span>
+          </button>
+        </div>
       </div>
 
       <div className="bg-[#111827] rounded-3xl border border-border p-6 md:p-8">
@@ -247,7 +342,7 @@ export default function OtherPracticeManagement() {
               placeholder="Search by title or topic..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-[#0a1128] border border-border rounded-xl pl-12 pr-4 py-3 text-text-inverse focus:outline-none focus:border-rose-500 transition-colors"
+              className="w-full bg-[#0B0F19] border border-border rounded-xl pl-12 pr-4 py-3 text-text-inverse focus:outline-none focus:border-rose-500 transition-colors"
             />
           </div>
         </div>
@@ -255,7 +350,7 @@ export default function OtherPracticeManagement() {
         <div className="space-y-4">
           {filteredProblems.length === 0 ? (
             <div className="text-center py-12">
-              <div className="w-20 h-20 bg-[#0a1128] rounded-full flex items-center justify-center mx-auto mb-4 border border-border">
+              <div className="w-20 h-20 bg-[#0B0F19] rounded-full flex items-center justify-center mx-auto mb-4 border border-border">
                 <Target className="w-10 h-10 text-text-muted" />
               </div>
               <h3 className="text-xl font-bold text-text-inverse mb-2">No Questions Found</h3>
@@ -263,11 +358,16 @@ export default function OtherPracticeManagement() {
             </div>
           ) : (
             filteredProblems.map(p => (
-              <div key={p._id} className="group relative overflow-hidden bg-[#0a1128] rounded-2xl border border-border hover:border-border-hover transition-colors p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div key={p._id} className="group relative overflow-hidden bg-[#0B0F19] rounded-2xl border border-border hover:border-border-hover transition-colors p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="absolute left-0 top-0 bottom-0 w-1 bg-rose-500 scale-y-0 group-hover:scale-y-100 transition-transform origin-top"></div>
                 
                 <div>
                   <div className="flex items-center gap-3 mb-2">
+                    {p.subject && (
+                      <span className="px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-500 text-xs font-bold uppercase tracking-wider border border-blue-500/20">
+                        {p.subject}
+                      </span>
+                    )}
                     <span className="px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-500 text-xs font-bold uppercase tracking-wider border border-rose-500/20">
                       {p.topic}
                     </span>

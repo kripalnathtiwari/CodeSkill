@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { Plus, Edit, Trash2, Search, Image as ImageIcon, AlertTriangle, X, Save, ArrowLeft, Lock } from "lucide-react";
 import { COURSES_DATA } from "../../data/coursesData";
 
@@ -13,7 +13,7 @@ export default function CourseManagement() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("summer");
-  const [price, setPrice] = useState("₹2,999");
+  const [price, setPrice] = useState("â‚¹2,999");
   const [image, setImage] = useState("");
   const [tags, setTags] = useState("");
   const [duration, setDuration] = useState("4 Weeks");
@@ -35,7 +35,7 @@ export default function CourseManagement() {
 
   const resetForm = () => {
     setTitle(""); setDescription(""); setCategory("summer");
-    setPrice("₹2,999"); setImage(""); setTags("");
+    setPrice("â‚¹2,999"); setImage(""); setTags("");
     setDuration("4 Weeks"); setLevel("Beginner to Advanced");
     setLanguage("English"); setVisibility("PUBLIC"); setPublishStatus("DRAFT");
     setSeoTitle(""); setOverview(""); setSkillsYouWillLearn(""); setTechStack("");
@@ -51,7 +51,7 @@ export default function CourseManagement() {
     setTitle(course.title || "");
     setDescription(course.description || "");
     setCategory(course.category || "summer");
-    setPrice(course.price || "₹2,999");
+    setPrice(course.price || "â‚¹2,999");
     setImage(course.image || "");
     setTags(Array.isArray(course.tags) ? course.tags.join(", ") : (course.tags || ""));
     setDuration(course.duration || "4 Weeks");
@@ -131,7 +131,7 @@ export default function CourseManagement() {
     setDeleteConfirmId(null);
   };
 
-  // ─── Editor View (Create / Edit) ────────────────────────────────────────────
+  // â”€â”€â”€ Editor View (Create / Edit) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (isCreating) {
     const isEditingDefault = editingCourse && isDefaultCourse(editingCourse.id);
     const isEditMode = !!editingCourse;
@@ -199,7 +199,7 @@ export default function CourseManagement() {
                 <input
                   type="text" value={title} onChange={e => setTitle(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   placeholder="e.g. Master React in 30 Days"
                 />
               </div>
@@ -208,7 +208,7 @@ export default function CourseManagement() {
                 <select
                   value={category} onChange={e => setCategory(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option value="summer">Summer Training</option>
                   <option value="industrial">Industrial Training</option>
@@ -221,8 +221,8 @@ export default function CourseManagement() {
                 <input
                   type="text" value={price} onChange={e => setPrice(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
-                  placeholder="e.g. ₹2,999"
+                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                  placeholder="e.g. â‚¹2,999"
                 />
               </div>
               <div>
@@ -230,7 +230,7 @@ export default function CourseManagement() {
                 <input
                   type="text" value={duration} onChange={e => setDuration(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="e.g. 4 Weeks"
                 />
               </div>
@@ -243,7 +243,7 @@ export default function CourseManagement() {
                 <select
                   value={level} onChange={e => setLevel(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option>Beginner</option>
                   <option>Intermediate</option>
@@ -258,7 +258,7 @@ export default function CourseManagement() {
                 <input
                   type="text" value={tags} onChange={e => setTags(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="React, Node.js, Web Dev"
                 />
               </div>
@@ -267,7 +267,7 @@ export default function CourseManagement() {
                 <input
                   type="text" value={image} onChange={e => setImage(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="https://..."
                 />
                 {image && (
@@ -283,7 +283,7 @@ export default function CourseManagement() {
                 <input
                   type="text" value={language} onChange={e => setLanguage(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="e.g. English, Hindi"
                 />
               </div>
@@ -292,7 +292,7 @@ export default function CourseManagement() {
                 <select
                   value={visibility} onChange={e => setVisibility(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option value="PUBLIC">Public</option>
                   <option value="PRIVATE">Private</option>
@@ -304,7 +304,7 @@ export default function CourseManagement() {
                 <select
                   value={publishStatus} onChange={e => setPublishStatus(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option value="DRAFT">Draft</option>
                   <option value="PUBLISHED">Published</option>
@@ -319,20 +319,20 @@ export default function CourseManagement() {
               <input
                 type="text" value={seoTitle} onChange={e => setSeoTitle(e.target.value)}
                 disabled={!!isEditingDefault}
-                className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 placeholder="Title optimized for Search Engines"
               />
             </div>
           </div>
 
-          {/* Description – full width */}
+          {/* Description â€“ full width */}
           <div>
             <label className="block text-sm font-bold text-text-muted mb-2">Description *</label>
             <textarea
               value={description} onChange={e => setDescription(e.target.value)}
               rows={4}
               disabled={!!isEditingDefault}
-              className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed resize-none"
+              className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed resize-none"
               placeholder="Detailed course description..."
             />
           </div>
@@ -343,7 +343,7 @@ export default function CourseManagement() {
               value={overview} onChange={e => setOverview(e.target.value)}
               rows={4}
               disabled={!!isEditingDefault}
-              className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed resize-none"
+              className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed resize-none"
               placeholder="Provide a high-level overview of the course..."
             />
           </div>
@@ -354,7 +354,7 @@ export default function CourseManagement() {
               <input
                 type="text" value={skillsYouWillLearn} onChange={e => setSkillsYouWillLearn(e.target.value)}
                 disabled={!!isEditingDefault}
-                className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 placeholder="e.g. Problem Solving, Web Development"
               />
             </div>
@@ -363,7 +363,7 @@ export default function CourseManagement() {
               <input
                 type="text" value={techStack} onChange={e => setTechStack(e.target.value)}
                 disabled={!!isEditingDefault}
-                className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 placeholder="e.g. React, Node.js, MongoDB"
               />
             </div>
@@ -373,7 +373,7 @@ export default function CourseManagement() {
     );
   }
 
-  // ─── List View ────────────────────────────────────────────────────────────
+  // â”€â”€â”€ List View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
@@ -426,7 +426,7 @@ export default function CourseManagement() {
                       </div>
                       <div className="min-w-0">
                         <p className="line-clamp-1 font-semibold">{course.title}</p>
-                        <p className="text-xs text-text-muted">{course.duration || "—"} · {course.level || "—"}</p>
+                        <p className="text-xs text-text-muted">{course.duration || "â€”"} Â· {course.level || "â€”"}</p>
                       </div>
                     </div>
                   </td>
@@ -443,7 +443,7 @@ export default function CourseManagement() {
                     </span>
                     <span className="block text-[10px] text-text-muted mt-1">{course.visibility || "PUBLIC"}</span>
                   </td>
-                  <td className="px-6 py-4">{course.students ?? "—"}</td>
+                  <td className="px-6 py-4">{course.students ?? "â€”"}</td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end space-x-1">
                       <button

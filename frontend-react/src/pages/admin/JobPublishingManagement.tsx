@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { 
   Megaphone, 
   Plus, 
@@ -44,7 +44,7 @@ const DEFAULT_PUBLISHED_JOBS: PublishedJob[] = [
     location: 'Bangalore, India',
     type: 'Full-time',
     workplace: 'Hybrid',
-    salary: '₹14,00,000 - ₹20,00,000 PA',
+    salary: 'â‚¹14,00,000 - â‚¹20,00,000 PA',
     experience: '0-2 Years',
     skills: ['React', 'TypeScript', 'Next.js', 'Tailwind CSS', 'Redux'],
     posted: 'Just now',
@@ -59,7 +59,7 @@ const DEFAULT_PUBLISHED_JOBS: PublishedJob[] = [
     location: 'Remote',
     type: 'Internship',
     workplace: 'Remote',
-    salary: '₹35,000 / month + PPO',
+    salary: 'â‚¹35,000 / month + PPO',
     experience: 'Internship',
     skills: ['Node.js', 'TypeScript', 'Express', 'PostgreSQL', 'Docker'],
     posted: '1 day ago',
@@ -74,7 +74,7 @@ const DEFAULT_PUBLISHED_JOBS: PublishedJob[] = [
     location: 'Hyderabad, India',
     type: 'Full-time',
     workplace: 'On-site',
-    salary: '₹16,00,000 - ₹24,00,000 PA',
+    salary: 'â‚¹16,00,000 - â‚¹24,00,000 PA',
     experience: '0-2 Years',
     skills: ['Python', 'PyTorch', 'Transformers', 'LangChain', 'FastAPI'],
     posted: '2 days ago',
@@ -286,7 +286,7 @@ export default function JobPublishingManagement() {
             placeholder="Search title, company, skills..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-11 pr-4 py-2.5 bg-[#0a1128] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500 text-sm"
+            className="w-full pl-11 pr-4 py-2.5 bg-[#0B0F19] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500 text-sm"
           />
         </div>
 
@@ -296,7 +296,7 @@ export default function JobPublishingManagement() {
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="bg-[#0a1128] border border-border rounded-xl px-3 py-2 text-sm text-text-inverse focus:outline-none focus:border-rose-500"
+            className="bg-[#0B0F19] border border-border rounded-xl px-3 py-2 text-sm text-text-inverse focus:outline-none focus:border-rose-500"
           >
             <option value="All">All Job Types</option>
             <option value="Full-time">Full-time</option>
@@ -394,7 +394,7 @@ export default function JobPublishingManagement() {
                         : 'bg-slate-800 text-text-muted hover:text-text-inverse'
                     }`}
                   >
-                    {job.featured ? '★ Featured' : '☆ Make Featured'}
+                    {job.featured ? 'â˜… Featured' : 'â˜† Make Featured'}
                   </button>
                   <Link
                     to="/jobs"
@@ -440,7 +440,7 @@ export default function JobPublishingManagement() {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="e.g. Senior Frontend React Developer"
-                    className="w-full px-4 py-2.5 bg-[#0a1128] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500"
+                    className="w-full px-4 py-2.5 bg-[#0B0F19] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500"
                   />
                 </div>
 
@@ -454,7 +454,7 @@ export default function JobPublishingManagement() {
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
                     placeholder="e.g. Google India / CodeSkill Labs"
-                    className="w-full px-4 py-2.5 bg-[#0a1128] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500"
+                    className="w-full px-4 py-2.5 bg-[#0B0F19] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500"
                   />
                 </div>
               </div>
@@ -470,7 +470,7 @@ export default function JobPublishingManagement() {
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     placeholder="e.g. Bangalore / Remote"
-                    className="w-full px-4 py-2.5 bg-[#0a1128] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500"
+                    className="w-full px-4 py-2.5 bg-[#0B0F19] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500"
                   />
                 </div>
 
@@ -481,7 +481,7 @@ export default function JobPublishingManagement() {
                   <select
                     value={type}
                     onChange={(e) => setType(e.target.value as any)}
-                    className="w-full px-3 py-2.5 bg-[#0a1128] border border-border rounded-xl text-text-inverse focus:outline-none focus:border-rose-500"
+                    className="w-full px-3 py-2.5 bg-[#0B0F19] border border-border rounded-xl text-text-inverse focus:outline-none focus:border-rose-500"
                   >
                     <option value="Full-time">Full-time</option>
                     <option value="Internship">Internship</option>
@@ -497,7 +497,7 @@ export default function JobPublishingManagement() {
                   <select
                     value={workplace}
                     onChange={(e) => setWorkplace(e.target.value as any)}
-                    className="w-full px-3 py-2.5 bg-[#0a1128] border border-border rounded-xl text-text-inverse focus:outline-none focus:border-rose-500"
+                    className="w-full px-3 py-2.5 bg-[#0B0F19] border border-border rounded-xl text-text-inverse focus:outline-none focus:border-rose-500"
                   >
                     <option value="Remote">Remote</option>
                     <option value="Hybrid">Hybrid</option>
@@ -516,8 +516,8 @@ export default function JobPublishingManagement() {
                     required
                     value={salary}
                     onChange={(e) => setSalary(e.target.value)}
-                    placeholder="e.g. ₹12,00,000 - ₹18,00,000 PA"
-                    className="w-full px-4 py-2.5 bg-[#0a1128] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500"
+                    placeholder="e.g. â‚¹12,00,000 - â‚¹18,00,000 PA"
+                    className="w-full px-4 py-2.5 bg-[#0B0F19] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500"
                   />
                 </div>
 
@@ -528,7 +528,7 @@ export default function JobPublishingManagement() {
                   <select
                     value={experience}
                     onChange={(e) => setExperience(e.target.value as any)}
-                    className="w-full px-3 py-2.5 bg-[#0a1128] border border-border rounded-xl text-text-inverse focus:outline-none focus:border-rose-500"
+                    className="w-full px-3 py-2.5 bg-[#0B0F19] border border-border rounded-xl text-text-inverse focus:outline-none focus:border-rose-500"
                   >
                     <option value="Fresher">Fresher</option>
                     <option value="0-2 Years">0-2 Years</option>
@@ -547,7 +547,7 @@ export default function JobPublishingManagement() {
                   value={skillsInput}
                   onChange={(e) => setSkillsInput(e.target.value)}
                   placeholder="React, TypeScript, Next.js, Node.js, AWS"
-                  className="w-full px-4 py-2.5 bg-[#0a1128] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500"
+                  className="w-full px-4 py-2.5 bg-[#0B0F19] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500"
                 />
               </div>
 
@@ -561,7 +561,7 @@ export default function JobPublishingManagement() {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Describe the role, team culture, responsibilities, and perks..."
-                  className="w-full px-4 py-2.5 bg-[#0a1128] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500"
+                  className="w-full px-4 py-2.5 bg-[#0B0F19] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500"
                 />
               </div>
 

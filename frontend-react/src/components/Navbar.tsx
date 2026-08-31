@@ -115,7 +115,7 @@ export default function Navbar() {
                 <span>Apptitude question</span>
               </Link>
               <Link to="/other-practice" className="px-4 py-3 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary transition-colors text-sm flex items-center space-x-2">
-                <span>Other Practice</span>
+                <span>More Practice</span>
               </Link>
             </div>
           </div>
@@ -326,7 +326,7 @@ export default function Navbar() {
                 <Link to="/problems" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary text-text-secondary dark:text-text-muted py-1.5">DSA Problem</Link>
                 <Link to="/company-problems" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary text-text-secondary dark:text-text-muted py-1.5">Company interview prep</Link>
                 <Link to="/aptitude" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary text-text-secondary dark:text-text-muted py-1.5">Aptitude questions</Link>
-                <Link to="/other-practice" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary text-text-secondary dark:text-text-muted py-1.5">Other Practice</Link>
+                <Link to="/other-practice" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary text-text-secondary dark:text-text-muted py-1.5">More Practice</Link>
               </div>
             )}
           </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Send, CheckCircle, Loader2 } from 'lucide-react';
 import axios from 'axios';
@@ -135,7 +135,7 @@ export default function Contact() {
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
                     placeholder="John Doe"
-                    className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary focus:ring-1 focus:ring-blue-500 transition-all"
+                    className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary focus:ring-1 focus:ring-blue-500 transition-all"
                   />
                 </div>
                 <div className="space-y-2">
@@ -146,7 +146,7 @@ export default function Contact() {
                     value={formData.email}
                     onChange={(e) => setFormData({...formData, email: e.target.value})}
                     placeholder="john@example.com"
-                    className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary focus:ring-1 focus:ring-blue-500 transition-all"
+                    className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary focus:ring-1 focus:ring-blue-500 transition-all"
                   />
                 </div>
               </div>
@@ -159,7 +159,7 @@ export default function Contact() {
                   onChange={(e) => setFormData({...formData, message: e.target.value})}
                   rows={5}
                   placeholder="How can we help you?"
-                  className="w-full bg-[#0a1128] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary focus:ring-1 focus:ring-blue-500 transition-all resize-none"
+                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary focus:ring-1 focus:ring-blue-500 transition-all resize-none"
                 ></textarea>
               </div>
 

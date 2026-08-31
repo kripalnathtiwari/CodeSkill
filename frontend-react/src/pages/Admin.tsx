@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -58,7 +58,7 @@ export default function AdminDashboard() {
     { id: "college_collection", label: "College Collection", icon: Users, roles: ["COLLEGE_ADMIN"] },
     { id: "cv_management", label: "CV Management", icon: FileText, roles: ["ADMIN"] },
     { id: "publish_job", label: "Publish Jobs", icon: Megaphone, roles: ["ADMIN"] },
-    { id: "other_practice", label: "Other Practice", icon: Target, roles: ["ADMIN"] },
+    { id: "other_practice", label: "More Practice", icon: Target, roles: ["ADMIN"] },
     { id: "user_activity", label: "User Activity", icon: TrendingUp, roles: ["ADMIN"] },
     { id: "activity", label: "Activity Logs", icon: Activity, roles: ["ADMIN"] },
     { id: "database", label: "Database", icon: Database, roles: ["ADMIN"] },
@@ -67,7 +67,7 @@ export default function AdminDashboard() {
   NAV_ITEMS = NAV_ITEMS.filter(item => item.roles.includes(user?.role || "ADMIN"));
 
   return (
-    <div className="flex h-screen bg-[#0a1128] text-text-inverse overflow-hidden font-sans pt-16">
+    <div className="flex h-screen bg-[#0B0F19] text-text-inverse overflow-hidden font-sans pt-16">
       
       {/* Sidebar Navigation */}
       <aside 
@@ -119,7 +119,7 @@ export default function AdminDashboard() {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto bg-[#0a1128] p-8 h-full">
+      <main className="flex-1 overflow-y-auto bg-[#0B0F19] p-8 h-full">
         {activeTab === "dashboard" && <DashboardOverview setActiveTab={setActiveTab} />}
         {activeTab === "courses" && <CourseManagement />}
         { activeTab === "users" && <UserManagement />}

@@ -229,7 +229,7 @@ export default function CompanyProblems() {
   // New UI states
   const [selectedTestSeries, setSelectedTestSeries] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [modulesExpanded, setModulesExpanded] = useState(true);
+  const [modulesExpanded, setModulesExpanded] = useState(false);
   const [mcqModulesExpanded, setMcqModulesExpanded] = useState(false);
 
   // Pagination for problems view
@@ -400,6 +400,8 @@ export default function CompanyProblems() {
 
   const handleStartPreparing = (companyName: string) => {
     setSelectedCompany(companyName);
+    setModulesExpanded(false);
+    setMcqModulesExpanded(false);
     setActiveView("problems");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };

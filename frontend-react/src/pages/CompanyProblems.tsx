@@ -14,7 +14,9 @@ import {
   Briefcase, 
   Users, 
   Globe, 
-  Sparkles 
+  Sparkles,
+  Loader2,
+  HelpCircle
 } from "lucide-react";
 import axios from "axios";
 import { getApiUrl } from "../utils/apiConfig";
@@ -612,8 +614,88 @@ export default function CompanyProblems() {
               )}
             </div>
 
+            {/* Questions Section */}
+            <div className="space-y-6">
+              {/* Tabs */}
+              <div className="flex items-center space-x-2 border-b border-border dark:border-border/40 pb-4">
+                {SECTIONS.map(sec => (
+                  <button
+                    key={sec}
+                    onClick={() => setSelectedSection(sec)}
+                    className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                      selectedSection === sec
+                        ? "bg-[#0066cc] text-white shadow-md shadow-blue-500/20"
+                        : "bg-surface dark:bg-background text-text-muted hover:bg-slate-100 dark:hover:bg-slate-800"
+                    }`}
+                  >
+                    {sec === "MCQ" ? "MCQ Questions" : "Coding Questions"}
+                  </button>
+                ))}
+              </div>
 
-          </div>
+              {/* Questions List */}
+              {isLoading ? (
+                <div className="text-center py-12 text-text-muted">Loading questions...</div>
+              ) : activeQuestions.length === 0 ? (
+                <div className="glass-card rounded-2xl p-12 text-center border border-border dark:border-border/40">
+                  <p className="text-text-muted">No {selectedSection} questions found for {selectedCompany}.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {activeQuestions.map((q: any) => (
+                    <div key={q._id || q.id} className="bg-surface dark:bg-background rounded-2xl border border-border dark:border-border/80 p-5 flex items-center justify-between hover:shadow-md transition-shadow">
+                      <div className="flex items-start space-x-4">
+                        <div className="mt-1">
+                          {selectedSection === "MCQ" ? (
+                            <HelpCircle className="w-5 h-5 text-purple-500" />
+                          ) : (
+                            <Code2 className="w-5 h-5 text-blue-500" />
+                          )}
+                        </div>
+                        <div>
+                          <h4 className="text-base font-bold text-text-primary dark:text-text-inverse">
+                            {q.title || q.statement}
+                          </h4>
+                          <div className="flex items-center space-x-3 mt-2">
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${
+                              (q.difficulty || "EASY").toUpperCase() === "EASY" ? "bg-green-500/10 text-green-500" :
+                              (q.difficulty || "EASY").toUpperCase() === "MEDIUM" ? "bg-amber-500/10 text-amber-500" :
+                              "bg-rose-500/10 text-rose-500"
+                            }`}>
+                              {q.difficulty || "EASY"}
+                            </span>
+                            {q.topicTags && (
+                              <span className="text-xs font-medium text-text-muted">
+                                {Array.isArray(q.topicTags) ? q.topicTags.map((t:any)=>t.name||t).join(", ") : q.topicTags}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      <Link
+                        to={selectedSection === "MCQ" ? `/solve-interview-mcq/${q._id || q.id}` : `/problems/${q.slug}`}
+                        className="shrink-0 bg-slate-100 dark:bg-slate-800 hover:bg-[#0066cc] hover:text-white text-text-primary dark:text-text-inverse p-2.5 rounded-xl transition-colors"
+                      >
+                        <ArrowUpRight className="w-5 h-5" />
+                      </Link>
+                    </div>
+                  ))}
+                  
+                  {hasMore && (
+                    <div className="pt-4 flex justify-center">
+                      <button
+                        onClick={() => fetchCompanyQuestions(true)}
+                        disabled={loadingMore}
+                        className="bg-surface hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-text-primary dark:text-text-inverse font-semibold px-6 py-2.5 rounded-xl transition-colors flex items-center space-x-2 border border-border"
+                      >
+                        {loadingMore && <Loader2 className="w-4 h-4 animate-spin" />}
+                        <span>Load More</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
         </div>
       )}
     </div>

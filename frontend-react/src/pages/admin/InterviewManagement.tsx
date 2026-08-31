@@ -319,6 +319,18 @@ export default function InterviewManagement() {
     setShowAddTestSeriesModal(false);
   };
 
+  // Handle deleting a custom test series
+  const handleDeleteTestSeries = (tsName: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!window.confirm(`Delete test series "${tsName}"?`)) return;
+    const updated = customTestSeries.filter(ts => !(ts.name === tsName && ts.companyName === selectedCompany));
+    setCustomTestSeries(updated);
+    localStorage.setItem("admin_company_test_series", JSON.stringify(updated));
+    if (selectedTestSeries === tsName) {
+      setSelectedTestSeries(null);
+    }
+  };
+
   // Handle saving a new custom company
   const handleAddCompany = () => {
     if (!newCompanyName.trim()) {
@@ -834,13 +846,20 @@ export default function InterviewManagement() {
                               >
                                 <Edit className="w-4 h-4" />
                               </button>}
-                              {!q.isTestSeries && <button
-                                onClick={(e) => { e.stopPropagation(); setDeleteConfirmId(q._id || q.id); }}
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (q.isTestSeries) {
+                                    handleDeleteTestSeries(q.title, e);
+                                  } else {
+                                    setDeleteConfirmId(q._id || q.id);
+                                  }
+                                }}
                                 className="p-1.5 text-text-muted hover:text-rose-400 hover:bg-slate-800 rounded-lg transition-colors"
-                                title="Delete Question"
+                                title={q.isTestSeries ? "Delete Test Series" : "Delete Question"}
                               >
                                 <Trash2 className="w-4 h-4" />
-                              </button>}
+                              </button>
                             </div>
                           </td>
                         </tr>

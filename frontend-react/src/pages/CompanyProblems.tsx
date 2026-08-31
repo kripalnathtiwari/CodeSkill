@@ -1,20 +1,19 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { 
-  Building2, 
+Building2,
   Search,
-  ChevronRight, 
+  ChevronRight,
   ChevronDown,
-  Flame, 
-  Home, 
-  CheckCircle2, 
-  Award, 
-  ArrowUpRight, 
-  ArrowLeft, 
-  Code2, 
-  Briefcase, 
-  Users, 
-  Globe, 
+  Flame,
+  Home,
+  CheckCircle2,
+  Award,
+  ArrowUpRight,
+  ArrowLeft,
+  Code2,
+  Briefcase,
+  Users,
+  Globe,
   Sparkles,
   Menu,
   X,
@@ -225,7 +224,7 @@ export default function CompanyProblems() {
   const [searchQuery, setSearchQuery] = useState("");
   const [problemSearchQuery, setProblemSearchQuery] = useState("");
   const [selectedSection, setSelectedSection] = useState("MCQ");
-  
+
   // New UI states
   const [selectedTestSeries, setSelectedTestSeries] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -309,7 +308,7 @@ export default function CompanyProblems() {
       }
 
       let url = `/api/v1/questions?limit=50&type=INTERVIEW&company=${encodeURIComponent(selectedCompany)}`;
-      
+
       if (problemSearchQuery.trim()) {
         url += `&search=${encodeURIComponent(problemSearchQuery.trim())}`;
       }
@@ -326,13 +325,13 @@ export default function CompanyProblems() {
           const savedCustom = localStorage.getItem("admin_custom_interview_problems");
           if (savedCustom) {
             let customQuestions = JSON.parse(savedCustom);
-            
+
             // Filter custom ones by company
             customQuestions = customQuestions.filter((q: any) => {
               const tags = q.companyTags || q.companies || [];
               return tags.some((t: any) => (t.name || t).toLowerCase() === selectedCompany.toLowerCase());
             });
-            
+
             fetchedQuestions = [...customQuestions, ...fetchedQuestions];
           }
         } catch (e) {
@@ -448,11 +447,10 @@ export default function CompanyProblems() {
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={`px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
-                    selectedCategory === category
+                  className={`px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${selectedCategory === category
                       ? "bg-surface dark:bg-slate-800 text-primary dark:text-primary shadow-sm font-semibold border border-border/60 dark:border-border"
                       : "text-text-secondary dark:text-text-muted hover:text-text-primary dark:hover:text-text-secondary"
-                  }`}
+                    }`}
                 >
                   {category}
                 </button>
@@ -606,7 +604,7 @@ export default function CompanyProblems() {
                   </button>
                 </div>
                 <div>
-                  <button 
+                  <button
                     onClick={() => setModulesExpanded(!modulesExpanded)}
                     className="w-full p-4 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
                   >
@@ -624,11 +622,10 @@ export default function CompanyProblems() {
                           <button
                             key={idx}
                             onClick={() => { setSelectedTestSeries(ts.name); setSidebarOpen(false); }}
-                            className={`w-full p-3.5 pl-6 flex items-center space-x-3 text-left transition-colors border-l-4 ${
-                              selectedTestSeries === ts.name 
-                                ? "border-blue-600 bg-blue-50/50 dark:bg-blue-900/20 text-[#0066cc] dark:text-blue-400" 
+                            className={`w-full p-3.5 pl-6 flex items-center space-x-3 text-left transition-colors border-l-4 ${selectedTestSeries === ts.name
+                                ? "border-blue-600 bg-blue-50/50 dark:bg-blue-900/20 text-[#0066cc] dark:text-blue-400"
                                 : "border-transparent text-text-secondary dark:text-text-muted hover:bg-slate-100 dark:hover:bg-slate-800/50"
-                            }`}
+                              }`}
                           >
                             <Code2 className="w-4 h-4 shrink-0" />
                             <span className="text-[13px] font-medium truncate">{ts.name}</span>
@@ -668,14 +665,14 @@ export default function CompanyProblems() {
                       {testSeriesList.length} Lessons
                     </span>
                   </div>
-                  
+
                   <div className="p-4 sm:p-6 space-y-3">
                     {testSeriesList.length === 0 ? (
                       <p className="text-text-muted text-sm text-center py-8">No test series available for this company.</p>
                     ) : (
                       testSeriesList.map((ts, idx) => {
                         // Count questions in this TS
-                        const qCount = questions.filter(q => q.testSeriesTags?.some((t:any) => t.name === ts.name)).length;
+                        const qCount = questions.filter(q => q.testSeriesTags?.some((t: any) => t.name === ts.name)).length;
                         return (
                           <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border border-blue-100 dark:border-border/60 hover:border-blue-300 dark:hover:border-blue-500/50 transition-colors bg-white dark:bg-slate-900/20 gap-4">
                             <div className="flex items-center space-x-3 min-w-0">
@@ -689,7 +686,7 @@ export default function CompanyProblems() {
                                 <FileText className="w-4 h-4" />
                                 <span>{qCount} Questions</span>
                               </div>
-                              <button 
+                              <button
                                 onClick={() => setSelectedTestSeries(ts.name)}
                                 className="bg-[#0066cc] hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-semibold flex items-center space-x-2 transition-colors shadow-sm shrink-0"
                               >
@@ -710,7 +707,7 @@ export default function CompanyProblems() {
                     <h2 className="text-xs sm:text-sm font-bold text-slate-500 dark:text-text-muted uppercase tracking-wider">
                       Practice Problems
                     </h2>
-                    <button 
+                    <button
                       onClick={() => setSelectedTestSeries(null)}
                       className="flex items-center space-x-1.5 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors"
                     >
@@ -718,7 +715,7 @@ export default function CompanyProblems() {
                       <span>Back to Modules</span>
                     </button>
                   </div>
-                  
+
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse min-w-[700px]">
                       <thead>
@@ -733,7 +730,7 @@ export default function CompanyProblems() {
                       </thead>
                       <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-sm">
                         {(() => {
-                          const tsQuestions = questions.filter(q => q.testSeriesTags?.some((t:any) => t.name === selectedTestSeries));
+                          const tsQuestions = questions.filter(q => q.testSeriesTags?.some((t: any) => t.name === selectedTestSeries));
                           if (tsQuestions.length === 0) {
                             return (
                               <tr>
@@ -747,18 +744,17 @@ export default function CompanyProblems() {
                             const isCoding = q.questionType === "CODING" || q.type === "CODING";
                             const isSolved = isCoding ? solvedCodingProblems.has(String(q._id || q.id)) : false;
                             const diff = (q.difficulty || "EASY").toUpperCase();
-                            
+
                             return (
                               <tr key={q._id || q.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
                                 <td className="px-6 py-4 font-bold text-slate-800 dark:text-text-inverse truncate max-w-xs">
                                   {q.title || q.statement}
                                 </td>
                                 <td className="px-6 py-4 text-center">
-                                  <span className={`text-[10px] font-extrabold px-2.5 py-1 rounded uppercase ${
-                                    diff === "EASY" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" :
-                                    diff === "MEDIUM" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400" :
-                                    "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400"
-                                  }`}>
+                                  <span className={`text-[10px] font-extrabold px-2.5 py-1 rounded uppercase ${diff === "EASY" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" :
+                                      diff === "MEDIUM" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400" :
+                                        "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400"
+                                    }`}>
                                     {diff}
                                   </span>
                                 </td>
@@ -781,14 +777,14 @@ export default function CompanyProblems() {
                                 </td>
                                 <td className="px-6 py-4 text-center">
                                   {isCoding ? (
-                                    <Link 
+                                    <Link
                                       to={`/solve/${q._id || q.id}`}
                                       className="inline-flex items-center justify-center bg-[#0066cc] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2 rounded-lg transition-colors shadow-sm"
                                     >
                                       Solve
                                     </Link>
                                   ) : (
-                                    <Link 
+                                    <Link
                                       to={`/take-test/${encodeURIComponent(selectedTestSeries)}`}
                                       className="inline-flex items-center justify-center bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-5 py-2 rounded-lg transition-colors shadow-sm"
                                       title="Take Full Test"

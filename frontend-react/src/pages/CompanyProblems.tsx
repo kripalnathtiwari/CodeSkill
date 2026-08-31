@@ -14,7 +14,8 @@ import {
   Briefcase, 
   Users, 
   Globe, 
-  Sparkles 
+  Sparkles,
+  BookOpen
 } from "lucide-react";
 import axios from "axios";
 import { getApiUrl } from "../utils/apiConfig";

@@ -212,9 +212,10 @@ export default function CompanyProblems() {
   const [companiesList, setCompaniesList] = useState<CompanyCardData[]>(DEFAULT_COMPANIES);
   const [isLoading, setIsLoading] = useState(true);
 
-  // View state: "directory" (card grid) or "problems" (company practice view)
-  const [activeView, setActiveView] = useState<"directory" | "problems">("directory");
+  // View state: "directory" (card grid), "topics" (topic cards), or "problems" (company practice view)
+  const [activeView, setActiveView] = useState<"directory" | "topics" | "problems">("directory");
   const [selectedCompany, setSelectedCompany] = useState<string>("");
+  const [selectedTopic, setSelectedTopic] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [problemSearchQuery, setProblemSearchQuery] = useState("");
@@ -338,14 +339,14 @@ export default function CompanyProblems() {
 
   // Fetch questions for the selected company
   useEffect(() => {
-    if (activeView === "problems" && selectedCompany) {
+    if ((activeView === "topics" || activeView === "problems") && selectedCompany) {
       fetchCompanyQuestions(false);
     }
-  }, [activeView, selectedCompany, selectedSection, problemSearchQuery]);
+  }, [activeView, selectedCompany, problemSearchQuery]);
 
   // Fetch test series for the selected company
   useEffect(() => {
-    if (activeView === "problems" && selectedCompany) {
+    if ((activeView === "topics" || activeView === "problems") && selectedCompany) {
       const savedTS = localStorage.getItem("admin_company_test_series");
       if (savedTS) {
         const allTS = JSON.parse(savedTS);
@@ -367,23 +368,64 @@ export default function CompanyProblems() {
     });
   }, [companiesList, selectedCategory, searchQuery]);
 
-  // Active questions filtered by section
+  // Active questions filtered by topic and section
   const activeQuestions = useMemo(() => {
     return questions.filter((q: any) => {
+      // Must match selected topic
+      let matchesTopic = false;
+      const topicList = Array.isArray(q.topicTags) 
+        ? q.topicTags.map((t: any) => t.name || t)
+        : (q.topicTags ? q.topicTags.split(",") : []);
+      
+      matchesTopic = topicList.some((t: string) => t.trim().toLowerCase() === selectedTopic.toLowerCase());
+
+      if (!matchesTopic) return false;
+
       const isMcq = q.questionType === "MCQ" || q.type === "MCQ";
       if (selectedSection === "MCQ") return isMcq;
       return !isMcq;
     });
-  }, [questions, selectedSection]);
+  }, [questions, selectedSection, selectedTopic]);
+
+  // Unique topics within the standalone questions
+  const uniqueTopics = useMemo(() => {
+    const topicsMap = new Map<string, number>();
+    questions.forEach((q: any) => {
+      if (!q.testSeriesTags || q.testSeriesTags.length === 0) {
+        const topicList = Array.isArray(q.topicTags) 
+          ? q.topicTags.map((t: any) => t.name || t)
+          : (q.topicTags ? q.topicTags.split(",") : []);
+          
+        topicList.forEach((t: string) => {
+          const cleanTopic = t.trim();
+          if (cleanTopic) {
+            topicsMap.set(cleanTopic, (topicsMap.get(cleanTopic) || 0) + 1);
+          }
+        });
+      }
+    });
+    return Array.from(topicsMap.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+  }, [questions]);
 
   const handleStartPreparing = (companyName: string) => {
     setSelectedCompany(companyName);
-    setActiveView("problems");
+    setActiveView("topics");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleBackToDirectory = () => {
     setActiveView("directory");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleStartTopic = (topic: string) => {
+    setSelectedTopic(topic);
+    setActiveView("problems");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleBackToTopics = () => {
+    setActiveView("topics");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -402,7 +444,7 @@ export default function CompanyProblems() {
           <span>/</span>
           {activeView === "directory" ? (
             <span className="text-primary dark:text-primary font-semibold">Company Preparation</span>
-          ) : (
+          ) : activeView === "topics" ? (
             <>
               <button
                 onClick={handleBackToDirectory}
@@ -412,6 +454,24 @@ export default function CompanyProblems() {
               </button>
               <span>/</span>
               <span className="text-primary dark:text-primary font-semibold">{selectedCompany}</span>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={handleBackToDirectory}
+                className="hover:text-primary dark:hover:text-primary transition-colors"
+              >
+                Company Preparation
+              </button>
+              <span>/</span>
+              <button
+                onClick={handleBackToTopics}
+                className="hover:text-primary dark:hover:text-primary transition-colors"
+              >
+                {selectedCompany}
+              </button>
+              <span>/</span>
+              <span className="text-primary dark:text-primary font-semibold">{selectedTopic}</span>
             </>
           )}
         </div>
@@ -533,8 +593,8 @@ export default function CompanyProblems() {
             )}
           </div>
         </>
-      ) : (
-        /* Company Problems Practice View (when a user clicks "Start Preparing") */
+      ) : activeView === "topics" ? (
+        /* Company Topics View (when a user clicks "Start Preparing" on a company) */
         <div className="space-y-6">
           {/* Back button */}
           <div>
@@ -613,6 +673,158 @@ export default function CompanyProblems() {
             </div>
 
 
+            {/* Practice by Topic */}
+            <div className="space-y-4 mb-8">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white">Practice by Topic</h3>
+              {uniqueTopics.length === 0 ? (
+                  <div className="glass-card rounded-2xl p-8 text-center border border-border dark:border-border/40">
+                    <p className="text-text-muted text-sm">No topic-wise questions available for this company yet.</p>
+                  </div>
+              ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {uniqueTopics.map(([topic, count]) => (
+                      <div
+                        key={topic}
+                        className="bg-surface dark:bg-background rounded-2xl border border-border dark:border-border/80 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between overflow-hidden group"
+                      >
+                        {/* Card Body */}
+                        <div className="p-5 sm:p-6 flex gap-4 sm:gap-5 items-start">
+                          {/* Left Box */}
+                          <div className="w-32 h-36 shrink-0 rounded-2xl bg-gradient-to-br from-orange-400 via-orange-500 to-amber-500 p-3 sm:p-3.5 flex flex-col items-center justify-between text-center relative overflow-hidden shadow-sm">
+                            <div className="flex items-center justify-center font-bold text-white text-sm sm:text-base tracking-tight truncate px-1">
+                              <span className="truncate">{topic}</span>
+                            </div>
+                            <span className="text-[10px] font-extrabold text-white uppercase tracking-tight mt-0.5">
+                              PREPARATION
+                            </span>
+                            <div className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center shadow-lg border-2 border-white/40 text-white relative overflow-hidden">
+                               <Code2 className="w-6 h-6" />
+                            </div>
+                          </div>
+  
+                          {/* Right Side */}
+                          <div className="flex-1 min-w-0 pt-0.5">
+                            <h2 className="text-lg font-bold text-text-primary dark:text-text-inverse truncate">
+                              {topic}
+                            </h2>
+                            <div className="text-[10px] font-bold text-text-muted uppercase tracking-wider mt-2 mb-2">
+                              PREPARATION INCLUDES:
+                            </div>
+                            <ul className="space-y-1.5">
+                              <li className="flex items-center text-xs text-text-primary dark:text-text-secondary font-medium">
+                                <CheckCircle2 className="text-blue-500 shrink-0 h-4 w-4 mr-2" />
+                                <span>Coding Assessments</span>
+                              </li>
+                              <li className="flex items-center text-xs text-text-primary dark:text-text-secondary font-medium">
+                                <CheckCircle2 className="text-blue-500 shrink-0 h-4 w-4 mr-2" />
+                                <span>Algorithmic Logic</span>
+                              </li>
+                              <li className="flex items-center text-xs text-text-primary dark:text-text-secondary font-medium">
+                                <CheckCircle2 className="text-blue-500 shrink-0 h-4 w-4 mr-2" />
+                                <span>{count} Questions</span>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+  
+                        {/* Card Footer */}
+                        <div className="px-5 py-3.5 bg-background/70 dark:bg-background/70 border-t border-border/80 flex items-center justify-between">
+                          <div className="inline-flex items-center justify-center p-2 rounded-lg border border-border bg-surface text-primary">
+                            <Award className="w-4 h-4" />
+                          </div>
+                          <button
+                            onClick={() => handleStartTopic(topic)}
+                            className="bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg inline-flex items-center space-x-1.5 transition-all"
+                          >
+                            <span>Start Preparing</span>
+                            <ArrowUpRight className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : (
+        /* PROBLEMS VIEW (when a user clicks "Start Preparing" on a topic) */
+        <div className="space-y-6 animate-in fade-in duration-500">
+          {/* Back button */}
+          <div>
+            <button
+              onClick={handleBackToTopics}
+              className="inline-flex items-center space-x-2 text-sm font-semibold text-primary dark:text-primary hover:underline transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to {selectedCompany} Topics</span>
+            </button>
+          </div>
+          
+          {/* Topic Header */}
+          <div className="relative rounded-2xl overflow-hidden glass-card p-6 flex flex-col border border-border dark:border-border/40 gap-2">
+             <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+               <Flame className="w-6 h-6 text-orange-500" />
+               {selectedTopic} Problems
+             </h2>
+             <p className="text-text-muted text-sm">Practice MCQ and Coding problems specifically for {selectedTopic}.</p>
+          </div>
+          
+          {/* Section Tabs */}
+          <div className="flex border-b border-border/80">
+            {SECTIONS.map((section) => (
+              <button
+                key={section}
+                onClick={() => setSelectedSection(section)}
+                className={`py-3 px-6 text-sm font-semibold transition-all ${
+                  selectedSection === section
+                    ? "border-b-2 border-primary text-primary"
+                    : "text-text-muted hover:text-text-primary"
+                }`}
+              >
+                {section === "MCQ" ? "MCQ Questions" : "Coding Problems"}
+              </button>
+            ))}
+          </div>
+          
+          {/* Render Active Questions */}
+          <div className="space-y-4">
+             {activeQuestions.length === 0 ? (
+               <div className="py-12 text-center text-text-muted text-sm glass-card rounded-xl border border-border/50">
+                 No {selectedSection === "MCQ" ? "MCQ" : "Coding"} questions found for this topic.
+               </div>
+             ) : (
+               activeQuestions.map((q: any) => (
+                 <div key={q._id || q.id} className="bg-surface dark:bg-background rounded-xl border border-border/80 p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
+                   <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
+                      <div className="flex items-center space-x-2">
+                        {selectedSection === "MCQ" ? <BookOpen className="w-5 h-5 text-purple-500" /> : <Code2 className="w-5 h-5 text-primary" />}
+                        <span className="font-semibold text-text-primary dark:text-text-inverse">{q.title || q.statement}</span>
+                      </div>
+                      <span className={`text-[10px] sm:text-xs px-2 py-0.5 rounded-md font-bold uppercase w-fit ${
+                        (q.difficulty || 'Easy').toLowerCase() === 'easy' ? 'bg-green-500/10 text-green-600 dark:text-green-400' : 
+                        (q.difficulty || 'Medium').toLowerCase() === 'medium' ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' : 
+                        'bg-rose-500/10 text-rose-600 dark:text-rose-400'
+                      }`}>
+                        {q.difficulty || 'Easy'}
+                      </span>
+                   </div>
+                   <Link 
+                     to={selectedSection === "MCQ" ? `/other-practice/solve/${q._id || q.id}` : `/solve/${q.slug}`}
+                     onClick={() => {
+                        if (selectedSection === "MCQ") {
+                          // Pass all MCQs for this topic to the solver for sequential navigation
+                          sessionStorage.setItem("current_other_practice_list", JSON.stringify(activeQuestions));
+                          sessionStorage.setItem("current_other_practice", JSON.stringify(q));
+                        }
+                     }}
+                     className="shrink-0 px-4 py-2 bg-[#0066cc] text-white rounded-lg text-xs sm:text-sm font-semibold hover:bg-blue-700 transition-colors ml-4"
+                   >
+                     {selectedSection === "MCQ" ? "Practice MCQ" : "Solve Problem"}
+                   </Link>
+                 </div>
+               ))
+             )}
           </div>
         </div>
       )}

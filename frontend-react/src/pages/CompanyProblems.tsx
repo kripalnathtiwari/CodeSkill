@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-Building2,
+import {
+  Building2,
   Search,
   ChevronRight,
   ChevronDown,
@@ -886,7 +887,6 @@ export default function CompanyProblems() {
               )}
             </div>
           </div>
-        </div>
       )}
     </div>
   );

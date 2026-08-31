@@ -229,6 +229,7 @@ export default function CompanyProblems() {
   const [selectedTestSeries, setSelectedTestSeries] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [modulesExpanded, setModulesExpanded] = useState(true);
+  const [mcqModulesExpanded, setMcqModulesExpanded] = useState(false);
 
   // Pagination for problems view
   const [loadingMore, setLoadingMore] = useState(false);
@@ -566,141 +567,222 @@ export default function CompanyProblems() {
             </button>
           </div>
 
-          {/* Header Banner for Selected Company */}
-          <div className="relative rounded-2xl overflow-hidden glass-card p-8 flex flex-col md:flex-row md:items-center justify-between border border-border dark:border-border/40 gap-4">
-            <div className="space-y-2 max-w-xl">
-              <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-primary via-indigo-500 to-sky-500 bg-clip-text text-transparent flex items-center gap-3">
-                {companiesList.find(c => c.name.toLowerCase() === selectedCompany?.toLowerCase())?.logoUrl ? (
-                  <img
-                    src={companiesList.find(c => c.name.toLowerCase() === selectedCompany?.toLowerCase())?.logoUrl}
-                    alt={`${selectedCompany} logo`}
-                    className="h-9 w-9 object-contain rounded-lg bg-surface p-1 shadow-sm shrink-0"
-                    onError={(e) => {
-                      (e.target as HTMLElement).style.display = "none";
-                    }}
-                  />
-                ) : (
-                  <Building2 className="h-8 w-8 text-primary shrink-0" />
-                )}
-                <span>{selectedCompany} Interview Prep</span>
-              </h1>
-              <p className="text-sm text-text-primary dark:text-text-muted leading-relaxed">
-                Targeted problem sets asked in recent interviews by {selectedCompany}. Master these exactly as they appeared to guarantee your success.
-              </p>
-            </div>
-          </div>
+          {/* New Header Banner for Selected Company */}
+          <div className="relative rounded-2xl overflow-hidden bg-gradient-to-r from-blue-700 via-blue-600 to-sky-500 p-8 flex flex-col md:flex-row md:items-center justify-between shadow-xl mb-6 border border-blue-500/30">
+            {/* Background Decorations */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full blur-2xl translate-y-1/2 -translate-x-1/4 pointer-events-none"></div>
 
-          <div className="flex flex-col md:flex-row gap-6 mt-6 items-start">
-            {/* Sidebar Modules Pane */}
-            <div className={`md:w-72 w-full shrink-0 ${sidebarOpen ? 'block' : 'hidden md:block'}`}>
-              <div className="bg-surface dark:bg-background rounded-2xl border border-border dark:border-border/80 overflow-hidden shadow-sm">
-                <div className="p-4 border-b border-border dark:border-border/50 flex items-center justify-between">
-                  <h3 className="font-bold text-text-primary dark:text-text-inverse text-lg">Modules</h3>
-                  <button onClick={() => setSidebarOpen(false)} className="md:hidden p-1 text-text-muted hover:text-text-primary dark:hover:text-text-inverse">
-                    <X className="w-5 h-5" />
-                  </button>
-                  <button className="hidden md:block p-1 text-text-muted hover:text-text-primary dark:hover:text-text-inverse">
-                    <Menu className="w-5 h-5" />
-                  </button>
-                </div>
-                <div>
-                  <button
-                    onClick={() => setModulesExpanded(!modulesExpanded)}
-                    className="w-full p-4 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
-                  >
-                    <span className="font-semibold text-sm text-text-primary dark:text-text-inverse truncate pr-2">
-                      {selectedCompany} Coding Assessment
-                    </span>
-                    <ChevronDown className={`w-4 h-4 text-text-muted transition-transform ${modulesExpanded ? 'rotate-180' : ''}`} />
-                  </button>
-                  {modulesExpanded && (
-                    <div className="bg-slate-50/50 dark:bg-slate-900/30">
-                      {testSeriesList.length === 0 ? (
-                        <div className="p-4 text-center text-xs text-text-muted">No modules available.</div>
-                      ) : (
-                        testSeriesList.map((ts, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => { setSelectedTestSeries(ts.name); setSidebarOpen(false); }}
-                            className={`w-full p-3.5 pl-6 flex items-center space-x-3 text-left transition-colors border-l-4 ${selectedTestSeries === ts.name
-                                ? "border-blue-600 bg-blue-50/50 dark:bg-blue-900/20 text-[#0066cc] dark:text-blue-400"
-                                : "border-transparent text-text-secondary dark:text-text-muted hover:bg-slate-100 dark:hover:bg-slate-800/50"
-                              }`}
-                          >
-                            <Code2 className="w-4 h-4 shrink-0" />
-                            <span className="text-[13px] font-medium truncate">{ts.name}</span>
-                          </button>
-                        ))
-                      )}
-                    </div>
+            <div className="relative z-10 space-y-6 max-w-2xl">
+              <div className="flex items-center space-x-2 text-[10px] sm:text-xs font-bold text-white/80 uppercase tracking-widest border border-white/20 rounded-full px-4 py-1.5 w-fit bg-white/10 backdrop-blur-sm">
+                <Award className="w-3.5 h-3.5" />
+                <span>ALGOTUTOR PRACTICE</span>
+                <span>|</span>
+                <span>INTERVIEW PREPARATION</span>
+              </div>
+              
+              <div className="flex items-center gap-5">
+                <div className="bg-white p-2.5 rounded-2xl shadow-lg shrink-0">
+                  {companiesList.find(c => c.name.toLowerCase() === selectedCompany?.toLowerCase())?.logoUrl ? (
+                    <img
+                      src={companiesList.find(c => c.name.toLowerCase() === selectedCompany?.toLowerCase())?.logoUrl}
+                      alt={`${selectedCompany} logo`}
+                      className="h-12 w-12 sm:h-16 sm:w-16 object-contain"
+                      onError={(e) => {
+                        (e.target as HTMLElement).style.display = "none";
+                      }}
+                    />
+                  ) : (
+                    <CompanyCircleIllustration iconType={companiesList.find(c => c.name.toLowerCase() === selectedCompany?.toLowerCase())?.iconType || "default"} name={selectedCompany} />
                   )}
                 </div>
+                <div>
+                  <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white flex flex-col space-y-1">
+                    <span>{selectedCompany}</span>
+                    <span className="text-xl sm:text-3xl font-semibold text-blue-100">Interview Preparation</span>
+                  </h1>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3 pt-4">
+                <div className="flex items-center space-x-2 bg-black/20 backdrop-blur-sm px-3.5 py-2 rounded-xl border border-white/10 text-white/95 text-xs sm:text-sm font-medium hover:bg-black/30 transition-colors">
+                  <Code2 className="w-4 h-4" />
+                  <span>Company-Specific Preparation</span>
+                </div>
+                <div className="flex items-center space-x-2 bg-black/20 backdrop-blur-sm px-3.5 py-2 rounded-xl border border-white/10 text-white/95 text-xs sm:text-sm font-medium hover:bg-black/30 transition-colors">
+                  <Flame className="w-4 h-4 text-orange-300" />
+                  <span>Expert-Led Content</span>
+                </div>
+                <div className="flex items-center space-x-2 bg-black/20 backdrop-blur-sm px-3.5 py-2 rounded-xl border border-white/10 text-white/95 text-xs sm:text-sm font-medium hover:bg-black/30 transition-colors">
+                  <Award className="w-4 h-4 text-yellow-300" />
+                  <span>Real Interview Experience</span>
+                </div>
+                <div className="flex items-center space-x-2 bg-black/20 backdrop-blur-sm px-3.5 py-2 rounded-xl border border-white/10 text-white/95 text-xs sm:text-sm font-medium hover:bg-black/30 transition-colors">
+                  <Users className="w-4 h-4 text-emerald-300" />
+                  <span>Career Success</span>
+                </div>
               </div>
             </div>
 
-            {/* Main Content Area */}
-            <div className="flex-1 w-full min-w-0">
-              {/* Mobile Sidebar Toggle */}
-              <div className="md:hidden mb-4 flex items-center justify-between bg-surface dark:bg-background p-3 rounded-xl border border-border dark:border-border/80">
-                <span className="font-semibold text-text-primary dark:text-text-inverse text-sm">
-                  {selectedTestSeries || "View Modules"}
-                </span>
-                <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg">
-                  {sidebarOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
-                </button>
-              </div>
-
-              {!selectedTestSeries ? (
-                // ACCORDION VIEW (Screenshot 1)
-                <div className="bg-white dark:bg-background rounded-2xl border border-blue-100 dark:border-border/80 shadow-sm overflow-hidden">
-                  <div className="p-4 sm:p-5 bg-blue-50/50 dark:bg-slate-900/40 border-b border-blue-100 dark:border-border/50 flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <ChevronDown className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                      <Code2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                      <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white truncate max-w-[200px] sm:max-w-md">
-                        {selectedCompany} Coding Assessment
-                      </h2>
-                    </div>
-                    <span className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-bold whitespace-nowrap">
-                      {testSeriesList.length} Lessons
-                    </span>
+            {/* Right side graphic approximation */}
+            <div className="hidden md:flex relative z-10 items-center justify-center pr-8">
+              <div className="bg-white rounded-2xl shadow-2xl p-7 relative w-72 h-64 flex flex-col transform rotate-2 hover:rotate-0 transition-transform duration-500 border border-slate-100">
+                <div className="flex items-center space-x-3 mb-5">
+                  {companiesList.find(c => c.name.toLowerCase() === selectedCompany?.toLowerCase())?.logoUrl ? (
+                    <img
+                      src={companiesList.find(c => c.name.toLowerCase() === selectedCompany?.toLowerCase())?.logoUrl}
+                      alt={`${selectedCompany} logo`}
+                      className="h-7 w-7 object-contain"
+                    />
+                  ) : (
+                    <Building2 className="w-7 h-7 text-blue-600" />
+                  )}
+                  <span className="font-extrabold text-slate-800 text-lg">{selectedCompany}</span>
+                </div>
+                <h3 className="font-black text-3xl leading-tight text-slate-900 mb-2">
+                  Interview<br/>
+                  <span className="text-blue-600">Preparation</span>
+                </h3>
+                <p className="text-[11px] font-bold text-slate-500 mt-auto flex space-x-1">
+                  <span className="text-slate-700">Practice.</span>
+                  <span className="text-blue-600">Prepare.</span>
+                  <span className="text-slate-900">Succeed.</span>
+                </p>
+                
+                {/* Floating clipboard icon approximation */}
+                <div className="absolute -right-14 top-6 bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border-[5px] border-blue-600 w-24 h-36 flex flex-col items-center justify-center overflow-hidden transform -rotate-6">
+                  <div className="w-12 h-3 bg-blue-600 rounded-b-md absolute top-0"></div>
+                  <div className="space-y-3 mt-4 w-full px-4">
+                    <div className="flex items-center space-x-2"><CheckCircle2 className="w-5 h-5 text-blue-600 shrink-0" /><div className="h-1.5 bg-slate-200 w-full rounded-full"></div></div>
+                    <div className="flex items-center space-x-2"><CheckCircle2 className="w-5 h-5 text-blue-600 shrink-0" /><div className="h-1.5 bg-slate-200 w-full rounded-full"></div></div>
+                    <div className="flex items-center space-x-2"><CheckCircle2 className="w-5 h-5 text-blue-600 shrink-0" /><div className="h-1.5 bg-slate-200 w-full rounded-full"></div></div>
+                    <div className="flex items-center space-x-2"><CheckCircle2 className="w-5 h-5 text-blue-600 shrink-0" /><div className="h-1.5 bg-slate-200 w-8 rounded-full"></div></div>
                   </div>
-
-                  <div className="p-4 sm:p-6 space-y-3">
-                    {testSeriesList.length === 0 ? (
-                      <p className="text-text-muted text-sm text-center py-8">No test series available for this company.</p>
+                  
+                  {/* Floating logo circle over clipboard */}
+                  <div className="absolute -bottom-4 -right-4 w-14 h-14 bg-white rounded-full shadow-lg border-2 border-slate-100 flex items-center justify-center">
+                    {companiesList.find(c => c.name.toLowerCase() === selectedCompany?.toLowerCase())?.logoUrl ? (
+                      <img src={companiesList.find(c => c.name.toLowerCase() === selectedCompany?.toLowerCase())?.logoUrl} className="w-8 h-8 object-contain" />
                     ) : (
-                      testSeriesList.map((ts, idx) => {
-                        // Count questions in this TS
-                        const qCount = questions.filter(q => q.testSeriesTags?.some((t: any) => t.name === ts.name)).length;
-                        return (
-                          <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border border-blue-100 dark:border-border/60 hover:border-blue-300 dark:hover:border-blue-500/50 transition-colors bg-white dark:bg-slate-900/20 gap-4">
-                            <div className="flex items-center space-x-3 min-w-0">
-                              <div className="p-2 bg-blue-50 dark:bg-slate-800 rounded-lg text-blue-600 dark:text-blue-400 shrink-0">
-                                <Code2 className="w-4 h-4" />
-                              </div>
-                              <span className="font-bold text-sm sm:text-base text-slate-800 dark:text-text-inverse truncate">{ts.name}</span>
-                            </div>
-                            <div className="flex items-center justify-between sm:justify-end sm:space-x-8 w-full sm:w-auto">
-                              <div className="flex items-center space-x-2 text-text-muted text-xs sm:text-sm font-medium">
-                                <FileText className="w-4 h-4" />
-                                <span>{qCount} Questions</span>
-                              </div>
-                              <button
-                                onClick={() => setSelectedTestSeries(ts.name)}
-                                className="bg-[#0066cc] hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-semibold flex items-center space-x-2 transition-colors shadow-sm shrink-0"
-                              >
-                                <Eye className="w-4 h-4" />
-                                <span>Preview</span>
-                              </button>
-                            </div>
-                          </div>
-                        );
-                      })
+                      <Building2 className="w-6 h-6 text-blue-600" />
                     )}
                   </div>
                 </div>
-              ) : (
+                
+                {/* Decorative dots */}
+                <div className="absolute top-4 left-4 grid grid-cols-3 gap-1">
+                  {[...Array(9)].map((_, i) => <div key={i} className="w-1 h-1 bg-blue-200 rounded-full"></div>)}
+                </div>
+                <div className="absolute bottom-16 right-4 grid grid-cols-3 gap-1 opacity-50">
+                  {[...Array(9)].map((_, i) => <div key={i} className="w-1 h-1 bg-slate-300 rounded-full"></div>)}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="w-full">
+            {!selectedTestSeries ? (
+              // COURSE CONTENT ACCORDION VIEW (Screenshot 3)
+              <div className="bg-white dark:bg-background rounded-2xl border border-border dark:border-border/80 shadow-sm overflow-hidden">
+                <div className="p-5 sm:p-6 border-b border-border dark:border-border/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-900/20">
+                  <div className="flex items-center space-x-3 text-slate-900 dark:text-white">
+                    <div className="bg-blue-600 p-2 rounded-lg text-white">
+                      <FileText className="w-5 h-5" />
+                    </div>
+                    <h2 className="text-xl font-bold">Course Content</h2>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <span className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-blue-50 border border-blue-100 text-blue-700 text-sm font-bold dark:bg-blue-900/30 dark:border-blue-800/50 dark:text-blue-300">
+                      <FileText className="w-4 h-4" />
+                      <span>2 Sections</span>
+                    </span>
+                    <span className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-blue-50 border border-blue-100 text-blue-700 text-sm font-bold dark:bg-blue-900/30 dark:border-blue-800/50 dark:text-blue-300">
+                      <FileText className="w-4 h-4" />
+                      <span>{testSeriesList.length} Lessons</span>
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="p-4 sm:p-6 space-y-4">
+                  {/* CODING ASSESSMENT ACCORDION */}
+                  <div className="rounded-xl border border-border dark:border-border/60 overflow-hidden bg-white dark:bg-slate-900/30">
+                    <button 
+                      onClick={() => setModulesExpanded(!modulesExpanded)}
+                      className="w-full p-4 sm:p-5 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <ChevronRight className={`w-5 h-5 text-blue-600 transition-transform ${modulesExpanded ? 'rotate-90' : ''}`} />
+                        <Code2 className="w-5 h-5 text-blue-600" />
+                        <span className="font-bold text-base sm:text-lg text-slate-900 dark:text-white truncate">
+                          {selectedCompany} Coding Assessment
+                        </span>
+                      </div>
+                      <span className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-bold whitespace-nowrap hidden sm:block">
+                        {testSeriesList.length} Lessons
+                      </span>
+                    </button>
+                    
+                    {modulesExpanded && (
+                      <div className="border-t border-slate-100 dark:border-border/50 divide-y divide-slate-100 dark:divide-slate-800 bg-slate-50/30 dark:bg-transparent">
+                        {testSeriesList.length === 0 ? (
+                          <div className="p-6 text-center text-sm text-text-muted">No coding test series available.</div>
+                        ) : (
+                          testSeriesList.map((ts, idx) => {
+                            const qCount = questions.filter(q => q.testSeriesTags?.some((t:any) => t.name === ts.name)).length;
+                            return (
+                              <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 pl-12 hover:bg-white dark:hover:bg-slate-800/40 transition-colors gap-4">
+                                <div className="flex items-center space-x-3 min-w-0">
+                                  <Code2 className="w-4 h-4 text-blue-400 shrink-0" />
+                                  <span className="font-semibold text-sm sm:text-base text-slate-800 dark:text-text-inverse truncate">{ts.name}</span>
+                                </div>
+                                <div className="flex items-center justify-between sm:justify-end sm:space-x-6 w-full sm:w-auto">
+                                  <div className="flex items-center space-x-1.5 text-text-muted text-xs sm:text-sm font-medium">
+                                    <FileText className="w-3.5 h-3.5" />
+                                    <span>{qCount} Questions</span>
+                                  </div>
+                                  <button 
+                                    onClick={() => setSelectedTestSeries(ts.name)}
+                                    className="bg-[#0066cc] hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-semibold flex items-center space-x-2 transition-colors shadow-sm shrink-0"
+                                  >
+                                    <Eye className="w-4 h-4" />
+                                    <span>Preview</span>
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* MCQ ASSESSMENT ACCORDION */}
+                  <div className="rounded-xl border border-border dark:border-border/60 overflow-hidden bg-white dark:bg-slate-900/30">
+                    <button 
+                      onClick={() => setMcqModulesExpanded(!mcqModulesExpanded)}
+                      className="w-full p-4 sm:p-5 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <ChevronRight className={`w-5 h-5 text-blue-600 transition-transform ${mcqModulesExpanded ? 'rotate-90' : ''}`} />
+                        <FileText className="w-5 h-5 text-blue-600" />
+                        <span className="font-bold text-base sm:text-lg text-slate-900 dark:text-white truncate">
+                          {selectedCompany} MCQ Assessment
+                        </span>
+                      </div>
+                      <span className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-bold whitespace-nowrap hidden sm:block">
+                        0 Lessons
+                      </span>
+                    </button>
+                    
+                    {mcqModulesExpanded && (
+                      <div className="border-t border-slate-100 dark:border-border/50 bg-slate-50/30 dark:bg-transparent">
+                        <div className="p-6 text-center text-sm text-text-muted">No MCQ test series available for this company yet.</div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ) : (
                 // TABLE VIEW (Screenshot 2)
                 <div className="bg-white dark:bg-background rounded-2xl border border-border dark:border-border/80 shadow-sm overflow-hidden">
                   <div className="p-4 sm:p-5 border-b border-border dark:border-border/50 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/40">
@@ -712,7 +794,7 @@ export default function CompanyProblems() {
                       className="flex items-center space-x-1.5 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors"
                     >
                       <ArrowLeft className="w-3.5 h-3.5" />
-                      <span>Back to Modules</span>
+                      <span>Back to Course Content</span>
                     </button>
                   </div>
 

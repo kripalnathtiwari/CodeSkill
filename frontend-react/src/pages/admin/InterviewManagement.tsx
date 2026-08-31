@@ -301,34 +301,70 @@ export default function InterviewManagement() {
     return { mcqCount: "N/A", codingCount: "N/A", totalCount: "N/A" };
   };
 
-  // Handle saving a new test series
   const handleAddTestSeries = () => {
     if (!newTestSeriesName.trim() || !selectedCompany) {
       alert("Please enter a test series name!");
       return;
     }
-    const exists = customTestSeries.some(ts => ts.companyName === selectedCompany && ts.name.toLowerCase() === newTestSeriesName.trim().toLowerCase());
-    if (exists) {
-      alert("This test series already exists for this company!");
-      return;
+    
+    if (editingProblem && editingProblem.isTestSeries) {
+      const oldName = editingProblem.title;
+      // Check if new name already exists
+      if (oldName !== newTestSeriesName.trim() && customTestSeries.some(ts => ts.companyName === selectedCompany && ts.name.toLowerCase() === newTestSeriesName.trim().toLowerCase())) {
+        alert("This test series already exists for this company!");
+        return;
+      }
+      
+      const updated = customTestSeries.map(ts => 
+        (ts.companyName === selectedCompany && ts.name === oldName) 
+          ? { ...ts, name: newTestSeriesName.trim() } 
+          : ts
+      );
+      setCustomTestSeries(updated);
+      localStorage.setItem("admin_company_test_series", JSON.stringify(updated));
+      
+      // Update linked questions
+      const savedRaw = localStorage.getItem("admin_custom_interview_problems");
+      if (savedRaw) {
+        const existing: any[] = JSON.parse(savedRaw);
+        let updatedProblems = false;
+        const newSavedList = existing.map(p => {
+          if (p.testSeriesTags && p.testSeriesTags.some((t: any) => t.name === oldName)) {
+            updatedProblems = true;
+            return {
+              ...p,
+              testSeriesTags: p.testSeriesTags.map((t: any) => t.name === oldName ? { name: newTestSeriesName.trim() } : t)
+            };
+          }
+          return p;
+        });
+        if (updatedProblems) {
+          localStorage.setItem("admin_custom_interview_problems", JSON.stringify(newSavedList));
+          setProblems(prev => prev.map(p => {
+            if (p.testSeriesTags && p.testSeriesTags.some((t: any) => t.name === oldName)) {
+              return {
+                ...p,
+                testSeriesTags: p.testSeriesTags.map((t: any) => t.name === oldName ? { name: newTestSeriesName.trim() } : t)
+              };
+            }
+            return p;
+          }));
+        }
+      }
+    } else {
+      const exists = customTestSeries.some(ts => ts.companyName === selectedCompany && ts.name.toLowerCase() === newTestSeriesName.trim().toLowerCase());
+      if (exists) {
+        alert("This test series already exists for this company!");
+        return;
+      }
+      const updated = [...customTestSeries, { companyName: selectedCompany, name: newTestSeriesName.trim() }];
+      setCustomTestSeries(updated);
+      localStorage.setItem("admin_company_test_series", JSON.stringify(updated));
     }
-    const updated = [...customTestSeries, { companyName: selectedCompany, name: newTestSeriesName.trim() }];
-    setCustomTestSeries(updated);
-    localStorage.setItem("admin_company_test_series", JSON.stringify(updated));
+    
     setNewTestSeriesName("");
     setShowAddTestSeriesModal(false);
-  };
-
-  // Handle deleting a custom test series
-  const handleDeleteTestSeries = (tsName: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!window.confirm(`Delete test series "${tsName}"?`)) return;
-    const updated = customTestSeries.filter(ts => !(ts.name === tsName && ts.companyName === selectedCompany));
-    setCustomTestSeries(updated);
-    localStorage.setItem("admin_company_test_series", JSON.stringify(updated));
-    if (selectedTestSeries === tsName) {
-      setSelectedTestSeries(null);
-    }
+    setEditingProblem(null);
   };
 
   // Handle saving a new custom company
@@ -401,10 +437,13 @@ export default function InterviewManagement() {
     setEditingProblem(null);
   };
 
-  // Open Edit modal for a question
+  // Open Edit modal for a question or test series
   const handleOpenEditProblem = (prob: any) => {
     setEditingProblem(prob);
-    if (prob.questionType === "MCQ" || prob.type === "MCQ") {
+    if (prob.isTestSeries) {
+      setNewTestSeriesName(prob.title || "");
+      setShowAddTestSeriesModal(true);
+    } else if (prob.questionType === "MCQ" || prob.type === "MCQ") {
       setMcqTitle(prob.title || prob.statement || "");
       setMcqDifficulty(prob.difficulty || "Easy");
       const topicsStr = Array.isArray(prob.topicTags)
@@ -548,9 +587,28 @@ export default function InterviewManagement() {
     resetCodingForm();
   };
 
-  // Delete question
+  // Delete question or test series
   const handleDeleteQuestion = async () => {
     if (!deleteConfirmId) return;
+
+    if (deleteConfirmId.startsWith("ts-")) {
+      const tsName = deleteConfirmId.replace("ts-", "");
+      const updatedTS = customTestSeries.filter(ts => !(ts.companyName === selectedCompany && ts.name === tsName));
+      setCustomTestSeries(updatedTS);
+      localStorage.setItem("admin_company_test_series", JSON.stringify(updatedTS));
+      
+      const savedRaw = localStorage.getItem("admin_custom_interview_problems");
+      if (savedRaw) {
+        const existing: any[] = JSON.parse(savedRaw);
+        const filtered = existing.filter(p => !(p.testSeriesTags && p.testSeriesTags.some((t: any) => t.name === tsName)));
+        localStorage.setItem("admin_custom_interview_problems", JSON.stringify(filtered));
+        setProblems(prev => prev.filter(p => !(p.testSeriesTags && p.testSeriesTags.some((t: any) => t.name === tsName))));
+      }
+      
+      setDeleteConfirmId(null);
+      return;
+    }
+
     const savedRaw = localStorage.getItem("admin_custom_interview_problems");
     if (savedRaw) {
       const existing: any[] = JSON.parse(savedRaw);
@@ -839,24 +897,17 @@ export default function InterviewManagement() {
                           </td>
                           <td className="px-6 py-4 text-right">
                             <div className="flex items-center justify-end space-x-2">
-                              {!q.isTestSeries && <button
+                              <button
                                 onClick={(e) => { e.stopPropagation(); handleOpenEditProblem(q); }}
                                 className="p-1.5 text-text-muted hover:text-primary hover:bg-slate-800 rounded-lg transition-colors"
                                 title="Edit Question"
                               >
                                 <Edit className="w-4 h-4" />
-                              </button>}
+                              </button>
                               <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  if (q.isTestSeries) {
-                                    handleDeleteTestSeries(q.title, e);
-                                  } else {
-                                    setDeleteConfirmId(q._id || q.id);
-                                  }
-                                }}
+                                onClick={(e) => { e.stopPropagation(); setDeleteConfirmId(q._id || q.id); }}
                                 className="p-1.5 text-text-muted hover:text-rose-400 hover:bg-slate-800 rounded-lg transition-colors"
-                                title={q.isTestSeries ? "Delete Test Series" : "Delete Question"}
+                                title="Delete Question"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>
@@ -880,9 +931,9 @@ export default function InterviewManagement() {
             <div className="flex items-center justify-between border-b border-border pb-4">
               <h3 className="text-lg font-bold text-text-inverse flex items-center">
                 <Layers className="w-5 h-5 mr-2 text-rose-500" />
-                Add Test Series
+                {editingProblem ? "Edit Test Series" : "Add Test Series"}
               </h3>
-              <button onClick={() => setShowAddTestSeriesModal(false)} className="text-text-muted hover:text-text-inverse">
+              <button onClick={() => { setShowAddTestSeriesModal(false); setEditingProblem(null); }} className="text-text-muted hover:text-text-inverse">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -904,7 +955,7 @@ export default function InterviewManagement() {
 
             <div className="flex items-center justify-end space-x-3 pt-4 border-t border-border">
               <button
-                onClick={() => setShowAddTestSeriesModal(false)}
+                onClick={() => { setShowAddTestSeriesModal(false); setEditingProblem(null); }}
                 className="px-4 py-2 text-sm font-semibold text-text-muted hover:text-text-inverse transition-colors"
               >
                 Cancel

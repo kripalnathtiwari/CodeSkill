@@ -781,13 +781,13 @@ export default function CompanyProblems() {
                                     <FileText className="w-3.5 h-3.5" />
                                     <span>{qCount} Questions</span>
                                   </div>
-                                  <button 
-                                    onClick={() => setSelectedTestSeries(ts.name)}
+                                  <Link 
+                                    to={`/take-test/${encodeURIComponent(ts.name)}`}
                                     className="bg-[#0066cc] hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-semibold flex items-center space-x-2 transition-colors shadow-sm shrink-0"
                                   >
                                     <Eye className="w-4 h-4" />
-                                    <span>Preview</span>
-                                  </button>
+                                    <span>Take Test</span>
+                                  </Link>
                                 </div>
                               </div>
                             );

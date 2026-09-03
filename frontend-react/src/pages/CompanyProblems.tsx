@@ -781,13 +781,20 @@ export default function CompanyProblems() {
                                     <FileText className="w-3.5 h-3.5" />
                                     <span>{qCount} Questions</span>
                                   </div>
-                                  <Link 
-                                    to={`/take-test/${encodeURIComponent(ts.name)}`}
-                                    className="bg-[#0066cc] hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-semibold flex items-center space-x-2 transition-colors shadow-sm shrink-0"
-                                  >
-                                    <Eye className="w-4 h-4" />
-                                    <span>Take Test</span>
-                                  </Link>
+                                  {takenTests.has(String(ts.name)) ? (
+                                    <div className="bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 px-5 py-2 rounded-lg text-sm font-semibold flex items-center space-x-2 shadow-sm shrink-0 cursor-not-allowed">
+                                      <CheckCircle2 className="w-4 h-4" />
+                                      <span>Taken</span>
+                                    </div>
+                                  ) : (
+                                    <Link 
+                                      to={`/take-test/${encodeURIComponent(ts.name)}`}
+                                      className="bg-[#0066cc] hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-semibold flex items-center space-x-2 transition-colors shadow-sm shrink-0"
+                                    >
+                                      <Eye className="w-4 h-4" />
+                                      <span>Take Test</span>
+                                    </Link>
+                                  )}
                                 </div>
                               </div>
                             );

@@ -420,9 +420,9 @@ export default function CompanyProblems() {
         </h1>
         <div className="flex items-center text-xs sm:text-sm font-medium text-text-muted dark:text-text-muted space-x-1.5">
           <Home className="w-4 h-4 text-text-muted shrink-0" />
-          <button onClick={handleBackToDirectory} className="hover:text-primary dark:hover:text-primary transition-colors">
+          <Link to="/" className="hover:text-primary dark:hover:text-primary transition-colors">
             Home
-          </button>
+          </Link>
           <span>/</span>
           {activeView === "directory" ? (
             <span className="text-primary dark:text-primary font-semibold">Company Preparation</span>
@@ -559,15 +559,29 @@ export default function CompanyProblems() {
       ) : (
         /* Company Problems Practice View (when a user clicks "Start Preparing") */
         <div className="space-y-6">
-          {/* Back button */}
-          <div>
-            <button
-              onClick={handleBackToDirectory}
-              className="inline-flex items-center space-x-2 text-sm font-semibold text-primary dark:text-primary hover:underline transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Back to Company Preparation</span>
-            </button>
+          {/* Promotional Card */}
+          <div className="bg-gradient-to-br from-[#f8fbff] to-[#eef5ff] dark:from-slate-900/80 dark:to-slate-800/80 rounded-3xl p-8 md:p-10 flex flex-col md:flex-row items-center justify-between border border-blue-100/50 dark:border-blue-800/30 shadow-sm relative overflow-hidden">
+            {/* Soft background glow */}
+            <div className="absolute right-0 top-0 w-64 h-64 bg-blue-400/10 blur-3xl rounded-full translate-x-1/2 -translate-y-1/4"></div>
+            
+            <div className="space-y-4 relative z-10">
+              <h2 className="text-3xl md:text-[40px] font-black text-[#0052cc] dark:text-blue-400 leading-[1.1] tracking-tight">
+                Prepare Smart.<br/>
+                Practice Better.<br/>
+                Get Hired.
+              </h2>
+              <p className="text-slate-500 dark:text-slate-400 font-medium text-lg md:text-xl">
+                Your dream role at <span className="font-bold text-slate-700 dark:text-slate-300">{selectedCompany}</span> awaits!
+              </p>
+            </div>
+            <div className="mt-8 md:mt-0 flex-shrink-0 relative z-10">
+              <div className="w-32 h-32 md:w-44 md:h-44 flex items-center justify-center text-[80px] md:text-[110px] drop-shadow-xl filter pb-4">
+                🏆
+                {/* Sparkles */}
+                <span className="absolute top-0 right-8 text-2xl text-yellow-400 animate-pulse">✨</span>
+                <span className="absolute bottom-4 left-4 text-xl text-yellow-400 animate-pulse delay-150">✨</span>
+              </div>
+            </div>
           </div>
 
           {/* New Header Banner for Selected Company */}

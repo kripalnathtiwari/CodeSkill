@@ -1,52 +1,53 @@
 import React, { useState, useEffect } from "react";
-import { Plus, Edit, Trash2, Search, Target, ArrowLeft, Save, X, BookOpen } from "lucide-react";
+import { Plus, Edit, Trash2, Search, Target, ArrowLeft, Save, X, BookOpen, Clock, Upload, Loader2, Users } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
+
+type Question = {
+  id: number;
+  text: string;
+  options: string[];
+  answer: string;
+};
 
 export default function OtherPracticeManagement() {
-  const [problems, setProblems] = useState<any[]>([]);
+  const { user } = useAuth();
+  const [tests, setTests] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [isCreating, setIsCreating] = useState(false);
-  const [editingProblem, setEditingProblem] = useState<any | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   // Form State
   const [title, setTitle] = useState("");
-  const [difficulty, setDifficulty] = useState("Easy");
-  const [description, setDescription] = useState("");
-  const [optionA, setOptionA] = useState("");
-  const [optionB, setOptionB] = useState("");
-  const [optionC, setOptionC] = useState("");
-  const [optionD, setOptionD] = useState("");
-  const [correctOption, setCorrectOption] = useState("A");
-  const [topic, setTopic] = useState("");
   const [subject, setSubject] = useState("");
-  const [company, setCompany] = useState("");
+  const [duration, setDuration] = useState("30 Mins");
+  const [questions, setQuestions] = useState<Question[]>([
+    { id: Date.now(), text: "", options: ["", "", "", ""], answer: "" }
+  ]);
+  const [isParsingPdf, setIsParsingPdf] = useState(false);
 
   const [subjects, setSubjects] = useState<string[]>([]);
   const [isManagingSubjects, setIsManagingSubjects] = useState(false);
   const [newSubject, setNewSubject] = useState("");
 
-  const STORAGE_KEY = "admin_other_practice_data";
+  const STORAGE_KEY = "admin_other_practice_tests";
   const SUBJECTS_KEY = "admin_subjects_data";
 
-  const fetchProblems = () => {
+  const fetchTests = () => {
     try {
       const data = localStorage.getItem(STORAGE_KEY);
-      if (data) {
-        setProblems(JSON.parse(data));
-      }
+      if (data) setTests(JSON.parse(data));
     } catch (e) {
       console.error(e);
     }
   };
 
   useEffect(() => {
-    fetchProblems();
+    fetchTests();
     const storedSubjects = localStorage.getItem(SUBJECTS_KEY);
     if (storedSubjects) {
       try {
         const parsed = JSON.parse(storedSubjects);
         if (Array.isArray(parsed)) {
-          // Filter out any non-string values just in case
           setSubjects(parsed.filter(s => typeof s === 'string'));
         } else {
           setSubjects([]);
@@ -57,84 +58,110 @@ export default function OtherPracticeManagement() {
     }
   }, []);
 
-  const saveProblems = (updatedProblems: any[]) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedProblems));
-    setProblems(updatedProblems);
+  const saveTests = (updatedTests: any[]) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTests));
+    setTests(updatedTests);
   };
 
   const handleSave = () => {
-    if (!title || !description || !topic) return;
+    if (!title || !subject) return alert("Title and subject are required.");
 
-    const newProblem = {
-      _id: editingProblem?._id || `op_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      title,
-      description,
-      difficulty,
-      topic,
-      company,
-      options: {
-        A: optionA,
-        B: optionB,
-        C: optionC,
-        D: optionD,
-      },
-      correctOption,
-      subject
-    };
-
-    let updated = [...problems];
-    if (editingProblem) {
-      updated = updated.map(p => p._id === editingProblem._id ? newProblem : p);
-    } else {
-      updated.push(newProblem);
+    for (let i = 0; i < questions.length; i++) {
+      const q = questions[i];
+      if (!q.text) return alert(`Question ${i + 1} is missing text!`);
+      if (q.options.some(o => !o)) return alert(`Question ${i + 1} has empty options!`);
+      if (!q.answer || !q.options.includes(q.answer)) return alert(`Question ${i + 1} needs a correct answer selected!`);
     }
 
-    saveProblems(updated);
+    const newTest = {
+      id: "optest_" + Date.now(),
+      title,
+      subject,
+      duration,
+      questions,
+      createdBy: user?.email,
+      creatorName: user?.profile ? `${user.profile.firstName} ${user.profile.lastName}` : "Admin",
+      createdAt: new Date().toISOString()
+    };
+
+    const updated = [...tests, newTest];
+    saveTests(updated);
     resetForm();
   };
 
   const handleDelete = (id: string) => {
-    const updated = problems.filter(p => p._id !== id);
-    saveProblems(updated);
+    const updated = tests.filter(t => t.id !== id);
+    saveTests(updated);
     setDeleteConfirmId(null);
   };
 
-  const startEdit = (p: any) => {
-    setEditingProblem(p);
-    setTitle(p.title || "");
-    setDifficulty(p.difficulty || "Easy");
-    setDescription(p.description || "");
-    setOptionA(p.options?.A || "");
-    setOptionB(p.options?.B || "");
-    setOptionC(p.options?.C || "");
-    setOptionD(p.options?.D || "");
-    setCorrectOption(p.correctOption || "A");
-    setTopic(p.topic || "");
-    setSubject(p.subject || "");
-    setCompany(p.company || "");
-    setIsCreating(true);
-  };
-
   const resetForm = () => {
-    setEditingProblem(null);
     setIsCreating(false);
     setTitle("");
-    setDifficulty("Easy");
-    setDescription("");
-    setOptionA("");
-    setOptionB("");
-    setOptionC("");
-    setOptionD("");
-    setCorrectOption("A");
-    setTopic("");
     setSubject("");
-    setCompany("");
+    setDuration("30 Mins");
+    setQuestions([{ id: Date.now(), text: "", options: ["", "", "", ""], answer: "" }]);
   };
 
-  const filteredProblems = problems.filter(p => 
-    p.title?.toLowerCase().includes(search.toLowerCase()) || 
-    p.topic?.toLowerCase().includes(search.toLowerCase()) ||
-    p.subject?.toLowerCase().includes(search.toLowerCase())
+  const handleAddQuestion = () =>
+    setQuestions(prev => [...prev, { id: Date.now(), text: "", options: ["", "", "", ""], answer: "" }]);
+
+  const handleRemoveQuestion = (id: number) => {
+    if (questions.length === 1) return;
+    setQuestions(prev => prev.filter(q => q.id !== id));
+  };
+
+  const updateQuestion = (id: number, field: keyof Question, value: any) => {
+    setQuestions(prev => prev.map(q => q.id === id ? { ...q, [field]: value } : q));
+  };
+
+  const updateOption = (qId: number, index: number, value: string) => {
+    setQuestions(prev => prev.map(q => {
+      if (q.id === qId) {
+        const newOptions = [...q.options];
+        newOptions[index] = value;
+        return { ...q, options: newOptions };
+      }
+      return q;
+    }));
+  };
+
+  const handlePdfUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsParsingPdf(true);
+    // Simulate OCR / PDF parsing delay like in TestManagement
+    setTimeout(() => {
+      const parsedQuestions = [
+        {
+          id: Date.now() + 1,
+          text: "What is the time complexity of binary search?",
+          options: ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
+          answer: "O(log n)"
+        },
+        {
+          id: Date.now() + 2,
+          text: "Which keyword is used to declare a constant in JavaScript?",
+          options: ["var", "let", "const", "static"],
+          answer: "const"
+        },
+        {
+          id: Date.now() + 3,
+          text: "What does HTML stand for?",
+          options: ["Hyper Text Markup Language", "High Text Machine Language", "Hyper Tabular Markup Language", "None of the above"],
+          answer: "Hyper Text Markup Language"
+        }
+      ];
+      setQuestions(parsedQuestions);
+      setIsParsingPdf(false);
+      e.target.value = ""; // reset
+    }, 2000);
+  };
+
+  const filteredTests = tests.filter(t => 
+    t.title?.toLowerCase().includes(search.toLowerCase()) || 
+    t.subject?.toLowerCase().includes(search.toLowerCase())
   );
 
   if (isManagingSubjects) {
@@ -200,132 +227,143 @@ export default function OtherPracticeManagement() {
     );
   }
 
-  const existingTopicsForSubject = React.useMemo(() => {
-    if (!subject) return [];
-    const topics = new Set<string>();
-    problems.forEach(p => {
-      if (p.subject === subject && p.topic) {
-        topics.add(p.topic.trim());
-      }
-    });
-    return Array.from(topics).sort();
-  }, [problems, subject]);
-
   if (isCreating) {
     return (
       <div className="bg-[#111827] rounded-3xl border border-border p-8 animate-in fade-in zoom-in-95 duration-300">
         <div className="flex items-center justify-between mb-8">
-          <button 
-            onClick={resetForm}
-            className="flex items-center gap-2 text-text-muted hover:text-text-inverse transition-colors"
-          >
+          <button onClick={resetForm} className="flex items-center gap-2 text-text-muted hover:text-text-inverse transition-colors">
             <ArrowLeft className="w-5 h-5" />
             <span>Back to List</span>
           </button>
-          <h2 className="text-2xl font-bold text-text-inverse">
-            {editingProblem ? "Edit Practice Question" : "Create Practice Question"}
-          </h2>
+          <h2 className="text-2xl font-bold text-text-inverse">Create New Test</h2>
           <button 
             onClick={handleSave}
             className="flex items-center gap-2 px-6 py-2.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(244,63,94,0.3)] hover:shadow-[0_0_25px_rgba(244,63,94,0.5)]"
           >
             <Save className="w-5 h-5" />
-            <span>Save Question</span>
+            <span>Save Test</span>
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="space-y-6">
-            <div>
-              <label className="block text-text-secondary text-sm font-semibold mb-2">Question Title</label>
-              <input 
-                value={title} onChange={e => setTitle(e.target.value)}
-                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-rose-500 transition-colors"
-                placeholder="e.g. Basic HTML Tags"
-              />
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="space-y-6">
+          <div className="bg-[#0B0F19] p-6 rounded-2xl border border-border space-y-6">
+            <h3 className="text-xl font-bold text-text-inverse">Test Details</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <label className="block text-text-secondary text-sm font-semibold mb-2">Subject</label>
+                <label className="block text-sm font-bold text-text-muted mb-2">Test Title</label>
+                <input 
+                  type="text" value={title} onChange={e => setTitle(e.target.value)}
+                  className="w-full bg-[#111827] border border-border rounded-xl px-4 py-3 text-text-inverse focus:border-rose-500 transition-colors focus:outline-none"
+                  placeholder="e.g. Arrays & Strings Test"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-text-muted mb-2">Subject</label>
                 <select 
                   value={subject} onChange={e => setSubject(e.target.value)}
-                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-rose-500 transition-colors"
+                  className="w-full bg-[#111827] border border-border rounded-xl px-4 py-3 text-text-inverse focus:border-rose-500 transition-colors focus:outline-none"
                 >
                   <option value="">Select Subject</option>
                   {subjects.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-text-secondary text-sm font-semibold mb-2">Topic</label>
-                <input 
-                  value={topic} onChange={e => setTopic(e.target.value)}
-                  list="topic-suggestions"
-                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-rose-500 transition-colors"
-                  placeholder="e.g. Web Dev"
-                />
-                <datalist id="topic-suggestions">
-                  {existingTopicsForSubject.map(t => (
-                    <option key={t} value={t} />
-                  ))}
-                </datalist>
-              </div>
-              <div>
-                <label className="block text-text-secondary text-sm font-semibold mb-2">Difficulty</label>
+                <label className="block text-sm font-bold text-text-muted mb-2">Duration</label>
                 <select 
-                  value={difficulty} onChange={e => setDifficulty(e.target.value)}
-                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-rose-500 transition-colors"
+                  value={duration} onChange={e => setDuration(e.target.value)}
+                  className="w-full bg-[#111827] border border-border rounded-xl px-4 py-3 text-text-inverse focus:border-rose-500 transition-colors focus:outline-none"
                 >
-                  <option value="Easy">Easy</option>
-                  <option value="Medium">Medium</option>
-                  <option value="Hard">Hard</option>
+                  <option>15 Mins</option>
+                  <option>30 Mins</option>
+                  <option>45 Mins</option>
+                  <option>1 Hour</option>
+                  <option>2 Hours</option>
                 </select>
               </div>
             </div>
-
-            <div>
-              <label className="block text-text-secondary text-sm font-semibold mb-2">Question Description</label>
-              <textarea 
-                value={description} onChange={e => setDescription(e.target.value)}
-                className="w-full h-32 bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-rose-500 transition-colors resize-none"
-                placeholder="Enter the question text here..."
-              />
-            </div>
-            
-            <div>
-              <label className="block text-text-secondary text-sm font-semibold mb-2">Company (Optional)</label>
-              <input 
-                value={company} onChange={e => setCompany(e.target.value)}
-                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-rose-500 transition-colors"
-                placeholder="e.g. Google, Amazon"
-              />
-            </div>
           </div>
 
-          <div className="space-y-6 bg-[#0B0F19] p-6 rounded-2xl border border-border">
-            <h3 className="text-lg font-bold text-text-inverse mb-4">Options</h3>
-            
-            <div className="space-y-4">
-              {['A', 'B', 'C', 'D'].map((opt) => (
-                <div key={opt} className="flex items-center gap-4">
-                  <div className={`flex items-center justify-center w-10 h-10 rounded-lg border-2 cursor-pointer transition-colors ${correctOption === opt ? 'border-emerald-500 bg-emerald-500/20 text-emerald-500' : 'border-border text-text-muted hover:border-text-secondary'}`} onClick={() => setCorrectOption(opt)}>
-                    {opt}
+          <div className="bg-[#0B0F19] p-6 rounded-2xl border border-border space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-bold text-text-inverse">Questions</h3>
+                <p className="text-text-muted mt-1">Add questions manually or upload a PDF to auto-fill.</p>
+              </div>
+              <div className="flex items-center space-x-3">
+                <input type="file" accept=".pdf" id="pdf-upload" className="hidden" onChange={handlePdfUpload} />
+                <label 
+                  htmlFor="pdf-upload"
+                  className={`cursor-pointer bg-slate-800 hover:bg-slate-700 text-rose-500 font-bold px-4 py-2.5 rounded-xl transition-colors flex items-center space-x-2 border ${isParsingPdf ? 'border-rose-500' : 'border-rose-500/30'}`}
+                >
+                  {isParsingPdf ? (
+                    <span className="animate-pulse flex items-center gap-2"><Loader2 className="w-5 h-5 animate-spin" /> Parsing...</span>
+                  ) : (
+                    <>
+                      <Upload className="w-5 h-5" />
+                      <span>Auto-fill via PDF</span>
+                    </>
+                  )}
+                </label>
+                <button 
+                  onClick={handleAddQuestion}
+                  className="bg-slate-800 hover:bg-slate-700 text-text-inverse font-bold px-4 py-2.5 rounded-xl transition-colors flex items-center space-x-2 border border-border"
+                >
+                  <Plus className="w-5 h-5" />
+                  <span>Add Question manually</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              {questions.map((q, qIndex) => (
+                <div key={q.id} className="p-5 border border-border bg-[#111827] rounded-xl relative group">
+                  <div className="absolute -top-3 -left-3 w-8 h-8 bg-rose-500 rounded-lg flex items-center justify-center font-bold text-white shadow-lg">
+                    {qIndex + 1}
                   </div>
-                  <input 
-                    value={opt === 'A' ? optionA : opt === 'B' ? optionB : opt === 'C' ? optionC : optionD}
-                    onChange={e => {
-                      if (opt === 'A') setOptionA(e.target.value);
-                      if (opt === 'B') setOptionB(e.target.value);
-                      if (opt === 'C') setOptionC(e.target.value);
-                      if (opt === 'D') setOptionD(e.target.value);
-                    }}
-                    className={`flex-1 bg-[#111827] border ${correctOption === opt ? 'border-emerald-500/50 focus:border-emerald-500' : 'border-border focus:border-rose-500'} rounded-xl px-4 py-2.5 text-text-inverse focus:outline-none transition-colors`}
-                    placeholder={`Option ${opt} text`}
-                  />
+                  {questions.length > 1 && (
+                    <button 
+                      onClick={() => handleRemoveQuestion(q.id)}
+                      className="absolute top-4 right-4 p-2 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  )}
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-bold text-text-muted mb-2">Question Text</label>
+                      <textarea
+                        value={q.text}
+                        onChange={e => updateQuestion(q.id, "text", e.target.value)}
+                        className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse min-h-[80px] focus:outline-none focus:border-rose-500"
+                        placeholder="Enter the question..."
+                      />
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {q.options.map((opt, oIndex) => (
+                        <div key={oIndex} className="flex items-center space-x-3">
+                          <input 
+                            type="radio" 
+                            name={`answer-${q.id}`}
+                            checked={q.answer === opt && opt !== ""}
+                            onChange={() => opt !== "" && updateQuestion(q.id, "answer", opt)}
+                            className="w-5 h-5 text-rose-500 focus:ring-rose-500 cursor-pointer"
+                          />
+                          <input 
+                            type="text"
+                            value={opt}
+                            onChange={e => updateOption(q.id, oIndex, e.target.value)}
+                            className="flex-1 bg-[#0B0F19] border border-border rounded-xl px-4 py-2 text-text-inverse focus:outline-none focus:border-rose-500"
+                            placeholder={`Option ${oIndex + 1}`}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
-            <p className="text-sm text-text-muted mt-4">* Click the letter A/B/C/D to mark it as the correct answer.</p>
           </div>
         </div>
       </div>
@@ -340,7 +378,7 @@ export default function OtherPracticeManagement() {
             <Target className="w-8 h-8 text-rose-500" />
             More Practice Management
           </h2>
-          <p className="text-text-secondary mt-1">Manage custom topics and questions for the More Practice section.</p>
+          <p className="text-text-secondary mt-1">Manage tests and assessments for the More Practice section.</p>
         </div>
 
         <div className="flex items-center gap-3">
@@ -356,7 +394,7 @@ export default function OtherPracticeManagement() {
             className="flex items-center gap-2 px-6 py-2.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(244,63,94,0.3)] hover:shadow-[0_0_25px_rgba(244,63,94,0.5)]"
           >
             <Plus className="w-5 h-5" />
-            <span>Add Question</span>
+            <span>Create Test</span>
           </button>
         </div>
       </div>
@@ -367,7 +405,7 @@ export default function OtherPracticeManagement() {
             <Search className="absolute left-4 top-3.5 h-5 w-5 text-text-muted" />
             <input 
               type="text"
-              placeholder="Search by title or topic..."
+              placeholder="Search tests by title or subject..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full bg-[#0B0F19] border border-border rounded-xl pl-12 pr-4 py-3 text-text-inverse focus:outline-none focus:border-rose-500 transition-colors"
@@ -376,53 +414,43 @@ export default function OtherPracticeManagement() {
         </div>
 
         <div className="space-y-4">
-          {filteredProblems.length === 0 ? (
+          {filteredTests.length === 0 ? (
             <div className="text-center py-12">
               <div className="w-20 h-20 bg-[#0B0F19] rounded-full flex items-center justify-center mx-auto mb-4 border border-border">
                 <Target className="w-10 h-10 text-text-muted" />
               </div>
-              <h3 className="text-xl font-bold text-text-inverse mb-2">No Questions Found</h3>
-              <p className="text-text-secondary">Click "Add Question" to create your first practice question.</p>
+              <h3 className="text-xl font-bold text-text-inverse mb-2">No Tests Found</h3>
+              <p className="text-text-secondary">Click "Create Test" to build your first practice test.</p>
             </div>
           ) : (
-            filteredProblems.map(p => (
-              <div key={p._id} className="group relative overflow-hidden bg-[#0B0F19] rounded-2xl border border-border hover:border-border-hover transition-colors p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            filteredTests.map(t => (
+              <div key={t.id} className="group relative overflow-hidden bg-[#0B0F19] rounded-2xl border border-border hover:border-border-hover transition-colors p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="absolute left-0 top-0 bottom-0 w-1 bg-rose-500 scale-y-0 group-hover:scale-y-100 transition-transform origin-top"></div>
                 
                 <div>
                   <div className="flex items-center gap-3 mb-2">
-                    {p.subject && (
+                    {t.subject && (
                       <span className="px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-500 text-xs font-bold uppercase tracking-wider border border-blue-500/20">
-                        {p.subject}
+                        {t.subject}
                       </span>
                     )}
-                    <span className="px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-500 text-xs font-bold uppercase tracking-wider border border-rose-500/20">
-                      {p.topic}
+                    <span className="flex items-center space-x-1 text-text-muted text-xs font-bold bg-slate-800 px-2.5 py-0.5 rounded-full border border-border">
+                      <Clock className="w-3.5 h-3.5" />
+                      <span>{t.duration}</span>
                     </span>
-                    <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider border ${
-                      p.difficulty === 'Easy' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
-                      p.difficulty === 'Medium' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
-                      'bg-red-500/10 text-red-500 border-red-500/20'
-                    }`}>
-                      {p.difficulty}
+                    <span className="flex items-center space-x-1 text-text-muted text-xs font-bold bg-slate-800 px-2.5 py-0.5 rounded-full border border-border">
+                      <Users className="w-3.5 h-3.5" />
+                      <span>{t.questions?.length || 0} Qs</span>
                     </span>
                   </div>
-                  <h4 className="text-lg font-bold text-text-inverse">{p.title}</h4>
+                  <h4 className="text-lg font-bold text-text-inverse">{t.title}</h4>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <button 
-                    onClick={() => startEdit(p)}
-                    className="p-2 bg-[#111827] text-text-muted hover:text-blue-500 hover:bg-blue-500/10 rounded-lg transition-colors border border-border"
-                    title="Edit"
-                  >
-                    <Edit className="w-5 h-5" />
-                  </button>
-                  
-                  {deleteConfirmId === p._id ? (
+                  {deleteConfirmId === t.id ? (
                     <div className="flex items-center gap-2">
                       <button 
-                        onClick={() => handleDelete(p._id)}
+                        onClick={() => handleDelete(t.id)}
                         className="px-3 py-2 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-lg transition-colors text-sm font-bold border border-red-500/20"
                       >
                         Confirm
@@ -436,7 +464,7 @@ export default function OtherPracticeManagement() {
                     </div>
                   ) : (
                     <button 
-                      onClick={() => setDeleteConfirmId(p._id)}
+                      onClick={() => setDeleteConfirmId(t.id)}
                       className="p-2 bg-[#111827] text-text-muted hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors border border-border"
                       title="Delete"
                     >

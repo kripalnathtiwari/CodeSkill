@@ -17,7 +17,7 @@ export default function OtherPractice() {
 
   useEffect(() => {
     try {
-      const data = localStorage.getItem("admin_other_practice_data");
+      const data = localStorage.getItem("admin_other_practice_tests");
       if (data) {
         setQuestions(JSON.parse(data));
       }
@@ -46,22 +46,14 @@ export default function OtherPractice() {
   };
 
   // For topics view: unique topics within the selected subject
-  const uniqueTopics = useMemo(() => {
-    const topics = new Set<string>();
-    questions.forEach(q => {
-      // If a question doesn't have a subject, we shouldn't show it here,
-      // or we can handle it if we have an "Uncategorized" subject.
-      // But assuming the admin assigns them properly:
-      if (q.subject === selectedSubject && q.topic) {
-        topics.add(q.topic.trim());
-      }
-    });
-    return Array.from(topics).sort();
-  }, [questions, selectedSubject]);
+  
 
-  const filteredTopics = useMemo(() => {
-    return uniqueTopics.filter(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
-  }, [uniqueTopics, searchQuery]);
+    const filteredTests = useMemo(() => {
+    return questions.filter(t => 
+      t.subject === selectedSubject &&
+      t.title?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [questions, selectedSubject, searchQuery]);
 
   // For directory view: filtered subjects
   const filteredSubjects = useMemo(() => {
@@ -215,17 +207,17 @@ export default function OtherPractice() {
             <div className="space-y-2 max-w-xl">
               <h1 className="text-3xl font-extrabold tracking-tight text-text-primary dark:text-text-inverse flex items-center gap-3">
                 <Book className="w-8 h-8 text-rose-500 shrink-0" />
-                <span>{selectedSubject} Topics</span>
+                <span>{selectedSubject} Tests</span>
               </h1>
               <p className="text-sm text-text-primary dark:text-text-muted leading-relaxed">
-                Select a specific topic under {selectedSubject} to begin your targeted practice.
+                Select a specific test under {selectedSubject} to begin your targeted practice.
               </p>
             </div>
             <div className="relative w-full md:w-72">
               <Search className="absolute left-4 top-3.5 h-5 w-5 text-text-muted" />
               <input
                 type="text"
-                placeholder="Search topics..."
+                placeholder="Search tests..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-surface dark:bg-[#111827] border border-border rounded-xl pl-12 pr-4 py-3 text-text-primary dark:text-text-inverse focus:outline-none focus:border-rose-500 transition-colors shadow-sm"
@@ -234,46 +226,46 @@ export default function OtherPractice() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredTopics.length === 0 ? (
+            {filteredTests.length === 0 ? (
               <div className="col-span-full flex flex-col items-center justify-center py-20 text-center">
                 <div className="w-20 h-20 bg-surface dark:bg-[#111827] rounded-full flex items-center justify-center mb-4 border border-border shadow-sm">
                   <Target className="w-10 h-10 text-text-muted" />
                 </div>
-                <h2 className="text-2xl font-bold text-text-primary dark:text-text-inverse mb-2">No topics found</h2>
+                <h2 className="text-2xl font-bold text-text-primary dark:text-text-inverse mb-2">No tests found</h2>
                 <p className="text-text-secondary dark:text-text-muted max-w-md">
-                  No practice topics available for {selectedSubject}. Admin needs to add questions.
+                  No practice tests available for {selectedSubject}. Admin needs to add tests.
                 </p>
               </div>
             ) : (
-              filteredTopics.map((topic) => {
-                const topicQuestions = questions.filter(q => q.subject === selectedSubject && q.topic?.trim() === topic);
-                return (
-                  <div key={topic} className="group flex flex-col bg-surface dark:bg-[#111827] rounded-2xl border border-border hover:border-rose-500/50 hover:bg-rose-50 dark:hover:bg-rose-500/5 transition-all duration-300 overflow-hidden shadow-sm hover:shadow-[0_0_30px_rgba(225,29,72,0.1)] relative text-left">
-                    <div className="absolute -right-4 -top-4 w-24 h-24 bg-rose-500/10 rounded-full blur-2xl group-hover:bg-rose-500/20 transition-all"></div>
+              filteredTests.map((test) => (
+                <div key={test.id} className="group flex flex-col bg-surface dark:bg-[#111827] rounded-2xl border border-border hover:border-rose-500/50 hover:bg-rose-50 dark:hover:bg-rose-500/5 transition-all duration-300 overflow-hidden shadow-sm hover:shadow-[0_0_30px_rgba(225,29,72,0.1)] relative text-left">
+                  <div className="absolute -right-4 -top-4 w-24 h-24 bg-rose-500/10 rounded-full blur-2xl group-hover:bg-rose-500/20 transition-all"></div>
+                  
+                  <div className="p-6 flex-1 flex flex-col z-10 relative">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="w-12 h-12 rounded-xl bg-rose-100 dark:bg-rose-500/20 flex items-center justify-center border border-rose-200 dark:border-rose-500/30 flex-shrink-0">
+                        <BookOpen className="w-6 h-6 text-rose-500" />
+                      </div>
+                      <h3 className="text-xl font-bold text-text-primary dark:text-text-inverse line-clamp-2">{test.title}</h3>
+                    </div>
                     
-                    <div className="p-6 flex-1 flex flex-col z-10 relative">
-                      <div className="flex items-center gap-4 mb-4">
-                        <div className="w-12 h-12 rounded-xl bg-rose-100 dark:bg-rose-500/20 flex items-center justify-center border border-rose-200 dark:border-rose-500/30 flex-shrink-0">
-                          <BookOpen className="w-6 h-6 text-rose-500" />
-                        </div>
-                        <h3 className="text-xl font-bold text-text-primary dark:text-text-inverse line-clamp-2">{topic}</h3>
+                    <div className="mt-auto pt-4 border-t border-border flex items-center justify-between">
+                      <div className="flex flex-col gap-1">
+                        <span className="text-xs font-bold text-text-muted uppercase tracking-wider">{test.duration}</span>
+                        <span className="text-sm font-bold uppercase tracking-wider text-rose-500">{test.questions?.length || 0} Questions</span>
                       </div>
                       
-                      <div className="mt-auto pt-4 border-t border-border flex items-center justify-between">
-                        <span className="text-sm font-bold uppercase tracking-wider text-rose-500">{topicQuestions.length} Questions</span>
-                        
-                        <Link 
-                          to={`/other-practice/topic/${encodeURIComponent(topic)}`}
-                          className="px-4 py-2 bg-rose-500 text-white rounded-lg font-bold hover:bg-rose-600 transition-colors shadow-md text-sm inline-flex items-center space-x-1"
-                        >
-                          <span>Start</span>
-                          <ChevronRight className="w-4 h-4" />
-                        </Link>
-                      </div>
+                      <Link 
+                        to={`/take-test/${test.id}`}
+                        className="px-4 py-2 bg-rose-500 text-white rounded-lg font-bold hover:bg-rose-600 transition-colors shadow-md text-sm inline-flex items-center space-x-1"
+                      >
+                        <span>Take Test</span>
+                        <ChevronRight className="w-4 h-4" />
+                      </Link>
                     </div>
                   </div>
-                );
-              })
+                </div>
+              ))
             )}
           </div>
         </div>

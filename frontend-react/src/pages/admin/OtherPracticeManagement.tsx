@@ -154,8 +154,8 @@ export default function OtherPracticeManagement() {
       
       let currentQuestion: Question | null = null;
       
-      const questionRegex = /^\\d+[\\.\\)]\\s*(.+)/;
-      const optionRegex = /^[A-D][\\.\\)]\\s*(.+)/i;
+      const questionRegex = /^(?:Q|Question)?\\s*\\d+[\\.\\)]\\s*(.+)/i;
+      const optionRegex = /^[\\(]?[a-d][\\.\\)]\\s*(.+)/i;
       const answerRegex = /^answer[\\s:]*(.+)/i;
 
       for (let i = 0; i < lines.length; i++) {
@@ -169,7 +169,7 @@ export default function OtherPracticeManagement() {
           }
           currentQuestion = {
             id: Date.now() + Math.floor(Math.random() * 100000),
-            text: qMatch[1],
+            text: qMatch[1].trim(),
             options: [],
             answer: ""
           };
@@ -178,7 +178,7 @@ export default function OtherPracticeManagement() {
 
         const oMatch = line.match(optionRegex);
         if (oMatch && currentQuestion && currentQuestion.options.length < 4) {
-          currentQuestion.options.push(oMatch[1]);
+          currentQuestion.options.push(oMatch[1].trim());
           continue;
         }
 
@@ -201,7 +201,7 @@ export default function OtherPracticeManagement() {
       }
       
       if (parsedQuestions.length === 0) {
-          alert("Could not automatically extract any formatted questions from the PDF. Please make sure the questions follow standard format (1. Question, A) Option, Answer: A).");
+          alert("Could not automatically extract questions. Please ensure they start with a number (e.g. '1.' or 'Q1.') and options start with letters (e.g. 'a.', 'b.', 'c.', 'd.').");
           return;
       }
       

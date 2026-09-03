@@ -43,7 +43,17 @@ export default function OtherPracticeManagement() {
     fetchProblems();
     const storedSubjects = localStorage.getItem(SUBJECTS_KEY);
     if (storedSubjects) {
-      setSubjects(JSON.parse(storedSubjects));
+      try {
+        const parsed = JSON.parse(storedSubjects);
+        if (Array.isArray(parsed)) {
+          // Filter out any non-string values just in case
+          setSubjects(parsed.filter(s => typeof s === 'string'));
+        } else {
+          setSubjects([]);
+        }
+      } catch (e) {
+        setSubjects([]);
+      }
     }
   }, []);
 
@@ -151,8 +161,9 @@ export default function OtherPracticeManagement() {
             />
             <button 
               onClick={() => {
-                if (newSubject.trim() && !subjects.includes(newSubject.trim())) {
-                  const updated = [...subjects, newSubject.trim()];
+                const subjectList = Array.isArray(subjects) ? subjects : [];
+                if (newSubject.trim() && !subjectList.includes(newSubject.trim())) {
+                  const updated = [...subjectList, newSubject.trim()];
                   setSubjects(updated);
                   localStorage.setItem(SUBJECTS_KEY, JSON.stringify(updated));
                   setNewSubject("");
@@ -164,12 +175,12 @@ export default function OtherPracticeManagement() {
             </button>
           </div>
           <div className="bg-[#0B0F19] rounded-xl border border-border divide-y divide-border overflow-hidden">
-            {subjects.length === 0 ? (
+            {!(subjects && Array.isArray(subjects)) || subjects.length === 0 ? (
               <div className="p-8 text-center text-text-muted">No subjects added yet.</div>
             ) : (
               subjects.map(s => (
                 <div key={s} className="flex justify-between items-center p-4 hover:bg-slate-800/30 transition-colors">
-                  <span className="text-text-inverse font-medium">{s}</span>
+                  <span className="text-text-inverse font-medium">{String(s)}</span>
                   <button 
                     onClick={() => {
                       const updated = subjects.filter(sub => sub !== s);

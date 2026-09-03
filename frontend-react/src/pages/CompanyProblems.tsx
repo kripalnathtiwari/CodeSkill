@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   Building2,
   Search,
@@ -218,9 +218,9 @@ export default function CompanyProblems() {
   const [companiesList, setCompaniesList] = useState<CompanyCardData[]>(DEFAULT_COMPANIES);
   const [isLoading, setIsLoading] = useState(true);
 
-  // View state: "directory" (card grid) or "problems" (company practice view)
-  const [activeView, setActiveView] = useState<"directory" | "problems">("directory");
-  const [selectedCompany, setSelectedCompany] = useState<string>("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeView = searchParams.get("view") === "problems" ? "problems" : "directory";
+  const selectedCompany = searchParams.get("company") || "";
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [problemSearchQuery, setProblemSearchQuery] = useState("");
@@ -399,15 +399,14 @@ export default function CompanyProblems() {
   }, [questions, selectedSection]);
 
   const handleStartPreparing = (companyName: string) => {
-    setSelectedCompany(companyName);
+    setSearchParams({ view: "problems", company: companyName });
     setModulesExpanded(false);
     setMcqModulesExpanded(false);
-    setActiveView("problems");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleBackToDirectory = () => {
-    setActiveView("directory");
+    setSearchParams({});
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 

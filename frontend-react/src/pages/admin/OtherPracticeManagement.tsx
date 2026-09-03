@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Plus, Edit, Trash2, Search, Target, ArrowLeft, Save, X, BookOpen, Clock, Upload, Loader2, Users } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import axios from "axios";
+import * as pdfjsLib from "pdfjs-dist";
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
 type Question = {
   id: number;
@@ -15,6 +19,7 @@ export default function OtherPracticeManagement() {
   const [search, setSearch] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [apiKey, setApiKey] = useState("");
 
   // Form State
   const [title, setTitle] = useState("");
@@ -126,37 +131,59 @@ export default function OtherPracticeManagement() {
     }));
   };
 
-  const handlePdfUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (!apiKey) {
+      alert("Please enter a Gemini API Key first to parse the PDF.");
+      e.target.value = "";
+      return;
+    }
 
     setIsParsingPdf(true);
-    // Simulate OCR / PDF parsing delay like in TestManagement
-    setTimeout(() => {
-      const parsedQuestions = [
-        {
-          id: Date.now() + 1,
-          text: "What is the time complexity of binary search?",
-          options: ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
-          answer: "O(log n)"
-        },
-        {
-          id: Date.now() + 2,
-          text: "Which keyword is used to declare a constant in JavaScript?",
-          options: ["var", "let", "const", "static"],
-          answer: "const"
-        },
-        {
-          id: Date.now() + 3,
-          text: "What does HTML stand for?",
-          options: ["Hyper Text Markup Language", "High Text Machine Language", "Hyper Tabular Markup Language", "None of the above"],
-          answer: "Hyper Text Markup Language"
-        }
-      ];
-      setQuestions(parsedQuestions);
+    
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      let fullText = "";
+      
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const content = await page.getTextContent();
+        const pageText = content.items.map((item: any) => item.str).join(" ");
+        fullText += pageText + "\n";
+      }
+
+      const prompt = `Extract Multiple Choice Questions from the following text and format them as a JSON array. 
+      Each object must have exactly these fields: {text (the question string), options (array of 4 strings), answer (the correct string matching one of the options)}. 
+      Here is the text:\n\n${fullText.substring(0, 15000)}`;
+      
+      const response = await axios.post(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+        contents: [{ parts: [{ text: prompt }] }]
+      });
+      
+      const textResponse = response.data.candidates[0].content.parts[0].text;
+      const cleaned = textResponse.replace(/```json/gi, "").replace(/```/g, "").trim();
+      const parsed = JSON.parse(cleaned).map((p: any) => ({
+        id: Date.now() + Math.floor(Math.random() * 1000000),
+        text: p.text || "Untitled Question",
+        options: Array.isArray(p.options) && p.options.length === 4 ? p.options : ["A", "B", "C", "D"],
+        answer: p.answer || ""
+      }));
+      
+      setQuestions(prev => {
+        // If the only question is the default empty one, replace it
+        if (prev.length === 1 && !prev[0].text) return parsed;
+        return [...prev, ...parsed];
+      });
+      alert(`Successfully parsed and imported ${parsed.length} questions from PDF!`);
+    } catch (error: any) {
+      console.error(error);
+      alert("Error parsing PDF. Please check your API key and file. " + (error.message || ""));
+    } finally {
       setIsParsingPdf(false);
-      e.target.value = ""; // reset
-    }, 2000);
+      e.target.value = "";
+    }
   };
 
   const filteredTests = tests.filter(t => 
@@ -287,16 +314,23 @@ export default function OtherPracticeManagement() {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-xl font-bold text-text-inverse">Questions</h3>
-                <p className="text-text-muted mt-1">Add questions manually or upload a PDF to auto-fill.</p>
+                <p className="text-text-muted mt-1">Add questions manually or upload a PDF to auto-fill using AI.</p>
               </div>
               <div className="flex items-center space-x-3">
-                <input type="file" accept=".pdf" id="pdf-upload" className="hidden" onChange={handlePdfUpload} />
+                <input 
+                  type="password" 
+                  placeholder="Gemini API Key for PDF" 
+                  value={apiKey} 
+                  onChange={e => setApiKey(e.target.value)} 
+                  className="bg-[#0B0F19] border border-border rounded-xl px-4 py-2.5 text-text-inverse focus:border-rose-500 focus:outline-none w-48 text-sm"
+                />
+                <input type="file" accept=".pdf" id="pdf-upload" className="hidden" onChange={handlePdfUpload} disabled={isParsingPdf} />
                 <label 
                   htmlFor="pdf-upload"
-                  className={`cursor-pointer bg-slate-800 hover:bg-slate-700 text-rose-500 font-bold px-4 py-2.5 rounded-xl transition-colors flex items-center space-x-2 border ${isParsingPdf ? 'border-rose-500' : 'border-rose-500/30'}`}
+                  className={`cursor-pointer bg-slate-800 hover:bg-slate-700 text-rose-500 font-bold px-4 py-2.5 rounded-xl transition-colors flex items-center space-x-2 border ${isParsingPdf ? 'border-rose-500 opacity-70' : 'border-rose-500/30'}`}
                 >
                   {isParsingPdf ? (
-                    <span className="animate-pulse flex items-center gap-2"><Loader2 className="w-5 h-5 animate-spin" /> Parsing...</span>
+                    <span className="flex items-center gap-2"><Loader2 className="w-5 h-5 animate-spin" /> Parsing...</span>
                   ) : (
                     <>
                       <Upload className="w-5 h-5" />

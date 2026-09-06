@@ -1,11 +1,18 @@
-// Types removed as they are computed dynamically
+import React, { useState, useEffect } from 'react';
 
 // Helper component for SVG Circular Progress
 const CircularProgress = ({ value, total, color, strokeWidth = 8, size = 120, label1, label2 }: any) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
   const percent = total > 0 ? (value / total) * 100 : 0;
-  const strokeDashoffset = circumference - (percent / 100) * circumference;
+  
+  const [offset, setOffset] = useState(circumference);
+
+  useEffect(() => {
+    const calculatedOffset = circumference - (percent / 100) * circumference;
+    const timeout = setTimeout(() => setOffset(calculatedOffset), 100);
+    return () => clearTimeout(timeout);
+  }, [percent, circumference]);
 
   return (
     <div className="relative flex flex-col items-center justify-center" style={{ width: size, height: size }}>
@@ -28,7 +35,7 @@ const CircularProgress = ({ value, total, color, strokeWidth = 8, size = 120, la
           strokeWidth={strokeWidth}
           fill="transparent"
           strokeDasharray={circumference}
-          strokeDashoffset={strokeDashoffset}
+          strokeDashoffset={offset}
           strokeLinecap="round"
           className="transition-all duration-1000 ease-out"
         />
@@ -45,7 +52,14 @@ const McqCircularProgress = ({ correct, total, size = 120, strokeWidth = 10 }: a
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
   const percent = total > 0 ? (correct / total) * 100 : 0;
-  const strokeDashoffset = circumference - (percent / 100) * circumference;
+  
+  const [offset, setOffset] = useState(circumference);
+
+  useEffect(() => {
+    const calculatedOffset = circumference - (percent / 100) * circumference;
+    const timeout = setTimeout(() => setOffset(calculatedOffset), 100);
+    return () => clearTimeout(timeout);
+  }, [percent, circumference]);
 
   return (
     <div className="relative flex flex-col items-center justify-center" style={{ width: size, height: size }}>
@@ -68,7 +82,7 @@ const McqCircularProgress = ({ correct, total, size = 120, strokeWidth = 10 }: a
           strokeWidth={strokeWidth}
           fill="transparent"
           strokeDasharray={circumference}
-          strokeDashoffset={strokeDashoffset}
+          strokeDashoffset={offset}
           strokeLinecap="butt"
           className="transition-all duration-1000 ease-out"
         />
@@ -77,6 +91,25 @@ const McqCircularProgress = ({ correct, total, size = 120, strokeWidth = 10 }: a
         <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">TOTAL SCORE</span>
         <span className="text-sm font-bold text-slate-800">{correct}/{total}</span>
       </div>
+    </div>
+  );
+};
+
+const AnimatedProgressBar = ({ value, total, colorClass }: { value: number, total: number, colorClass: string }) => {
+  const percent = total > 0 ? (value / total) * 100 : 0;
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setWidth(percent), 100);
+    return () => clearTimeout(timeout);
+  }, [percent]);
+
+  return (
+    <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+      <div 
+        className={`${colorClass} h-full rounded-full transition-all duration-1000 ease-out`} 
+        style={{ width: `${width}%` }}
+      ></div>
     </div>
   );
 };
@@ -127,12 +160,7 @@ export default function AnalyticsCharts({ dsaStats, testStats, mcqTotal, mcqStat
                 <span className="font-semibold text-slate-500">Easy</span>
                 <span className="font-bold text-slate-700">{coding.easy.solved}/{coding.easy.total}</span>
               </div>
-              <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                <div 
-                  className="bg-teal-400 h-full rounded-full" 
-                  style={{ width: `${coding.easy.total > 0 ? (coding.easy.solved / coding.easy.total) * 100 : 0}%` }}
-                ></div>
-              </div>
+              <AnimatedProgressBar value={coding.easy.solved} total={coding.easy.total} colorClass="bg-teal-400" />
             </div>
 
             {/* Medium */}
@@ -141,12 +169,7 @@ export default function AnalyticsCharts({ dsaStats, testStats, mcqTotal, mcqStat
                 <span className="font-semibold text-slate-500">Medium</span>
                 <span className="font-bold text-slate-700">{coding.medium.solved}/{coding.medium.total}</span>
               </div>
-              <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                <div 
-                  className="bg-amber-400 h-full rounded-full" 
-                  style={{ width: `${coding.medium.total > 0 ? (coding.medium.solved / coding.medium.total) * 100 : 0}%` }}
-                ></div>
-              </div>
+              <AnimatedProgressBar value={coding.medium.solved} total={coding.medium.total} colorClass="bg-amber-400" />
             </div>
 
             {/* Hard */}
@@ -155,12 +178,7 @@ export default function AnalyticsCharts({ dsaStats, testStats, mcqTotal, mcqStat
                 <span className="font-semibold text-slate-500">Hard</span>
                 <span className="font-bold text-slate-700">{coding.hard.solved}/{coding.hard.total}</span>
               </div>
-              <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                <div 
-                  className="bg-rose-400 h-full rounded-full" 
-                  style={{ width: `${coding.hard.total > 0 ? (coding.hard.solved / coding.hard.total) * 100 : 0}%` }}
-                ></div>
-              </div>
+              <AnimatedProgressBar value={coding.hard.solved} total={coding.hard.total} colorClass="bg-rose-400" />
             </div>
 
           </div>

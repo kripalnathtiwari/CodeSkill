@@ -25,7 +25,7 @@ export default function OtherPracticeManagement() {
   const [subject, setSubject] = useState("");
   const [duration, setDuration] = useState("30 Mins");
   const [questions, setQuestions] = useState<Question[]>([
-    { id: Date.now(), text: "", options: ["", "", "", ""], answer: "" }
+    { id: Date.now() + Math.random(), text: "", options: ["", "", "", ""], answer: "" }
   ]);
   const [isParsingPdf, setIsParsingPdf] = useState(false);
 
@@ -104,11 +104,11 @@ export default function OtherPracticeManagement() {
     setTitle("");
     setSubject("");
     setDuration("30 Mins");
-    setQuestions([{ id: Date.now(), text: "", options: ["", "", "", ""], answer: "" }]);
+    setQuestions([{ id: Date.now() + Math.random(), text: "", options: ["", "", "", ""], answer: "" }]);
   };
 
   const handleAddQuestion = () =>
-    setQuestions(prev => [...prev, { id: Date.now(), text: "", options: ["", "", "", ""], answer: "" }]);
+    setQuestions(prev => [...prev, { id: Date.now() + Math.random(), text: "", options: ["", "", "", ""], answer: "" }]);
 
   const handleRemoveQuestion = (id: number) => {
     if (questions.length === 1) return;
@@ -145,31 +145,33 @@ export default function OtherPracticeManagement() {
         const page = await pdf.getPage(i);
         const content = await page.getTextContent();
         const pageText = content.items.map((item: any) => item.str).join(" ");
-        fullText += pageText + "\\n";
+        fullText += pageText + "\n";
       }
 
       // Regex-based parsing
-      const parsedQuestions: Question[] = [];
-      const lines = fullText.split("\\n").map(l => l.trim()).filter(l => l.length > 0);
+      // Regex-based parsing
+      let parsedQuestions: Question[] = [];
+      const lines = fullText.split("\n").map(l => l.trim()).filter(l => l.length > 0);
       
       let currentQuestion: Question | null = null;
       
-      const questionRegex = /^(?:Q|Question)?\\s*\\d+[\\.\\)]\\s*(.+)/i;
-      const optionRegex = /^[\\(]?[a-d][\\.\\)]\\s*(.+)/i;
-      const answerRegex = /^answer[\\s:]*(.+)/i;
+      // Extremely forgiving regexes
+      const questionRegex = /^(?:(?:Q|Question|Qns)\s*\d*|\d+)\s*[\.\)\-:]\s*(.+)/i;
+      const optionRegex = /^(?:[\[\(]?\s*(?:[a-e]|[1-5]|i|ii|iii|iv)\s*[\]\)\.]|[-•\*])\s*(.+)/i;
+      const answerRegex = /^(?:answer|ans|correct|solution)[\s:\-]*([a-e1-5]?.*)/i;
 
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
         
         const qMatch = line.match(questionRegex);
-        if (qMatch) {
+        if (qMatch || (line.endsWith("?") && (!currentQuestion || currentQuestion.options.length > 0))) {
           if (currentQuestion) {
             while (currentQuestion.options.length < 4) currentQuestion.options.push("");
             parsedQuestions.push(currentQuestion);
           }
           currentQuestion = {
-            id: Date.now() + Math.floor(Math.random() * 100000),
-            text: qMatch[1].trim(),
+            id: Date.now() + Math.random() + i,
+            text: qMatch ? qMatch[1].trim() : line,
             options: [],
             answer: ""
           };
@@ -177,21 +179,38 @@ export default function OtherPracticeManagement() {
         }
 
         const oMatch = line.match(optionRegex);
-        if (oMatch && currentQuestion && currentQuestion.options.length < 4) {
+        if (oMatch && currentQuestion && currentQuestion.options.length < 4 && !line.match(questionRegex)) {
           currentQuestion.options.push(oMatch[1].trim());
           continue;
         }
 
         const aMatch = line.match(answerRegex);
         if (aMatch && currentQuestion) {
-          currentQuestion.answer = aMatch[1];
+          currentQuestion.answer = aMatch[1].trim() || line;
           continue;
         }
 
         if (currentQuestion) {
            if (currentQuestion.options.length === 0 && !line.toLowerCase().startsWith('answer')) {
                currentQuestion.text += " " + line;
+           } else if (currentQuestion.options.length > 0 && currentQuestion.options.length < 4) {
+               currentQuestion.options.push(line);
+           } else {
+               parsedQuestions.push(currentQuestion);
+               currentQuestion = {
+                 id: Date.now() + Math.random() + i,
+                 text: line,
+                 options: [],
+                 answer: ""
+               };
            }
+        } else {
+           currentQuestion = {
+             id: Date.now() + Math.random() + i,
+             text: line,
+             options: [],
+             answer: ""
+           };
         }
       }
 
@@ -201,7 +220,7 @@ export default function OtherPracticeManagement() {
       }
       
       if (parsedQuestions.length === 0) {
-          alert("Could not automatically extract questions. Please ensure they start with a number (e.g. '1.' or 'Q1.') and options start with letters (e.g. 'a.', 'b.', 'c.', 'd.').");
+          alert("Could not extract any text from the PDF. It might be an image-based PDF.");
           return;
       }
       

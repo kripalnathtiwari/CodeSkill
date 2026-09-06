@@ -219,6 +219,35 @@ export default function OtherPracticeManagement() {
         parsedQuestions.push(currentQuestion);
       }
       
+      const hasStructuredOptions = parsedQuestions.some(q => q.options.some(o => o.trim() !== ""));
+      
+      if (!hasStructuredOptions && lines.length > 0) {
+          // Fallback naive chunking (1 question, 4 options)
+          parsedQuestions = [];
+          let q: Question | null = null;
+          for (let i = 0; i < lines.length; i++) {
+             const line = lines[i];
+             if (!q) {
+                q = { id: Date.now() + Math.random() + i, text: line, options: [], answer: "" };
+             } else if (q.options.length < 4) {
+                q.options.push(line);
+             } else {
+                if (line.toLowerCase().startsWith('ans') || line.toLowerCase().startsWith('answer')) {
+                   q.answer = line;
+                   parsedQuestions.push(q);
+                   q = null;
+                } else {
+                   parsedQuestions.push(q);
+                   q = { id: Date.now() + Math.random() + i, text: line, options: [], answer: "" };
+                }
+             }
+          }
+          if (q) {
+             while (q.options.length < 4) q.options.push("");
+             parsedQuestions.push(q);
+          }
+      }
+      
       if (parsedQuestions.length === 0) {
           alert("Could not extract any text from the PDF. It might be an image-based PDF.");
           return;

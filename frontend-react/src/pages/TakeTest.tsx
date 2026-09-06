@@ -37,6 +37,16 @@ export default function TakeTest() {
       }
     }
 
+    // 1.5. Try to fetch from Other Practice tests
+    const otherPracticeSaved = localStorage.getItem("admin_other_practice_tests");
+    if (otherPracticeSaved && id) {
+      const tests = JSON.parse(otherPracticeSaved);
+      const customTest = tests.find((t: any) => String(t.id) === String(id));
+      if (customTest && customTest.questions) {
+        return customTest.questions;
+      }
+    }
+
     // 2. Try to fetch from new Test Series logic
     const testSeriesRaw = localStorage.getItem("admin_custom_interview_problems");
     if (testSeriesRaw && id) {
@@ -185,6 +195,15 @@ export default function TakeTest() {
             if (t.collegeId) testAssignedCollegeId = t.collegeId;
             if (t.section) testAssignedSection = t.section;
             if (t.category) testAssignedCategory = t.category;
+          }
+        }
+
+        const otherPracticeTests = localStorage.getItem("admin_other_practice_tests");
+        if (otherPracticeTests) {
+          const tests = JSON.parse(otherPracticeTests);
+          const t = tests.find((x: any) => String(x.id) === String(id));
+          if (t) {
+            if (t.title) testName = t.title;
           }
         }
         

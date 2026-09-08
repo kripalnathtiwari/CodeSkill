@@ -25,10 +25,8 @@ export default function CareerTools() {
 
             <h2 className="text-3xl md:text-5xl font-bold text-text-primary dark:text-text-primary leading-tight">
               Optimize Your CV for <br />
-              <span className="drop-shadow-sm flex items-center flex-wrap gap-2">
-                <span className="text-primary">Top</span>
-                <span className="text-[#a09a9a]">Tech</span>
-                <span className="text-[#0ea5e9]">Companies</span>
+              <span className="text-primary drop-shadow-sm">
+                Top Tech Companies
               </span>
             </h2>
 
@@ -41,7 +39,7 @@ export default function CareerTools() {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="flex items-center justify-center space-x-2 bg-gradient-to-r from-primary via-primary to-primary hover:from-blue-400 hover:to-primary text-text-inverse font-extrabold px-8 py-4 rounded-xl border-2 border-white/90 transition-all shadow-[0_0_25px_rgba(16,185,129,0.4)] w-full sm:w-auto text-base sm:text-lg tracking-wide"
+                  className="flex items-center justify-center space-x-2 bg-primary hover:bg-primary/90 text-text-inverse font-extrabold px-8 py-4 rounded-xl border-2 border-white/90 transition-all shadow-lg shadow-primary/40 hover:shadow-xl hover:shadow-primary/50 w-full sm:w-auto text-base sm:text-lg tracking-wide"
                 >
                   <FileText className="w-5 h-5" />
                   <span>Make your CV</span>

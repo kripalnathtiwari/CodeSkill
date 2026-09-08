@@ -61,13 +61,10 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 glass border-b border-border dark:border-border px-6 py-3 flex items-center justify-between transition-colors">
       <Link to="/" className="flex items-center space-x-1 text-2xl font-extrabold tracking-tight">
         <span className="text-primary font-black tracking-tighter text-2xl mr-1">&lt;/&gt;</span>
-        <span className="flex">
-          <span className="text-[#a09a9a] dark:text-[#b8b2b2]">Code</span>
-          <span className="text-[#0ea5e9]">Skill</span>
-        </span>
+        <span className="text-primary">CodeSkill</span>
       </Link>
 
-      <nav className="hidden lg:flex items-center space-x-6 text-[13px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+      <nav className="hidden lg:flex items-center space-x-3 xl:space-x-5 text-xs lg:text-[13px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 whitespace-nowrap">
         <Link to="/" className="hover:text-primary transition-colors flex items-center space-x-1">
           <HomeIcon className="h-4 w-4" />
           <span>Home</span>
@@ -197,12 +194,6 @@ export default function Navbar() {
 
         {user ? (
           <>
-            {/* Daily Streak Tracker widget */}
-            <div className="hidden sm:flex items-center space-x-1 bg-amber-100 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 px-3 py-1.5 rounded-full text-xs font-semibold text-amber-600 dark:text-amber-400">
-              <Flame className="h-4 w-4" />
-              <span>{user.profile?.dailyStreak || 0} Day Streak!</span>
-            </div>
-
             {/* User Profile Dropdown / Card */}
             <div className="relative" ref={profileRef}>
               <button 

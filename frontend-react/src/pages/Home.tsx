@@ -64,10 +64,8 @@ export default function Home() {
 
           <motion.h1 variants={itemVariants} className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.15] text-text-primary dark:text-text-primary">
             One Platform for Training, <br />
-            <span className="drop-shadow-sm flex items-center flex-wrap justify-center gap-2">
-              <span className="text-primary">Certifications</span>
-              <span className="text-[#a09a9a]">&amp; Career</span>
-              <span className="text-[#0ea5e9]">Growth.</span>
+            <span className="text-primary drop-shadow-sm">
+              Certifications & Career Growth.
             </span>
           </motion.h1>
 
@@ -80,7 +78,7 @@ export default function Home() {
               <motion.button
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.96 }}
-                className="flex items-center space-x-2 bg-gradient-to-r from-primary to-sky-600 hover:from-primary hover:to-sky-500 text-text-inverse font-semibold text-sm sm:text-base px-6 py-3 rounded-xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:shadow-[0_0_30px_rgba(16,185,129,0.6)] w-full justify-center border border-primary/50"
+                className="flex items-center space-x-2 bg-primary hover:bg-primary/90 text-text-inverse font-semibold text-sm sm:text-base px-6 py-3 rounded-xl transition-all shadow-lg shadow-primary/40 hover:shadow-xl hover:shadow-primary/50 w-full justify-center border border-primary/50"
               >
                 <span>Practice Playground</span>
                 <ArrowRight className="h-4 w-4" />

@@ -40,6 +40,7 @@ const CVTemplates = lazy(() => import('./pages/CVTemplates'));
 const ATSChecker = lazy(() => import('./pages/ATSChecker'));
 const Jobs = lazy(() => import('./pages/Jobs'));
 const TestSeries = lazy(() => import('./pages/TestSeries'));
+const OurProduct = lazy(() => import('./pages/OurProduct'));
 
 import ErrorBoundary from './components/ErrorBoundary';
 
@@ -89,6 +90,7 @@ function AppContent() {
               <Route path="/cv-templates" element={<CVTemplates />} />
               <Route path="/ats-checker" element={<ATSChecker />} />
               <Route path="/jobs" element={<Jobs />} />
+              <Route path="/our-product" element={<OurProduct />} />
             </Routes>
           </Suspense>
         </ErrorBoundary>

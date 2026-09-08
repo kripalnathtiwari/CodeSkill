@@ -96,74 +96,80 @@ export default function Navbar() {
             </div>
           </div>
         </div>
-        <div className="relative group">
-          <button className="hover:text-primary transition-colors flex items-center space-x-1 py-4">
-            <BookOpen className="h-4 w-4" />
-            <span>Practice Problems</span>
-            <ChevronDown className="h-4 w-4 ml-0.5 opacity-70 group-hover:rotate-180 transition-transform duration-200" />
-          </button>
-          
-          <div className="absolute top-[80%] left-0 w-64 bg-surface dark:bg-background border border-border dark:border-border rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 z-50 overflow-hidden">
-            <div className="flex flex-col py-2">
-              <Link to="/problems" className="px-4 py-3 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary transition-colors text-sm border-b border-slate-100 dark:border-border/50 last:border-0 flex items-center space-x-2">
-                <span>DSA Problem</span>
-              </Link>
-              <Link to="/company-problems" className="px-4 py-3 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary transition-colors text-sm border-b border-slate-100 dark:border-border/50 last:border-0 flex items-center space-x-2">
-                <span>Company interview preperation</span>
-              </Link>
-              <Link to="/aptitude" className="px-4 py-3 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary transition-colors text-sm border-b border-slate-100 dark:border-border/50 last:border-0 flex items-center space-x-2">
-                <span>Apptitude question</span>
-              </Link>
-              <Link to="/other-practice" className="px-4 py-3 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary transition-colors text-sm flex items-center space-x-2">
-                <span>More Practice</span>
-              </Link>
-            </div>
-          </div>
-        </div>
-        <div className="relative group">
-          <Link to="/jobs" className="hover:text-primary transition-colors flex items-center space-x-1 py-4">
-            <Briefcase className="h-4 w-4" />
-            <span>Career</span>
-            <ChevronDown className="h-4 w-4 ml-0.5 opacity-70 group-hover:rotate-180 transition-transform duration-200" />
-          </Link>
-          
-          <div className="absolute top-[80%] left-0 w-64 bg-surface dark:bg-background border border-border dark:border-border rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 z-50 overflow-hidden">
-            <div className="flex flex-col py-2">
-              <Link to="/jobs" className="px-4 py-3 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary transition-colors text-sm border-b border-slate-100 dark:border-border/50 last:border-0 flex items-center space-x-2">
-                <Briefcase className="w-4 h-4 text-primary" />
-                <span>Job</span>
-              </Link>
-              <Link to="/cv-builder" className="px-4 py-3 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary transition-colors text-sm border-b border-slate-100 dark:border-border/50 last:border-0 flex items-center space-x-2">
-                <FileText className="w-4 h-4 text-primary" />
-                <span>Resume</span>
-              </Link>
-              <Link to="/ats-checker" className="px-4 py-3 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary transition-colors text-sm border-b border-slate-100 dark:border-border/50 last:border-0 flex items-center space-x-2">
-                <Sparkles className="w-4 h-4 text-primary" />
-                <span>Resume Analysis</span>
-              </Link>
-              <Link to="/jobs?tab=tracker" className="px-4 py-3 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary transition-colors text-sm flex items-center space-x-2">
-                <TrendingUp className="w-4 h-4 text-primary" />
-                <span>Track Application Progress</span>
-              </Link>
-            </div>
-          </div>
-        </div>
-        {user && (
-          <Link to="/contests" className="hover:text-primary transition-colors flex items-center space-x-1">
-            <Trophy className="h-4 w-4" />
-            <span>Test</span>
+        {!user && (
+          <Link to="/our-product" className="hover:text-primary transition-colors flex items-center space-x-1">
+            <Building2 className="h-4 w-4" />
+            <span>Our Product</span>
           </Link>
         )}
-        <Link to="/sandbox" className="hover:text-primary transition-colors flex items-center space-x-1">
-          <Code2 className="h-4 w-4" />
-          <span>Compiler</span>
-        </Link>
-        
+
         {user && (
-          <Link to="/dashboard" className="hover:text-primary transition-colors flex items-center space-x-1">
-            <User className="h-4 w-4" />
-            <span>Dashboard</span>
-          </Link>
+          <>
+            <div className="relative group">
+              <button className="hover:text-primary transition-colors flex items-center space-x-1 py-4">
+                <BookOpen className="h-4 w-4" />
+                <span>Practice Problems</span>
+                <ChevronDown className="h-4 w-4 ml-0.5 opacity-70 group-hover:rotate-180 transition-transform duration-200" />
+              </button>
+              
+              <div className="absolute top-[80%] left-0 w-64 bg-surface dark:bg-background border border-border dark:border-border rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 z-50 overflow-hidden">
+                <div className="flex flex-col py-2">
+                  <Link to="/problems" className="px-4 py-3 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary transition-colors text-sm border-b border-slate-100 dark:border-border/50 last:border-0 flex items-center space-x-2">
+                    <span>DSA Problem</span>
+                  </Link>
+                  <Link to="/company-problems" className="px-4 py-3 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary transition-colors text-sm border-b border-slate-100 dark:border-border/50 last:border-0 flex items-center space-x-2">
+                    <span>Company interview preperation</span>
+                  </Link>
+                  <Link to="/aptitude" className="px-4 py-3 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary transition-colors text-sm border-b border-slate-100 dark:border-border/50 last:border-0 flex items-center space-x-2">
+                    <span>Apptitude question</span>
+                  </Link>
+                  <Link to="/other-practice" className="px-4 py-3 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary transition-colors text-sm flex items-center space-x-2">
+                    <span>More Practice</span>
+                  </Link>
+                </div>
+              </div>
+            </div>
+            <div className="relative group">
+              <Link to="/jobs" className="hover:text-primary transition-colors flex items-center space-x-1 py-4">
+                <Briefcase className="h-4 w-4" />
+                <span>Career</span>
+                <ChevronDown className="h-4 w-4 ml-0.5 opacity-70 group-hover:rotate-180 transition-transform duration-200" />
+              </Link>
+              
+              <div className="absolute top-[80%] left-0 w-64 bg-surface dark:bg-background border border-border dark:border-border rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 z-50 overflow-hidden">
+                <div className="flex flex-col py-2">
+                  <Link to="/jobs" className="px-4 py-3 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary transition-colors text-sm border-b border-slate-100 dark:border-border/50 last:border-0 flex items-center space-x-2">
+                    <Briefcase className="w-4 h-4 text-primary" />
+                    <span>Job</span>
+                  </Link>
+                  <Link to="/cv-builder" className="px-4 py-3 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary transition-colors text-sm border-b border-slate-100 dark:border-border/50 last:border-0 flex items-center space-x-2">
+                    <FileText className="w-4 h-4 text-primary" />
+                    <span>Resume</span>
+                  </Link>
+                  <Link to="/ats-checker" className="px-4 py-3 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary transition-colors text-sm border-b border-slate-100 dark:border-border/50 last:border-0 flex items-center space-x-2">
+                    <Sparkles className="w-4 h-4 text-primary" />
+                    <span>Resume Analysis</span>
+                  </Link>
+                  <Link to="/jobs?tab=tracker" className="px-4 py-3 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary transition-colors text-sm flex items-center space-x-2">
+                    <TrendingUp className="w-4 h-4 text-primary" />
+                    <span>Track Application Progress</span>
+                  </Link>
+                </div>
+              </div>
+            </div>
+            <Link to="/contests" className="hover:text-primary transition-colors flex items-center space-x-1">
+              <Trophy className="h-4 w-4" />
+              <span>Test</span>
+            </Link>
+            <Link to="/sandbox" className="hover:text-primary transition-colors flex items-center space-x-1">
+              <Code2 className="h-4 w-4" />
+              <span>Compiler</span>
+            </Link>
+            <Link to="/dashboard" className="hover:text-primary transition-colors flex items-center space-x-1">
+              <User className="h-4 w-4" />
+              <span>Dashboard</span>
+            </Link>
+          </>
         )}
 
         {/* ROLE BASED ACCESS: Admin and Instructors */}
@@ -309,84 +315,91 @@ export default function Navbar() {
             )}
           </div>
           
-          <div className="py-2 px-4 flex flex-col space-y-2">
-            <button 
-              onClick={() => setIsMobileProblemsOpen(!isMobileProblemsOpen)}
-              className="flex items-center justify-between w-full text-text-primary dark:text-text-secondary font-medium py-2 hover:text-primary transition-colors"
-            >
-              <div className="flex items-center space-x-2">
-                <BookOpen className="h-4 w-4" />
-                <span>Practice Problems</span>
-              </div>
-              <ChevronDown className={`h-4 w-4 transition-transform ${isMobileProblemsOpen ? 'rotate-180' : ''}`} />
-            </button>
-            
-            {isMobileProblemsOpen && (
-              <div className="pl-6 flex flex-col space-y-2 text-sm mt-1 mb-2 animate-in slide-in-from-top-2 duration-200">
-                <Link to="/problems" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary text-text-secondary dark:text-text-muted py-1.5">DSA Problem</Link>
-                <Link to="/company-problems" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary text-text-secondary dark:text-text-muted py-1.5">Company interview prep</Link>
-                <Link to="/aptitude" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary text-text-secondary dark:text-text-muted py-1.5">Aptitude questions</Link>
-                <Link to="/other-practice" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary text-text-secondary dark:text-text-muted py-1.5">More Practice</Link>
-              </div>
-            )}
-          </div>
-          
-          <div className="py-2 px-4 flex flex-col space-y-2">
-            <div className="flex items-center justify-between w-full text-text-primary dark:text-text-secondary font-medium py-2">
-              <Link 
-                to="/jobs" 
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center space-x-2 hover:text-primary transition-colors flex-1"
-              >
-                <Briefcase className="h-4 w-4" />
-                <span>Career</span>
-              </Link>
-              <button 
-                onClick={() => setIsMobileCareerOpen(!isMobileCareerOpen)}
-                className="p-1 hover:text-primary transition-colors"
-                aria-label="Toggle career submenu"
-              >
-                <ChevronDown className={`h-4 w-4 transition-transform ${isMobileCareerOpen ? 'rotate-180' : ''}`} />
-              </button>
-            </div>
-            
-            {isMobileCareerOpen && (
-              <div className="pl-6 flex flex-col space-y-2 text-sm mt-1 mb-2 animate-in slide-in-from-top-2 duration-200">
-                <Link to="/jobs" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary text-text-secondary dark:text-text-muted py-1.5 flex items-center space-x-2">
-                  <Briefcase className="w-3.5 h-3.5 text-primary" />
-                  <span>Job</span>
-                </Link>
-                <Link to="/cv-builder" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary text-text-secondary dark:text-text-muted py-1.5 flex items-center space-x-2">
-                  <FileText className="w-3.5 h-3.5 text-primary" />
-                  <span>Resume</span>
-                </Link>
-                <Link to="/ats-checker" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary text-text-secondary dark:text-text-muted py-1.5 flex items-center space-x-2">
-                  <Sparkles className="w-3.5 h-3.5 text-primary" />
-                  <span>Resume Analysis</span>
-                </Link>
-                <Link to="/jobs?tab=tracker" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary text-text-secondary dark:text-text-muted py-1.5 flex items-center space-x-2">
-                  <TrendingUp className="w-3.5 h-3.5 text-primary" />
-                  <span>Track Application Progress</span>
-                </Link>
-              </div>
-            )}
-          </div>
-
-          {user && (
-            <Link to="/contests" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-4 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary rounded-lg flex items-center space-x-2 text-text-primary dark:text-text-secondary">
-              <Trophy className="h-4 w-4" />
-              <span>Test</span>
+          {!user && (
+            <Link to="/our-product" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-4 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary rounded-lg flex items-center space-x-2 text-text-primary dark:text-text-secondary">
+              <Building2 className="h-4 w-4" />
+              <span>Our Product</span>
             </Link>
           )}
-          <Link to="/sandbox" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-4 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary rounded-lg flex items-center space-x-2 text-text-primary dark:text-text-secondary">
-            <Code2 className="h-4 w-4" />
-            <span>Compiler</span>
-          </Link>
+
           {user && (
-            <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-4 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary rounded-lg flex items-center space-x-2 text-text-primary dark:text-text-secondary">
-              <User className="h-4 w-4" />
-              <span>Dashboard</span>
-            </Link>
+            <>
+              <div className="py-2 px-4 flex flex-col space-y-2">
+                <button 
+                  onClick={() => setIsMobileProblemsOpen(!isMobileProblemsOpen)}
+                  className="flex items-center justify-between w-full text-text-primary dark:text-text-secondary font-medium py-2 hover:text-primary transition-colors"
+                >
+                  <div className="flex items-center space-x-2">
+                    <BookOpen className="h-4 w-4" />
+                    <span>Practice Problems</span>
+                  </div>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${isMobileProblemsOpen ? 'rotate-180' : ''}`} />
+                </button>
+                
+                {isMobileProblemsOpen && (
+                  <div className="pl-6 flex flex-col space-y-2 text-sm mt-1 mb-2 animate-in slide-in-from-top-2 duration-200">
+                    <Link to="/problems" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary text-text-secondary dark:text-text-muted py-1.5">DSA Problem</Link>
+                    <Link to="/company-problems" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary text-text-secondary dark:text-text-muted py-1.5">Company interview prep</Link>
+                    <Link to="/aptitude" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary text-text-secondary dark:text-text-muted py-1.5">Aptitude questions</Link>
+                    <Link to="/other-practice" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary text-text-secondary dark:text-text-muted py-1.5">More Practice</Link>
+                  </div>
+                )}
+              </div>
+              
+              <div className="py-2 px-4 flex flex-col space-y-2">
+                <div className="flex items-center justify-between w-full text-text-primary dark:text-text-secondary font-medium py-2">
+                  <Link 
+                    to="/jobs" 
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center space-x-2 hover:text-primary transition-colors flex-1"
+                  >
+                    <Briefcase className="h-4 w-4" />
+                    <span>Career</span>
+                  </Link>
+                  <button 
+                    onClick={() => setIsMobileCareerOpen(!isMobileCareerOpen)}
+                    className="p-1 hover:text-primary transition-colors"
+                    aria-label="Toggle career submenu"
+                  >
+                    <ChevronDown className={`h-4 w-4 transition-transform ${isMobileCareerOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                </div>
+                
+                {isMobileCareerOpen && (
+                  <div className="pl-6 flex flex-col space-y-2 text-sm mt-1 mb-2 animate-in slide-in-from-top-2 duration-200">
+                    <Link to="/jobs" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary text-text-secondary dark:text-text-muted py-1.5 flex items-center space-x-2">
+                      <Briefcase className="w-3.5 h-3.5 text-primary" />
+                      <span>Job</span>
+                    </Link>
+                    <Link to="/cv-builder" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary text-text-secondary dark:text-text-muted py-1.5 flex items-center space-x-2">
+                      <FileText className="w-3.5 h-3.5 text-primary" />
+                      <span>Resume</span>
+                    </Link>
+                    <Link to="/ats-checker" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary text-text-secondary dark:text-text-muted py-1.5 flex items-center space-x-2">
+                      <Sparkles className="w-3.5 h-3.5 text-primary" />
+                      <span>Resume Analysis</span>
+                    </Link>
+                    <Link to="/jobs?tab=tracker" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary text-text-secondary dark:text-text-muted py-1.5 flex items-center space-x-2">
+                      <TrendingUp className="w-3.5 h-3.5 text-primary" />
+                      <span>Track Application Progress</span>
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              <Link to="/contests" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-4 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary rounded-lg flex items-center space-x-2 text-text-primary dark:text-text-secondary">
+                <Trophy className="h-4 w-4" />
+                <span>Test</span>
+              </Link>
+              <Link to="/sandbox" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-4 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary rounded-lg flex items-center space-x-2 text-text-primary dark:text-text-secondary">
+                <Code2 className="h-4 w-4" />
+                <span>Compiler</span>
+              </Link>
+              <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-4 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary rounded-lg flex items-center space-x-2 text-text-primary dark:text-text-secondary">
+                <User className="h-4 w-4" />
+                <span>Dashboard</span>
+              </Link>
+            </>
           )}
           {(user?.role === "ADMIN" || user?.role === "INSTRUCTOR" || user?.role === "COLLEGE_ADMIN") && (
             <Link to="/admin" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-4 hover:bg-rose-50 dark:hover:bg-rose-900/10 text-rose-500 hover:text-rose-400 rounded-lg flex items-center space-x-2">

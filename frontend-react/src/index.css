@@ -44,9 +44,9 @@
 
 @layer base {
   :root {
-    --primary-color: #225CF2;
-    --primary-hover: #1B4ED8;
-    --primary-light: #EAF0FF;
+    --primary-color: #F0763D;
+    --primary-hover: #D96029;
+    --primary-light: #FCE8DF;
     
     --secondary-color: #0F2747;
     --secondary-hover: #0A1D35;
@@ -73,13 +73,13 @@
     --background: 210 40% 98%; 
     --foreground: 222.2 84% 4.9%;
     --muted: 210 40% 96.1%;
-    --primary: 223 89% 54%; 
+    --primary: 19 86% 59%; 
   }
 
   .dark {
-    --primary-color: #3B82F6; /* Slightly lighter blue for dark mode visibility */
-    --primary-hover: #60A5FA;
-    --primary-light: #1E3A8A; /* Dark blue background */
+    --primary-color: #F0763D; /* Keep the vibrant orange for dark mode visibility */
+    --primary-hover: #F28C5A;
+    --primary-light: #3D1C0F; /* Dark orange/brown background */
     
     --secondary-color: #1E293B; 
     --secondary-hover: #334155;
@@ -106,7 +106,7 @@
     --background: 222.9 38.9% 7.1%;
     --foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
-    --primary: 223 89% 60%;
+    --primary: 19 86% 59%;
   }
 
   html {
@@ -240,10 +240,10 @@ html {
   }
   .hover-scale-premium:hover {
     transform: translateY(-2px) scale(1.01);
-    box-shadow: 0 12px 40px -10px rgba(34, 92, 242, 0.15); /* Primary color shadow */
+    box-shadow: 0 12px 40px -10px rgba(240, 118, 61, 0.15); /* Primary color shadow */
   }
   .dark .hover-scale-premium:hover {
-    box-shadow: 0 12px 40px -10px rgba(34, 92, 242, 0.3);
+    box-shadow: 0 12px 40px -10px rgba(240, 118, 61, 0.3);
   }
 
   /* Ultra Premium Grid Background */

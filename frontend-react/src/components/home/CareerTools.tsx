@@ -25,8 +25,10 @@ export default function CareerTools() {
 
             <h2 className="text-3xl md:text-5xl font-bold text-text-primary dark:text-text-primary leading-tight">
               Optimize Your CV for <br />
-              <span className="bg-gradient-to-r from-primary to-sky-500 dark:from-blue-400 dark:to-sky-400 bg-clip-text text-transparent">
-                Top Tech Companies
+              <span className="drop-shadow-sm flex items-center flex-wrap gap-2">
+                <span className="text-primary">Top</span>
+                <span className="text-[#a09a9a]">Tech</span>
+                <span className="text-[#0ea5e9]">Companies</span>
               </span>
             </h2>
 

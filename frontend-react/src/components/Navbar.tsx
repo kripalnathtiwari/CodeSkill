@@ -59,12 +59,15 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 glass border-b border-border dark:border-border px-6 py-3 flex items-center justify-between transition-colors">
-      <Link to="/" className="flex items-center space-x-2 text-xl font-bold tracking-tight bg-gradient-to-r from-primary to-sky-500 bg-clip-text text-transparent">
-        <Code2 className="h-6 w-6 text-primary" />
-        <span>CodeSkill</span>
+      <Link to="/" className="flex items-center space-x-1 text-2xl font-extrabold tracking-tight">
+        <span className="text-primary font-black tracking-tighter text-2xl mr-1">&lt;/&gt;</span>
+        <span className="flex">
+          <span className="text-[#a09a9a] dark:text-[#b8b2b2]">Code</span>
+          <span className="text-[#0ea5e9]">Skill</span>
+        </span>
       </Link>
 
-      <nav className="hidden lg:flex items-center space-x-6 text-sm font-medium text-text-primary dark:text-text-secondary">
+      <nav className="hidden lg:flex items-center space-x-6 text-[13px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
         <Link to="/" className="hover:text-primary transition-colors flex items-center space-x-1">
           <HomeIcon className="h-4 w-4" />
           <span>Home</span>

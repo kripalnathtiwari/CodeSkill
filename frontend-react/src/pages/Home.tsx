@@ -64,8 +64,10 @@ export default function Home() {
 
           <motion.h1 variants={itemVariants} className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.15] text-text-primary dark:text-text-primary">
             One Platform for Training, <br />
-            <span className="bg-gradient-to-r from-primary via-sky-500 to-sky-500 dark:from-blue-400 dark:via-sky-400 dark:to-sky-400 bg-clip-text text-transparent drop-shadow-sm">
-              Certifications & Career Growth.
+            <span className="drop-shadow-sm flex items-center flex-wrap justify-center gap-2">
+              <span className="text-primary">Certifications</span>
+              <span className="text-[#a09a9a]">&amp; Career</span>
+              <span className="text-[#0ea5e9]">Growth.</span>
             </span>
           </motion.h1>
 

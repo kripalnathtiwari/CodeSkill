@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, Target, BookOpen, ArrowLeft, Home, Book, CheckCircle2, ChevronRight, Award, ArrowUpRight } from "lucide-react";
+import { Search, Target, BookOpen, ArrowLeft, Home, Book, CheckCircle2, ChevronRight, Award, ArrowUpRight, FileText, Download } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 export default function OtherPractice() {
@@ -9,6 +9,7 @@ export default function OtherPractice() {
   const [searchQuery, setSearchQuery] = useState("");
   const [questions, setQuestions] = useState<any[]>([]);
   const [subjects, setSubjects] = useState<string[]>([]);
+  const [subjectNotes, setSubjectNotes] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(true);
 
   // View state: "directory" (subjects grid) or "topics" (topics inside a subject)
@@ -24,6 +25,10 @@ export default function OtherPractice() {
       const subjectsData = localStorage.getItem("admin_subjects_data");
       if (subjectsData) {
         setSubjects(JSON.parse(subjectsData));
+      }
+      const notesData = localStorage.getItem("admin_subject_notes");
+      if (notesData) {
+        setSubjectNotes(JSON.parse(notesData));
       }
     } catch (e) {
       console.error(e);
@@ -237,7 +242,9 @@ export default function OtherPractice() {
                 </p>
               </div>
             ) : (
-              filteredTests.map((test) => (
+              filteredTests.map((test) => {
+                const hasTaken = localStorage.getItem(`testResult_${user?.email || 'guest'}_${test.id}`) !== null;
+                return (
                 <div key={test.id} className="group flex flex-col bg-surface dark:bg-[#111827] rounded-2xl border border-border hover:border-rose-500/50 hover:bg-rose-50 dark:hover:bg-rose-500/5 transition-all duration-300 overflow-hidden shadow-sm hover:shadow-[0_0_30px_rgba(225,29,72,0.1)] relative text-left">
                   <div className="absolute -right-4 -top-4 w-24 h-24 bg-rose-500/10 rounded-full blur-2xl group-hover:bg-rose-500/20 transition-all"></div>
                   
@@ -257,17 +264,58 @@ export default function OtherPractice() {
                       
                       <Link 
                         to={`/take-test/${test.id}`}
-                        className="px-4 py-2 bg-rose-500 text-white rounded-lg font-bold hover:bg-rose-600 transition-colors shadow-md text-sm inline-flex items-center space-x-1"
+                        className={`px-4 py-2 text-white rounded-lg font-bold transition-colors shadow-md text-sm inline-flex items-center space-x-1 ${hasTaken ? 'bg-green-500 hover:bg-green-600' : 'bg-rose-500 hover:bg-rose-600'}`}
                       >
-                        <span>Take Test</span>
+                        <span>{hasTaken ? 'Test Taken' : 'Take Test'}</span>
                         <ChevronRight className="w-4 h-4" />
                       </Link>
                     </div>
                   </div>
                 </div>
-              ))
+              )})
             )}
           </div>
+          
+          {subjectNotes[selectedSubject] && (
+            <div className="mt-12 border-t border-border dark:border-border/40 pt-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <h2 className="text-2xl font-bold text-text-primary dark:text-text-inverse mb-6 flex items-center gap-2">
+                <BookOpen className="w-6 h-6 text-rose-500" />
+                Subject Notes
+              </h2>
+              <div className="bg-surface dark:bg-[#111827] border border-border p-6 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-center gap-4 text-left w-full sm:w-auto">
+                  <div className="w-12 h-12 bg-rose-500/10 text-rose-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <FileText className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-text-primary dark:text-text-inverse">{selectedSubject} Notes.pdf</h3>
+                    <p className="text-sm text-text-muted">Download or view the comprehensive notes for {selectedSubject}.</p>
+                  </div>
+                </div>
+                <div className="flex gap-3 w-full sm:w-auto">
+                  <button 
+                    onClick={() => {
+                      const pdfWindow = window.open("");
+                      if (pdfWindow) {
+                        pdfWindow.document.write(`<iframe width='100%' height='100%' src='${subjectNotes[selectedSubject]}'></iframe>`);
+                        pdfWindow.document.body.style.margin = "0";
+                      }
+                    }} 
+                    className="flex-1 sm:flex-none px-6 py-2.5 bg-slate-800 text-white rounded-xl font-bold text-sm hover:bg-slate-700 transition-colors shadow-sm"
+                  >
+                    View
+                  </button>
+                  <a 
+                    href={subjectNotes[selectedSubject]} 
+                    download={`${selectedSubject}_Notes.pdf`} 
+                    className="flex-1 sm:flex-none px-6 py-2.5 bg-rose-500 text-white rounded-xl font-bold text-sm hover:bg-rose-600 transition-colors flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(244,63,94,0.3)]"
+                  >
+                    <Download className="w-4 h-4" /> Download
+                  </a>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

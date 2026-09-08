@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Plus, Edit, Trash2, Search, Target, ArrowLeft, Save, X, BookOpen, Clock, Upload, Loader2, Users } from "lucide-react";
+import { Plus, Edit, Trash2, Search, Target, ArrowLeft, Save, X, BookOpen, Clock, Upload, Loader2, Users, FileText } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 import * as pdfjsLib from "pdfjs-dist";
@@ -35,6 +35,8 @@ export default function OtherPracticeManagement() {
 
   const STORAGE_KEY = "admin_other_practice_tests";
   const SUBJECTS_KEY = "admin_subjects_data";
+  const [subjectNotes, setSubjectNotes] = useState<Record<string, string>>({});
+  const SUBJECT_NOTES_KEY = "admin_subject_notes";
 
   const fetchTests = () => {
     try {
@@ -60,11 +62,35 @@ export default function OtherPracticeManagement() {
         setSubjects([]);
       }
     }
+    const storedNotes = localStorage.getItem(SUBJECT_NOTES_KEY);
+    if (storedNotes) {
+      try {
+        setSubjectNotes(JSON.parse(storedNotes));
+      } catch (e) {
+        setSubjectNotes({});
+      }
+    }
   }, []);
 
   const saveTests = (updatedTests: any[]) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTests));
     setTests(updatedTests);
+  };
+
+  const handleSubjectNoteUpload = (subject: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64 = event.target?.result as string;
+      const updated = { ...subjectNotes, [subject]: base64 };
+      setSubjectNotes(updated);
+      localStorage.setItem(SUBJECT_NOTES_KEY, JSON.stringify(updated));
+      alert(`Notes added for ${subject}`);
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
   };
 
   const handleSave = () => {
@@ -315,17 +341,45 @@ export default function OtherPracticeManagement() {
             ) : (
               subjects.map(s => (
                 <div key={s} className="flex justify-between items-center p-4 hover:bg-slate-800/30 transition-colors">
-                  <span className="text-text-inverse font-medium">{String(s)}</span>
-                  <button 
-                    onClick={() => {
-                      const updated = subjects.filter(sub => sub !== s);
-                      setSubjects(updated);
-                      localStorage.setItem(SUBJECTS_KEY, JSON.stringify(updated));
-                    }}
-                    className="p-2 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </button>
+                  <div className="flex flex-col gap-1">
+                     <span className="text-text-inverse font-medium">{String(s)}</span>
+                     {subjectNotes[String(s)] && (
+                       <span className="text-xs text-green-500 flex items-center gap-1">
+                         <FileText className="w-3 h-3" /> PDF Attached
+                       </span>
+                     )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input 
+                      type="file" 
+                      accept=".pdf" 
+                      id={`note-${s}`} 
+                      className="hidden" 
+                      onChange={(e) => handleSubjectNoteUpload(String(s), e)} 
+                    />
+                    <label 
+                      htmlFor={`note-${s}`}
+                      className="p-2 text-blue-500 hover:bg-blue-500/10 rounded-lg transition-colors cursor-pointer"
+                      title="Upload PDF Notes"
+                    >
+                      <Upload className="w-5 h-5" />
+                    </label>
+                    <button 
+                      onClick={() => {
+                        const updated = subjects.filter(sub => sub !== s);
+                        setSubjects(updated);
+                        localStorage.setItem(SUBJECTS_KEY, JSON.stringify(updated));
+                        
+                        const updatedNotes = { ...subjectNotes };
+                        delete updatedNotes[String(s)];
+                        setSubjectNotes(updatedNotes);
+                        localStorage.setItem(SUBJECT_NOTES_KEY, JSON.stringify(updatedNotes));
+                      }}
+                      className="p-2 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  </div>
                 </div>
               ))
             )}

@@ -230,6 +230,47 @@ export default function OtherPractice() {
             </div>
           </div>
 
+          {subjectNotes[selectedSubject] && (
+            <div className="mb-8 border-b border-border dark:border-border/40 pb-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <h2 className="text-2xl font-bold text-text-primary dark:text-text-inverse mb-6 flex items-center gap-2">
+                <BookOpen className="w-6 h-6 text-rose-500" />
+                Subject Notes
+              </h2>
+              <div className="bg-surface dark:bg-[#111827] border border-border p-6 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-center gap-4 text-left w-full sm:w-auto">
+                  <div className="w-12 h-12 bg-rose-500/10 text-rose-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <FileText className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-text-primary dark:text-text-inverse">{selectedSubject} Notes.pdf</h3>
+                    <p className="text-sm text-text-muted">Download or view the comprehensive notes for {selectedSubject}.</p>
+                  </div>
+                </div>
+                <div className="flex gap-3 w-full sm:w-auto">
+                  <button 
+                    onClick={() => {
+                      const pdfWindow = window.open("");
+                      if (pdfWindow) {
+                        pdfWindow.document.write(`<iframe width='100%' height='100%' src='${subjectNotes[selectedSubject]}'></iframe>`);
+                        pdfWindow.document.body.style.margin = "0";
+                      }
+                    }} 
+                    className="flex-1 sm:flex-none px-6 py-2.5 bg-slate-800 text-white rounded-xl font-bold text-sm hover:bg-slate-700 transition-colors shadow-sm"
+                  >
+                    View
+                  </button>
+                  <a 
+                    href={subjectNotes[selectedSubject]} 
+                    download={`${selectedSubject}_Notes.pdf`} 
+                    className="flex-1 sm:flex-none px-6 py-2.5 bg-rose-500 text-white rounded-xl font-bold text-sm hover:bg-rose-600 transition-colors flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(244,63,94,0.3)]"
+                  >
+                    <Download className="w-4 h-4" /> Download
+                  </a>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredTests.length === 0 ? (
               <div className="col-span-full flex flex-col items-center justify-center py-20 text-center">
@@ -275,47 +316,7 @@ export default function OtherPractice() {
               )})
             )}
           </div>
-          
-          {subjectNotes[selectedSubject] && (
-            <div className="mt-12 border-t border-border dark:border-border/40 pt-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <h2 className="text-2xl font-bold text-text-primary dark:text-text-inverse mb-6 flex items-center gap-2">
-                <BookOpen className="w-6 h-6 text-rose-500" />
-                Subject Notes
-              </h2>
-              <div className="bg-surface dark:bg-[#111827] border border-border p-6 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex items-center gap-4 text-left w-full sm:w-auto">
-                  <div className="w-12 h-12 bg-rose-500/10 text-rose-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <FileText className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-text-primary dark:text-text-inverse">{selectedSubject} Notes.pdf</h3>
-                    <p className="text-sm text-text-muted">Download or view the comprehensive notes for {selectedSubject}.</p>
-                  </div>
-                </div>
-                <div className="flex gap-3 w-full sm:w-auto">
-                  <button 
-                    onClick={() => {
-                      const pdfWindow = window.open("");
-                      if (pdfWindow) {
-                        pdfWindow.document.write(`<iframe width='100%' height='100%' src='${subjectNotes[selectedSubject]}'></iframe>`);
-                        pdfWindow.document.body.style.margin = "0";
-                      }
-                    }} 
-                    className="flex-1 sm:flex-none px-6 py-2.5 bg-slate-800 text-white rounded-xl font-bold text-sm hover:bg-slate-700 transition-colors shadow-sm"
-                  >
-                    View
-                  </button>
-                  <a 
-                    href={subjectNotes[selectedSubject]} 
-                    download={`${selectedSubject}_Notes.pdf`} 
-                    className="flex-1 sm:flex-none px-6 py-2.5 bg-rose-500 text-white rounded-xl font-bold text-sm hover:bg-rose-600 transition-colors flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(244,63,94,0.3)]"
-                  >
-                    <Download className="w-4 h-4" /> Download
-                  </a>
-                </div>
-              </div>
-            </div>
-          )}
+
         </div>
       )}
     </div>

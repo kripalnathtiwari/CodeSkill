@@ -115,7 +115,7 @@ export default function LoginPage() {
           className="w-full max-w-md z-10 bg-white rounded-2xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100"
         >
           <div className="flex items-center mb-4">
-            <div className="h-8 w-8 bg-[#0056D2] rounded flex items-center justify-center text-white mr-2.5">
+            <div className="h-8 w-8 bg-primary rounded flex items-center justify-center text-white mr-2.5">
               <Code2 className="h-5 w-5" />
             </div>
             <span className="text-xl font-extrabold text-slate-900 tracking-tight">CodeSklii</span>
@@ -138,7 +138,7 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0056D2]/50 transition-all placeholder:text-slate-400 text-sm font-medium"
+                className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-slate-400 text-sm font-medium"
                 placeholder="developer@example.com"
               />
             </div>
@@ -151,7 +151,7 @@ export default function LoginPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-2.5 pr-12 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0056D2]/50 transition-all placeholder:text-slate-400 text-sm font-medium"
+                  className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-2.5 pr-12 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-slate-400 text-sm font-medium"
                   placeholder="••••••••"
                 />
                 <button
@@ -170,11 +170,11 @@ export default function LoginPage() {
                   type="checkbox" 
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded border-slate-300 text-[#0056D2] focus:ring-[#0056D2]" 
+                  className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary" 
                 />
                 <span className="text-xs font-medium text-slate-600">Remember me</span>
               </label>
-              <Link to="/forgot-password" className="text-xs font-bold text-[#0056D2] hover:underline">
+              <Link to="/forgot-password" className="text-xs font-bold text-primary hover:underline">
                 Forgot Password?
               </Link>
             </div>
@@ -191,7 +191,7 @@ export default function LoginPage() {
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
               disabled={isLoading}
-              className="w-full bg-[#0056D2] hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-xl shadow-[0_4px_14px_rgba(0,86,210,0.3)] flex items-center justify-center transition-all disabled:opacity-50 mt-2 text-sm"
+              className="w-full bg-primary hover:bg-primary/90 text-white font-bold px-4 py-3 rounded-xl shadow-lg shadow-primary/30 flex items-center justify-center transition-all disabled:opacity-50 mt-2 text-sm"
             >
               {isLoading ? "Signing in..." : "Login"}
             </motion.button>
@@ -206,14 +206,22 @@ export default function LoginPage() {
       </div>
 
       {/* Right Side: Visuals */}
-      <div className="hidden lg:flex w-1/2 bg-[#0056D2] relative flex-col items-center justify-center p-8 overflow-hidden">
+      <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-white via-orange-50 to-primary/10 relative flex-col items-center justify-center p-8 overflow-hidden">
         {/* Background Decorative Elements */}
-        <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-400/20 via-transparent to-transparent pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-sky-400/20 via-transparent to-transparent pointer-events-none"></div>
+        <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/20 via-transparent to-transparent pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-orange-300/20 via-transparent to-transparent pointer-events-none"></div>
 
-        <div className="z-10 w-full max-w-xl flex flex-col items-center justify-center h-full">
+        <div className="z-10 w-full max-w-xl flex flex-col items-center justify-center h-full relative">
+          {/* Decorative Primary Squares */}
+          <div className="absolute top-[5%] -left-6 w-12 h-12 bg-primary rounded-xl shadow-lg shadow-primary/30 rotate-12 z-0 animate-bounce" style={{ animationDuration: '4s' }}></div>
+          <div className="absolute bottom-[35%] -right-12 w-16 h-16 bg-primary rounded-2xl shadow-xl shadow-primary/20 -rotate-6 z-0 animate-bounce" style={{ animationDuration: '6s' }}></div>
+          <div className="absolute top-[60%] -left-8 w-8 h-8 bg-primary/80 rounded-lg shadow-md shadow-primary/20 rotate-45 z-0 animate-pulse"></div>
+          <div className="absolute top-[20%] -right-4 w-10 h-10 bg-primary/90 rounded-xl shadow-lg shadow-primary/20 rotate-12 z-0 animate-bounce" style={{ animationDuration: '5s' }}></div>
+          <div className="absolute bottom-[10%] left-4 w-14 h-14 bg-primary/70 rounded-2xl shadow-xl shadow-primary/20 -rotate-12 z-0 animate-pulse" style={{ animationDuration: '3s' }}></div>
+          <div className="absolute -top-4 right-[20%] w-6 h-6 bg-primary/50 rounded-lg shadow-sm shadow-primary/10 rotate-45 z-0 animate-pulse"></div>
+          
           {/* Illustration Area */}
-          <div className="w-full aspect-video mb-6 relative flex items-center justify-center p-2 rounded-3xl bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl overflow-hidden group">
+          <div className="w-full aspect-video mb-6 relative flex items-center justify-center p-3 rounded-3xl bg-primary/10 backdrop-blur-md border-2 border-primary/20 shadow-xl overflow-hidden group z-10">
             <img 
               src="/assets/auth-illustration.png" 
               alt="Teacher teaching student" 
@@ -222,14 +230,14 @@ export default function LoginPage() {
           </div>
 
           <div className="text-left w-full mb-6">
-            <h2 className="text-2xl lg:text-3xl font-extrabold text-white mb-2 tracking-tight">Learn, Practice and Succeed with CodeSkill</h2>
-            <p className="text-blue-100 text-sm lg:text-base leading-relaxed font-medium">
+            <h2 className="text-2xl lg:text-3xl font-extrabold text-slate-900 mb-2 tracking-tight">Learn, Practice and Succeed with CodeSkill</h2>
+            <p className="text-slate-600 text-sm lg:text-base leading-relaxed font-medium">
               Access courses, build skills through self-learning, practice consistently, and get interview-ready.
             </p>
           </div>
 
           {/* Stats Card */}
-          <div className="bg-slate-50/95 backdrop-blur-md rounded-2xl p-5 w-full flex items-center justify-between shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-white/20">
+          <div className="bg-white/80 backdrop-blur-md rounded-2xl p-5 w-full flex items-center justify-between shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100">
             <div className="text-center flex-1 border-r border-slate-200">
               <div className="text-xl font-extrabold text-slate-900">25,000+</div>
               <div className="text-[10px] font-bold text-slate-500 mt-1 uppercase tracking-wider">Careers Empowered</div>

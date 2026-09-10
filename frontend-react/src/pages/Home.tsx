@@ -10,6 +10,7 @@ const EngineSection = lazy(() => import("../components/home/EngineSection"));
 const TrainerReviews = lazy(() => import("../components/home/TrainerReviews"));
 const CareerTools = lazy(() => import("../components/home/CareerTools"));
 const FeaturesGrid = lazy(() => import("../components/home/FeaturesGrid"));
+const IndustryReady = lazy(() => import("../components/home/IndustryReady"));
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -158,6 +159,7 @@ export default function Home() {
 
       {/* Lazy Loaded Below-the-fold Sections */}
       <Suspense fallback={<SectionSkeleton />}>
+        <IndustryReady />
         <FeaturedCourses />
         <CampusDrives />
         <EngineSection />

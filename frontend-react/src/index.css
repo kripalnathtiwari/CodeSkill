@@ -44,9 +44,9 @@
 
 @layer base {
   :root {
-    --primary-color: #F0763D;
-    --primary-hover: #D96029;
-    --primary-light: #FCE8DF;
+    --primary-color: #00A459;
+    --primary-hover: #00713D;
+    --primary-light: #E5FFF3;
     
     --secondary-color: #0F2747;
     --secondary-hover: #0A1D35;
@@ -73,13 +73,13 @@
     --background: 210 40% 98%; 
     --foreground: 222.2 84% 4.9%;
     --muted: 210 40% 96.1%;
-    --primary: 19 86% 59%; 
+    --primary: 152.6 100% 32.2%; 
   }
 
   .dark {
-    --primary-color: #F0763D; /* Keep the vibrant orange for dark mode visibility */
-    --primary-hover: #F28C5A;
-    --primary-light: #3D1C0F; /* Dark orange/brown background */
+    --primary-color: #00A459; /* Keep the vibrant green for dark mode visibility */
+    --primary-hover: #00C269;
+    --primary-light: #004C29; /* Dark green background */
     
     --secondary-color: #1E293B; 
     --secondary-hover: #334155;
@@ -106,7 +106,7 @@
     --background: 222.9 38.9% 7.1%;
     --foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
-    --primary: 19 86% 59%;
+    --primary: 152.6 100% 32.2%;
   }
 
   html {

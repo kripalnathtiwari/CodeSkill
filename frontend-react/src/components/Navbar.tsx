@@ -60,8 +60,7 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 glass border-b border-border dark:border-border px-6 py-3 flex items-center justify-between transition-colors">
       <Link to="/" className="flex items-center space-x-1 text-2xl font-extrabold tracking-tight">
-        <span className="text-primary font-black tracking-tighter text-2xl mr-1">&lt;/&gt;</span>
-        <span className="text-primary">CodeSkill</span>
+        <span className="text-black dark:text-white">Code</span><span className="text-primary">Skill</span>
       </Link>
 
       <nav className="hidden lg:flex items-center space-x-3 xl:space-x-5 text-xs lg:text-[13px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 whitespace-nowrap">

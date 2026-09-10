@@ -149,7 +149,7 @@ export default function Home() {
                 }}
               >
                 <img 
-                  src="https://lh3.googleusercontent.com/d/10lx4MUlxz1L4cytALPwY8mVZiit9yi1k" 
+                  src="/assets/lets-go.png" 
                   alt="Let's Go" 
                   className="w-full h-full object-cover rounded-2xl bg-surface"
                 />

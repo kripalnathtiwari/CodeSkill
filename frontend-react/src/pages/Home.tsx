@@ -122,8 +122,6 @@ export default function Home() {
               <div 
                 className="absolute inset-0 w-full h-full bg-surface dark:bg-slate-900 rounded-2xl overflow-hidden"
                 style={{ 
-                  backfaceVisibility: "hidden", 
-                  WebkitBackfaceVisibility: "hidden",
                   transform: "rotateY(0deg)",
                   opacity: isFlipped ? 0 : 1,
                   transition: "opacity 0.3s",
@@ -141,8 +139,6 @@ export default function Home() {
               <div 
                 className="absolute inset-0 w-full h-full bg-surface dark:bg-slate-900 rounded-2xl flex items-center justify-center overflow-hidden"
                 style={{ 
-                  backfaceVisibility: "hidden", 
-                  WebkitBackfaceVisibility: "hidden",
                   transform: "rotateY(180deg)",
                   opacity: isFlipped ? 1 : 0,
                   transition: "opacity 0.3s",

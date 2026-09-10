@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -65,8 +66,8 @@
     --border-color: #E2E8F0;
 
     --text-primary: #0F172A;
-    --text-secondary: #475569;
-    --text-muted: #94A3B8;
+    --text-secondary: #334155;
+    --text-muted: #475569;
     --text-inverse: #FFFFFF;
 
     /* Fallback HSL for Shadcn */
@@ -110,10 +111,11 @@
   }
 
   html {
-    font-size: 14px;
+    font-size: 16px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    letter-spacing: 0.015em;
   }
 
   @media (min-width: 1920px) {
@@ -126,9 +128,10 @@
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
-  font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
   transition: background-color 0.3s ease, color 0.3s ease;
+  line-height: 1.6;
 }
 
 /* Glassmorphism custom classes */

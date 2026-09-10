@@ -143,7 +143,7 @@ export default function Home() {
                 }}
               >
                 <img 
-                  src="/assets/lets-go.png" 
+                  src="https://drive.google.com/thumbnail?id=10lx4MUlxz1L4cytALPwY8mVZiit9yi1k&sz=w1000" 
                   alt="Let's Go" 
                   className="w-full h-full object-cover rounded-2xl"
                 />

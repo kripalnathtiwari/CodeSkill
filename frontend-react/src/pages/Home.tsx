@@ -58,7 +58,7 @@ export default function Home() {
       <section className="py-24 px-6 max-w-7xl mx-auto z-10 relative">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
           {/* Left Column: Text */}
-          <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-8 flex flex-col items-start text-left py-4 lg:col-span-5">
+          <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-8 flex flex-col items-start text-left lg:col-span-5">
 
             <motion.div variants={itemVariants} className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/30 px-5 py-2 rounded-full text-sm font-semibold text-primary dark:text-primary backdrop-blur-md shadow-[0_0_15px_rgba(var(--primary),0.15)]">
               <Award className="h-4 w-4" />
@@ -105,14 +105,14 @@ export default function Home() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="hidden lg:flex justify-center relative w-full h-full lg:col-span-7 cursor-pointer group"
+            className="hidden lg:block relative w-full h-full lg:col-span-7 cursor-pointer group"
             onClick={() => setIsFlipped(!isFlipped)}
             style={{ perspective: 1000 }}
           >
             <div className="absolute inset-0 bg-primary/20 blur-[100px] rounded-full pointer-events-none"></div>
             
             <motion.div
-              className="relative z-10 w-full h-full drop-shadow-2xl rounded-2xl border border-white/10 transition-shadow group-hover:shadow-[0_0_30px_rgba(var(--primary),0.3)]"
+              className="absolute inset-0 z-10 drop-shadow-2xl rounded-2xl border border-white/10 transition-shadow group-hover:shadow-[0_0_30px_rgba(var(--primary),0.3)]"
               animate={{ rotateY: isFlipped ? 180 : 0 }}
               transition={{ duration: 0.8, type: "spring", stiffness: 100, damping: 15 }}
               style={{ transformStyle: "preserve-3d" }}

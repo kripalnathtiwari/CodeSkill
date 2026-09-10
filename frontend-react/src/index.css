@@ -111,7 +111,7 @@
   }
 
   html {
-    font-size: 14px;
+    font-size: 12px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -120,7 +120,7 @@
 
   @media (min-width: 1920px) {
     html {
-      font-size: 15px;
+      font-size: 13px;
     }
   }
 }

@@ -2,6 +2,7 @@ import React, { lazy, Suspense, useState } from "react";
 import { Link } from "react-router-dom";
 import { Award, ArrowRight, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import letsGoImg from "../assets/lets-go.png";
 
 const FeaturedCourses = lazy(() => import("../components/home/FeaturedCourses"));
 const CampusDrives = lazy(() => import("../components/home/CampusDrives"));
@@ -149,7 +150,7 @@ export default function Home() {
                 }}
               >
                 <img 
-                  src="/assets/lets-go.png?v=2" 
+                  src={letsGoImg} 
                   alt="Let's Go" 
                   className="w-full h-full object-cover rounded-2xl bg-surface"
                 />

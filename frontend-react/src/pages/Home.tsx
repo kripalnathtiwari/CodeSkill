@@ -123,13 +123,16 @@ export default function Home() {
                 style={{ 
                   backfaceVisibility: "hidden", 
                   WebkitBackfaceVisibility: "hidden",
-                  transform: "rotateY(0deg) translateZ(1px)"
+                  transform: "rotateY(0deg)",
+                  opacity: isFlipped ? 0 : 1,
+                  transition: "opacity 0.3s",
+                  zIndex: isFlipped ? 0 : 10
                 }}
               >
                 <img 
                   src="/assets/hero-illustration.png" 
                   alt="CodeSkill Platform Illustration" 
-                  className="w-full h-full object-cover rounded-2xl"
+                  className="w-full h-full object-cover rounded-2xl bg-surface"
                 />
               </div>
 
@@ -139,13 +142,16 @@ export default function Home() {
                 style={{ 
                   backfaceVisibility: "hidden", 
                   WebkitBackfaceVisibility: "hidden",
-                  transform: "rotateY(180deg) translateZ(1px)" 
+                  transform: "rotateY(180deg)",
+                  opacity: isFlipped ? 1 : 0,
+                  transition: "opacity 0.3s",
+                  zIndex: isFlipped ? 10 : 0
                 }}
               >
                 <img 
-                  src="https://drive.google.com/thumbnail?id=10lx4MUlxz1L4cytALPwY8mVZiit9yi1k&sz=w1000" 
+                  src="https://lh3.googleusercontent.com/d/10lx4MUlxz1L4cytALPwY8mVZiit9yi1k" 
                   alt="Let's Go" 
-                  className="w-full h-full object-cover rounded-2xl"
+                  className="w-full h-full object-cover rounded-2xl bg-surface"
                 />
               </div>
             </motion.div>

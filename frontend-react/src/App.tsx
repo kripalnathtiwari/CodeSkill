@@ -76,6 +76,7 @@ function AppContent() {
               <Route path="/dashboard/practice/aptitude" element={<ProtectedRoute><DashboardLayout><Aptitude /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/practice/other" element={<ProtectedRoute><DashboardLayout><OtherPractice /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/tests" element={<ProtectedRoute><DashboardLayout><Contests /></DashboardLayout></ProtectedRoute>} />
+              <Route path="/dashboard/compiler" element={<ProtectedRoute><DashboardLayout><Sandbox /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/career" element={<ProtectedRoute><DashboardLayout><Jobs /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/career/resume-maker" element={<ProtectedRoute><DashboardLayout><CVBuilder /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/career/resume-analysis" element={<ProtectedRoute><DashboardLayout><ATSChecker /></DashboardLayout></ProtectedRoute>} />

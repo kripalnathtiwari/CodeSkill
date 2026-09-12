@@ -13,7 +13,6 @@ import {
   ChevronDown,
   FileEdit,
   ScanSearch,
-  Code2,
   StickyNote
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';

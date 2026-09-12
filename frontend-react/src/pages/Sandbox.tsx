@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Editor from "@monaco-editor/react";
-import { Play, Terminal, Loader2, AlertTriangle, CheckCircle, Clock, Cpu, Maximize2, Minimize2, Sun, Moon } from "lucide-react";
+import { Play, Terminal, Loader2, AlertTriangle, CheckCircle, Clock, Cpu, Maximize2, Minimize2, Sun, Moon, Code2 } from "lucide-react";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { getApiUrl } from "../utils/apiConfig";

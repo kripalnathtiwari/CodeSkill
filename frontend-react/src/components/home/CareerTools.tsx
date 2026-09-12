@@ -80,7 +80,7 @@ export default function CareerTools() {
           {/* Visual/Image for ATS & CV */}
           <div className="relative group lg:ml-auto w-full flex items-center justify-center h-[350px] sm:h-[400px] lg:h-[500px] py-6 lg:max-w-xl xl:max-w-2xl">
             {/* Left Image */}
-            <div className="absolute left-0 sm:left-4 lg:left-0 top-1/2 -translate-y-1/2 w-[55%] sm:w-[50%] lg:w-[55%] rounded-md shadow-xl border border-white/10 opacity-80 transform -translate-x-4 scale-[0.85] transition-all duration-500 group-hover:-translate-x-16 group-hover:scale-[0.9] group-hover:opacity-100 z-0 hover:!z-30 cursor-pointer">
+            <div className="absolute left-0 sm:left-4 lg:left-0 top-1/2 -translate-y-1/2 w-[55%] sm:w-[50%] lg:w-[55%] rounded-md shadow-xl border border-white/10 opacity-80 transform -translate-x-4 scale-[0.85] transition duration-500 group-hover:-translate-x-16 group-hover:scale-[0.9] group-hover:opacity-100 z-0 hover:!z-30 cursor-pointer will-change-transform">
               <img 
                 src={originalCvImage} 
                 alt="CV Stack Example" 
@@ -89,7 +89,7 @@ export default function CareerTools() {
             </div>
             
             {/* Right Image */}
-            <div className="absolute right-0 sm:right-4 lg:right-0 top-1/2 -translate-y-1/2 w-[55%] sm:w-[50%] lg:w-[55%] rounded-md shadow-xl border border-white/10 opacity-80 transform translate-x-4 scale-[0.85] transition-all duration-500 group-hover:translate-x-16 group-hover:scale-[0.9] group-hover:opacity-100 z-0 hover:!z-30 cursor-pointer">
+            <div className="absolute right-0 sm:right-4 lg:right-0 top-1/2 -translate-y-1/2 w-[55%] sm:w-[50%] lg:w-[55%] rounded-md shadow-xl border border-white/10 opacity-80 transform translate-x-4 scale-[0.85] transition duration-500 group-hover:translate-x-16 group-hover:scale-[0.9] group-hover:opacity-100 z-0 hover:!z-30 cursor-pointer will-change-transform">
               <img 
                 src={originalCvImage} 
                 alt="Original CV Example" 
@@ -98,7 +98,7 @@ export default function CareerTools() {
             </div>
             
             {/* Center Image (Foreground) */}
-            <div className="relative z-10 hover:!z-40 w-[65%] sm:w-[60%] lg:w-[65%] rounded-md shadow-2xl border border-white/20 dark:border-primary/20 transform transition-all duration-500 group-hover:scale-105 group-hover:-translate-y-4 cursor-pointer">
+            <div className="relative z-10 hover:!z-40 w-[65%] sm:w-[60%] lg:w-[65%] rounded-md shadow-2xl border border-white/20 dark:border-primary/20 transform transition duration-500 group-hover:scale-105 group-hover:-translate-y-4 cursor-pointer will-change-transform">
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none rounded-md"></div>
               <img 
                 src={kripalCvImage} 

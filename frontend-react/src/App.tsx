@@ -27,6 +27,7 @@ const Admin = lazy(() => import('./pages/Admin'));
 const Contests = lazy(() => import('./pages/Contests'));
 const TakeTest = lazy(() => import('./pages/TakeTest'));
 const SolveProblem = lazy(() => import('./pages/SolveProblem'));
+const Notes = lazy(() => import('./pages/Notes'));
 const Aptitude = lazy(() => import('./pages/Aptitude'));
 const AptitudeTopic = lazy(() => import('./pages/AptitudeTopic'));
 const SolveAptitude = lazy(() => import('./pages/SolveAptitude'));
@@ -77,6 +78,7 @@ function AppContent() {
               <Route path="/dashboard/practice/other" element={<ProtectedRoute><DashboardLayout><OtherPractice /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/tests" element={<ProtectedRoute><DashboardLayout><Contests /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/compiler" element={<ProtectedRoute><DashboardLayout><Sandbox /></DashboardLayout></ProtectedRoute>} />
+              <Route path="/dashboard/notes" element={<ProtectedRoute><DashboardLayout><Notes /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/career" element={<ProtectedRoute><DashboardLayout><Jobs /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/career/resume-maker" element={<ProtectedRoute><DashboardLayout><CVBuilder /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/career/resume-analysis" element={<ProtectedRoute><DashboardLayout><ATSChecker /></DashboardLayout></ProtectedRoute>} />

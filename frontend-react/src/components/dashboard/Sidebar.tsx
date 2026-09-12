@@ -12,7 +12,9 @@ import {
   Menu,
   ChevronDown,
   FileEdit,
-  ScanSearch
+  ScanSearch,
+  Code2,
+  StickyNote
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -32,6 +34,7 @@ const NAV_ITEMS = [
   },
   { path: '/dashboard/tests', label: 'Tests', icon: Trophy },
   { path: '/dashboard/compiler', label: 'Compiler', icon: Code2 },
+  { path: '/dashboard/notes', label: 'Notes', icon: StickyNote },
   { path: '/dashboard/career', label: 'Career', icon: Briefcase },
   { path: '/dashboard/career/resume-maker', label: 'Resume Maker', icon: FileEdit },
   { path: '/dashboard/career/resume-analysis', label: 'Resume Analysis', icon: ScanSearch },

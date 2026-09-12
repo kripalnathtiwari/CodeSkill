@@ -1337,7 +1337,7 @@ export default function CVBuilder() {
                 <span>Build new Resume</span>
               </motion.button>
 
-              <Link to="/ats-checker" className="inline-block">
+              <Link to={routerLocation.pathname.startsWith('/dashboard') ? "/dashboard/career/resume-analysis" : "/ats-checker"} className="inline-block">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}

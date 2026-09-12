@@ -15,10 +15,10 @@ import { useAuth } from '../../context/AuthContext';
 
 const NAV_ITEMS = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { path: '/courses-training', label: 'Courses', icon: BookOpen },
-  { path: '/problems', label: 'Practice', icon: Target },
-  { path: '/contests', label: 'Tests', icon: Trophy },
-  { path: '/jobs', label: 'Career', icon: Briefcase },
+  { path: '/dashboard/courses', label: 'Courses', icon: BookOpen },
+  { path: '/dashboard/practice', label: 'Practice', icon: Target },
+  { path: '/dashboard/tests', label: 'Tests', icon: Trophy },
+  { path: '/dashboard/career', label: 'Career', icon: Briefcase },
 ];
 
 export default function Sidebar() {

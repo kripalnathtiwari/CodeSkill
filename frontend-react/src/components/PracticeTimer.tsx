@@ -157,7 +157,7 @@ export default function PracticeTimer({
             : isLowTime
             ? "bg-amber-50 dark:bg-amber-900/80 border-amber-200 dark:border-amber-500/60 text-amber-700 dark:text-amber-300 animate-pulse"
             : isRunning
-            ? "bg-slate-100 dark:bg-[#0f111a] border-slate-200 dark:border-[#2d313f] text-primary"
+            ? "bg-slate-100 dark:bg-[#0f111a] border-slate-200 dark:border-[#2d313f] text-slate-900 dark:text-white"
             : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500"
         }`}
       >

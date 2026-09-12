@@ -6,6 +6,7 @@ import GlobalLoader from './components/GlobalLoader';
 import NetworkStatus from './components/NetworkStatus';
 import ProtectedRoute from './components/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
+import DashboardLayout from './components/dashboard/DashboardLayout';
 
 const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/Login'));
@@ -65,6 +66,10 @@ function AppContent() {
               <Route path="/change-password" element={<ChangePassword />} />
               <Route path="/sandbox" element={<Sandbox />} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/dashboard/courses" element={<ProtectedRoute><DashboardLayout><CoursesTraining /></DashboardLayout></ProtectedRoute>} />
+              <Route path="/dashboard/practice" element={<ProtectedRoute><DashboardLayout><Problems /></DashboardLayout></ProtectedRoute>} />
+              <Route path="/dashboard/tests" element={<ProtectedRoute><DashboardLayout><Contests /></DashboardLayout></ProtectedRoute>} />
+              <Route path="/dashboard/career" element={<ProtectedRoute><DashboardLayout><Jobs /></DashboardLayout></ProtectedRoute>} />
               <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
               <Route path="/my-courses" element={<ProtectedRoute><MyCourses /></ProtectedRoute>} />
               <Route path="/problems" element={<Problems />} />

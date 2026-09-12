@@ -10,7 +10,8 @@ import {
   LogOut,
   Target,
   Menu,
-  ChevronDown
+  ChevronDown,
+  FileText
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -29,12 +30,12 @@ const NAV_ITEMS = [
     ]
   },
   { path: '/dashboard/tests', label: 'Tests', icon: Trophy },
+  { path: '/dashboard/career', label: 'Career', icon: Briefcase },
   { 
-    path: '/dashboard/career', 
-    label: 'Career', 
-    icon: Briefcase,
+    path: '/dashboard/resume', 
+    label: 'Resume', 
+    icon: FileText,
     subItems: [
-      { path: '/dashboard/career', label: 'Jobs' },
       { path: '/dashboard/career/resume-maker', label: 'Resume Maker' },
       { path: '/dashboard/career/resume-analysis', label: 'Resume Analysis' },
     ]

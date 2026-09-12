@@ -53,7 +53,7 @@ export default function ActivitySection({ enrollments, onGenerateCert, onViewCer
             <div className="flex items-center space-x-3 shrink-0">
                {isCompleted ? (
                  <>
-                   <Link to={`/course/${course.courseId}`}>
+                   <Link to={`/dashboard/course/${course.courseId}`}>
                      <button className="px-4 py-2 bg-primary-light text-primary hover:bg-primary hover:text-text-inverse rounded-lg font-semibold text-sm transition-colors">Review</button>
                    </Link>
                    {course.certificateName ? (
@@ -79,7 +79,7 @@ export default function ActivitySection({ enrollments, onGenerateCert, onViewCer
                    </button>
                  </Link>
                ) : (
-                 <Link to={`/course/${course.courseId}`}>
+                 <Link to={`/dashboard/course/${course.courseId}`}>
                    <button className="px-4 py-2 bg-primary hover:bg-primary-hover text-text-inverse rounded-lg font-semibold text-sm transition-colors shadow-sm">
                      Continue Learning
                    </button>

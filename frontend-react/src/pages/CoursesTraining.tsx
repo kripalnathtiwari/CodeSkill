@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useLocation } from "react-router-dom";
 import { GraduationCap, Calendar, Clock, ChevronRight, Users, CheckCircle2, Search } from "lucide-react";
 import Fuse from "fuse.js";
 import { COURSES_DATA } from "../data/coursesData";
@@ -13,6 +13,8 @@ const CATEGORIES = [
 
 export default function CoursesTraining() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+  const isDashboard = location.pathname.startsWith('/dashboard');
   const [activeCategory, setActiveCategory] = useState(searchParams.get("category") || "all");
   const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
   const [courses, setCourses] = useState<any[]>(Object.values(COURSES_DATA));
@@ -169,7 +171,7 @@ export default function CoursesTraining() {
                     </div>
                   </div>
                   
-                  <Link to={`/course/${course.id}`} className="block pt-2">
+                  <Link to={isDashboard ? `/dashboard/course/${course.id}` : `/course/${course.id}`} className="block pt-2">
                     <button className="w-full py-3 rounded-xl border-2 border-border dark:border-border text-text-primary dark:text-text-primary font-bold hover:bg-primary hover:border-primary hover:text-text-inverse transition-colors flex items-center justify-center space-x-2">
                       <span>View Details</span>
                       <ChevronRight className="h-4 w-4" />

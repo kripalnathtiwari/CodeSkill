@@ -87,8 +87,11 @@ function AppContent() {
               <Route path="/test-series" element={<TestSeries />} />
               <Route path="/courses-training" element={<CoursesTraining />} />
               <Route path="/course/:id" element={<CourseDetails />} />
+              <Route path="/dashboard/course/:id" element={<ProtectedRoute><DashboardLayout><CourseDetails /></DashboardLayout></ProtectedRoute>} />
               <Route path="/register/:id" element={<ProtectedRoute><CourseRegistration /></ProtectedRoute>} />
+              <Route path="/dashboard/register/:id" element={<ProtectedRoute><DashboardLayout><CourseRegistration /></DashboardLayout></ProtectedRoute>} />
               <Route path="/payment/:id" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
+              <Route path="/dashboard/payment/:id" element={<ProtectedRoute><DashboardLayout><Payment /></DashboardLayout></ProtectedRoute>} />
               <Route path="/admin" element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>} />
               <Route path="/contests" element={<Contests />} />
               <Route path="/take-test/:id" element={<ProtectedRoute><DashboardLayout><TakeTest /></DashboardLayout></ProtectedRoute>} />

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { Play, TrendingUp, BarChart, Clock, Users, ChevronRight, Award, FileText, Settings, Database, Brain, Rocket, Shield } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getCourseById } from "../data/coursesData";
@@ -9,6 +9,8 @@ import { useAuth } from "../context/AuthContext";
 export default function CourseDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isDashboard = location.pathname.startsWith('/dashboard');
   const [showStickyBar, setShowStickyBar] = useState(false);
   const [showRatingModal, setShowRatingModal] = useState(false);
   const { user } = useAuth();
@@ -59,7 +61,7 @@ export default function CourseDetails() {
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-4">Course Not Found</h1>
           <p className="text-text-muted mb-8">The course you are looking for does not exist.</p>
-          <Link to="/courses-training" className="bg-primary px-6 py-3 rounded-lg font-bold text-text-inverse">Browse Courses</Link>
+          <Link to={isDashboard ? "/dashboard/courses" : "/courses-training"} className="bg-primary px-6 py-3 rounded-lg font-bold text-text-inverse">Browse Courses</Link>
         </div>
       </div>
     );
@@ -116,13 +118,13 @@ export default function CourseDetails() {
         } catch(e) {}
       }
       return (
-        <Link to={`/payment/${id || 'c-1'}`} state={{ newEnrollment: savedEnrollment }}>
+        <Link to={isDashboard ? `/dashboard/payment/${id || 'c-1'}` : `/payment/${id || 'c-1'}`} state={{ newEnrollment: savedEnrollment }}>
           <button className={className}>Make Payment</button>
         </Link>
       );
     } else {
       return (
-        <Link to={`/register/${id || 'c-1'}`}>
+        <Link to={isDashboard ? `/dashboard/register/${id || 'c-1'}` : `/register/${id || 'c-1'}`}>
           <button className={className}>Register Now</button>
         </Link>
       );
@@ -154,7 +156,7 @@ export default function CourseDetails() {
 
       {/* Breadcrumbs */}
       <div className="w-full px-6 pt-6 text-sm text-text-muted font-medium">
-        <Link to="/courses-training" className="hover:text-text-primary transition-colors">All Courses</Link>
+        <Link to={isDashboard ? "/dashboard/courses" : "/courses-training"} className="hover:text-text-primary transition-colors">All Courses</Link>
         <span className="mx-2">&gt;</span>
         <span className="text-text-primary">Live</span>
       </div>

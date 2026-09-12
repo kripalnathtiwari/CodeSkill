@@ -911,10 +911,11 @@ export default function Jobs() {
                               setActiveModalJob(job);
                             }}
                             disabled={isApplied}
-                            className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2 ${isApplied
+                            className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2 ${
+                              isApplied
                                 ? 'bg-primary/20 text-primary dark:text-primary border border-primary/30 cursor-default'
-                                : 'bg-primary hover:bg-primary text-slate-950 shadow-md hover:shadow-blue-500/20'
-                              }`}
+                                : 'bg-primary/10 hover:bg-primary/20 text-primary dark:text-primary border border-primary/20 shadow-sm'
+                            }`}
                           >
                             {isApplied ? (
                               <>

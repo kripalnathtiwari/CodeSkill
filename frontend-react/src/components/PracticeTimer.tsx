@@ -151,39 +151,39 @@ export default function PracticeTimer({
     <div className={`relative inline-flex items-center select-none ${className}`}>
       {/* Main Timer Pill */}
       <div
-        className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl border transition-all duration-300 shadow-sm ${
+        className={`flex items-center space-x-2 px-2 py-1 rounded-md border transition-all duration-300 shadow-sm ${
           isTimesUp
-            ? "bg-rose-900/80 border-rose-500/60 text-rose-300 animate-pulse"
+            ? "bg-rose-50 dark:bg-rose-900/80 border-rose-200 dark:border-rose-500/60 text-rose-600 dark:text-rose-300 animate-pulse"
             : isLowTime
-            ? "bg-amber-900/80 border-amber-500/60 text-amber-300 animate-pulse"
+            ? "bg-amber-50 dark:bg-amber-900/80 border-amber-200 dark:border-amber-500/60 text-amber-700 dark:text-amber-300 animate-pulse"
             : isRunning
-            ? "bg-slate-900 border-slate-700 text-primary shadow-lg shadow-black/20"
-            : "bg-slate-800 border-slate-700 text-slate-300 hover:border-slate-500"
+            ? "bg-slate-100 dark:bg-[#0f111a] border-slate-200 dark:border-[#2d313f] text-primary"
+            : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500"
         }`}
       >
         {/* Mode Icon / Settings Button */}
         <button
           onClick={() => setShowSettings(!showSettings)}
-          className="p-1 rounded-lg hover:bg-slate-800 transition-colors flex items-center space-x-1"
+          className="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors flex items-center space-x-1"
           title="Timer Settings & Presets"
         >
-          <TimerIcon className={`w-4 h-4 ${isRunning ? "text-primary" : "text-text-muted"}`} />
-          <span className={`text-[10px] font-extrabold uppercase tracking-widest px-1 py-0.5 rounded ${isRunning ? "bg-primary/20 text-primary" : "bg-slate-700 text-slate-300"}`}>
+          <TimerIcon className={`w-3.5 h-3.5 ${isRunning ? "text-primary" : "text-slate-500 dark:text-slate-400"}`} />
+          <span className={`text-[9px] font-extrabold uppercase tracking-widest px-1 py-0.5 rounded ${isRunning ? "bg-primary/10 dark:bg-primary/20 text-primary" : "bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300"}`}>
             {mode === "stopwatch" ? "UP" : "DOWN"}
           </span>
         </button>
 
         {/* Time Display */}
-        <div className="font-mono text-sm md:text-base font-bold tracking-wider px-1">
+        <div className="font-mono text-xs md:text-sm font-bold tracking-wider px-1">
           {formatTime(seconds)}
         </div>
 
         {/* Controls */}
-        <div className="flex items-center space-x-1 pl-1 border-l border-border/60">
+        <div className="flex items-center space-x-0.5 pl-1 border-l border-slate-200 dark:border-slate-700">
           {isTimesUp ? (
             <button
               onClick={() => addExtraMinutes(5)}
-              className="px-2 py-0.5 text-xs font-bold bg-rose-600 hover:bg-rose-500 text-text-inverse rounded-md flex items-center space-x-1 transition-colors"
+              className="px-2 py-0.5 text-xs font-bold bg-rose-500 hover:bg-rose-600 text-white rounded flex items-center space-x-1 transition-colors"
               title="Add 5 Extra Minutes"
             >
               <Plus className="w-3 h-3" />
@@ -193,7 +193,7 @@ export default function PracticeTimer({
 
           <button
             onClick={toggleRun}
-            className={`p-1.5 rounded-lg hover:bg-slate-800 transition-colors ${isRunning ? "text-amber-500 hover:text-amber-400" : "text-primary hover:text-blue-400"}`}
+            className={`p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors ${isRunning ? "text-amber-600 dark:text-amber-500 hover:text-amber-700" : "text-primary hover:text-primary/80"}`}
             title={isRunning ? "Pause Timer" : "Start Timer"}
           >
             {isRunning ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
@@ -201,7 +201,7 @@ export default function PracticeTimer({
 
           <button
             onClick={handleReset}
-            className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition-colors"
+            className="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
             title="Reset Timer"
           >
             <RotateCcw className="w-3.5 h-3.5" />

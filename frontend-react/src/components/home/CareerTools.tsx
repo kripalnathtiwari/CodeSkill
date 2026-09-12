@@ -2,7 +2,9 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { FileText, ShieldCheck, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
-import cvImage from "../../assets/cv-image.jpg";
+import kripalCvImage from "../../assets/kripal-cv-image.png";
+import originalCvImage from "../../assets/cv-image.jpg";
+import cvStackImage from "../../assets/cv-stack-image.png";
 
 export default function CareerTools() {
   return (
@@ -76,13 +78,32 @@ export default function CareerTools() {
           </div>
 
           {/* Visual/Image for ATS & CV */}
-          <div className="relative group lg:ml-auto w-full flex items-center justify-center lg:justify-end mt-10 lg:mt-0 lg:h-full py-6 lg:max-w-xl xl:max-w-2xl">
-            <div className="relative w-full max-w-sm lg:max-w-md rounded-2xl overflow-hidden shadow-2xl border border-white/20 dark:border-primary/20 transform rotate-2 hover:rotate-0 transition-all duration-500">
-              <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none"></div>
+          <div className="relative group lg:ml-auto w-full flex items-center justify-center h-[350px] sm:h-[400px] lg:h-[500px] py-6 lg:max-w-xl xl:max-w-2xl">
+            {/* Left Image */}
+            <div className="absolute left-0 sm:left-4 lg:left-0 top-1/2 -translate-y-1/2 w-[55%] sm:w-[50%] lg:w-[55%] rounded-md shadow-xl border border-white/10 opacity-80 transform -translate-x-4 scale-[0.85] transition-all duration-500 group-hover:-translate-x-16 group-hover:scale-[0.9] group-hover:opacity-100 z-0 hover:!z-30 cursor-pointer">
               <img 
-                src={cvImage} 
+                src={originalCvImage} 
+                alt="CV Stack Example" 
+                className="w-full h-auto object-cover rounded-md"
+              />
+            </div>
+            
+            {/* Right Image */}
+            <div className="absolute right-0 sm:right-4 lg:right-0 top-1/2 -translate-y-1/2 w-[55%] sm:w-[50%] lg:w-[55%] rounded-md shadow-xl border border-white/10 opacity-80 transform translate-x-4 scale-[0.85] transition-all duration-500 group-hover:translate-x-16 group-hover:scale-[0.9] group-hover:opacity-100 z-0 hover:!z-30 cursor-pointer">
+              <img 
+                src={originalCvImage} 
+                alt="Original CV Example" 
+                className="w-full h-auto object-cover rounded-md"
+              />
+            </div>
+            
+            {/* Center Image (Foreground) */}
+            <div className="relative z-10 hover:!z-40 w-[65%] sm:w-[60%] lg:w-[65%] rounded-md shadow-2xl border border-white/20 dark:border-primary/20 transform transition-all duration-500 group-hover:scale-105 group-hover:-translate-y-4 cursor-pointer">
+              <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none rounded-md"></div>
+              <img 
+                src={kripalCvImage} 
                 alt="CV Builder and ATS Checker Preview" 
-                className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                className="w-full h-auto object-cover rounded-md transition-transform duration-700"
               />
             </div>
           </div>

@@ -80,8 +80,8 @@ export default function CampusDrives() {
                     </div>
                   </div>
                   <div>
-                    <p className="text-text-secondary text-[15px] leading-relaxed">
-                      <span className="font-bold text-text-inverse">{step.title}</span> {step.desc}
+                    <p className="text-slate-300 text-[15px] leading-relaxed">
+                      <span className="font-bold text-white">{step.title}</span> {step.desc}
                     </p>
                   </div>
                 </div>

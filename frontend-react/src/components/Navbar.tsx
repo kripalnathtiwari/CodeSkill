@@ -105,7 +105,7 @@ export default function Navbar() {
         {user && (
           <>
             <div className="relative group">
-              <button className="hover:text-primary transition-colors flex items-center space-x-1 py-4">
+              <button className="uppercase hover:text-primary transition-colors flex items-center space-x-1 py-4">
                 <BookOpen className="h-4 w-4" />
                 <span>Practice Problems</span>
                 <ChevronDown className="h-4 w-4 ml-0.5 opacity-70 group-hover:rotate-180 transition-transform duration-200" />

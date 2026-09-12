@@ -15,8 +15,8 @@ export default function FeaturedCourses() {
       >
         <div className="flex flex-col items-center mb-14 text-center">
           <h2 className="text-3xl font-bold text-text-primary dark:text-text-primary mb-4">Master Your Skills</h2>
-          <p className="text-text-secondary dark:text-text-muted max-w-2xl">
-            Explore our most popular self-paced courses designed by industry experts to help you land your dream tech job.
+          <p className="text-slate-700 dark:text-slate-300 max-w-3xl">
+            Explore our most popular self-paced courses and summer training programs designed by industry experts. Whether you're looking to master full-stack development, dive into data analytics, or prepare for top tech company interviews, we have the perfect learning path to help you land your dream tech job.
           </p>
         </div>
 

@@ -1,9 +1,22 @@
 import React from "react";
-import { Code2, Zap, Trophy, Laptop } from "lucide-react";
+import { Code2, Zap, Trophy, Laptop, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import compilerImg from "../../assets/compiler-image.png";
 
 export default function CompilerSection() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleCompilerClick = () => {
+    if (user) {
+      navigate('/sandbox');
+    } else {
+      navigate('/login');
+    }
+  };
+
   return (
     <section className="py-20 px-6 w-full z-10 relative bg-surface dark:bg-background">
       <motion.div
@@ -73,6 +86,18 @@ export default function CompilerSection() {
               />
             </div>
           </div>
+        </div>
+
+        <div className="mt-16 w-full flex justify-center">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleCompilerClick}
+            className="inline-flex items-center space-x-2 bg-primary hover:bg-primary/90 text-text-inverse font-bold text-base md:text-lg px-10 py-5 rounded-xl border border-primary/20 transition-all shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/50"
+          >
+            <span>Launch Compiler</span>
+            <ArrowRight className="w-5 h-5" />
+          </motion.button>
         </div>
       </motion.div>
     </section>

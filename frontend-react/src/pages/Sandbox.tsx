@@ -77,41 +77,48 @@ export default function SandboxPage() {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-[calc(100vh-64px)] p-4 md:p-6 max-w-[1600px] mx-auto w-full gap-4">
-      {/* Header Controls */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center glass-card p-4 rounded-xl border border-border dark:border-border/60 shadow-lg">
-        <div>
-          <div className="flex items-center gap-2">
-            <Terminal className="w-5 h-5 text-primary" />
-            <h1 className="text-xl font-bold text-slate-950 dark:text-text-primary tracking-tight">
+    <div className="flex-1 flex flex-col h-[calc(100vh-64px)] w-full bg-slate-50 dark:bg-[#0f111a] overflow-hidden font-sans">
+      {/* Slim Header Toolbar */}
+      <div className="flex items-center justify-between px-4 py-2.5 bg-white dark:bg-[#1a1d27] border-b border-slate-200 dark:border-[#2d313f] shadow-sm z-10">
+        <div className="flex items-center gap-3">
+          <div className="p-1.5 bg-primary/10 rounded-md">
+            <Terminal className="w-4 h-4 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-sm font-bold text-slate-900 dark:text-slate-100 leading-tight">
               CodeSkill Compiler
             </h1>
+            <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Interactive Workspace</p>
           </div>
-          <p className="text-text-primary dark:text-text-muted text-sm mt-1">Write, compile, and run your code instantly.</p>
         </div>
         
-        <div className="mt-4 sm:mt-0 flex items-center space-x-3">
-          <select 
-            value={language.id}
-            onChange={handleLanguageChange}
-            className="bg-slate-800 border border-slate-700 text-slate-200 text-sm font-semibold rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent block w-full px-4 py-2 outline-none transition-colors shadow-sm hover:border-slate-500"
-          >
-            {LANGUAGES.map((lang) => (
-              <option key={lang.id} value={lang.id}>{lang.name}</option>
-            ))}
-          </select>
+        <div className="flex items-center space-x-3">
+          <div className="flex items-center bg-slate-100 dark:bg-[#0f111a] rounded-md border border-slate-200 dark:border-[#2d313f] overflow-hidden">
+            <select 
+              value={language.id}
+              onChange={handleLanguageChange}
+              className="bg-transparent text-slate-700 dark:text-slate-200 text-xs font-semibold focus:ring-0 focus:outline-none block w-32 px-3 py-1.5 cursor-pointer appearance-none"
+              style={{ backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.5rem center', backgroundSize: '1em' }}
+            >
+              {LANGUAGES.map((lang) => (
+                <option key={lang.id} value={lang.id} className="bg-white dark:bg-slate-800">{lang.name}</option>
+              ))}
+            </select>
+          </div>
 
-          <PracticeTimer storageKey="sandbox_general" defaultMode="stopwatch" />
+          <div className="hidden sm:block">
+            <PracticeTimer storageKey="sandbox_general" defaultMode="stopwatch" />
+          </div>
 
           <button
             onClick={handleRunCode}
             disabled={isExecuting}
-            className="flex items-center space-x-2 bg-gradient-to-r from-primary to-primary hover:from-blue-400 hover:to-primary disabled:opacity-50 disabled:cursor-not-allowed text-text-inverse px-5 py-2.5 rounded-lg font-semibold transition-all shadow-lg shadow-blue-900/20 whitespace-nowrap"
+            className="flex items-center space-x-1.5 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-1.5 rounded-md text-sm font-semibold transition-colors shadow-sm"
           >
             {isExecuting ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
             ) : (
-              <Play className="h-4 w-4 fill-current" />
+              <Play className="h-3.5 w-3.5 fill-current" />
             )}
             <span>{isExecuting ? "Running..." : "Run Code"}</span>
           </button>
@@ -121,58 +128,37 @@ export default function SandboxPage() {
       {/* Main Container: Editor vs I/O */}
       <div className={
         isFullscreen
-          ? "fixed inset-0 z-50 p-4 md:p-6 bg-background dark:bg-background flex flex-col lg:flex-row gap-4 w-full h-full overflow-hidden"
-          : "flex-1 flex flex-col lg:flex-row gap-4 min-h-0 w-full overflow-hidden"
+          ? "fixed inset-0 z-50 bg-slate-50 dark:bg-[#0f111a] flex flex-col lg:flex-row w-full h-full overflow-hidden"
+          : "flex-1 flex flex-col lg:flex-row w-full overflow-hidden"
       }>
         
-        {/* Editor Pane (Resizable) */}
-        <div className="flex-[2] glass-card rounded-xl border border-border dark:border-border/60 overflow-hidden flex flex-col lg:resize-x h-[500px] lg:h-auto min-w-[300px] lg:max-w-[80vw] w-full">
-          <div className="bg-surface dark:bg-background/80 px-4 py-2 border-b border-border dark:border-border flex justify-between items-center text-xs text-text-primary dark:text-text-muted font-mono">
-            <div className="flex items-center space-x-4">
-              <span>main.{language.id === "javascript" ? "js" : language.id === "typescript" ? "ts" : language.id}</span>
-              
-              {isFullscreen && (
-                <div className="flex items-center space-x-2 ml-2 border-l border-border dark:border-border pl-4">
-                  <select 
-                    value={language.id}
-                    onChange={handleLanguageChange}
-                    className="bg-slate-800 border border-slate-700 text-slate-200 text-xs font-semibold rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent block px-3 py-1.5 outline-none transition-colors hover:border-slate-500"
-                  >
-                    {LANGUAGES.map((lang) => (
-                      <option key={lang.id} value={lang.id}>{lang.name}</option>
-                    ))}
-                  </select>
-
-                  <button
-                    onClick={handleRunCode}
-                    disabled={isExecuting}
-                    className="flex items-center space-x-1 bg-primary hover:bg-primary disabled:opacity-50 text-text-inverse px-3 py-1.5 rounded text-xs font-semibold transition-all"
-                  >
-                    {isExecuting ? <Loader2 className="h-3 w-3 animate-spin" /> : <Play className="h-3 w-3 fill-current" />}
-                    <span>{isExecuting ? "Running" : "Run"}</span>
-                  </button>
-                </div>
-              )}
+        {/* Editor Pane */}
+        <div className="flex-[3] flex flex-col border-r border-slate-200 dark:border-[#2d313f] bg-white dark:bg-[#1e2230] relative min-h-[50vh] lg:min-h-0">
+          <div className="flex justify-between items-center px-4 py-2 bg-slate-50 dark:bg-[#1a1d27] border-b border-slate-200 dark:border-[#2d313f] text-xs font-mono">
+            <div className="flex items-center">
+              <div className="flex items-center space-x-2 bg-white dark:bg-[#1e2230] px-3 py-1.5 rounded-t-md border-t border-l border-r border-slate-200 dark:border-[#2d313f] text-slate-800 dark:text-slate-200 shadow-sm translate-y-[1px] z-10">
+                <Code2 className="w-3.5 h-3.5 text-primary" />
+                <span>main.{language.id === "javascript" ? "js" : language.id === "typescript" ? "ts" : language.id}</span>
+              </div>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-3 text-slate-500 dark:text-slate-400">
               <button 
                 onClick={() => setIsEditorDark(!isEditorDark)}
-                className="hover:text-primary transition-colors flex items-center space-x-1.5"
+                className="hover:text-primary transition-colors flex items-center space-x-1"
                 title="Toggle Editor Theme"
               >
-                {isEditorDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-                <span className="hidden sm:inline font-semibold">{isEditorDark ? "Light Mode" : "Dark Mode"}</span>
+                {isEditorDark ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
               </button>
               <button 
                 onClick={() => setIsFullscreen(!isFullscreen)}
-                className="hover:text-primary transition-colors flex items-center space-x-1.5"
+                className="hover:text-primary transition-colors flex items-center space-x-1"
                 title="Toggle Fullscreen"
               >
-                {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-                <span className="hidden sm:inline font-semibold">{isFullscreen ? "Minimize" : "Maximize"}</span>
+                {isFullscreen ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
               </button>
             </div>
           </div>
+          
           <div className="flex-1 w-full relative">
             <Editor
               height="100%"
@@ -182,42 +168,45 @@ export default function SandboxPage() {
               theme={isEditorDark ? "vs-dark" : "light"}
               options={{
                 minimap: { enabled: false },
-                fontSize: 18,
-                fontWeight: "600",
+                fontSize: 15,
+                fontWeight: "500",
                 fontFamily: "'Fira Code', 'JetBrains Mono', monospace",
-                lineHeight: 30,
+                lineHeight: 26,
                 padding: { top: 16 },
                 scrollBeyondLastLine: false,
                 smoothScrolling: true,
                 cursorBlinking: "smooth",
                 cursorSmoothCaretAnimation: "on",
                 formatOnPaste: true,
+                roundedSelection: false,
+                renderLineHighlight: "all",
               }}
+              loading={<div className="flex items-center justify-center h-full text-sm text-slate-500"><Loader2 className="w-5 h-5 animate-spin mr-2"/> Loading Editor...</div>}
             />
           </div>
         </div>
 
         {/* Input/Output Pane (Tabbed) */}
-        <div className="flex-1 flex flex-col h-[400px] lg:h-auto min-w-[300px] glass-card rounded-xl border border-border dark:border-border/60 overflow-hidden relative">
-          <div className="bg-surface dark:bg-background/80 px-4 pt-2 border-b border-border dark:border-border flex justify-between items-end text-xs font-mono">
-            <div className="flex space-x-6">
+        <div className="flex-[2] flex flex-col bg-white dark:bg-[#1e2230] min-h-[40vh] lg:min-h-0">
+          <div className="flex justify-between items-end px-4 pt-2 bg-slate-50 dark:bg-[#1a1d27] border-b border-slate-200 dark:border-[#2d313f] text-xs font-mono">
+            <div className="flex space-x-4">
               <button 
                 onClick={() => setIoTab("input")}
-                className={`pb-2 border-b-2 transition-colors ${ioTab === "input" ? "border-primary text-primary font-bold" : "border-transparent text-text-muted hover:text-text-primary dark:hover:text-text-secondary"}`}
+                className={`pb-2 px-2 border-b-2 transition-all ${ioTab === "input" ? "border-primary text-slate-900 dark:text-slate-100 font-bold" : "border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}
               >
-                Standard Input
+                STDIN
               </button>
               <button 
                 onClick={() => setIoTab("output")}
-                className={`pb-2 border-b-2 transition-colors flex items-center ${ioTab === "output" ? "border-primary text-primary font-bold" : "border-transparent text-text-muted hover:text-text-primary dark:hover:text-text-secondary"}`}
+                className={`pb-2 px-2 border-b-2 transition-all flex items-center ${ioTab === "output" ? "border-primary text-slate-900 dark:text-slate-100 font-bold" : "border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}
               >
-                Execution Output
-                {executionResult && <span className={`ml-2 w-2 h-2 rounded-full ${executionResult.status === "ACCEPTED" ? "bg-primary" : "bg-rose-500"}`}></span>}
+                STDOUT
+                {executionResult && <span className={`ml-1.5 w-1.5 h-1.5 rounded-full ${executionResult.status === "ACCEPTED" ? "bg-primary" : "bg-rose-500"}`}></span>}
               </button>
             </div>
             
             {ioTab === "output" && executionResult && (
-              <div className="flex space-x-3 text-text-muted pb-2">
+              <div className="flex space-x-3 text-slate-500 pb-2">
                 {executionResult.runtime !== undefined && (
                   <span className="flex items-center" title="Execution Time">
                     <Clock className="h-3 w-3 mr-1" /> {executionResult.runtime}ms
@@ -232,38 +221,39 @@ export default function SandboxPage() {
             )}
           </div>
 
-          <div className="flex-1 overflow-hidden flex flex-col bg-black/5 dark:bg-black/20">
+          <div className="flex-1 overflow-hidden flex flex-col bg-slate-50/50 dark:bg-black/10">
             {ioTab === "input" ? (
               <textarea 
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                className="flex-1 w-full bg-transparent border-none resize-none p-4 text-sm font-mono text-text-primary dark:text-text-secondary focus:ring-0 outline-none placeholder-slate-400 dark:placeholder-slate-600"
-                placeholder="Enter custom input here..."
+                className="flex-1 w-full bg-transparent border-none resize-none p-4 text-sm font-mono text-slate-800 dark:text-slate-300 focus:ring-0 outline-none placeholder-slate-400 dark:placeholder-slate-600"
+                placeholder="Enter standard input here..."
                 spellCheck="false"
               />
             ) : (
               <div className="flex-1 p-4 overflow-y-auto font-mono text-sm">
                 {!output && !executionResult && (
-                  <div className="text-text-muted h-full flex items-center justify-center italic">
-                    Run your code to see the output here.
+                  <div className="text-slate-400 dark:text-slate-600 h-full flex flex-col items-center justify-center space-y-2">
+                    <Terminal className="w-8 h-8 opacity-20" />
+                    <span className="italic">Run your code to see the output</span>
                   </div>
                 )}
                 
                 {executionResult?.status && executionResult.status !== "ACCEPTED" && (
-                  <div className="mb-3 inline-flex items-center px-2 py-1 rounded bg-rose-500/10 border border-rose-500/20 text-rose-500 dark:text-rose-400 text-xs font-bold tracking-wide uppercase">
-                    <AlertTriangle className="h-3 w-3 mr-1.5" />
+                  <div className="mb-4 inline-flex items-center px-2.5 py-1.5 rounded bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-bold tracking-wide uppercase">
+                    <AlertTriangle className="h-3.5 w-3.5 mr-1.5" />
                     {executionResult.status.replace(/_/g, ' ')}
                   </div>
                 )}
 
                 {executionResult?.status === "ACCEPTED" && (
-                  <div className="mb-3 inline-flex items-center px-2 py-1 rounded bg-primary/10 border border-primary/20 text-primary dark:text-primary text-xs font-bold tracking-wide uppercase">
-                    <CheckCircle className="h-3 w-3 mr-1.5" />
+                  <div className="mb-4 inline-flex items-center px-2.5 py-1.5 rounded bg-emerald-50 dark:bg-primary/10 border border-emerald-200 dark:border-primary/20 text-emerald-600 dark:text-primary text-xs font-bold tracking-wide uppercase">
+                    <CheckCircle className="h-3.5 w-3.5 mr-1.5" />
                     SUCCESS
                   </div>
                 )}
 
-                <pre className={`whitespace-pre-wrap break-words ${executionResult?.status === "ACCEPTED" ? "text-text-primary dark:text-text-secondary" : "text-rose-500 dark:text-rose-400"}`}>
+                <pre className={`whitespace-pre-wrap break-words ${executionResult?.status === "ACCEPTED" ? "text-slate-800 dark:text-slate-300" : "text-rose-600 dark:text-rose-400"}`}>
                   {output}
                 </pre>
               </div>

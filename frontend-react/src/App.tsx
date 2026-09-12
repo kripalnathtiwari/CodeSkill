@@ -47,7 +47,11 @@ import ErrorBoundary from './components/ErrorBoundary';
 
 function AppContent() {
   const location = useLocation();
-  const isDashboard = location.pathname.startsWith('/dashboard');
+  const isDashboardRoute = () => {
+    const p = location.pathname;
+    return p.startsWith('/dashboard') || p.startsWith('/take-test');
+  };
+  const isDashboard = isDashboardRoute();
   const isAuthPage = location.pathname === '/login' || location.pathname === '/forgot-password';
   const hideNavbar = isDashboard || isAuthPage;
 
@@ -87,7 +91,7 @@ function AppContent() {
               <Route path="/payment/:id" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
               <Route path="/admin" element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>} />
               <Route path="/contests" element={<Contests />} />
-              <Route path="/take-test/:id" element={<ProtectedRoute><TakeTest /></ProtectedRoute>} />
+              <Route path="/take-test/:id" element={<ProtectedRoute><DashboardLayout><TakeTest /></DashboardLayout></ProtectedRoute>} />
               <Route path="/solve/:id" element={<ProtectedRoute><SolveProblem /></ProtectedRoute>} />
               <Route path="/aptitude/:id" element={<ProtectedRoute><SolveAptitude /></ProtectedRoute>} />
               <Route path="/other-practice" element={<OtherPractice />} />

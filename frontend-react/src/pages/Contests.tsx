@@ -294,7 +294,7 @@ export default function Contests() {
 
   return (
     <div className="flex-1 bg-background dark:bg-background min-h-screen p-6 md:p-12">
-      <div className="max-w-7xl mx-auto space-y-12">
+      <div className="w-full space-y-12">
 
         {/* Header Section */}
         <div className="relative rounded-3xl overflow-hidden glass-card p-10 flex flex-col md:flex-row md:items-center justify-between border border-border dark:border-border/60 shadow-sm">

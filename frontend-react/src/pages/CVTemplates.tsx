@@ -114,7 +114,7 @@ export default function CVTemplates() {
 
   return (
     <div className="min-h-screen bg-background dark:bg-background text-text-primary dark:text-text-primary py-12 px-4 sm:px-6 lg:px-12 transition-colors">
-      <div className="max-w-7xl mx-auto">
+      <div className="w-full">
 
         {/* Top Navigation Bar */}
         <div className="flex items-center justify-end mb-8 pb-6 border-b border-border dark:border-border">

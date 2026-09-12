@@ -114,7 +114,7 @@ export default function AptitudePage() {
   );
 
   return (
-    <div className="flex flex-col max-w-7xl mx-auto w-full p-4 md:p-8 gap-8">
+    <div className="flex flex-col w-full p-4 md:p-8 gap-8">
       {/* Main Content Area */}
       <div className="flex-1 space-y-6">
         

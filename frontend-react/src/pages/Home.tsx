@@ -26,7 +26,7 @@ const itemVariants = {
 
 // A simple fallback skeleton for lazy loaded sections
 const SectionSkeleton = () => (
-  <div className="py-20 px-6 max-w-7xl mx-auto w-full flex flex-col items-center justify-center space-y-6 animate-pulse opacity-50">
+  <div className="py-20 px-6 w-full flex flex-col items-center justify-center space-y-6 animate-pulse opacity-50">
     <div className="h-8 bg-slate-200 dark:bg-slate-800 rounded w-64 mb-4"></div>
     <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-full max-w-2xl"></div>
     <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-full max-w-xl"></div>
@@ -56,7 +56,7 @@ export default function Home() {
       />
 
       {/* Hero section */}
-      <section className="py-24 px-6 max-w-7xl mx-auto z-10 relative">
+      <section className="py-24 px-6 w-full z-10 relative">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
           {/* Left Column: Text */}
           <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-8 flex flex-col items-start text-left lg:col-span-5">
@@ -106,7 +106,7 @@ export default function Home() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="hidden lg:block relative w-full h-full lg:col-span-7 cursor-pointer group"
+            className="hidden lg:block relative w-full h-full lg:col-span-7 cursor-pointer group lg:max-w-2xl lg:ml-auto xl:max-w-3xl"
             onClick={() => setIsFlipped(!isFlipped)}
             style={{ perspective: 1000 }}
           >

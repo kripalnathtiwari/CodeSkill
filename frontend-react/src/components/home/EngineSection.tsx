@@ -5,7 +5,7 @@ import industryReadyImg from "../../assets/real-classroom-2.jpg";
 
 export default function EngineSection() {
   return (
-    <section className="py-20 px-6 max-w-7xl mx-auto w-full z-10 relative">
+    <section className="py-20 px-6 w-full z-10 relative">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -55,7 +55,7 @@ export default function EngineSection() {
         </div>
 
         {/* Right Side Image */}
-        <div className="relative group lg:ml-auto w-full lg:h-full">
+        <div className="relative group lg:ml-auto w-full lg:h-full lg:max-w-xl xl:max-w-2xl">
           <div className="absolute -inset-1 bg-gradient-to-r from-primary to-blue-500 rounded-[2rem] blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
           <div className="relative h-[300px] sm:h-[400px] lg:h-full rounded-[2rem] overflow-hidden border border-border shadow-2xl">
             <img 

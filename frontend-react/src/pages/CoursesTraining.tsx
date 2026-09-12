@@ -49,7 +49,7 @@ export default function CoursesTraining() {
   }, [courses, searchQuery, activeCategory]);
 
   return (
-    <div className="flex-1 p-6 md:p-12 max-w-7xl mx-auto w-full space-y-12">
+    <div className="flex-1 p-6 md:p-12 w-full space-y-12">
       
       {/* Header Banner */}
       <div className="relative rounded-3xl overflow-hidden glass-card p-10 flex flex-col md:flex-row md:items-center justify-between border border-border dark:border-border/60 shadow-sm">

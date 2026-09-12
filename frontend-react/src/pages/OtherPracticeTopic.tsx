@@ -44,7 +44,7 @@ export default function OtherPracticeTopic() {
   }, [questions, searchQuery]);
 
   return (
-    <div className="flex flex-col max-w-7xl mx-auto w-full p-4 md:p-8 gap-8 animate-in fade-in duration-500">
+    <div className="flex flex-col w-full p-4 md:p-8 gap-8 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-4">
         <div>
           <Link to="/other-practice" className="inline-flex items-center text-text-muted hover:text-text-primary dark:hover:text-text-inverse mb-4 transition-colors font-medium">

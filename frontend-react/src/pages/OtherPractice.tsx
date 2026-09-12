@@ -66,7 +66,7 @@ export default function OtherPractice() {
   }, [subjects, searchQuery]);
 
   return (
-    <div className="flex-1 p-4 sm:p-6 md:p-10 lg:p-12 max-w-7xl mx-auto w-full space-y-6 sm:space-y-8 animate-in fade-in duration-500">
+    <div className="flex-1 p-4 sm:p-6 md:p-10 lg:p-12 w-full space-y-6 sm:space-y-8 animate-in fade-in duration-500">
       {/* Page Title & Breadcrumb */}
       <div className="space-y-1.5">
         <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-text-primary dark:text-text-inverse flex items-center gap-3">

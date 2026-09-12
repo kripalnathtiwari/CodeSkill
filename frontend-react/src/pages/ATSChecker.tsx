@@ -206,7 +206,7 @@ export default function ATSChecker() {
 
   return (
     <div className="min-h-screen bg-background dark:bg-background text-text-primary dark:text-text-inverse pt-20 px-6 pb-20">
-      <div className="max-w-7xl mx-auto space-y-8">
+      <div className="w-full space-y-8">
 
         {/* Header */}
         <div className="text-center space-y-4 max-w-2xl mx-auto mb-12">

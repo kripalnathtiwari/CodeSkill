@@ -1313,7 +1313,7 @@ export default function CVBuilder() {
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
 
       {/* SECTION 1: Hero Banner */}
-      <div className="max-w-7xl mx-auto w-full relative z-10 py-12 px-6 md:px-12">
+      <div className="w-full relative z-10 py-12 px-6 md:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
 
           {/* Left Column - Text & Actions */}
@@ -1463,7 +1463,7 @@ export default function CVBuilder() {
 
       {/* SECTION 2: Proven Professional Templates */}
       <div className="bg-[#F8FAFC] dark:bg-[#0B1320] text-text-primary dark:text-text-primary py-24 px-6 md:px-12 border-t border-border dark:border-border/80 relative z-10">
-        <div className="max-w-7xl mx-auto w-full">
+        <div className="w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-12 items-center">
 
             {/* Left Column: 3 Overlapping/Stacked Resume Template Sheets */}

@@ -539,7 +539,7 @@ export default function Jobs() {
 
   return (
     <div className="min-h-screen bg-background dark:bg-background text-text-primary dark:text-text-inverse py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
-      <div className="max-w-7xl mx-auto space-y-10">
+      <div className="w-full space-y-10">
         {/* Header Hero Section */}
         <div className="text-center space-y-4">
           <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary dark:text-primary text-sm font-medium">
@@ -555,7 +555,7 @@ export default function Jobs() {
         </div>
 
         {/* 4 Feature/Section Boxes Aligned in a Line */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
           {/* Box 1: Browse Jobs */}
           <button
             onClick={() => handleTabChange('browse')}

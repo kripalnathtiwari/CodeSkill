@@ -6,7 +6,7 @@ import cvImage from "../../assets/cv-image.jpg";
 
 export default function CareerTools() {
   return (
-    <section className="py-20 px-6 max-w-7xl mx-auto w-full z-10 relative border-t border-border dark:border-border/50">
+    <section className="py-20 px-6 w-full z-10 relative border-t border-border dark:border-border/50">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -76,7 +76,7 @@ export default function CareerTools() {
           </div>
 
           {/* Visual/Image for ATS & CV */}
-          <div className="relative group lg:ml-auto w-full flex items-center justify-center lg:justify-end mt-10 lg:mt-0 lg:h-full py-6">
+          <div className="relative group lg:ml-auto w-full flex items-center justify-center lg:justify-end mt-10 lg:mt-0 lg:h-full py-6 lg:max-w-xl xl:max-w-2xl">
             <div className="relative w-full max-w-sm lg:max-w-md rounded-2xl overflow-hidden shadow-2xl border border-white/20 dark:border-primary/20 transform rotate-2 hover:rotate-0 transition-all duration-500">
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none"></div>
               <img 

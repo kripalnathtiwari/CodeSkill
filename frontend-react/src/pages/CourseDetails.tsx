@@ -142,7 +142,7 @@ export default function CourseDetails() {
             transition={{ duration: 0.3 }}
             className="fixed top-16 left-0 right-0 z-40 bg-surface border-b border-border shadow-xl py-3 px-6"
           >
-            <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <div className="w-full flex items-center justify-between">
               <h2 className="text-text-primary font-bold text-lg md:text-xl truncate mr-4">
                 {courseData.title}
               </h2>
@@ -153,14 +153,14 @@ export default function CourseDetails() {
       </AnimatePresence>
 
       {/* Breadcrumbs */}
-      <div className="max-w-7xl mx-auto px-6 pt-6 text-sm text-text-muted font-medium">
+      <div className="w-full px-6 pt-6 text-sm text-text-muted font-medium">
         <Link to="/courses-training" className="hover:text-text-primary transition-colors">All Courses</Link>
         <span className="mx-2">&gt;</span>
         <span className="text-text-primary">Live</span>
       </div>
 
       {/* Header Info */}
-      <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row md:justify-between md:items-end gap-4">
+      <div className="w-full px-6 py-4 flex flex-col md:flex-row md:justify-between md:items-end gap-4">
         <div>
           <h1 className="text-3xl md:text-4xl font-bold text-text-primary mb-2">{courseData.title}</h1>
           <div className="flex items-center space-x-4 text-sm font-medium">
@@ -181,7 +181,7 @@ export default function CourseDetails() {
       </div>
 
       {/* Hero Box Layout */}
-      <div className="max-w-7xl mx-auto px-6 mt-4 mb-16">
+      <div className="w-full px-6 mt-4 mb-16">
         <div className="flex flex-col lg:flex-row bg-surface rounded-3xl overflow-hidden border border-border shadow-2xl">
           
           {/* Left: Image Thumbnail */}

@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 export default function TrainerReviews() {
   return (
-    <section className="py-20 px-6 max-w-7xl mx-auto w-full z-10 relative border-t border-border dark:border-border/50">
+    <section className="py-20 px-6 w-full z-10 relative border-t border-border dark:border-border/50">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}

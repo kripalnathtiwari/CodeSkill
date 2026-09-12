@@ -6,7 +6,7 @@ import { getCoursesByCategory } from "../../data/coursesData";
 
 export default function FeaturedCourses() {
   return (
-    <section className="py-20 px-6 max-w-7xl mx-auto w-full z-10 relative">
+    <section className="py-20 px-6 w-full z-10 relative">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}

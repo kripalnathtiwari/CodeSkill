@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -233,9 +233,11 @@ const PROGRESS_STEPS = [
 ];
 
 export default function Jobs() {
-  const navigate = useNavigate();
   const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const routerLocation = useLocation();
+  const isDashboard = routerLocation.pathname.startsWith('/dashboard');
   const initialTab = searchParams.get('tab') === 'tracker' ? 'tracker' : 'browse';
   const [activeTab, setActiveTab] = useState<'browse' | 'tracker'>(initialTab);
 
@@ -620,7 +622,7 @@ export default function Jobs() {
 
           {/* Box 3: Resume Builder (renamed from iResume) */}
           <Link
-            to="/cv-builder?view=editor"
+            to={isDashboard ? "/dashboard/career/resume-maker?view=editor" : "/cv-builder?view=editor"}
             className="group relative overflow-hidden rounded-2xl bg-surface dark:bg-slate-800/80 border border-border dark:border-border p-5 hover:border-primary/60 transition-all duration-300 flex flex-col justify-between shadow-md hover:shadow-lg"
           >
             <div className="space-y-3">
@@ -643,7 +645,7 @@ export default function Jobs() {
 
           {/* Box 4: Resume Analysis */}
           <Link
-            to="/ats-checker"
+            to={isDashboard ? "/dashboard/career/resume-analysis" : "/ats-checker"}
             className="group relative overflow-hidden rounded-2xl bg-surface dark:bg-slate-800/80 border border-border dark:border-border p-5 hover:border-primary/60 transition-all duration-300 flex flex-col justify-between shadow-md hover:shadow-lg"
           >
             <div className="space-y-3">
@@ -951,7 +953,7 @@ export default function Jobs() {
                 </p>
               </div>
               <Link
-                to="/cv-builder"
+                to={isDashboard ? "/dashboard/career/resume-maker" : "/cv-builder"}
                 className="inline-flex items-center space-x-2 px-4 py-2.5 bg-primary/10 hover:bg-primary/20 border border-primary/30 rounded-xl text-primary dark:text-primary text-sm font-semibold transition-colors w-fit"
               >
                 <FileText className="w-4 h-4" />
@@ -1103,13 +1105,13 @@ export default function Jobs() {
 
                         <div className="flex items-center space-x-3">
                           <Link
-                            to="/ats-checker"
+                            to={isDashboard ? "/dashboard/career/resume-analysis" : "/ats-checker"}
                             className="px-3.5 py-1.5 bg-surface dark:bg-slate-800 border border-border dark:border-border hover:border-primary rounded-lg text-xs font-semibold text-text-primary dark:text-text-secondary hover:text-primary dark:hover:text-primary transition-colors"
                           >
                             Check ATS Match
                           </Link>
                           <Link
-                            to="/cv-builder"
+                            to={isDashboard ? "/dashboard/career/resume-maker" : "/cv-builder"}
                             className="px-3.5 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary dark:text-primary rounded-lg text-xs font-semibold transition-colors"
                           >
                             View Submitted CV
@@ -1194,13 +1196,13 @@ export default function Jobs() {
             <div className="bg-surface-secondary dark:bg-slate-800/80 border border-border dark:border-border rounded-xl p-4 space-y-3 text-sm">
               <div className="flex items-center justify-between">
                 <span className="text-text-secondary dark:text-text-muted">Profile Resume:</span>
-                <Link to="/cv-builder" className="text-primary dark:text-primary hover:underline font-medium text-xs">
+                <Link to={isDashboard ? "/dashboard/career/resume-maker" : "/cv-builder"} className="text-primary dark:text-primary hover:underline font-medium text-xs">
                   Edit in Resume →
                 </Link>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-text-secondary dark:text-text-muted">ATS Score Check:</span>
-                <Link to="/ats-checker" className="text-primary dark:text-primary hover:underline font-medium text-xs">
+                <Link to={isDashboard ? "/dashboard/career/resume-analysis" : "/ats-checker"} className="text-primary dark:text-primary hover:underline font-medium text-xs">
                   Verify ATS Match →
                 </Link>
               </div>

@@ -29,7 +29,16 @@ const NAV_ITEMS = [
     ]
   },
   { path: '/dashboard/tests', label: 'Tests', icon: Trophy },
-  { path: '/dashboard/career', label: 'Career', icon: Briefcase },
+  { 
+    path: '/dashboard/career', 
+    label: 'Career', 
+    icon: Briefcase,
+    subItems: [
+      { path: '/dashboard/career', label: 'Jobs' },
+      { path: '/dashboard/career/resume-maker', label: 'Resume Maker' },
+      { path: '/dashboard/career/resume-analysis', label: 'Resume Analysis' },
+    ]
+  },
 ];
 
 export default function Sidebar() {

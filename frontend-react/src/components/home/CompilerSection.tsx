@@ -26,9 +26,9 @@ export default function CompilerSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Features List */}
-          <div className="space-y-8 order-2 lg:order-1">
+          <div className="space-y-8 order-2 lg:order-1 lg:col-span-5">
             {[
               {
                 icon: <Laptop className="w-6 h-6 text-primary" />,
@@ -63,13 +63,13 @@ export default function CompilerSection() {
           </div>
 
           {/* Compiler UI Image */}
-          <div className="order-1 lg:order-2">
+          <div className="order-1 lg:order-2 lg:col-span-7 lg:-mr-8">
             <div className="relative group rounded-[2rem] overflow-hidden border-2 border-border/50 shadow-2xl bg-white dark:bg-slate-900">
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
               <img 
                 src={compilerImg} 
                 alt="Our Compiler Interface" 
-                className="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-[1.02]"
+                className="w-full h-auto object-contain transform transition-transform duration-700 group-hover:scale-[1.02]"
               />
             </div>
           </div>

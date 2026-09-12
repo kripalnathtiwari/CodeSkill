@@ -58,7 +58,7 @@ export default function Home() {
 
       {/* Hero section */}
       <section className="py-24 px-6 w-full z-10 relative">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Left Column: Text */}
           <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-8 flex flex-col items-start text-left lg:col-span-5">
 
@@ -107,7 +107,7 @@ export default function Home() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="hidden lg:block relative w-full h-full lg:col-span-7 cursor-pointer group lg:max-w-2xl lg:ml-auto xl:max-w-3xl"
+            className="hidden lg:block relative w-full aspect-[4/3] lg:col-span-7 cursor-pointer group lg:max-w-2xl lg:ml-auto xl:max-w-3xl"
             onClick={() => setIsFlipped(!isFlipped)}
             style={{ perspective: 1000 }}
           >
@@ -132,7 +132,7 @@ export default function Home() {
                 <img 
                   src="/assets/hero-illustration.png" 
                   alt="CodeSkill Platform Illustration" 
-                  className="w-full h-full object-cover rounded-2xl bg-surface"
+                  className="w-full h-full object-cover rounded-2xl bg-surface dark:bg-slate-900"
                 />
               </div>
 
@@ -149,7 +149,7 @@ export default function Home() {
                 <img 
                   src={letsGoImg} 
                   alt="Let's Go" 
-                  className="w-full h-full object-cover rounded-2xl bg-surface"
+                  className="w-full h-full object-cover rounded-2xl bg-surface dark:bg-slate-900"
                 />
               </div>
             </motion.div>

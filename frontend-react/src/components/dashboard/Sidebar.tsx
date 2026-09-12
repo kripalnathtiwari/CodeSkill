@@ -11,7 +11,8 @@ import {
   Target,
   Menu,
   ChevronDown,
-  FileText
+  FileEdit,
+  ScanSearch
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -31,15 +32,8 @@ const NAV_ITEMS = [
   },
   { path: '/dashboard/tests', label: 'Tests', icon: Trophy },
   { path: '/dashboard/career', label: 'Career', icon: Briefcase },
-  { 
-    path: '/dashboard/resume', 
-    label: 'Resume', 
-    icon: FileText,
-    subItems: [
-      { path: '/dashboard/career/resume-maker', label: 'Resume Maker' },
-      { path: '/dashboard/career/resume-analysis', label: 'Resume Analysis' },
-    ]
-  },
+  { path: '/dashboard/career/resume-maker', label: 'Resume Maker', icon: FileEdit },
+  { path: '/dashboard/career/resume-analysis', label: 'Resume Analysis', icon: ScanSearch },
 ];
 
 export default function Sidebar() {

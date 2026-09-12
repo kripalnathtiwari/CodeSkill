@@ -9,6 +9,7 @@ const CampusDrives = lazy(() => import("../components/home/CampusDrives"));
 const EngineSection = lazy(() => import("../components/home/EngineSection"));
 const TrainerReviews = lazy(() => import("../components/home/TrainerReviews"));
 const CareerTools = lazy(() => import("../components/home/CareerTools"));
+const CompilerSection = lazy(() => import("../components/home/CompilerSection"));
 const FeaturesGrid = lazy(() => import("../components/home/FeaturesGrid"));
 
 const containerVariants = {
@@ -163,6 +164,7 @@ export default function Home() {
         <EngineSection />
         <TrainerReviews />
         <CareerTools />
+        <CompilerSection />
         <FeaturesGrid />
       </Suspense>
 

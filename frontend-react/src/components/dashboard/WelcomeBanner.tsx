@@ -21,8 +21,12 @@ export default function WelcomeBanner({ solvedCount, totalCount, userRank }: { s
           <span className="bg-surface/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide backdrop-blur-sm">Welcome Back</span>
         </div>
         <h1 className="text-3xl md:text-4xl font-black mb-2">Hello, {userName}! <span className="inline-block animate-bounce">👋</span></h1>
-        <p className="text-primary-light/80 text-lg max-w-lg mb-6">
-          You've solved {solvedCount} problems so far. Keep up the great work and complete your daily goals!
+        <p className="text-primary-light/80 text-lg max-w-lg mb-6 leading-relaxed">
+          You've solved <span className="font-bold text-white">{solvedCount}</span> problems so far. Keep up the great work and complete your daily goals!
+          <br/>
+          <span className="inline-block mt-3 font-black text-white text-lg tracking-wide bg-white/20 px-4 py-1.5 rounded-xl border border-white/30 shadow-sm backdrop-blur-md">
+            Code Today, Grow in Future 🚀
+          </span>
         </p>
         
         <button 

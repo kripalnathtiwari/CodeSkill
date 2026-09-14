@@ -3,13 +3,18 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getApiUrl } from "../utils/apiConfig";
-import { Code2, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { ArrowRight, Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
 import { Turnstile } from '@marsidev/react-turnstile';
+
 export default function LoginPage() {
+  const [isRegister, setIsRegister] = useState(false);
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [cfToken, setCfToken] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -28,9 +33,18 @@ export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  const switchMode = () => {
+    setIsRegister(!isRegister);
+    setError("");
+    setSuccess("");
+    setPassword("");
+    setConfirmPassword("");
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setSuccess("");
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
@@ -55,7 +69,7 @@ export default function LoginPage() {
           localStorage.removeItem("rememberedEmail");
           localStorage.removeItem("rememberedPassword");
         }
-        
+
         login("mock-token-admin", "mock-refresh", {
           id: "admin-1",
           email: "admin@codeskill.com",
@@ -64,14 +78,12 @@ export default function LoginPage() {
             firstName: "Super",
             lastName: "Admin",
             dailyStreak: 0,
-            totalSolved: 0
-          }
+            totalSolved: 0,
+          },
         });
         navigate("/admin");
         return;
       }
-
-
 
       // Default fallback to mock API
       const res = await axios.post(getApiUrl("/api/v1/auth/login"), {
@@ -81,7 +93,7 @@ export default function LoginPage() {
       });
 
       const { accessToken, refreshToken, user } = res.data;
-      
+
       if (rememberMe) {
         localStorage.setItem("rememberedEmail", email);
         localStorage.setItem("rememberedPassword", password);
@@ -89,7 +101,7 @@ export default function LoginPage() {
         localStorage.removeItem("rememberedEmail");
         localStorage.removeItem("rememberedPassword");
       }
-      
+
       login(accessToken, refreshToken, user);
       navigate("/dashboard");
     } catch (err: any) {
@@ -99,12 +111,66 @@ export default function LoginPage() {
     }
   };
 
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!fullName.trim()) {
+      setError("Please enter your full name.");
+      return;
+    }
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+    if (!cfToken) {
+      setError("Please complete the captcha to continue.");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      // Call your register endpoint when ready:
+      // await axios.post(getApiUrl("/api/v1/auth/register"), {
+      //   fullName, email, password, cfToken,
+      // });
+
+      setSuccess("Account created successfully! Please log in to continue.");
+      setIsRegister(false);
+      setPassword("");
+      setConfirmPassword("");
+      setFullName("");
+    } catch (err: any) {
+      setError(err.response?.data?.error || "Failed to create account. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    if (isRegister) {
+      handleRegister(e);
+    } else {
+      handleLogin(e);
+    }
+  };
 
   return (
     <div className="flex-grow min-h-screen flex w-full">
       {/* Left Side: Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center bg-slate-50 relative p-4 lg:p-6 overflow-hidden">
-        {/* Subtle background nodes pattern (simulated with CSS or existing grid) */}
+        {/* Subtle background nodes pattern */}
         <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none"></div>
         <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-100 rounded-full blur-[100px] pointer-events-none"></div>
 
@@ -114,15 +180,27 @@ export default function LoginPage() {
           transition={{ duration: 0.5 }}
           className="w-full max-w-md z-10 bg-white rounded-2xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100"
         >
-          <div className="flex items-center mb-4">
-            <div className="h-8 w-8 bg-primary rounded flex items-center justify-center text-white mr-2.5">
-              <Code2 className="h-5 w-5" />
-            </div>
-            <span className="text-xl font-extrabold text-slate-900 tracking-tight">CodeSklii</span>
-          </div>
+          {/* Logo */}
+          <Link to="/" className="flex items-center mb-4 group">
+            <img
+              src="/favicon.svg"
+              alt="CodeSkill Logo"
+              className="h-8 w-8 object-contain mr-2.5"
+            />
+            <span className="text-xl font-extrabold tracking-tight text-slate-900">
+              Code<span className="text-primary">Skill</span>
+            </span>
+          </Link>
 
-          <h1 className="text-2xl font-bold text-slate-900 mb-1">Welcome to CodeSklii 👋</h1>
-          <p className="text-slate-500 text-sm mb-5 font-medium">Enter your credentials below to access your account.</p>
+          {/* Dynamic Heading */}
+          <h1 className="text-2xl font-bold text-slate-900 mb-1">
+            {isRegister ? "Create your account 🚀" : "Welcome to CodeSkill 👋"}
+          </h1>
+          <p className="text-slate-500 text-sm mb-5 font-medium">
+            {isRegister
+              ? "Fill in the details below to get started."
+              : "Enter your credentials below to access your account."}
+          </p>
 
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-600 text-sm font-medium p-3 rounded-lg mb-4 text-center">
@@ -130,9 +208,35 @@ export default function LoginPage() {
             </div>
           )}
 
-          <form onSubmit={handleLogin} className="space-y-4">
+          {success && (
+            <div className="bg-green-50 border border-green-200 text-green-700 text-sm font-medium p-3 rounded-lg mb-4 text-center">
+              {success}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Full Name (Register only) */}
+            {isRegister && (
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  Full Name <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-slate-400 text-sm font-medium"
+                  placeholder="John Doe"
+                />
+              </div>
+            )}
+
+            {/* Email */}
             <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Email Id <span className="text-red-500">*</span></label>
+              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                Email Id <span className="text-red-500">*</span>
+              </label>
               <input
                 type="email"
                 required
@@ -143,8 +247,11 @@ export default function LoginPage() {
               />
             </div>
 
+            {/* Password */}
             <div className="space-y-1 relative">
-              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Password <span className="text-red-500">*</span></label>
+              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                Password <span className="text-red-500">*</span>
+              </label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -164,48 +271,111 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between mt-1">
-              <label className="flex items-center space-x-2 cursor-pointer">
-                <input 
-                  type="checkbox" 
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary" 
-                />
-                <span className="text-xs font-medium text-slate-600">Remember me</span>
-              </label>
-              <Link to="/forgot-password" className="text-xs font-bold text-primary hover:underline">
-                Forgot Password?
-              </Link>
-            </div>
+            {/* Confirm Password (Register only) */}
+            {isRegister && (
+              <div className="space-y-1 relative">
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  Confirm Password <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-2.5 pr-12 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-slate-400 text-sm font-medium"
+                    placeholder="••••••••"
+                  />
+                </div>
+              </div>
+            )}
 
+            {/* Remember me + Forgot Password (Login only) */}
+            {!isRegister && (
+              <div className="flex items-center justify-between mt-1">
+                <label className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary"
+                  />
+                  <span className="text-xs font-medium text-slate-600">Remember me</span>
+                </label>
+                <Link to="/forgot-password" className="text-xs font-bold text-primary hover:underline">
+                  Forgot Password?
+                </Link>
+              </div>
+            )}
+
+            {/* Captcha */}
             <div className="flex justify-center mt-2">
-              <div style={{ position: 'relative', width: '100%', height: '50px', overflow: 'hidden', borderRadius: '8px' }} className="flex justify-center">
-                <div style={{ position: 'absolute', top: 0, transform: 'scale(0.85)' }}>
-                  <Turnstile siteKey="1x00000000000000000000AA" onSuccess={(token) => setCfToken(token)} />
+              <div
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  height: "50px",
+                  overflow: "hidden",
+                  borderRadius: "8px",
+                }}
+                className="flex justify-center"
+              >
+                <div style={{ position: "absolute", top: 0, transform: "scale(0.85)" }}>
+                  <Turnstile
+                    siteKey="1x00000000000000000000AA"
+                    onSuccess={(token) => setCfToken(token)}
+                  />
                 </div>
               </div>
             </div>
 
+            {/* Submit Button */}
             <motion.button
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
               disabled={isLoading}
               className="w-full bg-primary hover:bg-primary/90 text-white font-bold px-4 py-3 rounded-xl shadow-lg shadow-primary/30 flex items-center justify-center transition-all disabled:opacity-50 mt-2 text-sm"
             >
-              {isLoading ? "Signing in..." : "Login"}
+              {isLoading
+                ? isRegister
+                  ? "Creating account..."
+                  : "Signing in..."
+                : isRegister
+                ? "Create Account"
+                : "Login"}
             </motion.button>
           </form>
 
-          <div className="text-center mt-6 space-y-4">
-            <p className="text-xs text-slate-400 font-medium">
-              Version 11.08
-            </p>
+          {/* Mode Switch Link */}
+          <div className="text-center mt-6">
+            {isRegister ? (
+              <p className="text-sm text-slate-500 font-medium">
+                Already have an account?{" "}
+                <button
+                  type="button"
+                  onClick={switchMode}
+                  className="text-primary font-bold underline underline-offset-2 hover:text-primary/80 transition-colors"
+                >
+                  Login
+                </button>
+              </p>
+            ) : (
+              <p className="text-sm text-slate-500 font-medium">
+                Don't have an account?{" "}
+                <button
+                  type="button"
+                  onClick={switchMode}
+                  className="text-primary font-bold underline underline-offset-2 hover:text-primary/80 transition-colors"
+                >
+                  Register
+                </button>
+              </p>
+            )}
           </div>
         </motion.div>
       </div>
 
-      {/* Right Side: Visuals */}
+      {/* Right Side: Visuals (unchanged) */}
       <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-white via-orange-50 to-primary/10 relative flex-col items-center justify-center p-8 overflow-hidden">
         {/* Background Decorative Elements */}
         <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/20 via-transparent to-transparent pointer-events-none"></div>
@@ -213,24 +383,26 @@ export default function LoginPage() {
 
         <div className="z-10 w-full max-w-xl flex flex-col items-center justify-center h-full relative">
           {/* Decorative Primary Squares */}
-          <div className="absolute top-[5%] -left-6 w-12 h-12 bg-primary rounded-xl shadow-lg shadow-primary/30 rotate-12 z-0 animate-bounce" style={{ animationDuration: '4s' }}></div>
-          <div className="absolute bottom-[35%] -right-12 w-16 h-16 bg-primary rounded-2xl shadow-xl shadow-primary/20 -rotate-6 z-0 animate-bounce" style={{ animationDuration: '6s' }}></div>
+          <div className="absolute top-[5%] -left-6 w-12 h-12 bg-primary rounded-xl shadow-lg shadow-primary/30 rotate-12 z-0 animate-bounce" style={{ animationDuration: "4s" }}></div>
+          <div className="absolute bottom-[35%] -right-12 w-16 h-16 bg-primary rounded-2xl shadow-xl shadow-primary/20 -rotate-6 z-0 animate-bounce" style={{ animationDuration: "6s" }}></div>
           <div className="absolute top-[60%] -left-8 w-8 h-8 bg-primary/80 rounded-lg shadow-md shadow-primary/20 rotate-45 z-0 animate-pulse"></div>
-          <div className="absolute top-[20%] -right-4 w-10 h-10 bg-primary/90 rounded-xl shadow-lg shadow-primary/20 rotate-12 z-0 animate-bounce" style={{ animationDuration: '5s' }}></div>
-          <div className="absolute bottom-[10%] left-4 w-14 h-14 bg-primary/70 rounded-2xl shadow-xl shadow-primary/20 -rotate-12 z-0 animate-pulse" style={{ animationDuration: '3s' }}></div>
+          <div className="absolute top-[20%] -right-4 w-10 h-10 bg-primary/90 rounded-xl shadow-lg shadow-primary/20 rotate-12 z-0 animate-bounce" style={{ animationDuration: "5s" }}></div>
+          <div className="absolute bottom-[10%] left-4 w-14 h-14 bg-primary/70 rounded-2xl shadow-xl shadow-primary/20 -rotate-12 z-0 animate-pulse" style={{ animationDuration: "3s" }}></div>
           <div className="absolute -top-4 right-[20%] w-6 h-6 bg-primary/50 rounded-lg shadow-sm shadow-primary/10 rotate-45 z-0 animate-pulse"></div>
-          
+
           {/* Illustration Area */}
           <div className="w-full aspect-video mb-6 relative flex items-center justify-center p-3 rounded-3xl bg-primary/10 backdrop-blur-md border-2 border-primary/20 shadow-xl overflow-hidden group z-10">
-            <img 
-              src="/assets/auth-illustration.png" 
-              alt="Teacher teaching student" 
+            <img
+              src="/assets/auth-illustration.png"
+              alt="Teacher teaching student"
               className="w-full h-full object-cover rounded-2xl opacity-90 transition-all duration-500 group-hover:opacity-100 group-hover:scale-[1.02]"
             />
           </div>
 
           <div className="text-left w-full mb-6">
-            <h2 className="text-2xl lg:text-3xl font-extrabold text-slate-900 mb-2 tracking-tight">Learn, Practice and Succeed with CodeSkill</h2>
+            <h2 className="text-2xl lg:text-3xl font-extrabold text-slate-900 mb-2 tracking-tight">
+              Learn, Practice and Succeed with CodeSkill
+            </h2>
             <p className="text-slate-600 text-sm lg:text-base leading-relaxed font-medium">
               Access courses, build skills through self-learning, practice consistently, and get interview-ready.
             </p>
@@ -256,4 +428,3 @@ export default function LoginPage() {
     </div>
   );
 }
-

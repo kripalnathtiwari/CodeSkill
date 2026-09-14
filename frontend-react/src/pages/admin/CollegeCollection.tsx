@@ -523,7 +523,7 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
                   {/* Add Manual Student Form */}
                   <div className="mt-4">
                     {isAddingStudentTo === collection.id ? (
-                      <div className="bg-[#1a2333] p-4 rounded-xl border border-border">
+                      <div className="bg-white dark:bg-[#1a2333] p-4 rounded-xl border border-border">
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
                           <input type="text" placeholder="Name *" value={newStudent.name} onChange={e => setNewStudent({ ...newStudent, name: e.target.value })} className="bg-background dark:bg-[#0B0F19] border border-border rounded-lg px-3 py-2 text-sm text-text-primary" />
                           <input type="email" placeholder="Email *" value={newStudent.email} onChange={e => setNewStudent({ ...newStudent, email: e.target.value })} className="bg-background dark:bg-[#0B0F19] border border-border rounded-lg px-3 py-2 text-sm text-text-primary" />

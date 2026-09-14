@@ -85,7 +85,7 @@ export default function UserActivityManagement() {
               placeholder="Search by name or email..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-primary focus:outline-none focus:border-rose-500"
+              className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-primary focus:outline-none focus:border-rose-500"
             />
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
           </div>
@@ -106,7 +106,7 @@ export default function UserActivityManagement() {
             </div>
           ) : (
             <table className="w-full text-left text-sm text-text-secondary">
-              <thead className="bg-[#1a2333] text-text-muted uppercase text-xs font-semibold">
+              <thead className="bg-white dark:bg-[#1a2333] text-text-muted uppercase text-xs font-semibold">
                 <tr>
                   <th className="px-6 py-4">User</th>
                   <th className="px-6 py-4">DSA Progress</th>

@@ -258,7 +258,7 @@ export default function UserManagement() {
           <div className="relative" ref={roleDropdownRef}>
             <div
               onClick={() => setIsRoleDropdownOpen(!isRoleDropdownOpen)}
-              className="flex items-center bg-[#1a2333] border border-border rounded-lg p-1 cursor-pointer hover:border-slate-600 transition-colors"
+              className="flex items-center bg-white dark:bg-[#1a2333] border border-border rounded-lg p-1 cursor-pointer hover:border-slate-600 transition-colors"
             >
               <span className="text-xs text-text-muted px-2 font-bold uppercase">Assign:</span>
               <div className="flex items-center text-primary font-bold px-2 py-1 text-sm select-none">
@@ -268,7 +268,7 @@ export default function UserManagement() {
             </div>
 
             {isRoleDropdownOpen && (
-              <div className="absolute top-full left-0 mt-2 w-48 bg-[#1a2333] border border-border rounded-xl shadow-2xl z-50 overflow-hidden">
+              <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-[#1a2333] border border-border rounded-xl shadow-2xl z-50 overflow-hidden">
                 <button onClick={() => { setUploadRole('STUDENT'); setIsRoleDropdownOpen(false) }} className="w-full text-left px-4 py-2.5 text-sm text-text-secondary hover:bg-slate-800 hover:text-primary font-bold transition-colors">Student</button>
                 <button onClick={() => { setUploadRole('INSTRUCTOR'); setIsRoleDropdownOpen(false) }} className="w-full text-left px-4 py-2.5 text-sm text-text-secondary hover:bg-slate-800 hover:text-primary font-bold transition-colors">Instructor</button>
                 <button onClick={() => { setUploadRole('COLLEGE_ADMIN'); setIsRoleDropdownOpen(false) }} className="w-full text-left px-4 py-2.5 text-sm text-text-secondary hover:bg-slate-800 hover:text-primary font-bold transition-colors">College Admin</button>
@@ -316,19 +316,19 @@ export default function UserManagement() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
               <label className="text-xs font-bold text-text-muted block mb-1">Full Name *</label>
-              <input type="text" value={newName} onChange={e => setNewName(e.target.value)} placeholder="e.g. John Doe" className="w-full bg-[#1a2333] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-primary" />
+              <input type="text" value={newName} onChange={e => setNewName(e.target.value)} placeholder="e.g. John Doe" className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-primary" />
             </div>
             <div>
               <label className="text-xs font-bold text-text-muted block mb-1">Email Address *</label>
-              <input type="email" value={newEmail} onChange={e => setNewEmail(e.target.value)} placeholder="e.g. john@example.com" className="w-full bg-[#1a2333] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-primary" />
+              <input type="email" value={newEmail} onChange={e => setNewEmail(e.target.value)} placeholder="e.g. john@example.com" className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-primary" />
             </div>
             <div>
               <label className="text-xs font-bold text-text-muted block mb-1">Phone Number</label>
-              <input type="tel" value={newPhone} onChange={e => setNewPhone(e.target.value)} placeholder="e.g. +91 9876543210" className="w-full bg-[#1a2333] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-primary" />
+              <input type="tel" value={newPhone} onChange={e => setNewPhone(e.target.value)} placeholder="e.g. +91 9876543210" className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-primary" />
             </div>
             <div>
               <label className="text-xs font-bold text-text-muted block mb-1">Role</label>
-              <select value={newRole} onChange={e => setNewRole(e.target.value)} className="w-full bg-[#1a2333] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-primary">
+              <select value={newRole} onChange={e => setNewRole(e.target.value)} className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-primary">
                 <option value="STUDENT">Student</option>
                 <option value="INSTRUCTOR">Instructor</option>
                 <option value="COLLEGE_ADMIN">College Admin</option>
@@ -354,7 +354,7 @@ export default function UserManagement() {
                 placeholder="Search name or email..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="w-full bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-primary focus:outline-none focus:border-primary"
+                className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-primary focus:outline-none focus:border-primary"
               />
               <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
             </div>
@@ -363,7 +363,7 @@ export default function UserManagement() {
               <select 
                 value={filterRole} 
                 onChange={(e) => setFilterRole(e.target.value)}
-                className="bg-[#1a2333] border border-border text-text-secondary px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary w-full sm:w-auto cursor-pointer"
+                className="bg-white dark:bg-[#1a2333] border border-border text-text-secondary px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary w-full sm:w-auto cursor-pointer"
               >
                 <option value="ALL">All Roles</option>
                 <option value="STUDENT">Student</option>
@@ -375,7 +375,7 @@ export default function UserManagement() {
               <select 
                 value={filterStatus} 
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="bg-[#1a2333] border border-border text-text-secondary px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary w-full sm:w-auto cursor-pointer"
+                className="bg-white dark:bg-[#1a2333] border border-border text-text-secondary px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary w-full sm:w-auto cursor-pointer"
               >
                 <option value="ALL">All Statuses</option>
                 <option value="active">Active</option>
@@ -388,7 +388,7 @@ export default function UserManagement() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-text-secondary">
-            <thead className="bg-[#1a2333] text-text-muted uppercase text-xs font-semibold">
+            <thead className="bg-white dark:bg-[#1a2333] text-text-muted uppercase text-xs font-semibold">
               <tr>
                 <th className="px-6 py-4">User Details</th>
                 <th className="px-6 py-4">Role</th>

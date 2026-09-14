@@ -103,7 +103,7 @@ export default function SalesManagement() {
         {Object.keys(salesByCourse).length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {Object.keys(salesByCourse).map(courseName => (
-              <div key={courseName} className="bg-[#1a2333] border border-border p-4 rounded-xl flex flex-col justify-between">
+              <div key={courseName} className="bg-white dark:bg-[#1a2333] border border-border p-4 rounded-xl flex flex-col justify-between">
                 <div>
                   <h4 className="font-bold text-text-primary line-clamp-1" title={courseName}>{courseName}</h4>
                   <p className="text-sm text-text-muted mt-1">{salesByCourse[courseName].length} Student(s)</p>
@@ -129,7 +129,7 @@ export default function SalesManagement() {
         {Object.keys(unpaidByCourse).length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {Object.keys(unpaidByCourse).map(courseName => (
-              <div key={courseName} className="bg-[#1a2333] border border-border p-4 rounded-xl flex flex-col justify-between">
+              <div key={courseName} className="bg-white dark:bg-[#1a2333] border border-border p-4 rounded-xl flex flex-col justify-between">
                 <div>
                   <h4 className="font-bold text-text-primary line-clamp-1" title={courseName}>{courseName}</h4>
                   <p className="text-sm text-text-muted mt-1">{unpaidByCourse[courseName].length} Student(s)</p>
@@ -157,7 +157,7 @@ export default function SalesManagement() {
               placeholder="Search by student or course..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-primary focus:outline-none focus:border-primary"
+              className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-primary focus:outline-none focus:border-primary"
             />
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
           </div>
@@ -165,7 +165,7 @@ export default function SalesManagement() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-text-secondary">
-            <thead className="bg-[#1a2333] text-text-muted uppercase text-xs font-semibold">
+            <thead className="bg-white dark:bg-[#1a2333] text-text-muted uppercase text-xs font-semibold">
               <tr>
                 <th className="px-6 py-4">Transaction Details</th>
                 <th className="px-6 py-4">Student Info</th>

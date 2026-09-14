@@ -520,11 +520,11 @@ export default function CollegeManagement() {
                 </div>
                 <div>
                   <label className="text-xs font-bold text-text-muted block mb-1">Email Address</label>
-                  <input type="email" value={tutorEmail} onChange={e => setTutorEmail(e.target.value)} placeholder="Email" className="w-full bg-[#1a2333] border border-border rounded-xl px-4 py-2 text-sm text-text-primary focus:outline-none focus:border-primary" />
+                  <input type="email" value={tutorEmail} onChange={e => setTutorEmail(e.target.value)} placeholder="Email" className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-xl px-4 py-2 text-sm text-text-primary focus:outline-none focus:border-primary" />
                 </div>
                 <div>
                   <label className="text-xs font-bold text-text-muted block mb-1">Section</label>
-                  <input type="text" value={tutorSection} onChange={e => setTutorSection(e.target.value)} placeholder="e.g. Section A" className="w-full bg-[#1a2333] border border-border rounded-xl px-4 py-2 text-sm text-text-primary focus:outline-none focus:border-primary" />
+                  <input type="text" value={tutorSection} onChange={e => setTutorSection(e.target.value)} placeholder="e.g. Section A" className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-xl px-4 py-2 text-sm text-text-primary focus:outline-none focus:border-primary" />
                 </div>
               </div>
 

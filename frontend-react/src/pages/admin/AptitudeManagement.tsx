@@ -589,7 +589,7 @@ export default function AptitudeManagement() {
           <input
             type="text" placeholder="Search questions..."
             value={search} onChange={e => setSearch(e.target.value)}
-            className="w-full bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-primary focus:outline-none focus:border-primary"
+            className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-primary focus:outline-none focus:border-primary"
           />
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
         </div>
@@ -625,7 +625,7 @@ export default function AptitudeManagement() {
 
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm text-text-secondary">
-                  <thead className="bg-[#1a2333] text-text-muted uppercase text-xs font-semibold">
+                  <thead className="bg-white dark:bg-[#1a2333] text-text-muted uppercase text-xs font-semibold">
                     <tr>
                       <th className="px-6 py-4">Title</th>
                       <th className="px-6 py-4">Difficulty</th>
@@ -734,7 +734,7 @@ export default function AptitudeManagement() {
             <p className="text-sm text-text-muted mb-6">Import questions via JSON, CSV, or let AI parse a PDF file.</p>
             
             <div className="space-y-4">
-              <div className="bg-[#1a2333] p-4 rounded-xl border border-border">
+              <div className="bg-white dark:bg-[#1a2333] p-4 rounded-xl border border-border">
                 <div className="flex items-start gap-3">
                   <div className="p-2 bg-slate-800 rounded-lg shrink-0">
                     <FileJson className="w-5 h-5 text-amber-400" />
@@ -751,7 +751,7 @@ export default function AptitudeManagement() {
                 </div>
               </div>
 
-              <div className="bg-[#1a2333] p-4 rounded-xl border border-border">
+              <div className="bg-white dark:bg-[#1a2333] p-4 rounded-xl border border-border">
                 <div className="flex items-start gap-3">
                   <div className="p-2 bg-slate-800 rounded-lg shrink-0">
                     <FileText className="w-5 h-5 text-rose-400" />

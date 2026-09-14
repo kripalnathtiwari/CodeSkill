@@ -396,7 +396,7 @@ export default function CourseManagement() {
             <input
               type="text" placeholder="Search courses..."
               value={search} onChange={e => setSearch(e.target.value)}
-              className="w-full bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-primary focus:outline-none focus:border-primary"
+              className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-primary focus:outline-none focus:border-primary"
             />
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
           </div>
@@ -405,7 +405,7 @@ export default function CourseManagement() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-text-secondary">
-            <thead className="bg-[#1a2333] text-text-muted uppercase text-xs font-semibold">
+            <thead className="bg-white dark:bg-[#1a2333] text-text-muted uppercase text-xs font-semibold">
               <tr>
                 <th className="px-6 py-4">Course</th>
                 <th className="px-6 py-4">Category</th>

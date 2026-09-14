@@ -552,7 +552,7 @@ export default function ProblemManagement() {
             
             <div className="space-y-3">
               {testCases.map((tc, idx) => (
-                <div key={idx} className="bg-[#1a2333] border border-border rounded-xl p-4 relative">
+                <div key={idx} className="bg-white dark:bg-[#1a2333] border border-border rounded-xl p-4 relative">
                   <div className="flex justify-between items-center mb-3">
                     <span className="text-xs font-bold text-text-muted uppercase tracking-wider">Test Case {idx + 1}</span>
                     <div className="flex items-center space-x-4">
@@ -678,7 +678,7 @@ export default function ProblemManagement() {
             <input
               type="text" placeholder="Search problems..."
               value={search} onChange={e => setSearch(e.target.value)}
-              className="w-full bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-primary focus:outline-none focus:border-primary"
+              className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-primary focus:outline-none focus:border-primary"
             />
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
           </div>
@@ -687,7 +687,7 @@ export default function ProblemManagement() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-text-secondary">
-            <thead className="bg-[#1a2333] text-text-muted uppercase text-xs font-semibold">
+            <thead className="bg-white dark:bg-[#1a2333] text-text-muted uppercase text-xs font-semibold">
               <tr>
                 <th className="px-6 py-4">Title</th>
                 <th className="px-6 py-4">Difficulty</th>

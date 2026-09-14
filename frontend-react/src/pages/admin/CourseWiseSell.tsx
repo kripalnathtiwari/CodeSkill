@@ -248,7 +248,7 @@ export default function CourseWiseSell() {
 
               <div className="overflow-x-auto rounded-xl border border-border">
                 <table className="w-full text-left text-sm text-text-secondary">
-                  <thead className="bg-[#1a2333] text-text-muted uppercase text-xs font-semibold tracking-wider">
+                  <thead className="bg-white dark:bg-[#1a2333] text-text-muted uppercase text-xs font-semibold tracking-wider">
                     <tr>
                       <th className="px-6 py-4">Transaction Details</th>
                       <th className="px-6 py-4">Student Info</th>

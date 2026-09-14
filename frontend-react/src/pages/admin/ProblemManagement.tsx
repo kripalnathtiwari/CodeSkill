@@ -673,7 +673,7 @@ export default function ProblemManagement() {
       </div>
 
       <div className="bg-surface dark:bg-[#111827] border border-border rounded-2xl overflow-hidden shadow-xl">
-        <div className="p-4 border-b border-border flex justify-between items-center bg-slate-900/50">
+        <div className="p-4 border-b border-border flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50">
           <div className="relative w-80">
             <input
               type="text" placeholder="Search problems..."
@@ -764,7 +764,7 @@ export default function ProblemManagement() {
       {deleteConfirmId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setDeleteConfirmId(null)} />
-          <div className="relative bg-slate-900 border border-border rounded-2xl shadow-2xl p-6 w-full max-w-md">
+          <div className="relative bg-slate-50 dark:bg-slate-900 border border-border rounded-2xl shadow-2xl p-6 w-full max-w-md">
             <button onClick={() => setDeleteConfirmId(null)} className="absolute top-4 right-4 p-1.5 text-text-muted hover:text-text-inverse hover:bg-slate-800 rounded-lg transition-colors">
               <X className="w-4 h-4" />
             </button>
@@ -810,7 +810,7 @@ export default function ProblemManagement() {
 
       {/* Upload Questions Modal */}
       {showUploadModal && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-surface dark:bg-[#111827] border border-border rounded-3xl w-full max-w-md shadow-2xl overflow-hidden relative">
             <div className="p-6 border-b border-border flex justify-between items-center bg-gradient-to-r from-blue-900/20 to-sky-900/20">
               <div className="flex items-center space-x-3">
@@ -864,7 +864,7 @@ export default function ProblemManagement() {
 
       {/* AI Generator Modal */}
       {showGeneratorModal && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-surface dark:bg-[#111827] border border-border rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden">
             <div className="p-6 border-b border-border flex justify-between items-center bg-gradient-to-r from-indigo-900/20 to-purple-900/20">
               <div className="flex items-center space-x-3">

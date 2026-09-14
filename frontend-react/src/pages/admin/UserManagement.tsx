@@ -346,7 +346,7 @@ export default function UserManagement() {
       )}
 
       <div className="bg-surface dark:bg-[#111827] border border-border rounded-2xl overflow-hidden shadow-xl">
-        <div className="p-4 border-b border-border flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900/50">
+        <div className="p-4 border-b border-border flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-50/50 dark:bg-slate-900/50">
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
             <div className="relative w-full sm:w-64">
               <input

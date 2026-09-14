@@ -955,7 +955,7 @@ export default function CvManagement() {
 
       {/* JSON RESUME VIEWER MODAL */}
       {selectedCvForView && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-surface dark:bg-background border border-border dark:border-border rounded-2xl max-w-3xl w-full p-6 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-border dark:border-border pb-4">
               <div className="flex items-center space-x-3">
@@ -985,7 +985,7 @@ export default function CvManagement() {
             {/* Original Uploaded PDF Document (Exact candidate formatting & style) */}
             {selectedCvForView.fileDataUrl ? (
               <div className="space-y-4">
-                <div className="w-full h-[640px] bg-slate-950 rounded-xl overflow-hidden border border-border">
+                <div className="w-full h-[640px] bg-white dark:bg-slate-950 rounded-xl overflow-hidden border border-border">
                   <iframe
                     src={selectedCvForView.fileDataUrl}
                     title={selectedCvForView.resumeFileName}

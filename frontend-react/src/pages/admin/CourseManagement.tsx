@@ -391,7 +391,7 @@ export default function CourseManagement() {
       </div>
 
       <div className="bg-surface dark:bg-[#111827] border border-border rounded-2xl overflow-hidden shadow-xl">
-        <div className="p-4 border-b border-border flex justify-between items-center bg-slate-900/50">
+        <div className="p-4 border-b border-border flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50">
           <div className="relative w-80">
             <input
               type="text" placeholder="Search courses..."

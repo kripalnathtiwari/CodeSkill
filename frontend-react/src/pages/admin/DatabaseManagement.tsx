@@ -153,7 +153,7 @@ export default function DatabaseManagement() {
 
       {!selectedRecord ? (
         <div className="bg-surface dark:bg-[#111827] rounded-xl border border-border overflow-hidden shadow-2xl">
-          <div className="p-4 border-b border-border flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-900/50">
+          <div className="p-4 border-b border-border flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-50/50 dark:bg-slate-900/50">
             <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 hide-scrollbar">
               {tabs.map(tab => (
                 <button
@@ -276,27 +276,27 @@ export default function DatabaseManagement() {
           </div>
 
           <div className="grid grid-cols-2 gap-6 mb-6">
-            <div className="bg-slate-900/50 p-4 rounded-lg border border-border">
+            <div className="bg-slate-50/50 dark:bg-slate-900/50 p-4 rounded-lg border border-border">
               <h3 className="text-sm font-semibold text-text-muted uppercase tracking-wider mb-1">Archive ID</h3>
               <p className="font-mono text-sm">{selectedRecord.id}</p>
             </div>
-            <div className="bg-slate-900/50 p-4 rounded-lg border border-border">
+            <div className="bg-slate-50/50 dark:bg-slate-900/50 p-4 rounded-lg border border-border">
               <h3 className="text-sm font-semibold text-text-muted uppercase tracking-wider mb-1">Original ID</h3>
               <p className="font-mono text-sm">{selectedRecord.originalId}</p>
             </div>
-            <div className="bg-slate-900/50 p-4 rounded-lg border border-border">
+            <div className="bg-slate-50/50 dark:bg-slate-900/50 p-4 rounded-lg border border-border">
               <h3 className="text-sm font-semibold text-text-muted uppercase tracking-wider mb-1">Deleted At</h3>
               <p>{new Date(selectedRecord.deletedAt).toLocaleString()}</p>
             </div>
             {selectedRecord.deletedBy && (
-              <div className="bg-slate-900/50 p-4 rounded-lg border border-border">
+              <div className="bg-slate-50/50 dark:bg-slate-900/50 p-4 rounded-lg border border-border">
                 <h3 className="text-sm font-semibold text-text-muted uppercase tracking-wider mb-1">Deleted By User ID</h3>
                 <p className="font-mono text-sm">{selectedRecord.deletedBy}</p>
               </div>
             )}
           </div>
 
-          <div className="bg-slate-900/50 rounded-lg border border-border overflow-hidden">
+          <div className="bg-slate-50/50 dark:bg-slate-900/50 rounded-lg border border-border overflow-hidden">
             <div className="px-4 py-3 border-b border-border bg-slate-100/50 dark:bg-slate-800/50 flex justify-between items-center">
               <h3 className="font-medium">Original Record Data</h3>
             </div>

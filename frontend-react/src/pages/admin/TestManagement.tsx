@@ -1179,9 +1179,9 @@ function SnapshotViewerModal({ testId, studentEmail, studentName, onClose }: { t
   }, [testId, studentEmail, token]);
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-white/90 dark:bg-slate-950/90 backdrop-blur-md">
       <div className="bg-surface dark:bg-[#111827] border border-border rounded-3xl w-full max-w-5xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in zoom-in duration-300">
-        <div className="p-6 border-b border-border flex justify-between items-center bg-slate-900/50">
+        <div className="p-6 border-b border-border flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50">
           <div>
             <h2 className="text-2xl font-bold text-text-primary mb-1">Camera Log: {studentName}</h2>
             <p className="text-text-muted text-sm">{studentEmail}</p>
@@ -1210,9 +1210,9 @@ function SnapshotViewerModal({ testId, studentEmail, studentName, onClose }: { t
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               {snapshots.map((snap, idx) => (
-                <div key={snap.id} className="bg-slate-900 rounded-2xl overflow-hidden border border-border shadow-lg">
+                <div key={snap.id} className="bg-slate-50 dark:bg-slate-900 rounded-2xl overflow-hidden border border-border shadow-lg">
                   <img src={snap.imageUrl} alt={`Snapshot ${idx + 1}`} className="w-full aspect-video object-cover" />
-                  <div className="p-3 bg-slate-900 border-t border-border flex justify-between items-center">
+                  <div className="p-3 bg-slate-50 dark:bg-slate-900 border-t border-border flex justify-between items-center">
                     <span className="text-xs font-bold text-text-muted">Snapshot {idx + 1}</span>
                     <span className="text-xs text-primary font-mono">
                       {new Date(snap.capturedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -1359,9 +1359,9 @@ function ResultsModal({ test, onClose }: { test: any; onClose: () => void }) {
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm">
       <div className="bg-surface dark:bg-[#111827] border border-border rounded-3xl w-full max-w-4xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden animate-in zoom-in duration-300">
-        <div className="p-6 border-b border-border flex justify-between items-center bg-slate-900/50">
+        <div className="p-6 border-b border-border flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50">
           <div>
             <h2 className="text-2xl font-bold text-text-primary mb-1">Results: {test.title}</h2>
             <p className="text-text-muted text-sm">Grouped by College and Section</p>

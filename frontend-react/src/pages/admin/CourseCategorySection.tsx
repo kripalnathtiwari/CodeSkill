@@ -647,7 +647,7 @@ export default function CourseCategorySection({
                 value={courseNameInput}
                 onChange={(e) => setCourseNameInput(e.target.value)}
                 placeholder="e.g. B.Tech Computer Science - Sem 6"
-                className="w-full bg-slate-900/80 border border-border rounded-2xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary shadow-inner"
+                className="w-full bg-slate-50/80 dark:bg-slate-900/80 border border-border rounded-2xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary shadow-inner"
               />
             </div>
 
@@ -660,7 +660,7 @@ export default function CourseCategorySection({
                 value={descriptionInput}
                 onChange={(e) => setDescriptionInput(e.target.value)}
                 placeholder="e.g. Core Engineering Batch 2026"
-                className="w-full bg-slate-900/80 border border-border rounded-2xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary shadow-inner"
+                className="w-full bg-slate-50/80 dark:bg-slate-900/80 border border-border rounded-2xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary shadow-inner"
               />
             </div>
           </div>
@@ -769,7 +769,7 @@ export default function CourseCategorySection({
 
                 {/* Expanded Management Panel */}
                 {isExpanded && (
-                  <div className="border-t border-border/80 bg-slate-900/50 p-6 md:p-8 animate-fadeIn">
+                  <div className="border-t border-border/80 bg-slate-50/50 dark:bg-slate-900/50 p-6 md:p-8 animate-fadeIn">
                     {/* Course Sections Header */}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4 mb-6">
                       <div>
@@ -822,7 +822,7 @@ export default function CourseCategorySection({
                             onChange={(e) =>
                               setNewStudent({ ...newStudent, name: e.target.value })
                             }
-                            className="bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-primary focus:border-primary focus:outline-none"
+                            className="bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-primary focus:border-primary focus:outline-none"
                           />
                           <input
                             type="email"
@@ -831,7 +831,7 @@ export default function CourseCategorySection({
                             onChange={(e) =>
                               setNewStudent({ ...newStudent, email: e.target.value })
                             }
-                            className="bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-primary focus:border-primary focus:outline-none"
+                            className="bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-primary focus:border-primary focus:outline-none"
                           />
                           <input
                             type="text"
@@ -840,7 +840,7 @@ export default function CourseCategorySection({
                             onChange={(e) =>
                               setNewStudent({ ...newStudent, regNum: e.target.value })
                             }
-                            className="bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-primary focus:border-primary focus:outline-none"
+                            className="bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-primary focus:border-primary focus:outline-none"
                           />
                           <input
                             type="text"
@@ -849,7 +849,7 @@ export default function CourseCategorySection({
                             onChange={(e) =>
                               setNewStudent({ ...newStudent, phone: e.target.value })
                             }
-                            className="bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-primary focus:border-primary focus:outline-none"
+                            className="bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-primary focus:border-primary focus:outline-none"
                           />
                         </div>
                         <div className="flex justify-end mt-4">
@@ -912,7 +912,7 @@ export default function CourseCategorySection({
                             <select
                               value={selectedTutorId}
                               onChange={(e) => setSelectedTutorId(e.target.value)}
-                              className="w-full bg-slate-900 border border-border rounded-xl px-4 py-2.5 text-xs text-text-primary focus:border-primary focus:outline-none"
+                              className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-4 py-2.5 text-xs text-text-primary focus:border-primary focus:outline-none"
                             >
                               <option value="">-- Select Instructor --</option>
                               {tutors.map((t) => (
@@ -941,7 +941,7 @@ export default function CourseCategorySection({
                                     name: e.target.value
                                   })
                                 }
-                                className="bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-primary focus:border-primary focus:outline-none"
+                                className="bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-primary focus:border-primary focus:outline-none"
                               />
                               <input
                                 type="email"
@@ -953,7 +953,7 @@ export default function CourseCategorySection({
                                     email: e.target.value
                                   })
                                 }
-                                className="bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-primary focus:border-primary focus:outline-none"
+                                className="bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-primary focus:border-primary focus:outline-none"
                               />
                               <input
                                 type="text"
@@ -965,7 +965,7 @@ export default function CourseCategorySection({
                                     domain: e.target.value
                                   })
                                 }
-                                className="bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-primary focus:border-primary focus:outline-none"
+                                className="bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-primary focus:border-primary focus:outline-none"
                               />
                               <input
                                 type="text"
@@ -977,7 +977,7 @@ export default function CourseCategorySection({
                                     phone: e.target.value
                                   })
                                 }
-                                className="bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-primary focus:border-primary focus:outline-none"
+                                className="bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-primary focus:border-primary focus:outline-none"
                               />
                             </div>
                             <div className="flex justify-end mt-4">
@@ -1015,14 +1015,14 @@ export default function CourseCategorySection({
                               placeholder="Class / Section Name (e.g. Section A - Morning) *"
                               value={newClassNameInput}
                               onChange={(e) => setNewClassNameInput(e.target.value)}
-                              className="bg-slate-900 border border-border rounded-xl px-3.5 py-2.5 text-xs text-text-primary focus:border-purple-500 focus:outline-none"
+                              className="bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3.5 py-2.5 text-xs text-text-primary focus:border-purple-500 focus:outline-none"
                             />
                             <input
                               type="text"
                               placeholder="Description (Optional, e.g. Mon-Wed 10 AM)"
                               value={newClassDescriptionInput}
                               onChange={(e) => setNewClassDescriptionInput(e.target.value)}
-                              className="bg-slate-900 border border-border rounded-xl px-3.5 py-2.5 text-xs text-text-primary focus:border-purple-500 focus:outline-none"
+                              className="bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3.5 py-2.5 text-xs text-text-primary focus:border-purple-500 focus:outline-none"
                             />
                           </div>
                           <div className="flex justify-end mt-4 space-x-3">
@@ -1059,7 +1059,7 @@ export default function CourseCategorySection({
 
                         if (displayClasses.length === 0) {
                           return (
-                            <div className="bg-slate-900/60 rounded-2xl p-10 text-center text-text-muted border border-border/80">
+                            <div className="bg-slate-50/60 dark:bg-slate-900/60 rounded-2xl p-10 text-center text-text-muted border border-border/80">
                               <Layers className="w-10 h-10 mx-auto mb-2 opacity-20" />
                               <p className="text-xs font-medium">No classes or sections added yet.</p>
                               <p className="text-[11px] text-text-secondary mt-1">
@@ -1098,7 +1098,7 @@ export default function CourseCategorySection({
                               return (
                                 <div
                                   key={cls.id}
-                                  className="bg-slate-900/80 border border-border/80 rounded-2xl p-6 shadow-md transition-all hover:border-purple-500/30"
+                                  className="bg-slate-50/80 dark:bg-slate-900/80 border border-border/80 rounded-2xl p-6 shadow-md transition-all hover:border-purple-500/30"
                                 >
                                   {/* Class Card Header */}
                                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-4 mb-4">
@@ -1247,7 +1247,7 @@ export default function CourseCategorySection({
                                                 }))
                                               }
                                               placeholder="Search students by name, email, roll no..."
-                                              className="w-full bg-slate-950/80 border border-border rounded-xl pl-10 pr-4 py-2 text-xs text-text-primary focus:border-purple-500 focus:outline-none"
+                                              className="w-full bg-white/80 dark:bg-slate-950/80 border border-border rounded-xl pl-10 pr-4 py-2 text-xs text-text-primary focus:border-purple-500 focus:outline-none"
                                             />
                                           </div>
 
@@ -1262,7 +1262,7 @@ export default function CourseCategorySection({
                                               {filteredStudents.map((student) => (
                                                 <div
                                                   key={student.id}
-                                                  className="bg-slate-950/60 border border-border rounded-xl p-3 flex items-center justify-between"
+                                                  className="bg-white/60 dark:bg-slate-950/60 border border-border rounded-xl p-3 flex items-center justify-between"
                                                 >
                                                   <div className="min-w-0 flex-1">
                                                     <h6 className="text-xs font-bold text-text-primary truncate">
@@ -1305,7 +1305,7 @@ export default function CourseCategorySection({
                                               {classInstructors.map((inst) => (
                                                 <div
                                                   key={inst.id}
-                                                  className="bg-slate-950/60 border border-border rounded-xl p-3 flex items-center justify-between"
+                                                  className="bg-white/60 dark:bg-slate-950/60 border border-border rounded-xl p-3 flex items-center justify-between"
                                                 >
                                                   <div className="min-w-0 flex-1">
                                                     <div className="flex items-center space-x-2">

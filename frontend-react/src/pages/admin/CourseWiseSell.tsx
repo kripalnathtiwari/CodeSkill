@@ -100,7 +100,7 @@ export default function CourseWiseSell() {
 
       {/* Tabs Navigation */}
       <div className="bg-surface dark:bg-[#111827] rounded-xl border border-border overflow-hidden shadow-2xl">
-        <div className="p-4 border-b border-border flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-900/50">
+        <div className="p-4 border-b border-border flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-50/50 dark:bg-slate-900/50">
           <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 hide-scrollbar">
             <button
               onClick={() => { setActiveTab("ALL"); setSearch(""); }}
@@ -149,7 +149,7 @@ export default function CourseWiseSell() {
                 const revenue = courseSales.length * 3999; 
                 
                 return (
-                  <div key={courseName} className="bg-slate-900/50 border border-border rounded-2xl overflow-hidden flex flex-col hover:border-border transition-colors">
+                  <div key={courseName} className="bg-slate-50/50 dark:bg-slate-900/50 border border-border rounded-2xl overflow-hidden flex flex-col hover:border-border transition-colors">
                     <div className="p-6 flex-1 cursor-pointer group" onClick={() => setActiveTab(courseName)}>
                       <div className="flex items-start justify-between mb-4">
                         <div className="p-3 bg-primary/10 text-primary rounded-xl group-hover:scale-110 transition-transform">
@@ -211,7 +211,7 @@ export default function CourseWiseSell() {
             </div>
           ) : (
             <div className="space-y-6 animate-in fade-in duration-300">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900/50 p-6 rounded-2xl border border-border">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-50/50 dark:bg-slate-900/50 p-6 rounded-2xl border border-border">
                 <div>
                   <h3 className="text-2xl font-bold text-text-primary">{activeTab}</h3>
                   <div className="flex flex-wrap gap-4 md:gap-6 mt-3">

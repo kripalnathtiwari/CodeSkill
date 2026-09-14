@@ -413,7 +413,7 @@ export default function JobPublishingManagement() {
 
       {/* Publish New Job Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-surface dark:bg-[#111827] border border-border rounded-2xl max-w-2xl w-full p-6 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-border pb-4">
               <h3 className="text-xl font-bold text-text-primary flex items-center space-x-2">
@@ -571,7 +571,7 @@ export default function JobPublishingManagement() {
                   id="featured-job"
                   checked={featured}
                   onChange={(e) => setFeatured(e.target.checked)}
-                  className="w-4 h-4 rounded border-border bg-slate-900 text-rose-500 focus:ring-0 cursor-pointer"
+                  className="w-4 h-4 rounded border-border bg-slate-50 dark:bg-slate-900 text-rose-500 focus:ring-0 cursor-pointer"
                 />
                 <label htmlFor="featured-job" className="text-xs text-text-secondary font-medium cursor-pointer">
                   Mark as Featured Opportunity (displays banner badge on site)

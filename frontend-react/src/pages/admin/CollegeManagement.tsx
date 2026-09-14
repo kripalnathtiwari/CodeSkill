@@ -1594,7 +1594,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
 
                   {/* Assigned Sections List when Expanded */}
                   {isExpanded && (
-                    <div className="p-6 bg-slate-950/40 space-y-4">
+                    <div className="p-6 bg-white/40 dark:bg-slate-950/40 space-y-4">
                       {Object.keys(sectionsMap).length === 0 ? (
                         <div className="p-6 text-center text-text-muted text-sm">
                           No sections assigned to this category yet.
@@ -1614,7 +1614,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                             return (
                               <div
                                 key={sectionName}
-                                className="bg-slate-900/80 border border-border/80 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-purple-500/30 transition-all"
+                                className="bg-slate-50/80 dark:bg-slate-900/80 border border-border/80 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-purple-500/30 transition-all"
                               >
                                 <div className="flex items-center space-x-3">
                                   <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 font-bold">
@@ -1707,7 +1707,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                   placeholder="Search student, reg no, email, course..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-slate-900 border border-border rounded-xl pl-9 pr-4 py-2 text-sm text-text-primary placeholder-slate-500 focus:outline-none focus:border-purple-500"
+                  className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl pl-9 pr-4 py-2 text-sm text-text-primary placeholder-slate-500 focus:outline-none focus:border-purple-500"
                 />
               </div>
               <button
@@ -1826,7 +1826,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                           dsaAttempted: Number(e.target.value),
                         })
                       }
-                      className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                      className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                     />
                   </div>
                   <div>
@@ -1841,7 +1841,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                           dsaCorrect: Number(e.target.value),
                         })
                       }
-                      className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                      className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                     />
                   </div>
                   <div>
@@ -1856,7 +1856,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                           dsaWrong: Number(e.target.value),
                         })
                       }
-                      className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                      className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                     />
                   </div>
                 </div>
@@ -1877,7 +1877,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                           aptAttempted: Number(e.target.value),
                         })
                       }
-                      className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                      className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                     />
                   </div>
                   <div>
@@ -1892,7 +1892,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                           aptCorrect: Number(e.target.value),
                         })
                       }
-                      className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                      className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                     />
                   </div>
                   <div>
@@ -1907,7 +1907,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                           aptWrong: Number(e.target.value),
                         })
                       }
-                      className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                      className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                     />
                   </div>
                 </div>
@@ -1961,7 +1961,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                   placeholder="e.g. Rahul Sharma"
                   value={newStudentForm.name}
                   onChange={(e) => setNewStudentForm({ ...newStudentForm, name: e.target.value })}
-                  className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                  className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                 />
               </div>
               <div>
@@ -1971,7 +1971,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                   placeholder="e.g. REG-10492"
                   value={newStudentForm.regNum}
                   onChange={(e) => setNewStudentForm({ ...newStudentForm, regNum: e.target.value })}
-                  className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary font-mono"
+                  className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary font-mono"
                 />
               </div>
               <div className="sm:col-span-2">
@@ -1982,7 +1982,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                   placeholder="e.g. rahul@example.com"
                   value={newStudentForm.email}
                   onChange={(e) => setNewStudentForm({ ...newStudentForm, email: e.target.value })}
-                  className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                  className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                 />
               </div>
               <div>
@@ -1992,7 +1992,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                   placeholder="e.g. B.Tech / MCA"
                   value={newStudentForm.courseName}
                   onChange={(e) => setNewStudentForm({ ...newStudentForm, courseName: e.target.value })}
-                  className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                  className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                 />
               </div>
               <div>
@@ -2002,7 +2002,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                   placeholder="e.g. Section A"
                   value={newStudentForm.sectionName}
                   onChange={(e) => setNewStudentForm({ ...newStudentForm, sectionName: e.target.value })}
-                  className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                  className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                 />
               </div>
             </div>
@@ -2019,7 +2019,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                     onChange={(e) =>
                       setNewStudentForm({ ...newStudentForm, dsaAttempted: Number(e.target.value) })
                     }
-                    className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                    className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                   />
                 </div>
                 <div>
@@ -2031,7 +2031,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                     onChange={(e) =>
                       setNewStudentForm({ ...newStudentForm, dsaCorrect: Number(e.target.value) })
                     }
-                    className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                    className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                   />
                 </div>
                 <div>
@@ -2043,7 +2043,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                     onChange={(e) =>
                       setNewStudentForm({ ...newStudentForm, dsaWrong: Number(e.target.value) })
                     }
-                    className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                    className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                   />
                 </div>
               </div>
@@ -2061,7 +2061,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                     onChange={(e) =>
                       setNewStudentForm({ ...newStudentForm, aptAttempted: Number(e.target.value) })
                     }
-                    className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                    className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                   />
                 </div>
                 <div>
@@ -2073,7 +2073,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                     onChange={(e) =>
                       setNewStudentForm({ ...newStudentForm, aptCorrect: Number(e.target.value) })
                     }
-                    className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                    className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                   />
                 </div>
                 <div>
@@ -2085,7 +2085,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                     onChange={(e) =>
                       setNewStudentForm({ ...newStudentForm, aptWrong: Number(e.target.value) })
                     }
-                    className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                    className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                   />
                 </div>
               </div>

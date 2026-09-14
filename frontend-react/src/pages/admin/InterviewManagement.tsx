@@ -662,7 +662,7 @@ export default function InterviewManagement() {
               placeholder="Search companies by name or category..."
               value={searchCompanyQuery}
               onChange={(e) => setSearchCompanyQuery(e.target.value)}
-              className="w-full bg-slate-900 border border-border rounded-xl pl-10 pr-4 py-2.5 text-sm text-text-primary placeholder-slate-500 focus:outline-none focus:border-rose-500 transition-all"
+              className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl pl-10 pr-4 py-2.5 text-sm text-text-primary placeholder-slate-500 focus:outline-none focus:border-rose-500 transition-all"
             />
           </div>
 
@@ -683,7 +683,7 @@ export default function InterviewManagement() {
                       setSelectedCompany(comp.name);
                       setSearchQuestionQuery("");
                     }}
-                    className="group bg-slate-900/80 hover:bg-slate-900 border border-border hover:border-rose-500/50 rounded-2xl p-5 cursor-pointer transition-all duration-200 flex flex-col justify-between hover:shadow-xl hover:shadow-rose-500/5"
+                    className="group bg-slate-50/80 dark:bg-slate-900/80 hover:bg-slate-200 dark:hover:bg-slate-900 border border-border hover:border-rose-500/50 rounded-2xl p-5 cursor-pointer transition-all duration-200 flex flex-col justify-between hover:shadow-xl hover:shadow-rose-500/5"
                   >
                     <div>
                       <div className="flex items-start justify-between gap-2 mb-3">
@@ -709,11 +709,11 @@ export default function InterviewManagement() {
 
                       {/* Stats */}
                       <div className="grid grid-cols-2 gap-2 mt-5 pt-4 border-t border-border/80">
-                        <div className="bg-slate-950/60 rounded-xl p-2.5 border border-border/40">
+                        <div className="bg-white/60 dark:bg-slate-950/60 rounded-xl p-2.5 border border-border/40">
                           <div className="text-[10px] font-bold text-text-muted uppercase">MCQ Questions</div>
                           <div className="text-base font-extrabold text-purple-400 mt-0.5">{stats.mcqCount}</div>
                         </div>
-                        <div className="bg-slate-950/60 rounded-xl p-2.5 border border-border/40">
+                        <div className="bg-white/60 dark:bg-slate-950/60 rounded-xl p-2.5 border border-border/40">
                           <div className="text-[10px] font-bold text-text-muted uppercase">Coding Problems</div>
                           <div className="text-base font-extrabold text-primary mt-0.5">{stats.codingCount}</div>
                         </div>
@@ -805,16 +805,16 @@ export default function InterviewManagement() {
               placeholder={`Search questions inside ${selectedCompany}...`}
               value={searchQuestionQuery}
               onChange={(e) => setSearchQuestionQuery(e.target.value)}
-              className="w-full bg-slate-900 border border-border rounded-xl pl-10 pr-4 py-2.5 text-sm text-text-primary placeholder-slate-500 focus:outline-none focus:border-rose-500 transition-all"
+              className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl pl-10 pr-4 py-2.5 text-sm text-text-primary placeholder-slate-500 focus:outline-none focus:border-rose-500 transition-all"
             />
           </div>
 
           {/* Company Questions Table */}
-          <div className="bg-slate-900/60 border border-border rounded-2xl overflow-hidden">
+          <div className="bg-slate-50/60 dark:bg-slate-900/60 border border-border rounded-2xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-border bg-slate-900/80 text-text-muted text-xs font-semibold uppercase tracking-wider">
+                  <tr className="border-b border-border bg-slate-50/80 dark:bg-slate-900/80 text-text-muted text-xs font-semibold uppercase tracking-wider">
                     <th className="px-6 py-4">Title / Question</th>
                     <th className="px-6 py-4">Type</th>
                     <th className="px-6 py-4">Difficulty</th>
@@ -927,7 +927,7 @@ export default function InterviewManagement() {
 
       {showAddTestSeriesModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="bg-slate-900 border border-border rounded-2xl max-w-md w-full p-6 space-y-6 shadow-2xl">
+          <div className="bg-slate-50 dark:bg-slate-900 border border-border rounded-2xl max-w-md w-full p-6 space-y-6 shadow-2xl">
             <div className="flex items-center justify-between border-b border-border pb-4">
               <h3 className="text-lg font-bold text-text-primary flex items-center">
                 <Layers className="w-5 h-5 mr-2 text-rose-500" />
@@ -948,7 +948,7 @@ export default function InterviewManagement() {
                   placeholder="e.g. Mock Test 1"
                   value={newTestSeriesName}
                   onChange={(e) => setNewTestSeriesName(e.target.value)}
-                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-rose-500"
+                  className="w-full bg-white dark:bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-rose-500"
                 />
               </div>
             </div>
@@ -974,7 +974,7 @@ export default function InterviewManagement() {
       {/* MODAL: ADD COMPANY */}
       {showAddCompanyModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="bg-slate-900 border border-border rounded-2xl max-w-md w-full p-6 space-y-6 shadow-2xl">
+          <div className="bg-slate-50 dark:bg-slate-900 border border-border rounded-2xl max-w-md w-full p-6 space-y-6 shadow-2xl">
             <div className="flex items-center justify-between border-b border-border pb-4">
               <h3 className="text-lg font-bold text-text-primary flex items-center">
                 <Building2 className="w-5 h-5 mr-2 text-rose-500" />
@@ -995,7 +995,7 @@ export default function InterviewManagement() {
                   placeholder="e.g. Stripe, Capgemini, Zomato"
                   value={newCompanyName}
                   onChange={(e) => setNewCompanyName(e.target.value)}
-                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-rose-500"
+                  className="w-full bg-white dark:bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-rose-500"
                 />
               </div>
 
@@ -1006,7 +1006,7 @@ export default function InterviewManagement() {
                 <select
                   value={newCompanyCategory}
                   onChange={(e) => setNewCompanyCategory(e.target.value as any)}
-                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-rose-500"
+                  className="w-full bg-white dark:bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-rose-500"
                 >
                   <option value="Product Based">Product Based</option>
                   <option value="Service Based">Service Based</option>
@@ -1024,7 +1024,7 @@ export default function InterviewManagement() {
                   placeholder="e.g. https://logo.clearbit.com/stripe.com"
                   value={newCompanyLogoUrl}
                   onChange={(e) => setNewCompanyLogoUrl(e.target.value)}
-                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary placeholder-slate-500 focus:outline-none focus:border-rose-500"
+                  className="w-full bg-white dark:bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary placeholder-slate-500 focus:outline-none focus:border-rose-500"
                 />
                 <p className="text-[11px] text-text-muted mt-1">
                   Paste a direct link to the logo image. It will display on company cards.
@@ -1053,7 +1053,7 @@ export default function InterviewManagement() {
       {/* MODAL: ADD / EDIT MCQ QUESTION */}
       {showAddMCQModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-slate-900 border border-border rounded-2xl max-w-2xl w-full p-6 space-y-6 shadow-2xl my-8">
+          <div className="bg-slate-50 dark:bg-slate-900 border border-border rounded-2xl max-w-2xl w-full p-6 space-y-6 shadow-2xl my-8">
             <div className="flex items-center justify-between border-b border-border pb-4">
               <h3 className="text-lg font-bold text-text-primary flex items-center">
                 <HelpCircle className="w-5 h-5 mr-2 text-purple-400" />
@@ -1074,7 +1074,7 @@ export default function InterviewManagement() {
                   placeholder="Enter the MCQ question statement..."
                   value={mcqTitle}
                   onChange={(e) => setMcqTitle(e.target.value)}
-                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-purple-500"
+                  className="w-full bg-white dark:bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-purple-500"
                 />
               </div>
 
@@ -1086,7 +1086,7 @@ export default function InterviewManagement() {
                   <select
                     value={mcqDifficulty}
                     onChange={(e) => setMcqDifficulty(e.target.value)}
-                    className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-purple-500"
+                    className="w-full bg-white dark:bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-purple-500"
                   >
                     <option value="Easy">Easy</option>
                     <option value="Medium">Medium</option>
@@ -1102,7 +1102,7 @@ export default function InterviewManagement() {
                     placeholder="e.g. Array, Time Complexity, OS"
                     value={mcqTopics}
                     onChange={(e) => setMcqTopics(e.target.value)}
-                    className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-purple-500"
+                    className="w-full bg-white dark:bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-purple-500"
                   />
                 </div>
               </div>
@@ -1112,7 +1112,7 @@ export default function InterviewManagement() {
                   Options (Select Correct Answer)
                 </label>
                 {(["A", "B", "C", "D"] as const).map((optLetter) => (
-                  <div key={optLetter} className="flex items-center space-x-3 bg-slate-950 p-2 rounded-xl border border-border">
+                  <div key={optLetter} className="flex items-center space-x-3 bg-white dark:bg-slate-950 p-2 rounded-xl border border-border">
                     <input
                       type="radio"
                       name="correctOption"
@@ -1150,7 +1150,7 @@ export default function InterviewManagement() {
                   placeholder="Explain why the selected option is correct..."
                   value={mcqExplanation}
                   onChange={(e) => setMcqExplanation(e.target.value)}
-                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-purple-500"
+                  className="w-full bg-white dark:bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-purple-500"
                 />
               </div>
             </div>
@@ -1176,7 +1176,7 @@ export default function InterviewManagement() {
       {/* MODAL: ADD / EDIT CODING PROBLEM */}
       {showAddCodingModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-slate-900 border border-border rounded-2xl max-w-3xl w-full p-6 space-y-6 shadow-2xl my-8">
+          <div className="bg-slate-50 dark:bg-slate-900 border border-border rounded-2xl max-w-3xl w-full p-6 space-y-6 shadow-2xl my-8">
             <div className="flex items-center justify-between border-b border-border pb-4">
               <h3 className="text-lg font-bold text-text-primary flex items-center">
                 <Code2 className="w-5 h-5 mr-2 text-primary" />
@@ -1198,7 +1198,7 @@ export default function InterviewManagement() {
                     placeholder="e.g. Find Peak Element"
                     value={codingTitle}
                     onChange={(e) => setCodingTitle(e.target.value)}
-                    className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary"
+                    className="w-full bg-white dark:bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary"
                   />
                 </div>
                 <div>
@@ -1208,7 +1208,7 @@ export default function InterviewManagement() {
                   <select
                     value={codingDifficulty}
                     onChange={(e) => setCodingDifficulty(e.target.value)}
-                    className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary"
+                    className="w-full bg-white dark:bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary"
                   >
                     <option value="Easy">Easy</option>
                     <option value="Medium">Medium</option>
@@ -1226,7 +1226,7 @@ export default function InterviewManagement() {
                   placeholder="e.g. Array, Binary Search, DP"
                   value={codingTopics}
                   onChange={(e) => setCodingTopics(e.target.value)}
-                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary"
+                  className="w-full bg-white dark:bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary"
                 />
               </div>
 
@@ -1239,7 +1239,7 @@ export default function InterviewManagement() {
                   placeholder="Describe the problem, input format, output format..."
                   value={codingDescription}
                   onChange={(e) => setCodingDescription(e.target.value)}
-                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary font-mono"
+                  className="w-full bg-white dark:bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary font-mono"
                 />
               </div>
 
@@ -1252,7 +1252,7 @@ export default function InterviewManagement() {
                   placeholder="1 <= nums.length <= 10^5"
                   value={codingConstraints}
                   onChange={(e) => setCodingConstraints(e.target.value)}
-                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary font-mono"
+                  className="w-full bg-white dark:bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary font-mono"
                 />
               </div>
 
@@ -1265,7 +1265,7 @@ export default function InterviewManagement() {
                   rows={3}
                   value={starterCodes.javascript || ""}
                   onChange={(e) => setStarterCodes({ ...starterCodes, javascript: e.target.value })}
-                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary font-mono"
+                  className="w-full bg-white dark:bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary font-mono"
                 />
               </div>
 
@@ -1285,7 +1285,7 @@ export default function InterviewManagement() {
                 </div>
 
                 {testCases.map((tc, idx) => (
-                  <div key={idx} className="grid grid-cols-12 gap-2 bg-slate-950 p-3 rounded-xl border border-border items-center">
+                  <div key={idx} className="grid grid-cols-12 gap-2 bg-white dark:bg-slate-950 p-3 rounded-xl border border-border items-center">
                     <input
                       type="text"
                       placeholder="Input"
@@ -1295,7 +1295,7 @@ export default function InterviewManagement() {
                         copy[idx].input = e.target.value;
                         setTestCases(copy);
                       }}
-                      className="col-span-5 bg-slate-900 border border-border rounded-lg px-3 py-1.5 text-xs text-text-primary"
+                      className="col-span-5 bg-slate-50 dark:bg-slate-900 border border-border rounded-lg px-3 py-1.5 text-xs text-text-primary"
                     />
                     <input
                       type="text"
@@ -1306,7 +1306,7 @@ export default function InterviewManagement() {
                         copy[idx].output = e.target.value;
                         setTestCases(copy);
                       }}
-                      className="col-span-5 bg-slate-900 border border-border rounded-lg px-3 py-1.5 text-xs text-text-primary"
+                      className="col-span-5 bg-slate-50 dark:bg-slate-900 border border-border rounded-lg px-3 py-1.5 text-xs text-text-primary"
                     />
                     <div className="col-span-2 flex items-center justify-end space-x-2">
                       <label className="text-[11px] text-text-muted flex items-center">
@@ -1358,7 +1358,7 @@ export default function InterviewManagement() {
       {/* MODAL: CONFIRM DELETE */}
       {deleteConfirmId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="bg-slate-900 border border-border rounded-2xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl">
+          <div className="bg-slate-50 dark:bg-slate-900 border border-border rounded-2xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl">
             <div className="mx-auto w-12 h-12 rounded-full bg-rose-500/10 flex items-center justify-center text-rose-500">
               <AlertTriangle className="w-6 h-6" />
             </div>

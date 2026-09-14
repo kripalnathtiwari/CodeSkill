@@ -62,7 +62,7 @@ export default function DatabaseManagement() {
 
       {!selectedRecord ? (
         <div className="bg-surface dark:bg-[#111827] rounded-xl border border-slate-800 overflow-hidden shadow-2xl">
-          <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
+          <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50">
             <div className="relative w-96">
               <input 
                 type="text" 
@@ -134,21 +134,21 @@ export default function DatabaseManagement() {
           </div>
 
           <div className="grid grid-cols-2 gap-6 mb-6">
-            <div className="bg-slate-900/50 p-4 rounded-lg border border-slate-800">
+            <div className="bg-slate-50/50 dark:bg-slate-900/50 p-4 rounded-lg border border-slate-800">
               <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Archive ID</h3>
               <p className="font-mono text-sm">{selectedRecord.id}</p>
             </div>
-            <div className="bg-slate-900/50 p-4 rounded-lg border border-slate-800">
+            <div className="bg-slate-50/50 dark:bg-slate-900/50 p-4 rounded-lg border border-slate-800">
               <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Original ID</h3>
               <p className="font-mono text-sm">{selectedRecord.originalId}</p>
             </div>
-            <div className="bg-slate-900/50 p-4 rounded-lg border border-slate-800">
+            <div className="bg-slate-50/50 dark:bg-slate-900/50 p-4 rounded-lg border border-slate-800">
               <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Deleted At</h3>
               <p>{new Date(selectedRecord.deletedAt).toLocaleString()}</p>
             </div>
           </div>
 
-          <div className="bg-slate-900/50 rounded-lg border border-slate-800 overflow-hidden">
+          <div className="bg-slate-50/50 dark:bg-slate-900/50 rounded-lg border border-slate-800 overflow-hidden">
             <div className="px-4 py-3 border-b border-slate-800 bg-slate-100/50 dark:bg-slate-800/50 flex justify-between items-center">
               <h3 className="font-medium">Original Record Data</h3>
             </div>

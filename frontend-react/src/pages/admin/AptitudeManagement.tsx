@@ -606,7 +606,7 @@ export default function AptitudeManagement() {
         ) : (
           Object.keys(groupedByTopic).sort().map(topicName => (
             <div key={topicName} className="bg-surface dark:bg-[#111827] border border-border rounded-2xl overflow-hidden shadow-xl">
-              <div className="p-4 border-b border-border flex justify-between items-center bg-slate-900/80">
+              <div className="p-4 border-b border-border flex justify-between items-center bg-slate-50/80 dark:bg-slate-900/80">
                 <h3 className="text-xl font-bold text-text-primary flex items-center gap-2">
                   <BrainCircuit className="w-5 h-5 text-purple-500" />
                   {topicName}
@@ -695,7 +695,7 @@ export default function AptitudeManagement() {
       {deleteConfirmId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setDeleteConfirmId(null)} />
-          <div className="relative bg-slate-900 border border-border rounded-2xl shadow-2xl p-6 w-full max-w-md">
+          <div className="relative bg-slate-50 dark:bg-slate-900 border border-border rounded-2xl shadow-2xl p-6 w-full max-w-md">
             <button onClick={() => setDeleteConfirmId(null)} className="absolute top-4 right-4 p-1.5 text-text-muted hover:text-text-inverse hover:bg-slate-800 rounded-lg transition-colors">
               <X className="w-4 h-4" />
             </button>

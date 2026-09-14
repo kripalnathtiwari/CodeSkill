@@ -297,28 +297,6 @@ export default function Contests() {
       <div className="w-full space-y-12">
 
         {/* Header Section */}
-        <div className="relative rounded-3xl overflow-hidden glass-card p-10 flex flex-col md:flex-row md:items-center justify-between border border-border dark:border-border/60 shadow-sm">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
-
-          <div className="space-y-4 max-w-2xl relative z-10">
-            <div className="inline-flex items-center space-x-2 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-full text-amber-600 dark:text-amber-400 text-xs font-bold uppercase tracking-widest">
-              <Trophy className="h-4 w-4" />
-              <span>Compete & Win</span>
-            </div>
-            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-text-primary dark:text-text-primary">
-              Global Coding <span className="bg-gradient-to-r from-blue-400 to-sky-400 bg-clip-text text-transparent">Tests</span>
-            </h1>
-            <p className="text-lg text-text-secondary dark:text-text-muted leading-relaxed">
-              Test your skills against thousands of developers worldwide. Participate in weekly challenges, win exciting prizes, and boost your global ranking!
-            </p>
-          </div>
-
-          <div className="hidden md:flex relative z-10 p-6 bg-surface dark:bg-background rounded-2xl border border-border dark:border-border shadow-xl flex-col items-center justify-center min-w-[200px]">
-            <Star className="w-10 h-10 text-amber-400 mb-2" />
-            <span className="text-3xl font-black text-text-primary dark:text-text-primary">#1</span>
-            <span className="text-sm text-text-muted font-bold uppercase tracking-widest">Your Rank</span>
-          </div>
-        </div>
 
         {/* Institution Filters */}
         <div className="bg-surface dark:bg-[#111827] border border-border dark:border-border p-4 rounded-2xl shadow-sm flex flex-col md:flex-row gap-4 items-center z-20 relative">

@@ -15,37 +15,47 @@ import {
   ScanSearch,
   StickyNote,
   Lightbulb,
-  GraduationCap
+  GraduationCap,
+  ShieldAlert
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
-const NAV_ITEMS = [
-  { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { path: '/dashboard/courses', label: 'Courses', icon: BookOpen },
-  { path: '/dashboard/my-courses', label: 'Enrolled Courses', icon: GraduationCap },
-  { 
-    path: '/dashboard/practice', 
-    label: 'Practice', 
-    icon: Target,
-    subItems: [
-      { path: '/dashboard/practice', label: 'DSA Problem' },
-      { path: '/dashboard/practice/company-problems', label: 'Company Interview Prep' },
-      { path: '/dashboard/practice/aptitude', label: 'Aptitude Question' },
-      { path: '/dashboard/practice/other', label: 'More Practice' },
-    ]
-  },
-  { path: '/dashboard/tests', label: 'Tests', icon: Trophy },
-  { path: '/dashboard/compiler', label: 'Compiler', icon: Code2 },
-  { path: '/dashboard/notes', label: 'Notes', icon: StickyNote },
-  { path: '/dashboard/career', label: 'Career', icon: Briefcase },
-  { path: '/dashboard/career/resume-maker', label: 'Resume Maker', icon: FileEdit },
-  { path: '/dashboard/career/resume-analysis', label: 'Resume Analysis', icon: ScanSearch },
-  { path: '/dashboard/projects', label: 'Project Ideas', icon: Lightbulb },
-];
+const getNavItems = (userRole?: string) => {
+  const items = [
+    { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { path: '/dashboard/courses', label: 'Courses', icon: BookOpen },
+    { path: '/dashboard/my-courses', label: 'Enrolled Courses', icon: GraduationCap },
+    { 
+      path: '/dashboard/practice', 
+      label: 'Practice', 
+      icon: Target,
+      subItems: [
+        { path: '/dashboard/practice', label: 'DSA Problem' },
+        { path: '/dashboard/practice/company-problems', label: 'Company Interview Prep' },
+        { path: '/dashboard/practice/aptitude', label: 'Aptitude Question' },
+        { path: '/dashboard/practice/other', label: 'More Practice' },
+      ]
+    },
+    { path: '/dashboard/tests', label: 'Tests', icon: Trophy },
+    { path: '/dashboard/compiler', label: 'Compiler', icon: Code2 },
+    { path: '/dashboard/notes', label: 'Notes', icon: StickyNote },
+    { path: '/dashboard/career', label: 'Career', icon: Briefcase },
+    { path: '/dashboard/career/resume-maker', label: 'Resume Maker', icon: FileEdit },
+    { path: '/dashboard/career/resume-analysis', label: 'Resume Analysis', icon: ScanSearch },
+    { path: '/dashboard/projects', label: 'Project Ideas', icon: Lightbulb },
+  ];
+
+  if (['ADMIN', 'INSTRUCTOR', 'COLLEGE_ADMIN'].includes(userRole || '')) {
+    items.push({ path: '/admin', label: 'Admin Dashboard', icon: ShieldAlert });
+  }
+
+  return items;
+};
 
 export default function Sidebar() {
   const { pathname } = useLocation();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
+  const navItems = getNavItems(user?.role);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
 
@@ -72,7 +82,7 @@ export default function Sidebar() {
       {/* Navigation */}
       <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
         <div className={`text-xs font-bold text-text-muted uppercase tracking-wider mb-4 px-2 ${isCollapsed ? 'hidden' : 'block'}`}>Menu</div>
-        {NAV_ITEMS.map((item) => {
+        {navItems.map((item) => {
           const isActive = pathname === item.path || (item.subItems && item.subItems.some(sub => pathname === sub.path));
           const hasSubItems = !!item.subItems;
           const isExpanded = openMenus[item.label] || (hasSubItems && isActive && openMenus[item.label] !== false);

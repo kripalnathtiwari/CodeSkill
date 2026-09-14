@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { getApiUrl } from "../utils/apiConfig";
 import PracticeTimer from "../components/PracticeTimer";
+import { recordDailyProgress } from "../utils/progressTracker";
 
 export default function SolveOtherPractice() {
   const { user } = useAuth();
@@ -141,6 +142,9 @@ export default function SolveOtherPractice() {
             headers: { Authorization: `Bearer ${token}` }
           }).catch(err => console.error("Failed to log aptitude", err));
         }
+        
+        // Track real progress
+        recordDailyProgress(user?.email, 1, 5);
       }
     }
   };

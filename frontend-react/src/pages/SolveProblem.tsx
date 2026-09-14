@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import { Play, Check, ChevronLeft, ChevronRight, Terminal, AlertTriangle, Code2, Clock, Cpu, Zap, CheckCircle2, XCircle } from "lucide-react";
@@ -6,6 +6,7 @@ import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { recordContribution } from "../utils/contributions";
 import { getApiUrl } from "../utils/apiConfig";
+import { recordDailyProgress } from "../utils/progressTracker";
 import PracticeTimer from "../components/PracticeTimer";
 
 // Helper: parse JSON string fields into arrays safely
@@ -355,6 +356,7 @@ if (Array.isArray(result)) console.log(result.join(' '));
             solvedArr.push(id); 
             localStorage.setItem(`solved_problems_progress_${user?.email || "guest"}`, JSON.stringify(solvedArr)); 
             recordContribution(user?.email);
+            recordDailyProgress(user?.email, 1, 20);
           }
         }
         setIsExecuting(false);
@@ -376,6 +378,7 @@ if (Array.isArray(result)) console.log(result.join(' '));
         solvedArr.push(id); 
         localStorage.setItem(`solved_problems_progress_${user?.email || "guest"}`, JSON.stringify(solvedArr)); 
         recordContribution(user?.email);
+        recordDailyProgress(user?.email, 1, 20);
       }
     }
     setIsExecuting(false);

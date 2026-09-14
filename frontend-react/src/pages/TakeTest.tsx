@@ -4,6 +4,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { recordContribution } from "../utils/contributions";
 import { getApiUrl } from "../utils/apiConfig";
+import { recordDailyProgress } from "../utils/progressTracker";
 import { AlertTriangle, Clock, CheckCircle, ShieldAlert, Award, ChevronLeft, ChevronRight, Trophy, Minus, XCircle, LogOut, Info, AlertOctagon, Bookmark, Maximize } from "lucide-react";
 
 // Mock Python Questions
@@ -179,6 +180,10 @@ export default function TakeTest() {
         
         // Record contribution
         recordContribution(user?.email);
+        
+        // Record Daily Progress (Test completed)
+        // 10 points per question in test
+        recordDailyProgress(user?.email, Object.keys(selectedAnswers).length, calculatedScore * 10);
 
         // --- ADMIN SCORE TRACKING ---
         let testName = `Test ${id}`;

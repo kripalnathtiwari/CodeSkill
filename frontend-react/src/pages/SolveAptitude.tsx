@@ -4,6 +4,7 @@ import { ArrowLeft, CheckCircle2, XCircle, BrainCircuit, ChevronLeft, ChevronRig
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { getApiUrl } from "../utils/apiConfig";
+import { recordDailyProgress } from "../utils/progressTracker";
 
 export default function SolveAptitude() {
   const { user } = useAuth();
@@ -154,6 +155,10 @@ export default function SolveAptitude() {
           }
         }
       });
+      
+      // Track real progress
+      recordDailyProgress(user?.email, correctCount, correctCount * 5);
+      
       alert(`Test Submitted! You scored ${correctCount} out of ${allQuestions.length}.`);
     }
     navigate(`/aptitude/topic/${encodeURIComponent(question?.topic || "Uncategorized")}`);

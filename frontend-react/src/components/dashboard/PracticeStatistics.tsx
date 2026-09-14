@@ -1,38 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart2, Calendar } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-
-// Generate mock data for the last 7 days
-const generateMockData = () => {
-  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const data = [];
-  const today = new Date();
-  
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(today);
-    d.setDate(d.getDate() - i);
-    data.push({
-      name: days[d.getDay()],
-      questionsSolved: Math.floor(Math.random() * 5) + 1, // Random 1-5
-      pointsEarned: Math.floor(Math.random() * 50) + 10,  // Random 10-60
-    });
-  }
-  
-  // Make it "growing" towards the end for the visual effect requested
-  data[5].questionsSolved += 2;
-  data[6].questionsSolved += 4;
-  data[5].pointsEarned += 20;
-  data[6].pointsEarned += 40;
-
-  return data;
-};
+import { useAuth } from '../../context/AuthContext';
+import { getWeeklyProgress } from '../../utils/progressTracker';
 
 export default function PracticeStatistics() {
+  const { user } = useAuth();
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
-    setData(generateMockData());
-  }, []);
+    setData(getWeeklyProgress(user?.email));
+  }, [user]);
 
   return (
     <div className="bg-surface rounded-2xl border border-border p-6 shadow-sm">

@@ -39,7 +39,7 @@ const DEFAULT_COMPANIES: CompanyCardData[] = [
 function CompanyLogoHeader({ name, iconType, logoUrl }: { name: string; iconType: string; logoUrl?: string }) {
   if (logoUrl) {
     return (
-      <div className="flex items-center space-x-2.5 font-bold text-text-primary dark:text-text-inverse text-base truncate">
+      <div className="flex items-center space-x-2.5 font-bold text-text-primary dark:text-text-primary text-base truncate">
         <img
           src={logoUrl}
           alt={`${name} logo`}
@@ -55,7 +55,7 @@ function CompanyLogoHeader({ name, iconType, logoUrl }: { name: string; iconType
 
   if (iconType === "microsoft" || name.toLowerCase().includes("microsoft")) {
     return (
-      <div className="flex items-center space-x-2 font-bold text-text-primary dark:text-text-inverse text-base">
+      <div className="flex items-center space-x-2 font-bold text-text-primary dark:text-text-primary text-base">
         <div className="grid grid-cols-2 gap-0.5 w-4 h-4 shrink-0">
           <div className="bg-[#f25022] w-full h-full rounded-[1px]" />
           <div className="bg-[#7fba00] w-full h-full rounded-[1px]" />
@@ -80,14 +80,14 @@ function CompanyLogoHeader({ name, iconType, logoUrl }: { name: string; iconType
   }
   if (iconType === "amazon" || name.toLowerCase().includes("amazon")) {
     return (
-      <div className="flex items-center space-x-1 font-bold text-text-primary dark:text-text-inverse text-base">
+      <div className="flex items-center space-x-1 font-bold text-text-primary dark:text-text-primary text-base">
         <span>amazon</span>
         <span className="text-[#FF9900] font-black">↗</span>
       </div>
     );
   }
   return (
-    <div className="flex items-center space-x-2 font-bold text-text-primary dark:text-text-inverse text-base truncate">
+    <div className="flex items-center space-x-2 font-bold text-text-primary dark:text-text-primary text-base truncate">
       <Building2 className="w-4 h-4 text-rose-500 shrink-0" />
       <span className="truncate">{name}</span>
     </div>
@@ -637,7 +637,7 @@ export default function InterviewManagement() {
         <>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
             <div>
-              <h1 className="text-2xl font-bold text-text-inverse flex items-center">
+              <h1 className="text-2xl font-bold text-text-primary flex items-center">
                 <Building2 className="w-7 h-7 mr-3 text-rose-500" />
                 Company Interview Preparation
               </h1>
@@ -662,7 +662,7 @@ export default function InterviewManagement() {
               placeholder="Search companies by name or category..."
               value={searchCompanyQuery}
               onChange={(e) => setSearchCompanyQuery(e.target.value)}
-              className="w-full bg-slate-900 border border-border rounded-xl pl-10 pr-4 py-2.5 text-sm text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500 transition-all"
+              className="w-full bg-slate-900 border border-border rounded-xl pl-10 pr-4 py-2.5 text-sm text-text-primary placeholder-slate-500 focus:outline-none focus:border-rose-500 transition-all"
             />
           </div>
 
@@ -737,13 +737,13 @@ export default function InterviewManagement() {
             <div className="space-y-2">
               <button
                 onClick={() => selectedTestSeries ? setSelectedTestSeries(null) : setSelectedCompany(null)}
-                className="inline-flex items-center space-x-2 text-xs font-semibold text-text-muted hover:text-text-inverse transition-colors"
+                className="inline-flex items-center space-x-2 text-xs font-semibold text-text-muted hover:text-text-primary transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>{selectedTestSeries ? "Back to " + selectedCompany + " Test Series" : "Back to Companies List"}</span>
               </button>
               <div className="flex items-center space-x-3">
-                <h1 className="text-2xl font-bold text-text-inverse flex items-center">
+                <h1 className="text-2xl font-bold text-text-primary flex items-center">
                   <CompanyLogoHeader
                     name={selectedCompany}
                     iconType={allCompaniesState.find(c => c.name.toLowerCase() === selectedCompany.toLowerCase())?.iconType || "default"}
@@ -769,7 +769,7 @@ export default function InterviewManagement() {
                     resetMCQForm();
                     setShowAddMCQModal(true);
                   }}
-                  className="inline-flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 text-text-inverse font-semibold px-4 py-2.5 rounded-xl shadow-lg shadow-purple-600/20 transition-all text-sm"
+                  className="inline-flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 text-text-primary font-semibold px-4 py-2.5 rounded-xl shadow-lg shadow-purple-600/20 transition-all text-sm"
                 >
                   <HelpCircle className="w-4 h-4" />
                   <span>+ Add MCQ Question</span>
@@ -805,7 +805,7 @@ export default function InterviewManagement() {
               placeholder={`Search questions inside ${selectedCompany}...`}
               value={searchQuestionQuery}
               onChange={(e) => setSearchQuestionQuery(e.target.value)}
-              className="w-full bg-slate-900 border border-border rounded-xl pl-10 pr-4 py-2.5 text-sm text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500 transition-all"
+              className="w-full bg-slate-900 border border-border rounded-xl pl-10 pr-4 py-2.5 text-sm text-text-primary placeholder-slate-500 focus:outline-none focus:border-rose-500 transition-all"
             />
           </div>
 
@@ -845,7 +845,7 @@ export default function InterviewManagement() {
 
                       return (
                         <tr key={q._id || q.id} className="hover:bg-slate-800/40 transition-colors cursor-pointer" onClick={() => { if (q.isTestSeries) setSelectedTestSeries(q.title) }}>
-                          <td className="px-6 py-4 font-medium text-text-inverse">
+                          <td className="px-6 py-4 font-medium text-text-primary">
                             <div className="flex items-center space-x-2">
                               {q.isTestSeries ? (
                                 <Layers className="w-4 h-4 text-rose-400 shrink-0" />
@@ -929,11 +929,11 @@ export default function InterviewManagement() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
           <div className="bg-slate-900 border border-border rounded-2xl max-w-md w-full p-6 space-y-6 shadow-2xl">
             <div className="flex items-center justify-between border-b border-border pb-4">
-              <h3 className="text-lg font-bold text-text-inverse flex items-center">
+              <h3 className="text-lg font-bold text-text-primary flex items-center">
                 <Layers className="w-5 h-5 mr-2 text-rose-500" />
                 {editingProblem ? "Edit Test Series" : "Add Test Series"}
               </h3>
-              <button onClick={() => { setShowAddTestSeriesModal(false); setEditingProblem(null); }} className="text-text-muted hover:text-text-inverse">
+              <button onClick={() => { setShowAddTestSeriesModal(false); setEditingProblem(null); }} className="text-text-muted hover:text-text-primary">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -948,7 +948,7 @@ export default function InterviewManagement() {
                   placeholder="e.g. Mock Test 1"
                   value={newTestSeriesName}
                   onChange={(e) => setNewTestSeriesName(e.target.value)}
-                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-inverse focus:outline-none focus:border-rose-500"
+                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-rose-500"
                 />
               </div>
             </div>
@@ -956,7 +956,7 @@ export default function InterviewManagement() {
             <div className="flex items-center justify-end space-x-3 pt-4 border-t border-border">
               <button
                 onClick={() => { setShowAddTestSeriesModal(false); setEditingProblem(null); }}
-                className="px-4 py-2 text-sm font-semibold text-text-muted hover:text-text-inverse transition-colors"
+                className="px-4 py-2 text-sm font-semibold text-text-muted hover:text-text-primary transition-colors"
               >
                 Cancel
               </button>
@@ -976,11 +976,11 @@ export default function InterviewManagement() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
           <div className="bg-slate-900 border border-border rounded-2xl max-w-md w-full p-6 space-y-6 shadow-2xl">
             <div className="flex items-center justify-between border-b border-border pb-4">
-              <h3 className="text-lg font-bold text-text-inverse flex items-center">
+              <h3 className="text-lg font-bold text-text-primary flex items-center">
                 <Building2 className="w-5 h-5 mr-2 text-rose-500" />
                 Add New Company
               </h3>
-              <button onClick={() => setShowAddCompanyModal(false)} className="text-text-muted hover:text-text-inverse">
+              <button onClick={() => setShowAddCompanyModal(false)} className="text-text-muted hover:text-text-primary">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -995,7 +995,7 @@ export default function InterviewManagement() {
                   placeholder="e.g. Stripe, Capgemini, Zomato"
                   value={newCompanyName}
                   onChange={(e) => setNewCompanyName(e.target.value)}
-                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-inverse focus:outline-none focus:border-rose-500"
+                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-rose-500"
                 />
               </div>
 
@@ -1006,7 +1006,7 @@ export default function InterviewManagement() {
                 <select
                   value={newCompanyCategory}
                   onChange={(e) => setNewCompanyCategory(e.target.value as any)}
-                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-inverse focus:outline-none focus:border-rose-500"
+                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-rose-500"
                 >
                   <option value="Product Based">Product Based</option>
                   <option value="Service Based">Service Based</option>
@@ -1024,7 +1024,7 @@ export default function InterviewManagement() {
                   placeholder="e.g. https://logo.clearbit.com/stripe.com"
                   value={newCompanyLogoUrl}
                   onChange={(e) => setNewCompanyLogoUrl(e.target.value)}
-                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500"
+                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary placeholder-slate-500 focus:outline-none focus:border-rose-500"
                 />
                 <p className="text-[11px] text-text-muted mt-1">
                   Paste a direct link to the logo image. It will display on company cards.
@@ -1055,11 +1055,11 @@ export default function InterviewManagement() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 overflow-y-auto">
           <div className="bg-slate-900 border border-border rounded-2xl max-w-2xl w-full p-6 space-y-6 shadow-2xl my-8">
             <div className="flex items-center justify-between border-b border-border pb-4">
-              <h3 className="text-lg font-bold text-text-inverse flex items-center">
+              <h3 className="text-lg font-bold text-text-primary flex items-center">
                 <HelpCircle className="w-5 h-5 mr-2 text-purple-400" />
                 {editingProblem ? "Edit MCQ Question" : `Add MCQ Question to ${selectedCompany}`}
               </h3>
-              <button onClick={() => { setShowAddMCQModal(false); resetMCQForm(); }} className="text-text-muted hover:text-text-inverse">
+              <button onClick={() => { setShowAddMCQModal(false); resetMCQForm(); }} className="text-text-muted hover:text-text-primary">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1074,7 +1074,7 @@ export default function InterviewManagement() {
                   placeholder="Enter the MCQ question statement..."
                   value={mcqTitle}
                   onChange={(e) => setMcqTitle(e.target.value)}
-                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-inverse focus:outline-none focus:border-purple-500"
+                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-purple-500"
                 />
               </div>
 
@@ -1086,7 +1086,7 @@ export default function InterviewManagement() {
                   <select
                     value={mcqDifficulty}
                     onChange={(e) => setMcqDifficulty(e.target.value)}
-                    className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-inverse focus:outline-none focus:border-purple-500"
+                    className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-purple-500"
                   >
                     <option value="Easy">Easy</option>
                     <option value="Medium">Medium</option>
@@ -1102,7 +1102,7 @@ export default function InterviewManagement() {
                     placeholder="e.g. Array, Time Complexity, OS"
                     value={mcqTopics}
                     onChange={(e) => setMcqTopics(e.target.value)}
-                    className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-inverse focus:outline-none focus:border-purple-500"
+                    className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-purple-500"
                   />
                 </div>
               </div>
@@ -1135,7 +1135,7 @@ export default function InterviewManagement() {
                         if (optLetter === "C") setOptionC(e.target.value);
                         if (optLetter === "D") setOptionD(e.target.value);
                       }}
-                      className="flex-1 bg-transparent text-sm text-text-inverse focus:outline-none"
+                      className="flex-1 bg-transparent text-sm text-text-primary focus:outline-none"
                     />
                   </div>
                 ))}
@@ -1150,7 +1150,7 @@ export default function InterviewManagement() {
                   placeholder="Explain why the selected option is correct..."
                   value={mcqExplanation}
                   onChange={(e) => setMcqExplanation(e.target.value)}
-                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-inverse focus:outline-none focus:border-purple-500"
+                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-purple-500"
                 />
               </div>
             </div>
@@ -1164,7 +1164,7 @@ export default function InterviewManagement() {
               </button>
               <button
                 onClick={handleSaveMCQ}
-                className="px-5 py-2 rounded-xl text-sm font-semibold text-text-inverse bg-purple-600 hover:bg-purple-700 transition-colors shadow-lg shadow-purple-600/20"
+                className="px-5 py-2 rounded-xl text-sm font-semibold text-text-primary bg-purple-600 hover:bg-purple-700 transition-colors shadow-lg shadow-purple-600/20"
               >
                 Save MCQ Question
               </button>
@@ -1178,11 +1178,11 @@ export default function InterviewManagement() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 overflow-y-auto">
           <div className="bg-slate-900 border border-border rounded-2xl max-w-3xl w-full p-6 space-y-6 shadow-2xl my-8">
             <div className="flex items-center justify-between border-b border-border pb-4">
-              <h3 className="text-lg font-bold text-text-inverse flex items-center">
+              <h3 className="text-lg font-bold text-text-primary flex items-center">
                 <Code2 className="w-5 h-5 mr-2 text-primary" />
                 {editingProblem ? "Edit Coding Problem" : `Add Coding Problem to ${selectedCompany}`}
               </h3>
-              <button onClick={() => { setShowAddCodingModal(false); resetCodingForm(); }} className="text-text-muted hover:text-text-inverse">
+              <button onClick={() => { setShowAddCodingModal(false); resetCodingForm(); }} className="text-text-muted hover:text-text-primary">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1198,7 +1198,7 @@ export default function InterviewManagement() {
                     placeholder="e.g. Find Peak Element"
                     value={codingTitle}
                     onChange={(e) => setCodingTitle(e.target.value)}
-                    className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-inverse focus:outline-none focus:border-primary"
+                    className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary"
                   />
                 </div>
                 <div>
@@ -1208,7 +1208,7 @@ export default function InterviewManagement() {
                   <select
                     value={codingDifficulty}
                     onChange={(e) => setCodingDifficulty(e.target.value)}
-                    className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-inverse focus:outline-none focus:border-primary"
+                    className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary"
                   >
                     <option value="Easy">Easy</option>
                     <option value="Medium">Medium</option>
@@ -1226,7 +1226,7 @@ export default function InterviewManagement() {
                   placeholder="e.g. Array, Binary Search, DP"
                   value={codingTopics}
                   onChange={(e) => setCodingTopics(e.target.value)}
-                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-inverse focus:outline-none focus:border-primary"
+                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary"
                 />
               </div>
 
@@ -1239,7 +1239,7 @@ export default function InterviewManagement() {
                   placeholder="Describe the problem, input format, output format..."
                   value={codingDescription}
                   onChange={(e) => setCodingDescription(e.target.value)}
-                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-inverse focus:outline-none focus:border-primary font-mono"
+                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary font-mono"
                 />
               </div>
 
@@ -1252,7 +1252,7 @@ export default function InterviewManagement() {
                   placeholder="1 <= nums.length <= 10^5"
                   value={codingConstraints}
                   onChange={(e) => setCodingConstraints(e.target.value)}
-                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-inverse focus:outline-none focus:border-primary font-mono"
+                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary font-mono"
                 />
               </div>
 
@@ -1265,7 +1265,7 @@ export default function InterviewManagement() {
                   rows={3}
                   value={starterCodes.javascript || ""}
                   onChange={(e) => setStarterCodes({ ...starterCodes, javascript: e.target.value })}
-                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-inverse focus:outline-none focus:border-primary font-mono"
+                  className="w-full bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary font-mono"
                 />
               </div>
 
@@ -1295,7 +1295,7 @@ export default function InterviewManagement() {
                         copy[idx].input = e.target.value;
                         setTestCases(copy);
                       }}
-                      className="col-span-5 bg-slate-900 border border-border rounded-lg px-3 py-1.5 text-xs text-text-inverse"
+                      className="col-span-5 bg-slate-900 border border-border rounded-lg px-3 py-1.5 text-xs text-text-primary"
                     />
                     <input
                       type="text"
@@ -1306,7 +1306,7 @@ export default function InterviewManagement() {
                         copy[idx].output = e.target.value;
                         setTestCases(copy);
                       }}
-                      className="col-span-5 bg-slate-900 border border-border rounded-lg px-3 py-1.5 text-xs text-text-inverse"
+                      className="col-span-5 bg-slate-900 border border-border rounded-lg px-3 py-1.5 text-xs text-text-primary"
                     />
                     <div className="col-span-2 flex items-center justify-end space-x-2">
                       <label className="text-[11px] text-text-muted flex items-center">
@@ -1362,7 +1362,7 @@ export default function InterviewManagement() {
             <div className="mx-auto w-12 h-12 rounded-full bg-rose-500/10 flex items-center justify-center text-rose-500">
               <AlertTriangle className="w-6 h-6" />
             </div>
-            <h3 className="text-lg font-bold text-text-inverse">Delete Question?</h3>
+            <h3 className="text-lg font-bold text-text-primary">Delete Question?</h3>
             <p className="text-sm text-text-muted">
               This action cannot be undone. The question will be permanently removed.
             </p>

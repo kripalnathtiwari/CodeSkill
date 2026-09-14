@@ -42,7 +42,7 @@ export default function DatabaseManagement() {
   ) : [];
 
   return (
-    <div className="p-6 bg-[#0B0F19] min-h-screen text-slate-100 font-sans">
+    <div className="p-6 bg-background dark:bg-[#0B0F19] min-h-screen text-slate-100 font-sans">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-3">
@@ -61,7 +61,7 @@ export default function DatabaseManagement() {
       </div>
 
       {!selectedRecord ? (
-        <div className="bg-[#111827] rounded-xl border border-slate-800 overflow-hidden shadow-2xl">
+        <div className="bg-surface dark:bg-[#111827] rounded-xl border border-slate-800 overflow-hidden shadow-2xl">
           <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
             <div className="relative w-96">
               <input 
@@ -120,7 +120,7 @@ export default function DatabaseManagement() {
           </div>
         </div>
       ) : (
-        <div className="bg-[#111827] rounded-xl border border-slate-800 overflow-hidden shadow-2xl p-6">
+        <div className="bg-surface dark:bg-[#111827] rounded-xl border border-slate-800 overflow-hidden shadow-2xl p-6">
           <div className="flex justify-between items-center mb-6">
             <button 
               onClick={() => setSelectedRecord(null)}

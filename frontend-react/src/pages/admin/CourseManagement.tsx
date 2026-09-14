@@ -148,7 +148,7 @@ export default function CourseManagement() {
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div>
-              <h2 className="text-2xl font-bold text-text-inverse">
+              <h2 className="text-2xl font-bold text-text-primary">
                 {isEditMode
                   ? isEditingDefault ? "View Course Details" : "Edit Course"
                   : "Create New Course"}
@@ -164,7 +164,7 @@ export default function CourseManagement() {
           </div>
 
           <div className="flex space-x-3">
-            <button onClick={handleCancel} className="px-5 py-2.5 rounded-xl font-semibold text-text-muted hover:text-text-inverse border border-border hover:border-slate-500 transition-colors">
+            <button onClick={handleCancel} className="px-5 py-2.5 rounded-xl font-semibold text-text-muted hover:text-text-primary border border-border hover:border-slate-500 transition-colors">
               Cancel
             </button>
             {!isEditingDefault && (
@@ -190,7 +190,7 @@ export default function CourseManagement() {
         )}
 
         {/* Form Card */}
-        <div className="bg-[#111827] rounded-3xl p-8 border border-border shadow-xl space-y-6">
+        <div className="bg-surface dark:bg-[#111827] rounded-3xl p-8 border border-border shadow-xl space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Left column */}
             <div className="space-y-5">
@@ -199,7 +199,7 @@ export default function CourseManagement() {
                 <input
                   type="text" value={title} onChange={e => setTitle(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   placeholder="e.g. Master React in 30 Days"
                 />
               </div>
@@ -208,7 +208,7 @@ export default function CourseManagement() {
                 <select
                   value={category} onChange={e => setCategory(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option value="summer">Summer Training</option>
                   <option value="industrial">Industrial Training</option>
@@ -221,7 +221,7 @@ export default function CourseManagement() {
                 <input
                   type="text" value={price} onChange={e => setPrice(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="e.g. ₹2,999"
                 />
               </div>
@@ -230,7 +230,7 @@ export default function CourseManagement() {
                 <input
                   type="text" value={duration} onChange={e => setDuration(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="e.g. 4 Weeks"
                 />
               </div>
@@ -243,7 +243,7 @@ export default function CourseManagement() {
                 <select
                   value={level} onChange={e => setLevel(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option>Beginner</option>
                   <option>Intermediate</option>
@@ -258,7 +258,7 @@ export default function CourseManagement() {
                 <input
                   type="text" value={tags} onChange={e => setTags(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="React, Node.js, Web Dev"
                 />
               </div>
@@ -267,7 +267,7 @@ export default function CourseManagement() {
                 <input
                   type="text" value={image} onChange={e => setImage(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="https://..."
                 />
                 {image && (
@@ -283,7 +283,7 @@ export default function CourseManagement() {
                 <input
                   type="text" value={language} onChange={e => setLanguage(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="e.g. English, Hindi"
                 />
               </div>
@@ -292,7 +292,7 @@ export default function CourseManagement() {
                 <select
                   value={visibility} onChange={e => setVisibility(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option value="PUBLIC">Public</option>
                   <option value="PRIVATE">Private</option>
@@ -304,7 +304,7 @@ export default function CourseManagement() {
                 <select
                   value={publishStatus} onChange={e => setPublishStatus(e.target.value)}
                   disabled={!!isEditingDefault}
-                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option value="DRAFT">Draft</option>
                   <option value="PUBLISHED">Published</option>
@@ -319,7 +319,7 @@ export default function CourseManagement() {
               <input
                 type="text" value={seoTitle} onChange={e => setSeoTitle(e.target.value)}
                 disabled={!!isEditingDefault}
-                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 placeholder="Title optimized for Search Engines"
               />
             </div>
@@ -332,7 +332,7 @@ export default function CourseManagement() {
               value={description} onChange={e => setDescription(e.target.value)}
               rows={4}
               disabled={!!isEditingDefault}
-              className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed resize-none"
+              className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed resize-none"
               placeholder="Detailed course description..."
             />
           </div>
@@ -343,7 +343,7 @@ export default function CourseManagement() {
               value={overview} onChange={e => setOverview(e.target.value)}
               rows={4}
               disabled={!!isEditingDefault}
-              className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed resize-none"
+              className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed resize-none"
               placeholder="Provide a high-level overview of the course..."
             />
           </div>
@@ -354,7 +354,7 @@ export default function CourseManagement() {
               <input
                 type="text" value={skillsYouWillLearn} onChange={e => setSkillsYouWillLearn(e.target.value)}
                 disabled={!!isEditingDefault}
-                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 placeholder="e.g. Problem Solving, Web Development"
               />
             </div>
@@ -363,7 +363,7 @@ export default function CourseManagement() {
               <input
                 type="text" value={techStack} onChange={e => setTechStack(e.target.value)}
                 disabled={!!isEditingDefault}
-                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 placeholder="e.g. React, Node.js, MongoDB"
               />
             </div>
@@ -378,7 +378,7 @@ export default function CourseManagement() {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold text-text-inverse mb-1">Course Management</h2>
+          <h2 className="text-3xl font-bold text-text-primary mb-1">Course Management</h2>
           <p className="text-text-muted">Add, edit, or remove platform courses.</p>
         </div>
         <button
@@ -390,13 +390,13 @@ export default function CourseManagement() {
         </button>
       </div>
 
-      <div className="bg-[#111827] border border-border rounded-2xl overflow-hidden shadow-xl">
+      <div className="bg-surface dark:bg-[#111827] border border-border rounded-2xl overflow-hidden shadow-xl">
         <div className="p-4 border-b border-border flex justify-between items-center bg-slate-900/50">
           <div className="relative w-80">
             <input
               type="text" placeholder="Search courses..."
               value={search} onChange={e => setSearch(e.target.value)}
-              className="w-full bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-inverse focus:outline-none focus:border-primary"
+              className="w-full bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-primary focus:outline-none focus:border-primary"
             />
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
           </div>
@@ -419,7 +419,7 @@ export default function CourseManagement() {
             <tbody className="divide-y divide-slate-800">
               {filtered.map(course => (
                 <tr key={course.id} className="hover:bg-slate-800/30 transition-colors">
-                  <td className="px-6 py-4 font-medium text-text-inverse">
+                  <td className="px-6 py-4 font-medium text-text-primary">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 rounded bg-slate-800 flex items-center justify-center overflow-hidden shrink-0">
                         {course.image ? <img src={course.image} alt="" loading="lazy" className="w-full h-full object-cover" /> : <ImageIcon className="w-5 h-5 text-text-muted" />}
@@ -490,7 +490,7 @@ export default function CourseManagement() {
                     <AlertTriangle className="w-6 h-6 text-amber-500" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-text-inverse">Protected Course</h3>
+                    <h3 className="text-lg font-bold text-text-primary">Protected Course</h3>
                     <p className="mt-1 text-sm text-text-muted">This is a <span className="text-amber-400 font-semibold">default system course</span> and cannot be deleted. Only courses you've created can be removed.</p>
                   </div>
                 </div>
@@ -505,7 +505,7 @@ export default function CourseManagement() {
                     <AlertTriangle className="w-6 h-6 text-rose-500" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-text-inverse">Delete Course?</h3>
+                    <h3 className="text-lg font-bold text-text-primary">Delete Course?</h3>
                     <p className="mt-1 text-sm text-text-muted">This action is <span className="text-rose-400 font-semibold">permanent</span> and cannot be undone. The course will be removed immediately.</p>
                   </div>
                 </div>

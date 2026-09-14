@@ -65,7 +65,7 @@ export default function SalesManagement() {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold text-text-inverse mb-1">Sales & Enrollments</h2>
+          <h2 className="text-3xl font-bold text-text-primary mb-1">Sales & Enrollments</h2>
           <p className="text-text-muted">Track course purchases and student registrations.</p>
         </div>
         <button 
@@ -78,34 +78,34 @@ export default function SalesManagement() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-[#111827] border border-border p-6 rounded-2xl shadow-sm">
+        <div className="bg-surface dark:bg-[#111827] border border-border p-6 rounded-2xl shadow-sm">
           <p className="text-sm text-text-muted mb-1">Total Enrollments</p>
-          <h3 className="text-3xl font-bold text-text-inverse">{sales.length}</h3>
+          <h3 className="text-3xl font-bold text-text-primary">{sales.length}</h3>
         </div>
-        <div className="bg-[#111827] border border-border p-6 rounded-2xl shadow-sm">
+        <div className="bg-surface dark:bg-[#111827] border border-border p-6 rounded-2xl shadow-sm">
           <p className="text-sm text-text-muted mb-1">Gross Revenue</p>
           <h3 className="text-3xl font-bold text-primary flex items-center">
             ₹{totalRevenue.toLocaleString('en-IN')}
             <TrendingUp className="w-5 h-5 ml-2 text-primary" />
           </h3>
         </div>
-        <div className="bg-[#111827] border border-border p-6 rounded-2xl shadow-sm">
+        <div className="bg-surface dark:bg-[#111827] border border-border p-6 rounded-2xl shadow-sm">
           <p className="text-sm text-text-muted mb-1">Recent Activity</p>
-          <h3 className="text-xl font-bold text-text-inverse flex items-center h-full">
+          <h3 className="text-xl font-bold text-text-primary flex items-center h-full">
             + {sales.filter(s => new Date(s.dateRegistered) > new Date(Date.now() - 86400000)).length} today
           </h3>
         </div>
       </div>
 
       {/* Course-wise Registrations Section */}
-      <div className="bg-[#111827] border border-border p-6 rounded-2xl shadow-xl">
-        <h3 className="text-xl font-bold text-text-inverse mb-4">Course-wise Registrations</h3>
+      <div className="bg-surface dark:bg-[#111827] border border-border p-6 rounded-2xl shadow-xl">
+        <h3 className="text-xl font-bold text-text-primary mb-4">Course-wise Registrations</h3>
         {Object.keys(salesByCourse).length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {Object.keys(salesByCourse).map(courseName => (
               <div key={courseName} className="bg-[#1a2333] border border-border p-4 rounded-xl flex flex-col justify-between">
                 <div>
-                  <h4 className="font-bold text-text-inverse line-clamp-1" title={courseName}>{courseName}</h4>
+                  <h4 className="font-bold text-text-primary line-clamp-1" title={courseName}>{courseName}</h4>
                   <p className="text-sm text-text-muted mt-1">{salesByCourse[courseName].length} Student(s)</p>
                 </div>
                 <button
@@ -124,14 +124,14 @@ export default function SalesManagement() {
       </div>
 
       {/* Registered but Not Paid Section */}
-      <div className="bg-[#111827] border border-border p-6 rounded-2xl shadow-xl">
-        <h3 className="text-xl font-bold text-text-inverse mb-4">Registered but Not Paid</h3>
+      <div className="bg-surface dark:bg-[#111827] border border-border p-6 rounded-2xl shadow-xl">
+        <h3 className="text-xl font-bold text-text-primary mb-4">Registered but Not Paid</h3>
         {Object.keys(unpaidByCourse).length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {Object.keys(unpaidByCourse).map(courseName => (
               <div key={courseName} className="bg-[#1a2333] border border-border p-4 rounded-xl flex flex-col justify-between">
                 <div>
-                  <h4 className="font-bold text-text-inverse line-clamp-1" title={courseName}>{courseName}</h4>
+                  <h4 className="font-bold text-text-primary line-clamp-1" title={courseName}>{courseName}</h4>
                   <p className="text-sm text-text-muted mt-1">{unpaidByCourse[courseName].length} Student(s)</p>
                 </div>
                 <button
@@ -149,7 +149,7 @@ export default function SalesManagement() {
         )}
       </div>
 
-      <div className="bg-[#111827] border border-border rounded-2xl overflow-hidden shadow-xl">
+      <div className="bg-surface dark:bg-[#111827] border border-border rounded-2xl overflow-hidden shadow-xl">
         <div className="p-4 border-b border-border flex justify-between items-center bg-slate-900/50">
           <div className="relative w-80">
             <input 
@@ -157,7 +157,7 @@ export default function SalesManagement() {
               placeholder="Search by student or course..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-inverse focus:outline-none focus:border-primary"
+              className="w-full bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-primary focus:outline-none focus:border-primary"
             />
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
           </div>
@@ -183,7 +183,7 @@ export default function SalesManagement() {
                         <Receipt className="w-5 h-5" />
                       </div>
                       <div>
-                        <div className="font-semibold text-text-inverse line-clamp-1">{sale.courseName}</div>
+                        <div className="font-semibold text-text-primary line-clamp-1">{sale.courseName}</div>
                         <div className="text-xs text-text-muted uppercase tracking-wider">TXN-{Math.random().toString(36).substr(2, 8)}</div>
                       </div>
                     </div>

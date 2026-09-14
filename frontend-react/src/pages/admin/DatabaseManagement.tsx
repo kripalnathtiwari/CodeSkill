@@ -105,7 +105,7 @@ export default function DatabaseManagement() {
   };
 
   return (
-    <div className="p-6 bg-[#0B0F19] min-h-screen text-text-inverse font-sans">
+    <div className="p-6 bg-background dark:bg-[#0B0F19] min-h-screen text-text-primary font-sans">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-3">
@@ -152,7 +152,7 @@ export default function DatabaseManagement() {
       </div>
 
       {!selectedRecord ? (
-        <div className="bg-[#111827] rounded-xl border border-border overflow-hidden shadow-2xl">
+        <div className="bg-surface dark:bg-[#111827] rounded-xl border border-border overflow-hidden shadow-2xl">
           <div className="p-4 border-b border-border flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-900/50">
             <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 hide-scrollbar">
               {tabs.map(tab => (
@@ -246,11 +246,11 @@ export default function DatabaseManagement() {
           </div>
         </div>
       ) : (
-        <div className="bg-[#111827] rounded-xl border border-border overflow-hidden shadow-2xl p-6">
+        <div className="bg-surface dark:bg-[#111827] rounded-xl border border-border overflow-hidden shadow-2xl p-6">
           <div className="flex justify-between items-center mb-6">
             <button 
               onClick={() => setSelectedRecord(null)}
-              className="flex items-center gap-2 text-text-muted hover:text-text-inverse transition-colors"
+              className="flex items-center gap-2 text-text-muted hover:text-text-primary transition-colors"
             >
               <ArrowLeft className="w-5 h-5" /> Back to Archives
             </button>

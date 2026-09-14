@@ -67,11 +67,11 @@ export default function AdminDashboard() {
   NAV_ITEMS = NAV_ITEMS.filter(item => item.roles.includes(user?.role || "ADMIN"));
 
   return (
-    <div className="flex h-screen bg-[#0B0F19] text-text-inverse overflow-hidden font-sans pt-16">
+    <div className="flex h-screen bg-background dark:bg-[#0B0F19] text-text-primary overflow-hidden font-sans pt-16">
       
       {/* Sidebar Navigation */}
       <aside 
-        className={`${isSidebarOpen ? "w-64" : "w-20"} flex-shrink-0 bg-[#111827] border-r border-border transition-all duration-300 flex flex-col h-full`}
+        className={`${isSidebarOpen ? "w-64" : "w-20"} flex-shrink-0 bg-surface dark:bg-[#111827] border-r border-border transition-all duration-300 flex flex-col h-full`}
       >
         <div className="p-4 border-b border-border flex justify-between items-center h-16">
           {isSidebarOpen && (
@@ -82,7 +82,7 @@ export default function AdminDashboard() {
           )}
           <button 
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="p-2 text-text-muted hover:text-text-inverse transition-colors"
+            className="p-2 text-text-muted hover:text-text-primary transition-colors"
           >
             {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-6 h-6 mx-auto" />}
           </button>
@@ -119,7 +119,7 @@ export default function AdminDashboard() {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto bg-[#0B0F19] p-8 h-full">
+      <main className="flex-1 overflow-y-auto bg-background dark:bg-[#0B0F19] p-8 h-full">
         {activeTab === "dashboard" && <DashboardOverview setActiveTab={setActiveTab} />}
         {activeTab === "courses" && <CourseManagement />}
         { activeTab === "users" && <UserManagement />}

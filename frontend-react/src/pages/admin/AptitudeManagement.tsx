@@ -344,11 +344,11 @@ export default function AptitudeManagement() {
       <div className="max-w-5xl mx-auto space-y-6 animate-in fade-in duration-500">
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-2xl font-bold text-text-inverse">Review Uploaded Questions</h2>
+            <h2 className="text-2xl font-bold text-text-primary">Review Uploaded Questions</h2>
             <p className="text-text-muted text-sm">Please verify the extracted questions and select the correct option for each.</p>
           </div>
           <div className="flex space-x-3">
-            <button onClick={() => { setIsReviewingBulk(false); setPendingBulkQuestions([]); }} className="px-5 py-2.5 rounded-xl font-semibold text-text-muted hover:text-text-inverse border border-border transition-colors">
+            <button onClick={() => { setIsReviewingBulk(false); setPendingBulkQuestions([]); }} className="px-5 py-2.5 rounded-xl font-semibold text-text-muted hover:text-text-primary border border-border transition-colors">
               Discard Upload
             </button>
             <button onClick={handleSaveBulk} className="bg-primary hover:bg-primary text-text-inverse px-6 py-2.5 rounded-xl font-bold flex items-center space-x-2 shadow-lg shadow-blue-500/20">
@@ -360,9 +360,9 @@ export default function AptitudeManagement() {
 
         <div className="space-y-6">
           {pendingBulkQuestions.map((q, idx) => (
-            <div key={q._id} className="bg-[#111827] rounded-3xl p-6 border border-border shadow-xl space-y-4">
+            <div key={q._id} className="bg-surface dark:bg-[#111827] rounded-3xl p-6 border border-border shadow-xl space-y-4">
               <div className="flex justify-between items-start gap-4">
-                <h3 className="font-bold text-text-inverse text-lg leading-tight">Q{idx + 1}. {q.title}</h3>
+                <h3 className="font-bold text-text-primary text-lg leading-tight">Q{idx + 1}. {q.title}</h3>
                 <span className={`text-xs px-2 py-1 rounded font-bold whitespace-nowrap ${
                   q.difficulty === "Easy" ? "bg-primary/10 text-primary" :
                   q.difficulty === "Medium" ? "bg-amber-500/10 text-amber-400" :
@@ -380,7 +380,7 @@ export default function AptitudeManagement() {
                     className={`p-4 border-2 rounded-xl flex items-center space-x-3 cursor-pointer transition-all ${
                       q.correctOption === opt 
                         ? 'bg-primary/10 border-primary shadow-[0_0_15px_rgba(16,185,129,0.15)]' 
-                        : 'bg-[#0B0F19] border-border hover:border-slate-500 hover:bg-slate-800'
+                        : 'bg-background dark:bg-[#0B0F19] border-border hover:border-slate-500 hover:bg-slate-800'
                     }`} 
                     onClick={() => {
                       const newQs = [...pendingBulkQuestions];
@@ -418,7 +418,7 @@ export default function AptitudeManagement() {
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div>
-              <h2 className="text-2xl font-bold text-text-inverse">
+              <h2 className="text-2xl font-bold text-text-primary">
                 {isEditMode ? "Edit Aptitude Question" : "Add New Aptitude Question"}
               </h2>
               <p className="text-text-muted text-sm">
@@ -427,7 +427,7 @@ export default function AptitudeManagement() {
             </div>
           </div>
           <div className="flex space-x-3">
-            <button onClick={handleCancel} className="px-5 py-2.5 rounded-xl font-semibold text-text-muted hover:text-text-inverse border border-border hover:border-slate-500 transition-colors">
+            <button onClick={handleCancel} className="px-5 py-2.5 rounded-xl font-semibold text-text-muted hover:text-text-primary border border-border hover:border-slate-500 transition-colors">
               Cancel
             </button>
             <button onClick={handleSave} className="bg-primary hover:bg-primary text-text-inverse px-6 py-2.5 rounded-xl font-bold flex items-center space-x-2 shadow-lg shadow-blue-500/20 transition-colors">
@@ -438,13 +438,13 @@ export default function AptitudeManagement() {
         </div>
 
         {/* Main Form */}
-        <div className="bg-[#111827] rounded-3xl p-8 border border-border shadow-xl space-y-6">
+        <div className="bg-surface dark:bg-[#111827] rounded-3xl p-8 border border-border shadow-xl space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-bold text-text-muted mb-2">Question Title *</label>
               <input
                 type="text" value={title} onChange={e => setTitle(e.target.value)}
-                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+                className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary"
                 placeholder="e.g. Percentage Problem 1"
               />
             </div>
@@ -452,7 +452,7 @@ export default function AptitudeManagement() {
               <label className="block text-sm font-bold text-text-muted mb-2">Difficulty</label>
               <select
                 value={difficulty} onChange={e => setDifficulty(e.target.value)}
-                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+                className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary"
               >
                 <option value="Easy">Easy</option>
                 <option value="Medium">Medium</option>
@@ -463,7 +463,7 @@ export default function AptitudeManagement() {
               <label className="block text-sm font-bold text-text-muted mb-2">Topic</label>
               <input
                 type="text" value={topic} onChange={e => setTopic(e.target.value)}
-                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+                className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary"
                 placeholder="e.g. Percentages, Algebra"
               />
             </div>
@@ -471,7 +471,7 @@ export default function AptitudeManagement() {
               <label className="block text-sm font-bold text-text-muted mb-2">Company (Optional)</label>
               <input
                 type="text" value={company} onChange={e => setCompany(e.target.value)}
-                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+                className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary"
                 placeholder="e.g. TCS, Infosys"
               />
             </div>
@@ -482,7 +482,7 @@ export default function AptitudeManagement() {
             <textarea
               value={description} onChange={e => setDescription(e.target.value)}
               rows={4}
-              className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary text-sm resize-none"
+              className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary text-sm resize-none"
               placeholder="Write the full question statement..."
             />
           </div>
@@ -494,7 +494,7 @@ export default function AptitudeManagement() {
                 <label className="block text-xs font-bold text-text-muted mb-1.5">Option A</label>
                 <input
                   type="text" value={optionA} onChange={e => setOptionA(e.target.value)}
-                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-3 py-2.5 text-text-inverse focus:outline-none focus:border-primary text-sm"
+                  className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-3 py-2.5 text-text-primary focus:outline-none focus:border-primary text-sm"
                   placeholder="e.g. 15%"
                 />
               </div>
@@ -502,7 +502,7 @@ export default function AptitudeManagement() {
                 <label className="block text-xs font-bold text-text-muted mb-1.5">Option B</label>
                 <input
                   type="text" value={optionB} onChange={e => setOptionB(e.target.value)}
-                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-3 py-2.5 text-text-inverse focus:outline-none focus:border-primary text-sm"
+                  className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-3 py-2.5 text-text-primary focus:outline-none focus:border-primary text-sm"
                   placeholder="e.g. 20%"
                 />
               </div>
@@ -510,7 +510,7 @@ export default function AptitudeManagement() {
                 <label className="block text-xs font-bold text-text-muted mb-1.5">Option C</label>
                 <input
                   type="text" value={optionC} onChange={e => setOptionC(e.target.value)}
-                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-3 py-2.5 text-text-inverse focus:outline-none focus:border-primary text-sm"
+                  className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-3 py-2.5 text-text-primary focus:outline-none focus:border-primary text-sm"
                   placeholder="e.g. 25%"
                 />
               </div>
@@ -518,7 +518,7 @@ export default function AptitudeManagement() {
                 <label className="block text-xs font-bold text-text-muted mb-1.5">Option D</label>
                 <input
                   type="text" value={optionD} onChange={e => setOptionD(e.target.value)}
-                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-3 py-2.5 text-text-inverse focus:outline-none focus:border-primary text-sm"
+                  className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-3 py-2.5 text-text-primary focus:outline-none focus:border-primary text-sm"
                   placeholder="e.g. 30%"
                 />
               </div>
@@ -528,7 +528,7 @@ export default function AptitudeManagement() {
               <label className="block text-sm font-bold text-text-muted mb-2">Correct Option</label>
               <select
                 value={correctOption} onChange={e => setCorrectOption(e.target.value)}
-                className="w-full md:w-64 bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+                className="w-full md:w-64 bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary"
               >
                 <option value="A">Option A</option>
                 <option value="B">Option B</option>
@@ -547,7 +547,7 @@ export default function AptitudeManagement() {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold text-text-inverse mb-1">Aptitude Questions</h2>
+          <h2 className="text-3xl font-bold text-text-primary mb-1">Aptitude Questions</h2>
           <p className="text-text-muted">Manage multiple-choice aptitude and reasoning questions.</p>
         </div>
         <div className="flex space-x-3">
@@ -584,12 +584,12 @@ export default function AptitudeManagement() {
         </div>
       </div>
 
-      <div className="mb-6 flex justify-between items-center bg-[#111827] border border-border rounded-2xl p-4 shadow-xl">
+      <div className="mb-6 flex justify-between items-center bg-surface dark:bg-[#111827] border border-border rounded-2xl p-4 shadow-xl">
         <div className="relative w-80">
           <input
             type="text" placeholder="Search questions..."
             value={search} onChange={e => setSearch(e.target.value)}
-            className="w-full bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-inverse focus:outline-none focus:border-primary"
+            className="w-full bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-primary focus:outline-none focus:border-primary"
           />
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
         </div>
@@ -600,14 +600,14 @@ export default function AptitudeManagement() {
         {loading ? (
           <div className="p-8 text-center text-text-muted">Loading questions...</div>
         ) : Object.keys(groupedByTopic).length === 0 ? (
-          <div className="p-12 text-center text-text-muted bg-[#111827] border border-border rounded-2xl">
+          <div className="p-12 text-center text-text-muted bg-surface dark:bg-[#111827] border border-border rounded-2xl">
             No aptitude questions found.
           </div>
         ) : (
           Object.keys(groupedByTopic).sort().map(topicName => (
-            <div key={topicName} className="bg-[#111827] border border-border rounded-2xl overflow-hidden shadow-xl">
+            <div key={topicName} className="bg-surface dark:bg-[#111827] border border-border rounded-2xl overflow-hidden shadow-xl">
               <div className="p-4 border-b border-border flex justify-between items-center bg-slate-900/80">
-                <h3 className="text-xl font-bold text-text-inverse flex items-center gap-2">
+                <h3 className="text-xl font-bold text-text-primary flex items-center gap-2">
                   <BrainCircuit className="w-5 h-5 text-purple-500" />
                   {topicName}
                   <span className="text-xs bg-slate-800 text-text-muted px-2 py-1 rounded-full font-medium ml-2">
@@ -616,7 +616,7 @@ export default function AptitudeManagement() {
                 </h3>
                 <button
                   onClick={() => openCreate(topicName)}
-                  className="flex items-center space-x-1 bg-purple-600 hover:bg-purple-500 text-text-inverse px-3 py-1.5 rounded-lg text-sm font-bold transition-all shadow-[0_0_15px_rgba(147,51,234,0.3)]"
+                  className="flex items-center space-x-1 bg-purple-600 hover:bg-purple-500 text-text-primary px-3 py-1.5 rounded-lg text-sm font-bold transition-all shadow-[0_0_15px_rgba(147,51,234,0.3)]"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Add Question</span>
@@ -637,7 +637,7 @@ export default function AptitudeManagement() {
                   <tbody className="divide-y divide-slate-800">
                     {groupedByTopic[topicName].map((problem: any, idx: number) => (
                       <tr key={problem._id || `fallback-key-${idx}`} className="hover:bg-slate-800/30 transition-colors">
-                        <td className="px-6 py-4 font-medium text-text-inverse">
+                        <td className="px-6 py-4 font-medium text-text-primary">
                           <span className="line-clamp-1">{problem.title}</span>
                         </td>
                         <td className="px-6 py-4">
@@ -704,7 +704,7 @@ export default function AptitudeManagement() {
                 <AlertTriangle className="w-6 h-6 text-rose-500" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-text-inverse">Delete Question?</h3>
+                <h3 className="text-lg font-bold text-text-primary">Delete Question?</h3>
                 <p className="mt-1 text-sm text-text-muted">This action is <span className="text-rose-400 font-semibold">permanent</span>. The question will be removed immediately.</p>
               </div>
             </div>
@@ -723,11 +723,11 @@ export default function AptitudeManagement() {
       {showUploadModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => !isUploading && setShowUploadModal(false)} />
-          <div className="relative bg-[#111827] border border-border rounded-2xl shadow-2xl p-6 w-full max-w-lg">
-            <button onClick={() => setShowUploadModal(false)} disabled={isUploading} className="absolute top-4 right-4 p-1.5 text-text-muted hover:text-text-inverse transition-colors">
+          <div className="relative bg-surface dark:bg-[#111827] border border-border rounded-2xl shadow-2xl p-6 w-full max-w-lg">
+            <button onClick={() => setShowUploadModal(false)} disabled={isUploading} className="absolute top-4 right-4 p-1.5 text-text-muted hover:text-text-primary transition-colors">
               <X className="w-5 h-5" />
             </button>
-            <h3 className="text-xl font-bold text-text-inverse mb-2 flex items-center gap-2">
+            <h3 className="text-xl font-bold text-text-primary mb-2 flex items-center gap-2">
               <Upload className="w-5 h-5 text-primary" />
               Upload Questions
             </h3>
@@ -740,7 +740,7 @@ export default function AptitudeManagement() {
                     <FileJson className="w-5 h-5 text-amber-400" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-text-inverse">JSON / CSV Upload</h4>
+                    <h4 className="font-semibold text-text-primary">JSON / CSV Upload</h4>
                     <p className="text-xs text-text-muted mt-1 mb-3">Upload a properly formatted JSON or CSV file to instantly add questions.</p>
                     <label className="cursor-pointer inline-flex items-center px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-sm font-medium text-text-inverse transition-colors">
                       {isUploading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Upload className="w-4 h-4 mr-2" />}
@@ -757,7 +757,7 @@ export default function AptitudeManagement() {
                     <FileText className="w-5 h-5 text-rose-400" />
                   </div>
                   <div className="w-full">
-                    <h4 className="font-semibold text-text-inverse flex items-center justify-between">
+                    <h4 className="font-semibold text-text-primary flex items-center justify-between">
                       AI PDF Parsing
                       <span className="text-[10px] uppercase tracking-wider bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full font-bold">Powered by Gemini</span>
                     </h4>
@@ -773,7 +773,7 @@ export default function AptitudeManagement() {
                         value={apiKey}
                         onChange={(e) => setApiKey(e.target.value)}
                         placeholder="AIzaSy..."
-                        className="w-full bg-[#0B0F19] border border-border rounded-lg px-3 py-2 text-sm text-text-inverse focus:outline-none focus:border-primary"
+                        className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-primary"
                         disabled={isUploading}
                       />
                     </div>

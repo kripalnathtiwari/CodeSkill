@@ -371,7 +371,7 @@ export default function ProblemManagement() {
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div>
-              <h2 className="text-2xl font-bold text-text-inverse">
+              <h2 className="text-2xl font-bold text-text-primary">
                 {isEditMode ? "Edit Problem" : "Add New Problem"}
               </h2>
               <p className="text-text-muted text-sm">
@@ -380,7 +380,7 @@ export default function ProblemManagement() {
             </div>
           </div>
           <div className="flex space-x-3">
-            <button onClick={handleCancel} className="px-5 py-2.5 rounded-xl font-semibold text-text-muted hover:text-text-inverse border border-border hover:border-slate-500 transition-colors">
+            <button onClick={handleCancel} className="px-5 py-2.5 rounded-xl font-semibold text-text-muted hover:text-text-primary border border-border hover:border-slate-500 transition-colors">
               Cancel
             </button>
             <button onClick={handleSave} className="bg-primary hover:bg-primary text-text-inverse px-6 py-2.5 rounded-xl font-bold flex items-center space-x-2 shadow-lg shadow-blue-500/20 transition-colors">
@@ -391,13 +391,13 @@ export default function ProblemManagement() {
         </div>
 
         {/* Main Form */}
-        <div className="bg-[#111827] rounded-3xl p-8 border border-border shadow-xl space-y-6">
+        <div className="bg-surface dark:bg-[#111827] rounded-3xl p-8 border border-border shadow-xl space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-bold text-text-muted mb-2">Problem Title *</label>
               <input
                 type="text" value={title} onChange={e => setTitle(e.target.value)}
-                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+                className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary"
                 placeholder="e.g. Merge K Sorted Lists"
               />
             </div>
@@ -405,7 +405,7 @@ export default function ProblemManagement() {
               <label className="block text-sm font-bold text-text-muted mb-2">Difficulty</label>
               <select
                 value={difficulty} onChange={e => setDifficulty(e.target.value)}
-                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+                className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary"
               >
                 <option value="Easy">Easy</option>
                 <option value="Medium">Medium</option>
@@ -419,7 +419,7 @@ export default function ProblemManagement() {
             <textarea
               value={description} onChange={e => setDescription(e.target.value)}
               rows={6}
-              className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary font-mono text-sm resize-none"
+              className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary font-mono text-sm resize-none"
               placeholder="Write the problem statement, input/output format, constraints, and examples..."
             />
           </div>
@@ -429,7 +429,7 @@ export default function ProblemManagement() {
               <label className="block text-sm font-bold text-text-muted mb-2">Topic Tags (comma separated)</label>
               <input
                 type="text" value={topics} onChange={e => setTopics(e.target.value)}
-                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+                className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary"
                 placeholder="Array, Dynamic Programming"
               />
             </div>
@@ -437,7 +437,7 @@ export default function ProblemManagement() {
               <label className="block text-sm font-bold text-text-muted mb-2">Company Tags (comma separated)</label>
               <input
                 type="text" value={companies} onChange={e => setCompanies(e.target.value)}
-                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+                className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary"
                 placeholder="Google, Amazon, Meta"
               />
             </div>
@@ -529,7 +529,7 @@ export default function ProblemManagement() {
                   <textarea
                     value={code} onChange={e => setStarterCodes(prev => ({ ...prev, [lang]: e.target.value }))}
                     rows={5}
-                    className="w-full bg-[#0B0F19] border border-border rounded-xl px-3 py-2.5 text-text-inverse focus:outline-none focus:border-primary font-mono text-xs resize-none"
+                    className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-3 py-2.5 text-text-primary focus:outline-none focus:border-primary font-mono text-xs resize-none"
                     placeholder={`Write starter code for ${lang}...`}
                   />
                 </div>
@@ -593,7 +593,7 @@ export default function ProblemManagement() {
                           setTestCases(newTc);
                         }}
                         rows={2}
-                        className="w-full bg-[#0B0F19] border border-border rounded-lg px-3 py-2 text-text-inverse focus:outline-none focus:border-primary font-mono text-sm resize-y min-h-[60px]"
+                        className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-lg px-3 py-2 text-text-primary focus:outline-none focus:border-primary font-mono text-sm resize-y min-h-[60px]"
                         placeholder="e.g. nums = [2,7,11,15], target = 9"
                       />
                     </div>
@@ -607,7 +607,7 @@ export default function ProblemManagement() {
                           setTestCases(newTc);
                         }}
                         rows={2}
-                        className="w-full bg-[#0B0F19] border border-border rounded-lg px-3 py-2 text-text-inverse focus:outline-none focus:border-primary font-mono text-sm resize-y min-h-[60px]"
+                        className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-lg px-3 py-2 text-text-primary focus:outline-none focus:border-primary font-mono text-sm resize-y min-h-[60px]"
                         placeholder="e.g. [0,1]"
                       />
                     </div>
@@ -632,7 +632,7 @@ export default function ProblemManagement() {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold text-text-inverse mb-1">Coding Problems</h2>
+          <h2 className="text-3xl font-bold text-text-primary mb-1">Coding Problems</h2>
           <p className="text-text-muted">Manage sandbox coding challenges and their test cases.</p>
         </div>
         <div className="flex space-x-3">
@@ -657,7 +657,7 @@ export default function ProblemManagement() {
           </button>
           <button
             onClick={() => setShowGeneratorModal(true)}
-            className="flex items-center space-x-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-text-inverse px-4 py-2 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(139,92,246,0.3)]"
+            className="flex items-center space-x-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-text-primary px-4 py-2 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(139,92,246,0.3)]"
           >
             <Wand2 className="w-5 h-5" />
             <span>AI Auto-Generator</span>
@@ -672,13 +672,13 @@ export default function ProblemManagement() {
         </div>
       </div>
 
-      <div className="bg-[#111827] border border-border rounded-2xl overflow-hidden shadow-xl">
+      <div className="bg-surface dark:bg-[#111827] border border-border rounded-2xl overflow-hidden shadow-xl">
         <div className="p-4 border-b border-border flex justify-between items-center bg-slate-900/50">
           <div className="relative w-80">
             <input
               type="text" placeholder="Search problems..."
               value={search} onChange={e => setSearch(e.target.value)}
-              className="w-full bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-inverse focus:outline-none focus:border-primary"
+              className="w-full bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-primary focus:outline-none focus:border-primary"
             />
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
           </div>
@@ -701,7 +701,7 @@ export default function ProblemManagement() {
                 <tr><td colSpan={5} className="px-6 py-8 text-center text-text-muted">Loading problems...</td></tr>
               ) : filtered.map((problem, idx) => (
                 <tr key={problem._id || problem.id || `fallback-key-${idx}`} className="hover:bg-slate-800/30 transition-colors">
-                  <td className="px-6 py-4 font-medium text-text-inverse">
+                  <td className="px-6 py-4 font-medium text-text-primary">
                     <div className="flex items-center space-x-3">
                       <Code2 className="w-5 h-5 text-primary shrink-0" />
                       <span className="line-clamp-1">{problem.title}</span>
@@ -776,7 +776,7 @@ export default function ProblemManagement() {
                     <AlertTriangle className="w-6 h-6 text-amber-500" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-text-inverse">Protected Problem</h3>
+                    <h3 className="text-lg font-bold text-text-primary">Protected Problem</h3>
                     <p className="mt-1 text-sm text-text-muted">This is a <span className="text-amber-400 font-semibold">default/backend problem</span> and cannot be deleted. Only custom problems you've created can be removed.</p>
                   </div>
                 </div>
@@ -791,7 +791,7 @@ export default function ProblemManagement() {
                     <AlertTriangle className="w-6 h-6 text-rose-500" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-text-inverse">Delete Problem?</h3>
+                    <h3 className="text-lg font-bold text-text-primary">Delete Problem?</h3>
                     <p className="mt-1 text-sm text-text-muted">This action is <span className="text-rose-400 font-semibold">permanent</span>. The problem will be removed immediately.</p>
                   </div>
                 </div>
@@ -811,18 +811,18 @@ export default function ProblemManagement() {
       {/* Upload Questions Modal */}
       {showUploadModal && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-[#111827] border border-border rounded-3xl w-full max-w-md shadow-2xl overflow-hidden relative">
+          <div className="bg-surface dark:bg-[#111827] border border-border rounded-3xl w-full max-w-md shadow-2xl overflow-hidden relative">
             <div className="p-6 border-b border-border flex justify-between items-center bg-gradient-to-r from-blue-900/20 to-sky-900/20">
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-sky-600 flex items-center justify-center shadow-lg">
-                  <Upload className="w-5 h-5 text-text-inverse" />
+                  <Upload className="w-5 h-5 text-text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-text-inverse">Upload Questions</h3>
+                  <h3 className="text-xl font-bold text-text-primary">Upload Questions</h3>
                   <p className="text-xs text-blue-300">Import PDF or JSON file</p>
                 </div>
               </div>
-              <button onClick={() => setShowUploadModal(false)} disabled={isUploading} className="text-text-muted hover:text-text-inverse transition-colors">
+              <button onClick={() => setShowUploadModal(false)} disabled={isUploading} className="text-text-muted hover:text-text-primary transition-colors">
                 <X className="w-6 h-6" />
               </button>
             </div>
@@ -830,7 +830,7 @@ export default function ProblemManagement() {
             <div className="p-6 space-y-5">
                <div>
                 <label className="block text-sm font-bold text-text-muted mb-2">Gemini API Key (Required for PDF)</label>
-                <input type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary" placeholder="AIzaSy..." disabled={isUploading} />
+                <input type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary" placeholder="AIzaSy..." disabled={isUploading} />
               </div>
               <div className="border-2 border-dashed border-border hover:border-primary transition-colors rounded-2xl p-8 flex flex-col items-center justify-center text-center group cursor-pointer relative overflow-hidden">
                 <input 
@@ -852,7 +852,7 @@ export default function ProblemManagement() {
                       <FileJson className="w-10 h-10 text-amber-500 group-hover:scale-110 transition-transform" />
                       <FileText className="w-10 h-10 text-rose-500 group-hover:scale-110 transition-transform" />
                     </div>
-                    <h4 className="text-text-inverse font-bold mb-1">Click or drag file to upload</h4>
+                    <h4 className="text-text-primary font-bold mb-1">Click or drag file to upload</h4>
                     <p className="text-xs text-text-muted max-w-[200px]">Supports structured JSON files or unstructured PDF documents</p>
                   </>
                 )}
@@ -865,30 +865,30 @@ export default function ProblemManagement() {
       {/* AI Generator Modal */}
       {showGeneratorModal && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-[#111827] border border-border rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden">
+          <div className="bg-surface dark:bg-[#111827] border border-border rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden">
             <div className="p-6 border-b border-border flex justify-between items-center bg-gradient-to-r from-indigo-900/20 to-purple-900/20">
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
-                  <Wand2 className="w-5 h-5 text-text-inverse" />
+                  <Wand2 className="w-5 h-5 text-text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-text-inverse">AI Problem Generator</h3>
+                  <h3 className="text-xl font-bold text-text-primary">AI Problem Generator</h3>
                   <p className="text-xs text-indigo-300">Generate 100s of problems instantly</p>
                 </div>
               </div>
-              <button onClick={() => setShowGeneratorModal(false)} className="text-text-muted hover:text-text-inverse transition-colors">
+              <button onClick={() => setShowGeneratorModal(false)} className="text-text-muted hover:text-text-primary transition-colors">
                 <X className="w-6 h-6" />
               </button>
             </div>
             <div className="p-6 space-y-5">
               <div>
                 <label className="block text-sm font-bold text-text-muted mb-2">Topic</label>
-                <input type="text" value={genTopic} onChange={e => setGenTopic(e.target.value)} className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500" placeholder="e.g. Arrays, Dynamic Programming" />
+                <input type="text" value={genTopic} onChange={e => setGenTopic(e.target.value)} className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-indigo-500" placeholder="e.g. Arrays, Dynamic Programming" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-bold text-text-muted mb-2">Difficulty</label>
-                  <select value={genDifficulty} onChange={e => setGenDifficulty(e.target.value)} className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500">
+                  <select value={genDifficulty} onChange={e => setGenDifficulty(e.target.value)} className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-indigo-500">
                     <option value="Easy">Easy</option>
                     <option value="Medium">Medium</option>
                     <option value="Hard">Hard</option>
@@ -896,18 +896,18 @@ export default function ProblemManagement() {
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-text-muted mb-2">Count</label>
-                  <input type="number" min="1" max="100" value={genCount} onChange={e => setGenCount(e.target.value)} className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500" />
+                  <input type="number" min="1" max="100" value={genCount} onChange={e => setGenCount(e.target.value)} className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-indigo-500" />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-bold text-text-muted mb-2">Gemini API Key</label>
-                <input type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500" placeholder="AIzaSy..." />
+                <input type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-indigo-500" placeholder="AIzaSy..." />
                 <p className="text-xs text-text-muted mt-2">Your API key is used only locally in your browser.</p>
               </div>
             </div>
-            <div className="p-6 border-t border-border bg-[#0B0F19]/50 flex justify-end space-x-3">
-              <button onClick={() => setShowGeneratorModal(false)} disabled={isGenerating} className="px-5 py-2.5 rounded-xl font-bold text-text-muted hover:text-text-inverse transition-colors">Cancel</button>
-              <button onClick={handleGenerate} disabled={isGenerating} className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-text-inverse px-6 py-2.5 rounded-xl font-bold flex items-center shadow-lg shadow-indigo-500/20 disabled:opacity-50 transition-all">
+            <div className="p-6 border-t border-border bg-background dark:bg-[#0B0F19]/50 flex justify-end space-x-3">
+              <button onClick={() => setShowGeneratorModal(false)} disabled={isGenerating} className="px-5 py-2.5 rounded-xl font-bold text-text-muted hover:text-text-primary transition-colors">Cancel</button>
+              <button onClick={handleGenerate} disabled={isGenerating} className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-text-primary px-6 py-2.5 rounded-xl font-bold flex items-center shadow-lg shadow-indigo-500/20 disabled:opacity-50 transition-all">
                 {isGenerating ? <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Generating...</> : <><Wand2 className="w-5 h-5 mr-2" /> Generate Now</>}
               </button>
             </div>

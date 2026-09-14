@@ -386,7 +386,7 @@ export default function CollegeManagement() {
     <div className="space-y-8">
       {selectedCollege ? (
         <>
-          <div className="flex justify-between items-center bg-[#111827] p-6 rounded-3xl border border-border shadow-xl">
+          <div className="flex justify-between items-center bg-surface dark:bg-[#111827] p-6 rounded-3xl border border-border shadow-xl">
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => { setSelectedCollegeId(null); resetTutorForm(); setCollegeTab("tutors"); }}
@@ -395,7 +395,7 @@ export default function CollegeManagement() {
                 <ArrowLeft className="w-5 h-5" />
               </button>
               <div>
-                <h2 className="text-2xl font-bold text-text-inverse flex items-center">
+                <h2 className="text-2xl font-bold text-text-primary flex items-center">
                   <Building2 className="w-6 h-6 mr-3 text-primary" />
                   {selectedCollege.name}
                 </h2>
@@ -459,13 +459,13 @@ export default function CollegeManagement() {
           )}
 
           {collegeTab === "collections" && (
-            <div className="bg-[#111827] rounded-3xl p-6 border border-border shadow-xl">
+            <div className="bg-surface dark:bg-[#111827] rounded-3xl p-6 border border-border shadow-xl">
               <CollegeCollection targetCollegeName={selectedCollege.name} targetCollegeEmail={selectedCollege.adminEmail} />
             </div>
           )}
 
           {collegeTab === "courseCategories" && (
-            <div className="bg-[#111827] rounded-3xl p-6 border border-border shadow-xl">
+            <div className="bg-surface dark:bg-[#111827] rounded-3xl p-6 border border-border shadow-xl">
               <CourseCategorySection
                 collegeName={selectedCollege.name}
                 collegeEmail={selectedCollege.adminEmail}
@@ -475,13 +475,13 @@ export default function CollegeManagement() {
           )}
 
           {collegeTab === "tutors" && (isCreatingTutor ? (
-            <div className="bg-[#111827] rounded-3xl p-8 border border-border shadow-xl max-w-4xl mx-auto">
+            <div className="bg-surface dark:bg-[#111827] rounded-3xl p-8 border border-border shadow-xl max-w-4xl mx-auto">
               <div className="flex justify-between items-center mb-6 pb-6 border-b border-border">
-                <h3 className="text-xl font-bold text-text-inverse flex items-center">
+                <h3 className="text-xl font-bold text-text-primary flex items-center">
                   <User className="w-6 h-6 mr-3 text-primary" />
                   {editingTutorId ? "Edit Instructor Details" : "Add New Instructor"}
                 </h3>
-                <button onClick={resetTutorForm} className="text-text-muted hover:text-text-inverse transition-colors p-2">
+                <button onClick={resetTutorForm} className="text-text-muted hover:text-text-primary transition-colors p-2">
                   <X className="w-6 h-6" />
                 </button>
               </div>
@@ -492,7 +492,7 @@ export default function CollegeManagement() {
                   <input
                     type="text" value={tutorName} onChange={e => setTutorName(e.target.value)}
                     placeholder="e.g. Rahul Sharma"
-                    className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+                    className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -500,14 +500,14 @@ export default function CollegeManagement() {
                   <input
                     type="text" value={domain} onChange={e => setDomain(e.target.value)}
                     placeholder="e.g. Full Stack MERN"
-                    className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+                    className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary"
                   />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-sm font-bold text-text-muted">Joining Date</label>
                   <input
                     type="date" value={joiningDate} onChange={e => setJoiningDate(e.target.value)}
-                    className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary [color-scheme:dark]"
+                    className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary [color-scheme:dark]"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -515,21 +515,21 @@ export default function CollegeManagement() {
                   <input
                     type="tel" value={tutorPhone} onChange={e => setTutorPhone(e.target.value)}
                     placeholder="e.g. +91 98765 43210"
-                    className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+                    className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary"
                   />
                 </div>
                 <div>
                   <label className="text-xs font-bold text-text-muted block mb-1">Email Address</label>
-                  <input type="email" value={tutorEmail} onChange={e => setTutorEmail(e.target.value)} placeholder="Email" className="w-full bg-[#1a2333] border border-border rounded-xl px-4 py-2 text-sm text-text-inverse focus:outline-none focus:border-primary" />
+                  <input type="email" value={tutorEmail} onChange={e => setTutorEmail(e.target.value)} placeholder="Email" className="w-full bg-[#1a2333] border border-border rounded-xl px-4 py-2 text-sm text-text-primary focus:outline-none focus:border-primary" />
                 </div>
                 <div>
                   <label className="text-xs font-bold text-text-muted block mb-1">Section</label>
-                  <input type="text" value={tutorSection} onChange={e => setTutorSection(e.target.value)} placeholder="e.g. Section A" className="w-full bg-[#1a2333] border border-border rounded-xl px-4 py-2 text-sm text-text-inverse focus:outline-none focus:border-primary" />
+                  <input type="text" value={tutorSection} onChange={e => setTutorSection(e.target.value)} placeholder="e.g. Section A" className="w-full bg-[#1a2333] border border-border rounded-xl px-4 py-2 text-sm text-text-primary focus:outline-none focus:border-primary" />
                 </div>
               </div>
 
               <div className="mt-8 flex justify-end space-x-3">
-                <button onClick={resetTutorForm} className="px-6 py-2.5 rounded-xl font-bold text-text-muted hover:text-text-inverse transition-colors border border-border">
+                <button onClick={resetTutorForm} className="px-6 py-2.5 rounded-xl font-bold text-text-muted hover:text-text-primary transition-colors border border-border">
                   Cancel
                 </button>
                 <button onClick={handleSaveTutor} className="bg-primary hover:bg-primary text-text-inverse px-8 py-2.5 rounded-xl font-bold flex items-center shadow-lg transition-colors">
@@ -547,18 +547,18 @@ export default function CollegeManagement() {
                   value={tutorSearch}
                   onChange={e => setTutorSearch(e.target.value)}
                   placeholder="Search instructors by name, domain, email, phone, or ID..."
-                  className="w-full bg-[#111827] border border-border rounded-xl pl-12 pr-4 py-3 text-text-inverse focus:outline-none focus:border-primary shadow-sm"
+                  className="w-full bg-surface dark:bg-[#111827] border border-border rounded-xl pl-12 pr-4 py-3 text-text-primary focus:outline-none focus:border-primary shadow-sm"
                 />
               </div>
               <div className="flex flex-col space-y-4">
                 {filteredTutors.length === 0 ? (
-                  <div className="bg-[#111827] rounded-3xl border border-border p-16 text-center text-text-muted">
+                  <div className="bg-surface dark:bg-[#111827] rounded-3xl border border-border p-16 text-center text-text-muted">
                     <User className="w-16 h-16 mx-auto mb-4 opacity-20" />
                     <p>{tutorSearch ? "No tutors found matching your search." : "No tutors have been dispatched to this college yet."}</p>
                   </div>
                 ) : (
                   filteredTutors.map(tutor => (
-                    <div key={tutor.id} className="bg-[#111827] rounded-2xl p-5 border border-border flex flex-col md:flex-row md:items-center justify-between shadow-lg relative group transition-all hover:border-primary/30 gap-4">
+                    <div key={tutor.id} className="bg-surface dark:bg-[#111827] rounded-2xl p-5 border border-border flex flex-col md:flex-row md:items-center justify-between shadow-lg relative group transition-all hover:border-primary/30 gap-4">
 
                       {/* Left section: Icon + Name + Domain + Section */}
                       <div className="flex items-center space-x-4 min-w-[250px]">
@@ -566,7 +566,7 @@ export default function CollegeManagement() {
                           <User className="w-6 h-6 text-primary" />
                         </div>
                         <div>
-                          <h3 className="text-lg font-bold text-text-inverse flex items-center">
+                          <h3 className="text-lg font-bold text-text-primary flex items-center">
                             {tutor.name}
                             {tutor.section && (
                               <span className="ml-2 text-[10px] bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full uppercase tracking-wider">
@@ -619,7 +619,7 @@ export default function CollegeManagement() {
         <>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h2 className="text-2xl font-bold text-text-inverse">Partner Colleges</h2>
+              <h2 className="text-2xl font-bold text-text-primary">Partner Colleges</h2>
               <p className="text-text-muted">Manage colleges and the tutors dispatched to them.</p>
             </div>
 
@@ -639,16 +639,16 @@ export default function CollegeManagement() {
           </div>
 
           {isCreatingCollege && (
-            <div className="bg-[#111827] rounded-3xl p-6 border border-border shadow-xl flex items-center space-x-4 max-w-2xl">
+            <div className="bg-surface dark:bg-[#111827] rounded-3xl p-6 border border-border shadow-xl flex items-center space-x-4 max-w-2xl">
               <input
                 type="text"
                 value={collegeNameInput}
                 onChange={e => setCollegeNameInput(e.target.value)}
                 placeholder="Enter College Name..."
-                className="flex-1 bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+                className="flex-1 bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary"
                 autoFocus
               />
-              <button onClick={() => { setIsCreatingCollege(false); setCollegeNameInput(""); setEditingCollegeId(null); }} className="p-3 text-text-muted hover:text-text-inverse transition-colors">
+              <button onClick={() => { setIsCreatingCollege(false); setCollegeNameInput(""); setEditingCollegeId(null); }} className="p-3 text-text-muted hover:text-text-primary transition-colors">
                 <X className="w-6 h-6" />
               </button>
               <button onClick={handleSaveCollege} className="bg-primary hover:bg-primary text-text-inverse px-6 py-3 rounded-xl font-bold shadow-lg transition-colors">
@@ -659,7 +659,7 @@ export default function CollegeManagement() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {filteredColleges.length === 0 ? (
-              <div className="col-span-full bg-[#111827] rounded-3xl border border-border p-16 text-center text-text-muted">
+              <div className="col-span-full bg-surface dark:bg-[#111827] rounded-3xl border border-border p-16 text-center text-text-muted">
                 <Building2 className="w-16 h-16 mx-auto mb-4 opacity-20" />
                 <p>{collegeSearch ? "No colleges found matching your search." : "No colleges found. Click \"Add College\" to create your first partner."}</p>
               </div>
@@ -673,14 +673,14 @@ export default function CollegeManagement() {
                   : [];
 
                 return (
-                  <div key={college.id} className="bg-[#111827] rounded-2xl p-5 border border-border shadow-lg flex flex-col justify-between group hover:border-primary/30 transition-all">
+                  <div key={college.id} className="bg-surface dark:bg-[#111827] rounded-2xl p-5 border border-border shadow-lg flex flex-col justify-between group hover:border-primary/30 transition-all">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4 flex-1 cursor-pointer" onClick={() => setSelectedCollegeId(college.id)}>
                         <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
                           <Building2 className="w-6 h-6 text-indigo-400" />
                         </div>
                         <div>
-                          <h3 className="font-bold text-text-inverse text-lg group-hover:text-primary transition-colors">{college.name}</h3>
+                          <h3 className="font-bold text-text-primary text-lg group-hover:text-primary transition-colors">{college.name}</h3>
                           <p className="text-sm text-text-muted">{college.tutors.length} Tutor{college.tutors.length !== 1 && 's'} Dispatched</p>
                         </div>
                       </div>
@@ -1474,13 +1474,13 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
   return (
     <div className="space-y-6">
       {/* Test Results Top Navigation & Action Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#111827] p-4 rounded-2xl border border-border shadow-lg">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface dark:bg-[#111827] p-4 rounded-2xl border border-border shadow-lg">
         {/* Sub-tabs: Category Wise & All Record */}
         <div className="flex items-center space-x-3">
           <button
             onClick={() => setResultsSubTab("categoryWise")}
             className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${resultsSubTab === "categoryWise"
-                ? "bg-purple-600 text-text-inverse shadow-md shadow-purple-600/30"
+                ? "bg-purple-600 text-text-primary shadow-md shadow-purple-600/30"
                 : "bg-slate-800/80 hover:bg-slate-800 text-text-secondary hover:text-text-inverse"
               }`}
           >
@@ -1494,7 +1494,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
           <button
             onClick={() => setResultsSubTab("allRecord")}
             className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${resultsSubTab === "allRecord"
-                ? "bg-purple-600 text-text-inverse shadow-md shadow-purple-600/30"
+                ? "bg-purple-600 text-text-primary shadow-md shadow-purple-600/30"
                 : "bg-slate-800/80 hover:bg-slate-800 text-text-secondary hover:text-text-inverse"
               }`}
           >
@@ -1522,7 +1522,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
         /* Category Wise View */
         <div className="space-y-6">
           {Object.entries(categoryTree).length === 0 ? (
-            <div className="bg-[#111827] rounded-3xl border border-border p-12 text-center text-text-muted">
+            <div className="bg-surface dark:bg-[#111827] rounded-3xl border border-border p-12 text-center text-text-muted">
               <BookOpen className="w-16 h-16 mx-auto mb-4 opacity-20" />
               <h3 className="text-xl font-bold text-text-muted mb-2">No Course Categories Found</h3>
               <p>Create Course Categories and Sections first, or assign tests to students.</p>
@@ -1534,7 +1534,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
               const isExpanded = expandedCategories[categoryName] === true; // Minimized by default
 
               return (
-                <div key={categoryName} className="bg-[#111827] rounded-3xl border border-border shadow-xl overflow-hidden transition-all">
+                <div key={categoryName} className="bg-surface dark:bg-[#111827] rounded-3xl border border-border shadow-xl overflow-hidden transition-all">
                   {/* Category Header */}
                   <div
                     onClick={() => toggleCategoryExpand(categoryName)}
@@ -1625,7 +1625,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                                       <span className="text-xs uppercase tracking-wider font-bold bg-purple-500/20 text-purple-300 px-2.5 py-0.5 rounded-full border border-purple-500/30">
                                         Assigned Section
                                       </span>
-                                      <h4 className="text-lg font-bold text-text-inverse">{sectionName}</h4>
+                                      <h4 className="text-lg font-bold text-text-primary">{sectionName}</h4>
                                     </div>
                                     <p className="text-xs text-text-muted mt-1 font-medium">
                                       {uniqueSectionStudents.size} Students â€¢ {sectionScores.length} Test Records
@@ -1674,7 +1674,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
           )}
         </div>
       ) : masterStudentList.length === 0 ? (
-        <div className="bg-[#111827] rounded-3xl border border-border shadow-xl overflow-hidden p-12 text-center text-text-muted">
+        <div className="bg-surface dark:bg-[#111827] rounded-3xl border border-border shadow-xl overflow-hidden p-12 text-center text-text-muted">
           <User className="w-16 h-16 mx-auto mb-4 opacity-20" />
           <h3 className="text-xl font-bold text-text-muted mb-2">No Student Records Found</h3>
           <p className="mb-6">Students added in Course Categories or who complete tests will appear here with their DSA & Aptitude solved stats.</p>
@@ -1688,10 +1688,10 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
         </div>
       ) : (
         /* All Record View */
-        <div className="bg-[#111827] rounded-3xl border border-border shadow-xl overflow-hidden p-6 space-y-6">
+        <div className="bg-surface dark:bg-[#111827] rounded-3xl border border-border shadow-xl overflow-hidden p-6 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h3 className="text-xl font-bold text-text-inverse flex items-center">
+              <h3 className="text-xl font-bold text-text-primary flex items-center">
                 <User className="w-5 h-5 mr-2 text-purple-400" />
                 All College Student Records ({masterStudentList.length})
               </h3>
@@ -1707,7 +1707,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                   placeholder="Search student, reg no, email, course..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-slate-900 border border-border rounded-xl pl-9 pr-4 py-2 text-sm text-text-inverse placeholder-slate-500 focus:outline-none focus:border-purple-500"
+                  className="w-full bg-slate-900 border border-border rounded-xl pl-9 pr-4 py-2 text-sm text-text-primary placeholder-slate-500 focus:outline-none focus:border-purple-500"
                 />
               </div>
               <button
@@ -1720,7 +1720,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
               {masterStudentList.length > 0 && (
                 <button
                   onClick={() => generateAllStudentRecordsCSV(filteredMasterStudents)}
-                  className="flex items-center space-x-2 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-text-inverse font-bold rounded-xl text-sm transition-all shadow-lg"
+                  className="flex items-center space-x-2 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-text-primary font-bold rounded-xl text-sm transition-all shadow-lg"
                 >
                   <Download className="w-4 h-4" />
                   <span>Download Records (CSV)</span>
@@ -1745,7 +1745,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
               <tbody className="divide-y divide-slate-800/60 text-sm">
                 {filteredMasterStudents.map((s, idx) => (
                   <tr key={idx} className="hover:bg-slate-800/40 transition-colors">
-                    <td className="py-4 pr-4 font-bold text-text-inverse">{s.name || "N/A"}</td>
+                    <td className="py-4 pr-4 font-bold text-text-primary">{s.name || "N/A"}</td>
                     <td className="py-4 px-4 text-text-secondary font-mono">{s.regNum || "N/A"}</td>
                     <td className="py-4 px-4 text-text-muted">{s.email || "unknown"}</td>
                     <td className="py-4 px-4">
@@ -1798,14 +1798,14 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
       {/* Edit Stats Modal */}
       {editingStudentStats && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="bg-[#111827] border border-border rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-6">
+          <div className="bg-surface dark:bg-[#111827] border border-border rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-6">
             <div className="flex items-center justify-between border-b border-border pb-4">
-              <h3 className="text-lg font-bold text-text-inverse">
+              <h3 className="text-lg font-bold text-text-primary">
                 Edit Question Records - <span className="text-purple-400">{editingStudentStats.name}</span>
               </h3>
               <button
                 onClick={() => setEditingStudentStats(null)}
-                className="text-text-muted hover:text-text-inverse p-1"
+                className="text-text-muted hover:text-text-primary p-1"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1826,7 +1826,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                           dsaAttempted: Number(e.target.value),
                         })
                       }
-                      className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-inverse"
+                      className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                     />
                   </div>
                   <div>
@@ -1841,7 +1841,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                           dsaCorrect: Number(e.target.value),
                         })
                       }
-                      className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-inverse"
+                      className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                     />
                   </div>
                   <div>
@@ -1856,7 +1856,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                           dsaWrong: Number(e.target.value),
                         })
                       }
-                      className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-inverse"
+                      className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                     />
                   </div>
                 </div>
@@ -1877,7 +1877,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                           aptAttempted: Number(e.target.value),
                         })
                       }
-                      className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-inverse"
+                      className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                     />
                   </div>
                   <div>
@@ -1892,7 +1892,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                           aptCorrect: Number(e.target.value),
                         })
                       }
-                      className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-inverse"
+                      className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                     />
                   </div>
                   <div>
@@ -1907,7 +1907,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                           aptWrong: Number(e.target.value),
                         })
                       }
-                      className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-inverse"
+                      className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                     />
                   </div>
                 </div>
@@ -1922,7 +1922,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
               </button>
               <button
                 onClick={() => handleSaveStudentStats(editingStudentStats)}
-                className="px-6 py-2 bg-purple-600 hover:bg-purple-500 text-text-inverse rounded-xl text-sm font-bold shadow-lg"
+                className="px-6 py-2 bg-purple-600 hover:bg-purple-500 text-text-primary rounded-xl text-sm font-bold shadow-lg"
               >
                 Save Record
               </button>
@@ -1936,17 +1936,17 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
           <form
             onSubmit={handleAddNewStudent}
-            className="bg-[#111827] border border-border rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto"
+            className="bg-surface dark:bg-[#111827] border border-border rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto"
           >
             <div className="flex items-center justify-between border-b border-border pb-4">
-              <h3 className="text-lg font-bold text-text-inverse flex items-center">
+              <h3 className="text-lg font-bold text-text-primary flex items-center">
                 <Plus className="w-5 h-5 mr-2 text-primary" />
                 Add Student & Solved Record
               </h3>
               <button
                 type="button"
                 onClick={() => setIsAddStudentModalOpen(false)}
-                className="text-text-muted hover:text-text-inverse p-1"
+                className="text-text-muted hover:text-text-primary p-1"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1961,7 +1961,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                   placeholder="e.g. Rahul Sharma"
                   value={newStudentForm.name}
                   onChange={(e) => setNewStudentForm({ ...newStudentForm, name: e.target.value })}
-                  className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-inverse"
+                  className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                 />
               </div>
               <div>
@@ -1971,7 +1971,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                   placeholder="e.g. REG-10492"
                   value={newStudentForm.regNum}
                   onChange={(e) => setNewStudentForm({ ...newStudentForm, regNum: e.target.value })}
-                  className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-inverse font-mono"
+                  className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary font-mono"
                 />
               </div>
               <div className="sm:col-span-2">
@@ -1982,7 +1982,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                   placeholder="e.g. rahul@example.com"
                   value={newStudentForm.email}
                   onChange={(e) => setNewStudentForm({ ...newStudentForm, email: e.target.value })}
-                  className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-inverse"
+                  className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                 />
               </div>
               <div>
@@ -1992,7 +1992,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                   placeholder="e.g. B.Tech / MCA"
                   value={newStudentForm.courseName}
                   onChange={(e) => setNewStudentForm({ ...newStudentForm, courseName: e.target.value })}
-                  className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-inverse"
+                  className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                 />
               </div>
               <div>
@@ -2002,7 +2002,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                   placeholder="e.g. Section A"
                   value={newStudentForm.sectionName}
                   onChange={(e) => setNewStudentForm({ ...newStudentForm, sectionName: e.target.value })}
-                  className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-inverse"
+                  className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                 />
               </div>
             </div>
@@ -2019,7 +2019,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                     onChange={(e) =>
                       setNewStudentForm({ ...newStudentForm, dsaAttempted: Number(e.target.value) })
                     }
-                    className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-inverse"
+                    className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                   />
                 </div>
                 <div>
@@ -2031,7 +2031,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                     onChange={(e) =>
                       setNewStudentForm({ ...newStudentForm, dsaCorrect: Number(e.target.value) })
                     }
-                    className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-inverse"
+                    className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                   />
                 </div>
                 <div>
@@ -2043,7 +2043,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                     onChange={(e) =>
                       setNewStudentForm({ ...newStudentForm, dsaWrong: Number(e.target.value) })
                     }
-                    className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-inverse"
+                    className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                   />
                 </div>
               </div>
@@ -2061,7 +2061,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                     onChange={(e) =>
                       setNewStudentForm({ ...newStudentForm, aptAttempted: Number(e.target.value) })
                     }
-                    className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-inverse"
+                    className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                   />
                 </div>
                 <div>
@@ -2073,7 +2073,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                     onChange={(e) =>
                       setNewStudentForm({ ...newStudentForm, aptCorrect: Number(e.target.value) })
                     }
-                    className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-inverse"
+                    className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                   />
                 </div>
                 <div>
@@ -2085,7 +2085,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                     onChange={(e) =>
                       setNewStudentForm({ ...newStudentForm, aptWrong: Number(e.target.value) })
                     }
-                    className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-inverse"
+                    className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
                   />
                 </div>
               </div>

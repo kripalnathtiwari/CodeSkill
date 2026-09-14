@@ -300,16 +300,16 @@ export default function OtherPracticeManagement() {
 
   if (isManagingSubjects) {
     return (
-      <div className="bg-[#111827] rounded-3xl border border-border p-8 animate-in fade-in zoom-in-95 duration-300">
+      <div className="bg-surface dark:bg-[#111827] rounded-3xl border border-border p-8 animate-in fade-in zoom-in-95 duration-300">
         <div className="flex items-center justify-between mb-8">
           <button 
             onClick={() => setIsManagingSubjects(false)}
-            className="flex items-center gap-2 text-text-muted hover:text-text-inverse transition-colors"
+            className="flex items-center gap-2 text-text-muted hover:text-text-primary transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
             <span>Back to List</span>
           </button>
-          <h2 className="text-2xl font-bold text-text-inverse">Manage Subjects</h2>
+          <h2 className="text-2xl font-bold text-text-primary">Manage Subjects</h2>
           <div className="w-24"></div>
         </div>
 
@@ -317,7 +317,7 @@ export default function OtherPracticeManagement() {
           <div className="flex gap-4">
             <input 
               value={newSubject} onChange={e => setNewSubject(e.target.value)}
-              className="flex-1 bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-rose-500 transition-colors"
+              className="flex-1 bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-rose-500 transition-colors"
               placeholder="New Subject Name"
             />
             <button 
@@ -335,14 +335,14 @@ export default function OtherPracticeManagement() {
               Add
             </button>
           </div>
-          <div className="bg-[#0B0F19] rounded-xl border border-border divide-y divide-border overflow-hidden">
+          <div className="bg-background dark:bg-[#0B0F19] rounded-xl border border-border divide-y divide-border overflow-hidden">
             {!(subjects && Array.isArray(subjects)) || subjects.length === 0 ? (
               <div className="p-8 text-center text-text-muted">No subjects added yet.</div>
             ) : (
               subjects.map(s => (
                 <div key={s} className="flex justify-between items-center p-4 hover:bg-slate-800/30 transition-colors">
                   <div className="flex flex-col gap-1">
-                     <span className="text-text-inverse font-medium">{String(s)}</span>
+                     <span className="text-text-primary font-medium">{String(s)}</span>
                      {subjectNotes[String(s)] && (
                        <span className="text-xs text-green-500 flex items-center gap-1">
                          <FileText className="w-3 h-3" /> PDF Attached
@@ -391,13 +391,13 @@ export default function OtherPracticeManagement() {
 
   if (isCreating) {
     return (
-      <div className="bg-[#111827] rounded-3xl border border-border p-8 animate-in fade-in zoom-in-95 duration-300">
+      <div className="bg-surface dark:bg-[#111827] rounded-3xl border border-border p-8 animate-in fade-in zoom-in-95 duration-300">
         <div className="flex items-center justify-between mb-8">
-          <button onClick={resetForm} className="flex items-center gap-2 text-text-muted hover:text-text-inverse transition-colors">
+          <button onClick={resetForm} className="flex items-center gap-2 text-text-muted hover:text-text-primary transition-colors">
             <ArrowLeft className="w-5 h-5" />
             <span>Back to List</span>
           </button>
-          <h2 className="text-2xl font-bold text-text-inverse">Create New Test</h2>
+          <h2 className="text-2xl font-bold text-text-primary">Create New Test</h2>
           <button 
             onClick={handleSave}
             className="flex items-center gap-2 px-6 py-2.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(244,63,94,0.3)] hover:shadow-[0_0_25px_rgba(244,63,94,0.5)]"
@@ -408,14 +408,14 @@ export default function OtherPracticeManagement() {
         </div>
 
         <div className="space-y-6">
-          <div className="bg-[#0B0F19] p-6 rounded-2xl border border-border space-y-6">
-            <h3 className="text-xl font-bold text-text-inverse">Test Details</h3>
+          <div className="bg-background dark:bg-[#0B0F19] p-6 rounded-2xl border border-border space-y-6">
+            <h3 className="text-xl font-bold text-text-primary">Test Details</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <label className="block text-sm font-bold text-text-muted mb-2">Test Title</label>
                 <input 
                   type="text" value={title} onChange={e => setTitle(e.target.value)}
-                  className="w-full bg-[#111827] border border-border rounded-xl px-4 py-3 text-text-inverse focus:border-rose-500 transition-colors focus:outline-none"
+                  className="w-full bg-surface dark:bg-[#111827] border border-border rounded-xl px-4 py-3 text-text-primary focus:border-rose-500 transition-colors focus:outline-none"
                   placeholder="e.g. Arrays & Strings Test"
                 />
               </div>
@@ -423,7 +423,7 @@ export default function OtherPracticeManagement() {
                 <label className="block text-sm font-bold text-text-muted mb-2">Subject</label>
                 <select 
                   value={subject} onChange={e => setSubject(e.target.value)}
-                  className="w-full bg-[#111827] border border-border rounded-xl px-4 py-3 text-text-inverse focus:border-rose-500 transition-colors focus:outline-none"
+                  className="w-full bg-surface dark:bg-[#111827] border border-border rounded-xl px-4 py-3 text-text-primary focus:border-rose-500 transition-colors focus:outline-none"
                 >
                   <option value="">Select Subject</option>
                   {subjects.map(s => <option key={s} value={s}>{s}</option>)}
@@ -433,7 +433,7 @@ export default function OtherPracticeManagement() {
                 <label className="block text-sm font-bold text-text-muted mb-2">Duration</label>
                 <select 
                   value={duration} onChange={e => setDuration(e.target.value)}
-                  className="w-full bg-[#111827] border border-border rounded-xl px-4 py-3 text-text-inverse focus:border-rose-500 transition-colors focus:outline-none"
+                  className="w-full bg-surface dark:bg-[#111827] border border-border rounded-xl px-4 py-3 text-text-primary focus:border-rose-500 transition-colors focus:outline-none"
                 >
                   <option>15 Mins</option>
                   <option>30 Mins</option>
@@ -445,10 +445,10 @@ export default function OtherPracticeManagement() {
             </div>
           </div>
 
-          <div className="bg-[#0B0F19] p-6 rounded-2xl border border-border space-y-6">
+          <div className="bg-background dark:bg-[#0B0F19] p-6 rounded-2xl border border-border space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-xl font-bold text-text-inverse">Questions</h3>
+                <h3 className="text-xl font-bold text-text-primary">Questions</h3>
                 <p className="text-text-muted mt-1">Add questions manually or auto-fill via PDF.</p>
               </div>
               <div className="flex items-center space-x-3">
@@ -478,7 +478,7 @@ export default function OtherPracticeManagement() {
 
             <div className="space-y-6">
               {questions.map((q, qIndex) => (
-                <div key={q.id} className="p-5 border border-border bg-[#111827] rounded-xl relative group">
+                <div key={q.id} className="p-5 border border-border bg-surface dark:bg-[#111827] rounded-xl relative group">
                   <div className="absolute -top-3 -left-3 w-8 h-8 bg-rose-500 rounded-lg flex items-center justify-center font-bold text-white shadow-lg">
                     {qIndex + 1}
                   </div>
@@ -497,7 +497,7 @@ export default function OtherPracticeManagement() {
                       <textarea
                         value={q.text}
                         onChange={e => updateQuestion(q.id, "text", e.target.value)}
-                        className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse min-h-[80px] focus:outline-none focus:border-rose-500"
+                        className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary min-h-[80px] focus:outline-none focus:border-rose-500"
                         placeholder="Enter the question..."
                       />
                     </div>
@@ -516,7 +516,7 @@ export default function OtherPracticeManagement() {
                             type="text"
                             value={opt}
                             onChange={e => updateOption(q.id, oIndex, e.target.value)}
-                            className="flex-1 bg-[#0B0F19] border border-border rounded-xl px-4 py-2 text-text-inverse focus:outline-none focus:border-rose-500"
+                            className="flex-1 bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-2 text-text-primary focus:outline-none focus:border-rose-500"
                             placeholder={`Option ${oIndex + 1}`}
                           />
                         </div>
@@ -536,7 +536,7 @@ export default function OtherPracticeManagement() {
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-text-inverse flex items-center gap-2">
+          <h2 className="text-2xl font-bold text-text-primary flex items-center gap-2">
             <Target className="w-8 h-8 text-rose-500" />
             More Practice Management
           </h2>
@@ -561,7 +561,7 @@ export default function OtherPracticeManagement() {
         </div>
       </div>
 
-      <div className="bg-[#111827] rounded-3xl border border-border p-6 md:p-8">
+      <div className="bg-surface dark:bg-[#111827] rounded-3xl border border-border p-6 md:p-8">
         <div className="flex items-center gap-4 mb-8">
           <div className="relative flex-1">
             <Search className="absolute left-4 top-3.5 h-5 w-5 text-text-muted" />
@@ -570,7 +570,7 @@ export default function OtherPracticeManagement() {
               placeholder="Search tests by title or subject..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-[#0B0F19] border border-border rounded-xl pl-12 pr-4 py-3 text-text-inverse focus:outline-none focus:border-rose-500 transition-colors"
+              className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl pl-12 pr-4 py-3 text-text-primary focus:outline-none focus:border-rose-500 transition-colors"
             />
           </div>
         </div>
@@ -578,15 +578,15 @@ export default function OtherPracticeManagement() {
         <div className="space-y-4">
           {filteredTests.length === 0 ? (
             <div className="text-center py-12">
-              <div className="w-20 h-20 bg-[#0B0F19] rounded-full flex items-center justify-center mx-auto mb-4 border border-border">
+              <div className="w-20 h-20 bg-background dark:bg-[#0B0F19] rounded-full flex items-center justify-center mx-auto mb-4 border border-border">
                 <Target className="w-10 h-10 text-text-muted" />
               </div>
-              <h3 className="text-xl font-bold text-text-inverse mb-2">No Tests Found</h3>
+              <h3 className="text-xl font-bold text-text-primary mb-2">No Tests Found</h3>
               <p className="text-text-secondary">Click "Create Test" to build your first practice test.</p>
             </div>
           ) : (
             filteredTests.map(t => (
-              <div key={t.id} className="group relative overflow-hidden bg-[#0B0F19] rounded-2xl border border-border hover:border-border-hover transition-colors p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div key={t.id} className="group relative overflow-hidden bg-background dark:bg-[#0B0F19] rounded-2xl border border-border hover:border-border-hover transition-colors p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="absolute left-0 top-0 bottom-0 w-1 bg-rose-500 scale-y-0 group-hover:scale-y-100 transition-transform origin-top"></div>
                 
                 <div>
@@ -605,7 +605,7 @@ export default function OtherPracticeManagement() {
                       <span>{t.questions?.length || 0} Qs</span>
                     </span>
                   </div>
-                  <h4 className="text-lg font-bold text-text-inverse">{t.title}</h4>
+                  <h4 className="text-lg font-bold text-text-primary">{t.title}</h4>
                 </div>
 
                 <div className="flex items-center gap-3">
@@ -619,7 +619,7 @@ export default function OtherPracticeManagement() {
                       </button>
                       <button 
                         onClick={() => setDeleteConfirmId(null)}
-                        className="p-2 bg-[#111827] text-text-muted hover:text-text-inverse rounded-lg transition-colors border border-border"
+                        className="p-2 bg-surface dark:bg-[#111827] text-text-muted hover:text-text-primary rounded-lg transition-colors border border-border"
                       >
                         <X className="w-5 h-5" />
                       </button>
@@ -627,7 +627,7 @@ export default function OtherPracticeManagement() {
                   ) : (
                     <button 
                       onClick={() => setDeleteConfirmId(t.id)}
-                      className="p-2 bg-[#111827] text-text-muted hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors border border-border"
+                      className="p-2 bg-surface dark:bg-[#111827] text-text-muted hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors border border-border"
                       title="Delete"
                     >
                       <Trash2 className="w-5 h-5" />

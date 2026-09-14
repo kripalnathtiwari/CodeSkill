@@ -591,7 +591,7 @@ export default function CourseCategorySection({
             <BookOpen className="w-6 h-6 text-primary" />
           </div>
           <div>
-            <h3 className="text-xl font-black text-text-inverse flex items-center">
+            <h3 className="text-xl font-black text-text-primary flex items-center">
               Course Categories & Batches
               <span className="ml-3 text-xs bg-primary/20 text-primary px-3 py-1 rounded-full font-bold">
                 {courses.length} Active
@@ -611,7 +611,7 @@ export default function CourseCategorySection({
               setCourseNameInput("");
               setDescriptionInput("");
             }}
-            className="bg-gradient-to-r from-primary to-sky-500 hover:from-primary hover:to-sky-400 text-text-inverse px-6 py-3 rounded-2xl font-bold flex items-center justify-center space-x-2 shadow-lg hover:shadow-blue-500/20 transition-all transform hover:-translate-y-0.5"
+            className="bg-gradient-to-r from-primary to-sky-500 hover:from-primary hover:to-sky-400 text-text-primary px-6 py-3 rounded-2xl font-bold flex items-center justify-center space-x-2 shadow-lg hover:shadow-blue-500/20 transition-all transform hover:-translate-y-0.5"
           >
             <Plus className="w-5 h-5" />
             <span>New Course Category</span>
@@ -621,7 +621,7 @@ export default function CourseCategorySection({
 
       {/* Create/Edit Course Modal/Card */}
       {isCreatingCourse && (
-        <div className="bg-[#111827] rounded-3xl p-6 md:p-8 border border-primary/30 shadow-2xl relative animate-slideDown">
+        <div className="bg-surface dark:bg-[#111827] rounded-3xl p-6 md:p-8 border border-primary/30 shadow-2xl relative animate-slideDown">
           <button
             onClick={() => {
               setIsCreatingCourse(false);
@@ -632,7 +632,7 @@ export default function CourseCategorySection({
             <X className="w-5 h-5" />
           </button>
 
-          <h4 className="text-lg font-bold text-text-inverse mb-6 flex items-center">
+          <h4 className="text-lg font-bold text-text-primary mb-6 flex items-center">
             <Sparkles className="w-5 h-5 mr-2 text-primary" />
             {editingCourseId ? "Edit Course Category" : "Create Course Category"}
           </h4>
@@ -647,7 +647,7 @@ export default function CourseCategorySection({
                 value={courseNameInput}
                 onChange={(e) => setCourseNameInput(e.target.value)}
                 placeholder="e.g. B.Tech Computer Science - Sem 6"
-                className="w-full bg-slate-900/80 border border-border rounded-2xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary shadow-inner"
+                className="w-full bg-slate-900/80 border border-border rounded-2xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary shadow-inner"
               />
             </div>
 
@@ -660,7 +660,7 @@ export default function CourseCategorySection({
                 value={descriptionInput}
                 onChange={(e) => setDescriptionInput(e.target.value)}
                 placeholder="e.g. Core Engineering Batch 2026"
-                className="w-full bg-slate-900/80 border border-border rounded-2xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary shadow-inner"
+                className="w-full bg-slate-900/80 border border-border rounded-2xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary shadow-inner"
               />
             </div>
           </div>
@@ -671,7 +671,7 @@ export default function CourseCategorySection({
                 setIsCreatingCourse(false);
                 setEditingCourseId(null);
               }}
-              className="px-6 py-2.5 rounded-xl font-bold text-text-muted hover:text-text-inverse border border-border transition-colors"
+              className="px-6 py-2.5 rounded-xl font-bold text-text-muted hover:text-text-primary border border-border transition-colors"
             >
               Cancel
             </button>
@@ -688,7 +688,7 @@ export default function CourseCategorySection({
 
       {/* Course Cards List */}
       {courses.length === 0 && !isLoading ? (
-        <div className="bg-[#111827] rounded-3xl border border-border p-16 text-center text-text-muted">
+        <div className="bg-surface dark:bg-[#111827] rounded-3xl border border-border p-16 text-center text-text-muted">
           <Layers className="w-16 h-16 mx-auto mb-4 opacity-20" />
           <p className="text-base font-medium">No course categories added yet.</p>
           <p className="text-xs text-text-secondary mt-1">
@@ -703,7 +703,7 @@ export default function CourseCategorySection({
             return (
               <div
                 key={course.id}
-                className="bg-[#111827] rounded-3xl border border-border overflow-hidden transition-all duration-300 shadow-lg hover:border-border"
+                className="bg-surface dark:bg-[#111827] rounded-3xl border border-border overflow-hidden transition-all duration-300 shadow-lg hover:border-border"
               >
                 {/* Card Header Bar */}
                 <div className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -712,7 +712,7 @@ export default function CourseCategorySection({
                       <BookOpen className="w-6 h-6 text-primary" />
                     </div>
                     <div>
-                      <h4 className="text-lg font-bold text-text-inverse flex items-center">
+                      <h4 className="text-lg font-bold text-text-primary flex items-center">
                         {course.courseName}
                       </h4>
                       {course.description && (
@@ -773,7 +773,7 @@ export default function CourseCategorySection({
                     {/* Course Sections Header */}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4 mb-6">
                       <div>
-                        <h5 className="text-base font-bold text-text-inverse flex items-center">
+                        <h5 className="text-base font-bold text-text-primary flex items-center">
                           <Layers className="w-5 h-5 mr-2 text-purple-400" />
                           Sections / Classes in {course.courseName}
                         </h5>
@@ -787,7 +787,7 @@ export default function CourseCategorySection({
                             creatingClassCourseId === course.id ? null : course.id
                           )
                         }
-                        className="bg-purple-600 hover:bg-purple-500 text-text-inverse px-4 py-2.5 rounded-xl text-xs font-bold flex items-center shadow-md transition-all shrink-0"
+                        className="bg-purple-600 hover:bg-purple-500 text-text-primary px-4 py-2.5 rounded-xl text-xs font-bold flex items-center shadow-md transition-all shrink-0"
                       >
                         <Plus className="w-4 h-4 mr-1.5" />
                         New Class / Section
@@ -796,9 +796,9 @@ export default function CourseCategorySection({
 
                     {/* Modal/Form: Add Student */}
                     {addingStudentCourseId === course.id && (
-                      <div className="bg-[#111827] rounded-2xl p-6 border border-border mb-6 animate-slideDown">
+                      <div className="bg-surface dark:bg-[#111827] rounded-2xl p-6 border border-border mb-6 animate-slideDown">
                         <div className="flex justify-between items-center mb-4">
-                          <h5 className="text-sm font-bold text-text-inverse">
+                          <h5 className="text-sm font-bold text-text-primary">
                             Add Student to {course.courseName}{" "}
                             {targetClassId && course.classes
                               ? `(${course.classes.find((cl) => cl.id === targetClassId)?.className || "Class"})`
@@ -809,7 +809,7 @@ export default function CourseCategorySection({
                               setAddingStudentCourseId(null);
                               setTargetClassId(null);
                             }}
-                            className="text-text-muted hover:text-text-inverse"
+                            className="text-text-muted hover:text-text-primary"
                           >
                             <X className="w-4 h-4" />
                           </button>
@@ -822,7 +822,7 @@ export default function CourseCategorySection({
                             onChange={(e) =>
                               setNewStudent({ ...newStudent, name: e.target.value })
                             }
-                            className="bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-inverse focus:border-primary focus:outline-none"
+                            className="bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-primary focus:border-primary focus:outline-none"
                           />
                           <input
                             type="email"
@@ -831,7 +831,7 @@ export default function CourseCategorySection({
                             onChange={(e) =>
                               setNewStudent({ ...newStudent, email: e.target.value })
                             }
-                            className="bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-inverse focus:border-primary focus:outline-none"
+                            className="bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-primary focus:border-primary focus:outline-none"
                           />
                           <input
                             type="text"
@@ -840,7 +840,7 @@ export default function CourseCategorySection({
                             onChange={(e) =>
                               setNewStudent({ ...newStudent, regNum: e.target.value })
                             }
-                            className="bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-inverse focus:border-primary focus:outline-none"
+                            className="bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-primary focus:border-primary focus:outline-none"
                           />
                           <input
                             type="text"
@@ -849,7 +849,7 @@ export default function CourseCategorySection({
                             onChange={(e) =>
                               setNewStudent({ ...newStudent, phone: e.target.value })
                             }
-                            className="bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-inverse focus:border-primary focus:outline-none"
+                            className="bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-primary focus:border-primary focus:outline-none"
                           />
                         </div>
                         <div className="flex justify-end mt-4">
@@ -865,9 +865,9 @@ export default function CourseCategorySection({
 
                     {/* Modal/Form: Assign Instructor */}
                     {assigningToCourseId === course.id && (
-                      <div className="bg-[#111827] rounded-2xl p-6 border border-border mb-6 animate-slideDown">
+                      <div className="bg-surface dark:bg-[#111827] rounded-2xl p-6 border border-border mb-6 animate-slideDown">
                         <div className="flex justify-between items-center mb-4">
-                          <h5 className="text-sm font-bold text-text-inverse">
+                          <h5 className="text-sm font-bold text-text-primary">
                             Assign Instructor to {course.courseName}{" "}
                             {targetClassId && course.classes
                               ? `(${course.classes.find((cl) => cl.id === targetClassId)?.className || "Class"})`
@@ -878,7 +878,7 @@ export default function CourseCategorySection({
                               setAssigningToCourseId(null);
                               setTargetClassId(null);
                             }}
-                            className="text-text-muted hover:text-text-inverse"
+                            className="text-text-muted hover:text-text-primary"
                           >
                             <X className="w-4 h-4" />
                           </button>
@@ -912,7 +912,7 @@ export default function CourseCategorySection({
                             <select
                               value={selectedTutorId}
                               onChange={(e) => setSelectedTutorId(e.target.value)}
-                              className="w-full bg-slate-900 border border-border rounded-xl px-4 py-2.5 text-xs text-text-inverse focus:border-primary focus:outline-none"
+                              className="w-full bg-slate-900 border border-border rounded-xl px-4 py-2.5 text-xs text-text-primary focus:border-primary focus:outline-none"
                             >
                               <option value="">-- Select Instructor --</option>
                               {tutors.map((t) => (
@@ -941,7 +941,7 @@ export default function CourseCategorySection({
                                     name: e.target.value
                                   })
                                 }
-                                className="bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-inverse focus:border-primary focus:outline-none"
+                                className="bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-primary focus:border-primary focus:outline-none"
                               />
                               <input
                                 type="email"
@@ -953,7 +953,7 @@ export default function CourseCategorySection({
                                     email: e.target.value
                                   })
                                 }
-                                className="bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-inverse focus:border-primary focus:outline-none"
+                                className="bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-primary focus:border-primary focus:outline-none"
                               />
                               <input
                                 type="text"
@@ -965,7 +965,7 @@ export default function CourseCategorySection({
                                     domain: e.target.value
                                   })
                                 }
-                                className="bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-inverse focus:border-primary focus:outline-none"
+                                className="bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-primary focus:border-primary focus:outline-none"
                               />
                               <input
                                 type="text"
@@ -977,7 +977,7 @@ export default function CourseCategorySection({
                                     phone: e.target.value
                                   })
                                 }
-                                className="bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-inverse focus:border-primary focus:outline-none"
+                                className="bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs text-text-primary focus:border-primary focus:outline-none"
                               />
                             </div>
                             <div className="flex justify-end mt-4">
@@ -996,15 +996,15 @@ export default function CourseCategorySection({
                     {/* Classes / Sections List Content */}
                     <div className="space-y-6">
                       {creatingClassCourseId === course.id && (
-                        <div className="bg-[#111827] rounded-2xl p-6 border border-purple-500/40 mb-6 animate-slideDown shadow-xl">
+                        <div className="bg-surface dark:bg-[#111827] rounded-2xl p-6 border border-purple-500/40 mb-6 animate-slideDown shadow-xl">
                           <div className="flex justify-between items-center mb-4">
-                            <h5 className="text-sm font-bold text-text-inverse flex items-center">
+                            <h5 className="text-sm font-bold text-text-primary flex items-center">
                               <Layers className="w-4 h-4 mr-2 text-purple-400" />
                               Create New Class / Section for {course.courseName}
                             </h5>
                             <button
                               onClick={() => setCreatingClassCourseId(null)}
-                              className="text-text-muted hover:text-text-inverse"
+                              className="text-text-muted hover:text-text-primary"
                             >
                               <X className="w-4 h-4" />
                             </button>
@@ -1015,14 +1015,14 @@ export default function CourseCategorySection({
                               placeholder="Class / Section Name (e.g. Section A - Morning) *"
                               value={newClassNameInput}
                               onChange={(e) => setNewClassNameInput(e.target.value)}
-                              className="bg-slate-900 border border-border rounded-xl px-3.5 py-2.5 text-xs text-text-inverse focus:border-purple-500 focus:outline-none"
+                              className="bg-slate-900 border border-border rounded-xl px-3.5 py-2.5 text-xs text-text-primary focus:border-purple-500 focus:outline-none"
                             />
                             <input
                               type="text"
                               placeholder="Description (Optional, e.g. Mon-Wed 10 AM)"
                               value={newClassDescriptionInput}
                               onChange={(e) => setNewClassDescriptionInput(e.target.value)}
-                              className="bg-slate-900 border border-border rounded-xl px-3.5 py-2.5 text-xs text-text-inverse focus:border-purple-500 focus:outline-none"
+                              className="bg-slate-900 border border-border rounded-xl px-3.5 py-2.5 text-xs text-text-primary focus:border-purple-500 focus:outline-none"
                             />
                           </div>
                           <div className="flex justify-end mt-4 space-x-3">
@@ -1034,7 +1034,7 @@ export default function CourseCategorySection({
                             </button>
                             <button
                               onClick={() => handleCreateClass(course.id)}
-                              className="bg-purple-600 hover:bg-purple-500 text-text-inverse px-5 py-2 rounded-xl text-xs font-bold transition-all shadow-lg"
+                              className="bg-purple-600 hover:bg-purple-500 text-text-primary px-5 py-2 rounded-xl text-xs font-bold transition-all shadow-lg"
                             >
                               Create Class
                             </button>
@@ -1103,7 +1103,7 @@ export default function CourseCategorySection({
                                   {/* Class Card Header */}
                                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-4 mb-4">
                                     <div>
-                                      <h6 className="text-base font-bold text-text-inverse flex items-center">
+                                      <h6 className="text-base font-bold text-text-primary flex items-center">
                                         <Layers className="w-4 h-4 mr-2 text-purple-400" />
                                         {cls.className}
                                       </h6>
@@ -1247,7 +1247,7 @@ export default function CourseCategorySection({
                                                 }))
                                               }
                                               placeholder="Search students by name, email, roll no..."
-                                              className="w-full bg-slate-950/80 border border-border rounded-xl pl-10 pr-4 py-2 text-xs text-text-inverse focus:border-purple-500 focus:outline-none"
+                                              className="w-full bg-slate-950/80 border border-border rounded-xl pl-10 pr-4 py-2 text-xs text-text-primary focus:border-purple-500 focus:outline-none"
                                             />
                                           </div>
 
@@ -1265,7 +1265,7 @@ export default function CourseCategorySection({
                                                   className="bg-slate-950/60 border border-border rounded-xl p-3 flex items-center justify-between"
                                                 >
                                                   <div className="min-w-0 flex-1">
-                                                    <h6 className="text-xs font-bold text-text-inverse truncate">
+                                                    <h6 className="text-xs font-bold text-text-primary truncate">
                                                       {student.name}
                                                     </h6>
                                                     <p className="text-[11px] text-text-muted truncate">
@@ -1309,7 +1309,7 @@ export default function CourseCategorySection({
                                                 >
                                                   <div className="min-w-0 flex-1">
                                                     <div className="flex items-center space-x-2">
-                                                      <h6 className="text-xs font-bold text-text-inverse truncate">
+                                                      <h6 className="text-xs font-bold text-text-primary truncate">
                                                         {inst.name}
                                                       </h6>
                                                       {inst.domain && (

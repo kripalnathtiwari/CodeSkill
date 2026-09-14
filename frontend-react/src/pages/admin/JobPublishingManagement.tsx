@@ -215,7 +215,7 @@ export default function JobPublishingManagement() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold text-text-inverse tracking-tight flex items-center space-x-3">
+          <h1 className="text-3xl font-extrabold text-text-primary tracking-tight flex items-center space-x-3">
             <Megaphone className="w-8 h-8 text-rose-500" />
             <span>Publish Jobs to Career Portal</span>
           </h1>
@@ -246,17 +246,17 @@ export default function JobPublishingManagement() {
 
       {/* Overview Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-[#111827] border border-border rounded-2xl p-5 flex items-center justify-between">
+        <div className="bg-surface dark:bg-[#111827] border border-border rounded-2xl p-5 flex items-center justify-between">
           <div>
             <p className="text-xs font-semibold text-text-muted uppercase">Total Published Jobs</p>
-            <p className="text-2xl font-extrabold text-text-inverse mt-1">{totalPublished}</p>
+            <p className="text-2xl font-extrabold text-text-primary mt-1">{totalPublished}</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-500">
             <Briefcase className="w-6 h-6" />
           </div>
         </div>
 
-        <div className="bg-[#111827] border border-border rounded-2xl p-5 flex items-center justify-between">
+        <div className="bg-surface dark:bg-[#111827] border border-border rounded-2xl p-5 flex items-center justify-between">
           <div>
             <p className="text-xs font-semibold text-text-muted uppercase">Featured Opportunities</p>
             <p className="text-2xl font-extrabold text-primary mt-1">{featuredCount}</p>
@@ -266,7 +266,7 @@ export default function JobPublishingManagement() {
           </div>
         </div>
 
-        <div className="bg-[#111827] border border-border rounded-2xl p-5 flex items-center justify-between">
+        <div className="bg-surface dark:bg-[#111827] border border-border rounded-2xl p-5 flex items-center justify-between">
           <div>
             <p className="text-xs font-semibold text-text-muted uppercase">Applications Received</p>
             <p className="text-2xl font-extrabold text-primary mt-1">{totalApplicants}</p>
@@ -278,7 +278,7 @@ export default function JobPublishingManagement() {
       </div>
 
       {/* Search and Filter */}
-      <div className="bg-[#111827] border border-border rounded-2xl p-5 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="bg-surface dark:bg-[#111827] border border-border rounded-2xl p-5 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="relative w-full md:w-96">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
           <input
@@ -286,7 +286,7 @@ export default function JobPublishingManagement() {
             placeholder="Search title, company, skills..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-11 pr-4 py-2.5 bg-[#0B0F19] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500 text-sm"
+            className="w-full pl-11 pr-4 py-2.5 bg-background dark:bg-[#0B0F19] border border-border rounded-xl text-text-primary placeholder-slate-500 focus:outline-none focus:border-rose-500 text-sm"
           />
         </div>
 
@@ -296,7 +296,7 @@ export default function JobPublishingManagement() {
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="bg-[#0B0F19] border border-border rounded-xl px-3 py-2 text-sm text-text-inverse focus:outline-none focus:border-rose-500"
+            className="bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-rose-500"
           >
             <option value="All">All Job Types</option>
             <option value="Full-time">Full-time</option>
@@ -310,14 +310,14 @@ export default function JobPublishingManagement() {
       {/* Published Jobs Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filteredJobs.length === 0 ? (
-          <div className="col-span-full bg-[#111827] border border-border rounded-2xl p-12 text-center text-text-muted">
+          <div className="col-span-full bg-surface dark:bg-[#111827] border border-border rounded-2xl p-12 text-center text-text-muted">
             No published jobs match your filters. Click "+ Publish New Job on Site" to post a new opening.
           </div>
         ) : (
           filteredJobs.map(job => (
             <div
               key={job.id}
-              className="bg-[#111827] border border-border hover:border-border rounded-2xl p-6 space-y-4 flex flex-col justify-between transition-all"
+              className="bg-surface dark:bg-[#111827] border border-border hover:border-border rounded-2xl p-6 space-y-4 flex flex-col justify-between transition-all"
             >
               <div className="space-y-3">
                 <div className="flex items-start justify-between gap-2">
@@ -333,7 +333,7 @@ export default function JobPublishingManagement() {
                         </span>
                       )}
                     </div>
-                    <h3 className="text-lg font-bold text-text-inverse mt-2">{job.title}</h3>
+                    <h3 className="text-lg font-bold text-text-primary mt-2">{job.title}</h3>
                     <p className="text-sm font-semibold text-text-secondary flex items-center space-x-1.5 mt-0.5">
                       <Building2 className="w-4 h-4 text-text-muted" />
                       <span>{job.company}</span>
@@ -382,7 +382,7 @@ export default function JobPublishingManagement() {
 
               <div className="pt-4 border-t border-border flex items-center justify-between text-xs">
                 <span className="text-text-muted">
-                  Applicants: <strong className="text-text-inverse">{job.applicantCount || 0}</strong>
+                  Applicants: <strong className="text-text-primary">{job.applicantCount || 0}</strong>
                 </span>
 
                 <div className="flex items-center space-x-2">
@@ -414,15 +414,15 @@ export default function JobPublishingManagement() {
       {/* Publish New Job Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-[#111827] border border-border rounded-2xl max-w-2xl w-full p-6 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-surface dark:bg-[#111827] border border-border rounded-2xl max-w-2xl w-full p-6 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-border pb-4">
-              <h3 className="text-xl font-bold text-text-inverse flex items-center space-x-2">
+              <h3 className="text-xl font-bold text-text-primary flex items-center space-x-2">
                 <Megaphone className="w-5 h-5 text-rose-500" />
                 <span>Publish New Job to Site</span>
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-text-muted hover:text-text-inverse"
+                className="text-text-muted hover:text-text-primary"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -440,7 +440,7 @@ export default function JobPublishingManagement() {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="e.g. Senior Frontend React Developer"
-                    className="w-full px-4 py-2.5 bg-[#0B0F19] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500"
+                    className="w-full px-4 py-2.5 bg-background dark:bg-[#0B0F19] border border-border rounded-xl text-text-primary placeholder-slate-500 focus:outline-none focus:border-rose-500"
                   />
                 </div>
 
@@ -454,7 +454,7 @@ export default function JobPublishingManagement() {
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
                     placeholder="e.g. Google India / CodeSkill Labs"
-                    className="w-full px-4 py-2.5 bg-[#0B0F19] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500"
+                    className="w-full px-4 py-2.5 bg-background dark:bg-[#0B0F19] border border-border rounded-xl text-text-primary placeholder-slate-500 focus:outline-none focus:border-rose-500"
                   />
                 </div>
               </div>
@@ -470,7 +470,7 @@ export default function JobPublishingManagement() {
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     placeholder="e.g. Bangalore / Remote"
-                    className="w-full px-4 py-2.5 bg-[#0B0F19] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500"
+                    className="w-full px-4 py-2.5 bg-background dark:bg-[#0B0F19] border border-border rounded-xl text-text-primary placeholder-slate-500 focus:outline-none focus:border-rose-500"
                   />
                 </div>
 
@@ -481,7 +481,7 @@ export default function JobPublishingManagement() {
                   <select
                     value={type}
                     onChange={(e) => setType(e.target.value as any)}
-                    className="w-full px-3 py-2.5 bg-[#0B0F19] border border-border rounded-xl text-text-inverse focus:outline-none focus:border-rose-500"
+                    className="w-full px-3 py-2.5 bg-background dark:bg-[#0B0F19] border border-border rounded-xl text-text-primary focus:outline-none focus:border-rose-500"
                   >
                     <option value="Full-time">Full-time</option>
                     <option value="Internship">Internship</option>
@@ -497,7 +497,7 @@ export default function JobPublishingManagement() {
                   <select
                     value={workplace}
                     onChange={(e) => setWorkplace(e.target.value as any)}
-                    className="w-full px-3 py-2.5 bg-[#0B0F19] border border-border rounded-xl text-text-inverse focus:outline-none focus:border-rose-500"
+                    className="w-full px-3 py-2.5 bg-background dark:bg-[#0B0F19] border border-border rounded-xl text-text-primary focus:outline-none focus:border-rose-500"
                   >
                     <option value="Remote">Remote</option>
                     <option value="Hybrid">Hybrid</option>
@@ -517,7 +517,7 @@ export default function JobPublishingManagement() {
                     value={salary}
                     onChange={(e) => setSalary(e.target.value)}
                     placeholder="e.g. ₹12,00,000 - ₹18,00,000 PA"
-                    className="w-full px-4 py-2.5 bg-[#0B0F19] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500"
+                    className="w-full px-4 py-2.5 bg-background dark:bg-[#0B0F19] border border-border rounded-xl text-text-primary placeholder-slate-500 focus:outline-none focus:border-rose-500"
                   />
                 </div>
 
@@ -528,7 +528,7 @@ export default function JobPublishingManagement() {
                   <select
                     value={experience}
                     onChange={(e) => setExperience(e.target.value as any)}
-                    className="w-full px-3 py-2.5 bg-[#0B0F19] border border-border rounded-xl text-text-inverse focus:outline-none focus:border-rose-500"
+                    className="w-full px-3 py-2.5 bg-background dark:bg-[#0B0F19] border border-border rounded-xl text-text-primary focus:outline-none focus:border-rose-500"
                   >
                     <option value="Fresher">Fresher</option>
                     <option value="0-2 Years">0-2 Years</option>
@@ -547,7 +547,7 @@ export default function JobPublishingManagement() {
                   value={skillsInput}
                   onChange={(e) => setSkillsInput(e.target.value)}
                   placeholder="React, TypeScript, Next.js, Node.js, AWS"
-                  className="w-full px-4 py-2.5 bg-[#0B0F19] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500"
+                  className="w-full px-4 py-2.5 bg-background dark:bg-[#0B0F19] border border-border rounded-xl text-text-primary placeholder-slate-500 focus:outline-none focus:border-rose-500"
                 />
               </div>
 
@@ -561,7 +561,7 @@ export default function JobPublishingManagement() {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Describe the role, team culture, responsibilities, and perks..."
-                  className="w-full px-4 py-2.5 bg-[#0B0F19] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500"
+                  className="w-full px-4 py-2.5 bg-background dark:bg-[#0B0F19] border border-border rounded-xl text-text-primary placeholder-slate-500 focus:outline-none focus:border-rose-500"
                 />
               </div>
 
@@ -582,7 +582,7 @@ export default function JobPublishingManagement() {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-text-muted hover:text-text-inverse transition-colors font-medium"
+                  className="px-4 py-2 rounded-xl text-text-muted hover:text-text-primary transition-colors font-medium"
                 >
                   Cancel
                 </button>

@@ -728,7 +728,7 @@ export default function CvManagement() {
               <button
                 type="submit"
                 disabled={isSavingSkill}
-                className="w-full bg-fuchsia-600 hover:bg-fuchsia-500 text-text-inverse font-bold py-3 rounded-xl transition-colors disabled:opacity-50 mt-4"
+                className="w-full bg-fuchsia-600 hover:bg-fuchsia-500 text-text-primary font-bold py-3 rounded-xl transition-colors disabled:opacity-50 mt-4"
               >
                 {isSavingSkill ? 'Saving...' : 'Save Job Skills'}
               </button>
@@ -976,7 +976,7 @@ export default function CvManagement() {
               </div>
               <button
                 onClick={() => setSelectedCvForView(null)}
-                className="p-1.5 text-text-muted hover:text-text-primary dark:hover:text-text-inverse rounded-lg"
+                className="p-1.5 text-text-muted hover:text-text-primary dark:hover:text-text-primary rounded-lg"
               >
                 <X className="w-5 h-5" />
               </button>

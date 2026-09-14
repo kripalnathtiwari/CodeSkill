@@ -136,10 +136,10 @@ function TestCard({ test, colleges, onDelete, onDownloadCSV, onViewResults }: { 
 
   return (
     <div className={`p-5 flex justify-between items-start rounded-2xl border transition-all ${status === "live"
-      ? "bg-[#111827] border-primary/50 shadow-xl shadow-blue-500/10"
+      ? "bg-surface dark:bg-[#111827] border-primary/50 shadow-xl shadow-blue-500/10"
       : status === "upcoming"
-        ? "bg-[#111827] border-amber-500/40 shadow-xl"
-        : "bg-[#111827] border-border/80 shadow-xl hover:border-slate-600"
+        ? "bg-surface dark:bg-[#111827] border-amber-500/40 shadow-xl"
+        : "bg-surface dark:bg-[#111827] border-border/80 shadow-xl hover:border-slate-600"
       }`}>
       <div className="flex-1 min-w-0">
         <div className="flex items-center space-x-2 mb-1">
@@ -162,7 +162,7 @@ function TestCard({ test, colleges, onDelete, onDownloadCSV, onViewResults }: { 
           {test.section && (
             <span className="text-xs font-bold text-indigo-300 bg-indigo-500/20 px-2.5 py-0.5 rounded-full border border-indigo-500/30">Sec: {test.section}</span>
           )}
-          <h4 className="font-extrabold text-text-inverse text-base truncate">{test.title}</h4>
+          <h4 className="font-extrabold text-text-primary text-base truncate">{test.title}</h4>
         </div>
 
         <div className="flex flex-wrap gap-2.5 mt-3 text-xs text-text-secondary font-medium">
@@ -704,7 +704,7 @@ export default function TestManagement() {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-2xl font-bold text-text-inverse">Tests & Contests</h2>
+            <h2 className="text-2xl font-bold text-text-primary">Tests & Contests</h2>
             <p className="text-text-muted">Manage live coding contests and MCQ tests.</p>
           </div>
           <div className="flex space-x-3">
@@ -724,14 +724,14 @@ export default function TestManagement() {
         </div>
 
         {tests.length === 0 ? (
-          <div className="bg-[#111827] rounded-3xl border border-border p-16 text-center text-text-muted">
+          <div className="bg-surface dark:bg-[#111827] rounded-3xl border border-border p-16 text-center text-text-muted">
             <Award className="w-16 h-16 mx-auto mb-4 opacity-20" />
             <p>No tests yet. Click "Create New Test" to schedule one.</p>
           </div>
         ) : (
           <>
             {/* Filter and Search Bar */}
-            <div className="bg-[#111827] border border-border/80 p-4 rounded-2xl shadow-xl flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div className="bg-surface dark:bg-[#111827] border border-border/80 p-4 rounded-2xl shadow-xl flex flex-col md:flex-row gap-4 items-center justify-between">
               {/* Search Input */}
               <div className="relative flex-1 w-full">
                 <Search className="w-5 h-5 text-text-muted absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -740,12 +740,12 @@ export default function TestManagement() {
                   placeholder="Search tests by title, course category, or section name..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-[#0B0F19] border border-border/80 rounded-xl pl-11 pr-10 py-2.5 text-sm text-text-secondary placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
+                  className="w-full bg-background dark:bg-[#0B0F19] border border-border/80 rounded-xl pl-11 pr-10 py-2.5 text-sm text-text-secondary placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
                 />
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery("")}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-inverse p-1 rounded-lg transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary p-1 rounded-lg transition-colors"
                     title="Clear search"
                   >
                     <X className="w-4 h-4" />
@@ -763,7 +763,7 @@ export default function TestManagement() {
                       mainDateInputRef.current?.focus();
                     }
                   }}
-                  className="flex items-center space-x-2 bg-[#0B0F19] border border-border/80 hover:border-indigo-500/60 px-3 py-2 rounded-xl cursor-pointer transition-colors"
+                  className="flex items-center space-x-2 bg-background dark:bg-[#0B0F19] border border-border/80 hover:border-indigo-500/60 px-3 py-2 rounded-xl cursor-pointer transition-colors"
                 >
                   <Calendar className="w-4 h-4 text-indigo-400 shrink-0 cursor-pointer" />
                   <span className="text-xs font-semibold text-text-muted hidden sm:inline select-none">Filter Date:</span>
@@ -780,7 +780,7 @@ export default function TestManagement() {
                         e.stopPropagation();
                         setFilterDate("");
                       }}
-                      className="text-text-muted hover:text-text-inverse ml-1 p-0.5 rounded transition-colors"
+                      className="text-text-muted hover:text-text-primary ml-1 p-0.5 rounded transition-colors"
                       title="Clear date filter"
                     >
                       <X className="w-4 h-4" />
@@ -802,7 +802,7 @@ export default function TestManagement() {
             </div>
 
             {visibleTests.length === 0 ? (
-              <div className="bg-[#111827] rounded-3xl border border-border p-12 text-center text-text-muted space-y-3">
+              <div className="bg-surface dark:bg-[#111827] rounded-3xl border border-border p-12 text-center text-text-muted space-y-3">
                 <Filter className="w-12 h-12 mx-auto mb-2 opacity-20 text-indigo-400" />
                 <p className="text-base font-semibold text-text-muted">No tests found matching your search or date filter.</p>
                 <button
@@ -881,12 +881,12 @@ export default function TestManagement() {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <h2 className="text-2xl font-bold text-text-inverse">Create New Test</h2>
+            <h2 className="text-2xl font-bold text-text-primary">Create New Test</h2>
             <p className="text-text-muted text-sm">Schedule a test and build your question bank.</p>
           </div>
         </div>
         <div className="flex space-x-3">
-          <button onClick={() => setIsCreating(false)} className="px-5 py-2.5 rounded-xl font-semibold text-text-muted hover:text-text-inverse border border-border transition-colors">
+          <button onClick={() => setIsCreating(false)} className="px-5 py-2.5 rounded-xl font-semibold text-text-muted hover:text-text-primary border border-border transition-colors">
             Cancel
           </button>
           <button onClick={handleSaveTest} className="bg-primary hover:bg-primary text-text-inverse px-6 py-2.5 rounded-xl font-bold flex items-center space-x-2 shadow-lg shadow-blue-500/20">
@@ -896,16 +896,16 @@ export default function TestManagement() {
       </div>
 
       {/* Config Card */}
-      <div className="bg-[#111827] rounded-3xl p-8 border border-border space-y-6 shadow-xl">
-        <h3 className="font-bold text-lg text-text-inverse border-b border-border pb-4">Test Configuration</h3>
+      <div className="bg-surface dark:bg-[#111827] rounded-3xl p-8 border border-border space-y-6 shadow-xl">
+        <h3 className="font-bold text-lg text-text-primary border-b border-border pb-4">Test Configuration</h3>
 
         {user?.role === "INSTRUCTOR" && instructorCollege && (
           <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-4 flex items-center justify-between">
             <div>
               <p className="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-1">Target Audience</p>
               <p className="text-sm font-medium text-text-secondary">
-                <span className="text-text-inverse font-bold">{instructorCollege.name}</span>
-                {instructorCollege.section && <span> &bull; Section: <span className="text-text-inverse font-bold">{instructorCollege.section}</span></span>}
+                <span className="text-text-primary font-bold">{instructorCollege.name}</span>
+                {instructorCollege.section && <span> &bull; Section: <span className="text-text-primary font-bold">{instructorCollege.section}</span></span>}
               </p>
             </div>
           </div>
@@ -922,7 +922,7 @@ export default function TestManagement() {
                   setAdminSelectedCategory("all");
                   setAdminSelectedSection("all");
                 }}
-                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-2.5 text-text-inverse focus:outline-none focus:border-primary text-sm"
+                className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-2.5 text-text-primary focus:outline-none focus:border-primary text-sm"
               >
                 <option value="all">All Colleges (Global Test)</option>
                 {colleges.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -935,7 +935,7 @@ export default function TestManagement() {
                   setAdminSelectedSection("all");
                 }}
                 disabled={adminSelectedCollegeId === "all"}
-                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-2.5 text-text-inverse focus:outline-none focus:border-primary text-sm disabled:opacity-50"
+                className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-2.5 text-text-primary focus:outline-none focus:border-primary text-sm disabled:opacity-50"
               >
                 <option value="all">All Categories</option>
                 {adminSelectedCollegeId !== "all" && getCategoriesForCollege(adminSelectedCollegeId).map((cat: any) => (
@@ -947,7 +947,7 @@ export default function TestManagement() {
                 value={adminSelectedSection}
                 onChange={e => setAdminSelectedSection(e.target.value)}
                 disabled={adminSelectedCollegeId === "all"}
-                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-2.5 text-text-inverse focus:outline-none focus:border-primary text-sm disabled:opacity-50"
+                className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-2.5 text-text-primary focus:outline-none focus:border-primary text-sm disabled:opacity-50"
               >
                 <option value="all">All Sections</option>
                 {adminSelectedCollegeId !== "all" && getSectionsForCollege(adminSelectedCollegeId, adminSelectedCategory).map((s: any) => (
@@ -962,7 +962,7 @@ export default function TestManagement() {
           <label className="block text-sm font-bold text-text-muted mb-2">Test Title *</label>
           <input
             type="text" value={title} onChange={e => setTitle(e.target.value)}
-            className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary"
+            className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary"
             placeholder="e.g. Advanced React Architecture"
           />
         </div>
@@ -970,7 +970,7 @@ export default function TestManagement() {
         <div className="grid grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-bold text-text-muted mb-2">Duration</label>
-            <select value={duration} onChange={e => setDuration(e.target.value)} className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary">
+            <select value={duration} onChange={e => setDuration(e.target.value)} className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary">
               <option>15 Mins</option>
               <option>30 Mins</option>
               <option>1 Hour</option>
@@ -979,7 +979,7 @@ export default function TestManagement() {
           </div>
           <div>
             <label className="block text-sm font-bold text-text-muted mb-2">Prize / Reward</label>
-            <input type="text" value={prize} onChange={e => setPrize(e.target.value)} className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary" placeholder="e.g. ₹5,000 or Skill Badge" />
+            <input type="text" value={prize} onChange={e => setPrize(e.target.value)} className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary" placeholder="e.g. ₹5,000 or Skill Badge" />
           </div>
         </div>
 
@@ -988,12 +988,12 @@ export default function TestManagement() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <CalendarClock className="w-5 h-5 text-amber-400" />
-              <span className="font-bold text-text-inverse">Schedule Test</span>
+              <span className="font-bold text-text-primary">Schedule Test</span>
             </div>
             <label className="flex items-center space-x-2 cursor-pointer">
               <input
                 type="checkbox" checked={startNow} onChange={e => setStartNow(e.target.checked)}
-                className="w-4 h-4 rounded border-slate-600 text-primary focus:ring-blue-500 bg-[#0B0F19]"
+                className="w-4 h-4 rounded border-slate-600 text-primary focus:ring-blue-500 bg-background dark:bg-[#0B0F19]"
               />
               <span className="text-sm text-text-secondary font-medium">Start Immediately</span>
             </label>
@@ -1009,7 +1009,7 @@ export default function TestManagement() {
                   value={scheduleDate}
                   min={new Date().toISOString().split("T")[0]}
                   onChange={e => setScheduleDate(e.target.value)}
-                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary [color-scheme:dark]"
+                  className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary [color-scheme:dark]"
                 />
               </div>
 
@@ -1019,14 +1019,14 @@ export default function TestManagement() {
                 <div className="flex space-x-2">
                   <select
                     value={scheduleHour} onChange={e => setScheduleHour(e.target.value)}
-                    className="flex-1 bg-[#0B0F19] border border-border rounded-xl px-3 py-3 text-text-inverse focus:outline-none focus:border-primary text-center"
+                    className="flex-1 bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-3 py-3 text-text-primary focus:outline-none focus:border-primary text-center"
                   >
                     {hours12.map(h => <option key={h} value={h}>{h}</option>)}
                   </select>
                   <span className="text-text-muted self-center text-lg font-bold">:</span>
                   <select
                     value={scheduleMinute} onChange={e => setScheduleMinute(e.target.value)}
-                    className="flex-1 bg-[#0B0F19] border border-border rounded-xl px-3 py-3 text-text-inverse focus:outline-none focus:border-primary text-center"
+                    className="flex-1 bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-3 py-3 text-text-primary focus:outline-none focus:border-primary text-center"
                   >
                     {minutes.map(m => <option key={m} value={m}>{m}</option>)}
                   </select>
@@ -1034,12 +1034,12 @@ export default function TestManagement() {
                     <button
                       type="button"
                       onClick={() => setScheduleAmPm("AM")}
-                      className={`px-3 py-3 text-sm font-bold transition-colors ${scheduleAmPm === "AM" ? "bg-primary text-text-inverse" : "bg-[#0B0F19] text-text-muted hover:text-text-inverse"}`}
+                      className={`px-3 py-3 text-sm font-bold transition-colors ${scheduleAmPm === "AM" ? "bg-primary text-text-inverse" : "bg-background dark:bg-[#0B0F19] text-text-muted hover:text-text-inverse"}`}
                     >AM</button>
                     <button
                       type="button"
                       onClick={() => setScheduleAmPm("PM")}
-                      className={`px-3 py-3 text-sm font-bold transition-colors ${scheduleAmPm === "PM" ? "bg-primary text-text-inverse" : "bg-[#0B0F19] text-text-muted hover:text-text-inverse"}`}
+                      className={`px-3 py-3 text-sm font-bold transition-colors ${scheduleAmPm === "PM" ? "bg-primary text-text-inverse" : "bg-background dark:bg-[#0B0F19] text-text-muted hover:text-text-inverse"}`}
                     >PM</button>
                   </div>
                 </div>
@@ -1058,12 +1058,12 @@ export default function TestManagement() {
         {/* Access Code */}
         <div className="bg-slate-800/50 p-5 rounded-2xl border border-border">
           <label className="flex items-center space-x-3 cursor-pointer">
-            <input type="checkbox" checked={requiresCode} onChange={e => setRequiresCode(e.target.checked)} className="w-5 h-5 rounded border-slate-600 text-primary focus:ring-blue-500 bg-[#0B0F19]" />
-            <span className="font-bold text-text-inverse">Require Access Code</span>
+            <input type="checkbox" checked={requiresCode} onChange={e => setRequiresCode(e.target.checked)} className="w-5 h-5 rounded border-slate-600 text-primary focus:ring-blue-500 bg-background dark:bg-[#0B0F19]" />
+            <span className="font-bold text-text-primary">Require Access Code</span>
           </label>
           {requiresCode && (
             <div className="mt-4">
-              <input type="text" value={accessCode} onChange={e => setAccessCode(e.target.value)} className="w-full bg-[#0B0F19] border border-rose-500/50 rounded-xl px-4 py-3 text-rose-400 font-mono tracking-widest focus:outline-none focus:border-rose-500" placeholder="Enter Secret Code" />
+              <input type="text" value={accessCode} onChange={e => setAccessCode(e.target.value)} className="w-full bg-background dark:bg-[#0B0F19] border border-rose-500/50 rounded-xl px-4 py-3 text-rose-400 font-mono tracking-widest focus:outline-none focus:border-rose-500" placeholder="Enter Secret Code" />
             </div>
           )}
         </div>
@@ -1072,7 +1072,7 @@ export default function TestManagement() {
       {/* Question Bank */}
       <div className="space-y-6">
         <div className="flex justify-between items-center mt-4 border-b border-border pb-4">
-          <h3 className="font-bold text-2xl text-text-inverse">Question Bank</h3>
+          <h3 className="font-bold text-2xl text-text-primary">Question Bank</h3>
           <div>
             <input type="file" accept=".pdf" id="pdf-upload" className="hidden" onChange={handlePdfUpload} />
             <label
@@ -1092,7 +1092,7 @@ export default function TestManagement() {
         </div>
 
         {questions.map((q, qIndex) => (
-          <div key={q.id} className="bg-[#111827] rounded-3xl p-8 border border-border relative shadow-lg">
+          <div key={q.id} className="bg-surface dark:bg-[#111827] rounded-3xl p-8 border border-border relative shadow-lg">
             <div className="absolute top-6 right-6">
               <button onClick={() => handleRemoveQuestion(q.id)} className="text-text-muted hover:text-rose-500 transition-colors p-1.5 hover:bg-rose-500/10 rounded-lg">
                 <Trash2 className="w-4 h-4" />
@@ -1103,13 +1103,13 @@ export default function TestManagement() {
 
             <input
               type="text" value={q.text} onChange={e => setQuestions(prev => prev.map(x => x.id === q.id ? { ...x, text: e.target.value } : x))}
-              className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-4 text-text-inverse font-bold text-base mb-5 focus:outline-none focus:border-primary"
+              className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-4 text-text-primary font-bold text-base mb-5 focus:outline-none focus:border-primary"
               placeholder="What is the output of..."
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {q.options.map((opt, oIdx) => (
-                <div key={oIdx} className={`flex items-center space-x-3 bg-[#0B0F19] border rounded-xl p-3 transition-colors ${q.answer === opt && opt !== "" ? "border-primary" : "border-border"}`}>
+                <div key={oIdx} className={`flex items-center space-x-3 bg-background dark:bg-[#0B0F19] border rounded-xl p-3 transition-colors ${q.answer === opt && opt !== "" ? "border-primary" : "border-border"}`}>
                   <button
                     onClick={() => setQuestions(prev => prev.map(x => x.id === q.id ? { ...x, answer: opt } : x))}
                     className={`flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${q.answer === opt && opt !== "" ? "border-primary" : "border-slate-500"}`}
@@ -1123,7 +1123,7 @@ export default function TestManagement() {
                       const opts = [...x.options]; opts[oIdx] = e.target.value;
                       return { ...x, options: opts };
                     }))}
-                    className="flex-1 bg-transparent text-text-inverse focus:outline-none text-sm"
+                    className="flex-1 bg-transparent text-text-primary focus:outline-none text-sm"
                     placeholder={`Option ${oIdx + 1}`}
                   />
                 </div>
@@ -1180,10 +1180,10 @@ function SnapshotViewerModal({ testId, studentEmail, studentName, onClose }: { t
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md">
-      <div className="bg-[#111827] border border-border rounded-3xl w-full max-w-5xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in zoom-in duration-300">
+      <div className="bg-surface dark:bg-[#111827] border border-border rounded-3xl w-full max-w-5xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in zoom-in duration-300">
         <div className="p-6 border-b border-border flex justify-between items-center bg-slate-900/50">
           <div>
-            <h2 className="text-2xl font-bold text-text-inverse mb-1">Camera Log: {studentName}</h2>
+            <h2 className="text-2xl font-bold text-text-primary mb-1">Camera Log: {studentName}</h2>
             <p className="text-text-muted text-sm">{studentEmail}</p>
           </div>
           <button onClick={onClose} className="p-2 text-text-muted hover:text-text-inverse bg-slate-800 hover:bg-rose-500/20 hover:text-rose-500 rounded-xl transition-colors">
@@ -1191,7 +1191,7 @@ function SnapshotViewerModal({ testId, studentEmail, studentName, onClose }: { t
           </button>
         </div>
 
-        <div className="p-6 overflow-y-auto custom-scrollbar flex-1 bg-[#0B0F19]">
+        <div className="p-6 overflow-y-auto custom-scrollbar flex-1 bg-background dark:bg-[#0B0F19]">
           {loading ? (
             <div className="flex flex-col items-center justify-center h-64 text-primary">
               <Loader2 className="w-12 h-12 animate-spin mb-4" />
@@ -1360,10 +1360,10 @@ function ResultsModal({ test, onClose }: { test: any; onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-      <div className="bg-[#111827] border border-border rounded-3xl w-full max-w-4xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden animate-in zoom-in duration-300">
+      <div className="bg-surface dark:bg-[#111827] border border-border rounded-3xl w-full max-w-4xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden animate-in zoom-in duration-300">
         <div className="p-6 border-b border-border flex justify-between items-center bg-slate-900/50">
           <div>
-            <h2 className="text-2xl font-bold text-text-inverse mb-1">Results: {test.title}</h2>
+            <h2 className="text-2xl font-bold text-text-primary mb-1">Results: {test.title}</h2>
             <p className="text-text-muted text-sm">Grouped by College and Section</p>
           </div>
           <button onClick={onClose} className="p-2 text-text-muted hover:text-text-inverse bg-slate-800 hover:bg-rose-500/20 hover:text-rose-500 rounded-xl transition-colors">
@@ -1372,7 +1372,7 @@ function ResultsModal({ test, onClose }: { test: any; onClose: () => void }) {
         </div>
 
         {/* Filter and Search Bar for Results */}
-        <div className="bg-[#111827] border-b border-border p-4 flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div className="bg-surface dark:bg-[#111827] border-b border-border p-4 flex flex-col md:flex-row gap-4 items-center justify-between">
           <div className="relative flex-1 w-full">
             <Search className="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
@@ -1380,12 +1380,12 @@ function ResultsModal({ test, onClose }: { test: any; onClose: () => void }) {
               placeholder="Search results by section name, category, test name, or student..."
               value={resultSearchQuery}
               onChange={(e) => setResultSearchQuery(e.target.value)}
-              className="w-full bg-[#0B0F19] border border-border/80 rounded-xl pl-9 pr-8 py-2 text-xs sm:text-sm text-text-secondary placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
+              className="w-full bg-background dark:bg-[#0B0F19] border border-border/80 rounded-xl pl-9 pr-8 py-2 text-xs sm:text-sm text-text-secondary placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
             />
             {resultSearchQuery && (
               <button
                 onClick={() => setResultSearchQuery("")}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-inverse p-1 rounded transition-colors"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary p-1 rounded transition-colors"
                 title="Clear search"
               >
                 <X className="w-4 h-4" />
@@ -1402,7 +1402,7 @@ function ResultsModal({ test, onClose }: { test: any; onClose: () => void }) {
                   modalDateInputRef.current?.focus();
                 }
               }}
-              className="flex items-center space-x-2 bg-[#0B0F19] border border-border/80 hover:border-indigo-500/60 px-3 py-1.5 rounded-xl cursor-pointer transition-colors"
+              className="flex items-center space-x-2 bg-background dark:bg-[#0B0F19] border border-border/80 hover:border-indigo-500/60 px-3 py-1.5 rounded-xl cursor-pointer transition-colors"
             >
               <Calendar className="w-4 h-4 text-indigo-400 shrink-0 cursor-pointer" />
               <span className="text-xs font-semibold text-text-muted hidden sm:inline select-none">Filter Date:</span>
@@ -1419,7 +1419,7 @@ function ResultsModal({ test, onClose }: { test: any; onClose: () => void }) {
                     e.stopPropagation();
                     setResultDateFilter("");
                   }}
-                  className="text-text-muted hover:text-text-inverse ml-1 p-0.5 rounded transition-colors"
+                  className="text-text-muted hover:text-text-primary ml-1 p-0.5 rounded transition-colors"
                   title="Clear date filter"
                 >
                   <X className="w-3.5 h-3.5" />
@@ -1440,7 +1440,7 @@ function ResultsModal({ test, onClose }: { test: any; onClose: () => void }) {
           </div>
         </div>
 
-        <div className="p-6 overflow-y-auto custom-scrollbar flex-1 bg-[#0B0F19]">
+        <div className="p-6 overflow-y-auto custom-scrollbar flex-1 bg-background dark:bg-[#0B0F19]">
           {filteredScores.length === 0 ? (
             <div className="text-center py-12 text-text-muted">
               <Award className="w-12 h-12 mx-auto mb-4 opacity-20" />
@@ -1449,7 +1449,7 @@ function ResultsModal({ test, onClose }: { test: any; onClose: () => void }) {
           ) : (
             <div className="space-y-8">
               {Object.entries(grouped).map(([collegeName, sections]) => (
-                <div key={collegeName} className="bg-[#111827] rounded-2xl border border-border overflow-hidden shadow-lg">
+                <div key={collegeName} className="bg-surface dark:bg-[#111827] rounded-2xl border border-border overflow-hidden shadow-lg">
                   <div className="bg-indigo-500/10 border-b border-indigo-500/20 p-4 flex items-center space-x-3">
                     <Building2 className="w-5 h-5 text-indigo-400" />
                     <h3 className="text-lg font-bold text-indigo-400">{collegeName}</h3>
@@ -1471,7 +1471,7 @@ function ResultsModal({ test, onClose }: { test: any; onClose: () => void }) {
                           </h4>
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {students.sort((a, b) => b.score - a.score).map((student: any, idx: number) => (
-                              <div key={idx} className="bg-[#0B0F19] border border-border p-4 rounded-xl flex justify-between items-center hover:border-border transition-colors">
+                              <div key={idx} className="bg-background dark:bg-[#0B0F19] border border-border p-4 rounded-xl flex justify-between items-center hover:border-border transition-colors">
                                 <div className="min-w-0 flex-1 pr-4">
                                   <p className="font-bold text-text-secondary truncate">{student.studentName}</p>
                                   <p className="text-xs text-text-muted truncate">{student.studentEmail}</p>

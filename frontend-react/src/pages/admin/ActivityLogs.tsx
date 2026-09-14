@@ -39,7 +39,7 @@ export default function ActivityLogs() {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold text-text-inverse mb-1">User Activity Logs</h2>
+          <h2 className="text-3xl font-bold text-text-primary mb-1">User Activity Logs</h2>
           <p className="text-text-muted">Monitor system access, security events, and learning activity.</p>
         </div>
         <div className="flex space-x-3">
@@ -55,27 +55,27 @@ export default function ActivityLogs() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-[#111827] border border-border p-5 rounded-2xl flex items-center space-x-4">
+        <div className="bg-surface dark:bg-[#111827] border border-border p-5 rounded-2xl flex items-center space-x-4">
           <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
             <Activity className="w-6 h-6 text-primary" />
           </div>
           <div>
             <p className="text-sm text-text-muted">Total Events (24h)</p>
-            <h3 className="text-2xl font-bold text-text-inverse">1,248</h3>
+            <h3 className="text-2xl font-bold text-text-primary">1,248</h3>
           </div>
         </div>
-        <div className="bg-[#111827] border border-border p-5 rounded-2xl flex items-center space-x-4">
+        <div className="bg-surface dark:bg-[#111827] border border-border p-5 rounded-2xl flex items-center space-x-4">
           <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
             <Monitor className="w-6 h-6 text-primary" />
           </div>
           <div>
             <p className="text-sm text-text-muted">Unique Logins</p>
-            <h3 className="text-2xl font-bold text-text-inverse">452</h3>
+            <h3 className="text-2xl font-bold text-text-primary">452</h3>
           </div>
         </div>
       </div>
 
-      <div className="bg-[#111827] border border-border rounded-2xl overflow-hidden shadow-xl">
+      <div className="bg-surface dark:bg-[#111827] border border-border rounded-2xl overflow-hidden shadow-xl">
         <div className="p-4 border-b border-border flex justify-between items-center bg-slate-900/50">
           <div className="relative w-96">
             <input 
@@ -83,7 +83,7 @@ export default function ActivityLogs() {
               placeholder="Search by user, email, or action..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-inverse focus:outline-none focus:border-rose-500"
+              className="w-full bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-primary focus:outline-none focus:border-rose-500"
             />
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
           </div>
@@ -105,7 +105,7 @@ export default function ActivityLogs() {
               {filtered.map(log => (
                 <tr key={log.id} className="hover:bg-slate-800/30 transition-colors">
                   <td className="px-6 py-4">
-                    <div className="font-semibold text-text-inverse">{log.user}</div>
+                    <div className="font-semibold text-text-primary">{log.user}</div>
                     <div className="text-xs text-text-muted">{log.email}</div>
                   </td>
                   <td className="px-6 py-4">

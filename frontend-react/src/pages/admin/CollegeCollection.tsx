@@ -263,7 +263,7 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
       {!targetCollegeName && (
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-bold text-text-inverse flex items-center gap-3">
+            <h2 className="text-2xl font-bold text-text-primary flex items-center gap-3">
               <Building2 className="w-6 h-6 text-indigo-500" />
               College Student Collections
             </h2>
@@ -336,13 +336,13 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
 
       {/* Upload Form */}
       {isUploading && (
-        <div className="bg-[#111827] rounded-3xl p-6 border border-border shadow-xl max-w-3xl">
+        <div className="bg-surface dark:bg-[#111827] rounded-3xl p-6 border border-border shadow-xl max-w-3xl">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-bold text-text-inverse flex items-center">
+            <h3 className="text-lg font-bold text-text-primary flex items-center">
               <FileText className="w-5 h-5 mr-2 text-indigo-400" />
               Upload Student Collection
             </h3>
-            <button onClick={() => { setIsUploading(false); setSelectedFile(null); setCategoryInput(""); }} className="text-text-muted hover:text-text-inverse transition-colors">
+            <button onClick={() => { setIsUploading(false); setSelectedFile(null); setCategoryInput(""); }} className="text-text-muted hover:text-text-primary transition-colors">
               <X className="w-5 h-5" />
             </button>
           </div>
@@ -355,7 +355,7 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
                 value={categoryInput}
                 onChange={e => setCategoryInput(e.target.value)}
                 placeholder="e.g., B.Tech CSE, MCA, Full Stack Batch 1"
-                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500"
+                className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-indigo-500"
                 autoFocus
               />
               <p className="text-xs text-text-muted mt-1">This will group the students under this category. Re-uploading with the same category will overwrite it.</p>
@@ -369,7 +369,7 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
                   accept=".csv"
                   onChange={handleFileUpload}
                   ref={fileInputRef}
-                  className="block w-full text-sm text-text-muted file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-600/20 file:text-indigo-400 hover:file:bg-indigo-600/30 transition-all cursor-pointer bg-[#0B0F19] border border-border rounded-xl"
+                  className="block w-full text-sm text-text-muted file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-600/20 file:text-indigo-400 hover:file:bg-indigo-600/30 transition-all cursor-pointer bg-background dark:bg-[#0B0F19] border border-border rounded-xl"
                 />
               </div>
               <p className="text-xs text-text-muted mt-1">Ensure the CSV has headers like Name, Email, Phone, RegNum.</p>
@@ -387,13 +387,13 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
 
       {/* Manual Add Form */}
       {isAddingManually && (
-        <div className="bg-[#111827] rounded-3xl p-6 border border-border shadow-xl max-w-3xl">
+        <div className="bg-surface dark:bg-[#111827] rounded-3xl p-6 border border-border shadow-xl max-w-3xl">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-bold text-text-inverse flex items-center">
+            <h3 className="text-lg font-bold text-text-primary flex items-center">
               <Edit2 className="w-5 h-5 mr-2 text-indigo-400" />
               Create Collection Manually
             </h3>
-            <button onClick={() => { setIsAddingManually(false); setCategoryInput(""); setAdminCollegeEmailInput(""); }} className="text-text-muted hover:text-text-inverse transition-colors">
+            <button onClick={() => { setIsAddingManually(false); setCategoryInput(""); setAdminCollegeEmailInput(""); }} className="text-text-muted hover:text-text-primary transition-colors">
               <X className="w-5 h-5" />
             </button>
           </div>
@@ -407,7 +407,7 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
                   value={adminCollegeEmailInput}
                   onChange={e => setAdminCollegeEmailInput(e.target.value)}
                   placeholder="e.g., admin@college.edu"
-                  className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-indigo-500"
                 />
               </div>
             )}
@@ -418,7 +418,7 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
                 value={categoryInput}
                 onChange={e => setCategoryInput(e.target.value)}
                 placeholder="e.g., B.Tech CSE"
-                className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-indigo-500"
+                className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-indigo-500"
                 autoFocus
               />
             </div>
@@ -436,13 +436,13 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
       {/* Collections List */}
       <div className="space-y-4">
         {visibleCollections.length === 0 ? (
-          <div className="bg-[#111827] rounded-3xl border border-border p-16 text-center text-text-muted">
+          <div className="bg-surface dark:bg-[#111827] rounded-3xl border border-border p-16 text-center text-text-muted">
             <Users className="w-16 h-16 mx-auto mb-4 opacity-20" />
             <p>No student collections found. Upload a CSV to get started.</p>
           </div>
         ) : (
           visibleCollections.map(collection => (
-            <div key={collection.id} className="bg-[#111827] rounded-2xl border border-border shadow-lg overflow-hidden transition-all">
+            <div key={collection.id} className="bg-surface dark:bg-[#111827] rounded-2xl border border-border shadow-lg overflow-hidden transition-all">
               {/* Collection Header */}
               <div
                 className="p-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/30 transition-colors"
@@ -453,7 +453,7 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
                     <FileText className="w-6 h-6 text-indigo-400" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-text-inverse text-lg flex items-center gap-2">
+                    <h3 className="font-bold text-text-primary text-lg flex items-center gap-2">
                       {collection.category}
                       <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-md border border-primary/20">
                         {collection.students.length} Students
@@ -483,7 +483,7 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
                   >
                     <Trash2 className="w-5 h-5" />
                   </button>
-                  <button className="p-2 text-text-muted hover:text-text-inverse transition-colors">
+                  <button className="p-2 text-text-muted hover:text-text-primary transition-colors">
                     {expandedId === collection.id ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                   </button>
                 </div>
@@ -491,10 +491,10 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
 
               {/* Expanded Student List */}
               {expandedId === collection.id && (
-                <div className="border-t border-border bg-[#0B0F19] p-4">
+                <div className="border-t border-border bg-background dark:bg-[#0B0F19] p-4">
                   <div className="overflow-x-auto rounded-xl border border-border">
                     <table className="w-full text-left text-sm text-text-muted">
-                      <thead className="bg-[#111827] text-xs uppercase text-text-secondary">
+                      <thead className="bg-surface dark:bg-[#111827] text-xs uppercase text-text-secondary">
                         <tr>
                           <th className="px-4 py-3 border-b border-border">S.No</th>
                           <th className="px-4 py-3 border-b border-border">Name</th>
@@ -510,7 +510,7 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
                         {collection.students.map((student, idx) => (
                           <tr key={student.id} className="border-b border-border/50 hover:bg-slate-800/20">
                             <td className="px-4 py-3">{idx + 1}</td>
-                            <td className="px-4 py-3 font-medium text-text-inverse">{student.name}</td>
+                            <td className="px-4 py-3 font-medium text-text-primary">{student.name}</td>
                             <td className="px-4 py-3 text-primary">{student.email}</td>
                             <td className="px-4 py-3 font-mono">{student.regNum}</td>
                             <td className="px-4 py-3 font-mono">{student.phone}</td>
@@ -525,13 +525,13 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
                     {isAddingStudentTo === collection.id ? (
                       <div className="bg-[#1a2333] p-4 rounded-xl border border-border">
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
-                          <input type="text" placeholder="Name *" value={newStudent.name} onChange={e => setNewStudent({ ...newStudent, name: e.target.value })} className="bg-[#0B0F19] border border-border rounded-lg px-3 py-2 text-sm text-text-inverse" />
-                          <input type="email" placeholder="Email *" value={newStudent.email} onChange={e => setNewStudent({ ...newStudent, email: e.target.value })} className="bg-[#0B0F19] border border-border rounded-lg px-3 py-2 text-sm text-text-inverse" />
-                          <input type="text" placeholder="Reg Num" value={newStudent.regNum} onChange={e => setNewStudent({ ...newStudent, regNum: e.target.value })} className="bg-[#0B0F19] border border-border rounded-lg px-3 py-2 text-sm text-text-inverse" />
-                          <input type="text" placeholder="Phone" value={newStudent.phone} onChange={e => setNewStudent({ ...newStudent, phone: e.target.value })} className="bg-[#0B0F19] border border-border rounded-lg px-3 py-2 text-sm text-text-inverse" />
+                          <input type="text" placeholder="Name *" value={newStudent.name} onChange={e => setNewStudent({ ...newStudent, name: e.target.value })} className="bg-background dark:bg-[#0B0F19] border border-border rounded-lg px-3 py-2 text-sm text-text-primary" />
+                          <input type="email" placeholder="Email *" value={newStudent.email} onChange={e => setNewStudent({ ...newStudent, email: e.target.value })} className="bg-background dark:bg-[#0B0F19] border border-border rounded-lg px-3 py-2 text-sm text-text-primary" />
+                          <input type="text" placeholder="Reg Num" value={newStudent.regNum} onChange={e => setNewStudent({ ...newStudent, regNum: e.target.value })} className="bg-background dark:bg-[#0B0F19] border border-border rounded-lg px-3 py-2 text-sm text-text-primary" />
+                          <input type="text" placeholder="Phone" value={newStudent.phone} onChange={e => setNewStudent({ ...newStudent, phone: e.target.value })} className="bg-background dark:bg-[#0B0F19] border border-border rounded-lg px-3 py-2 text-sm text-text-primary" />
                         </div>
                         <div className="flex justify-end space-x-2">
-                          <button onClick={() => setIsAddingStudentTo(null)} className="px-4 py-1.5 text-sm text-text-muted hover:text-text-inverse border border-border rounded-lg">Cancel</button>
+                          <button onClick={() => setIsAddingStudentTo(null)} className="px-4 py-1.5 text-sm text-text-muted hover:text-text-primary border border-border rounded-lg">Cancel</button>
                           <button onClick={() => handleAddManualStudent(collection.id)} className="px-4 py-1.5 text-sm bg-primary hover:bg-primary text-text-inverse rounded-lg">Save Student</button>
                         </div>
                       </div>

@@ -64,7 +64,7 @@ export default function UserActivityManagement() {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold text-text-inverse mb-1">User Activity Stats</h2>
+          <h2 className="text-3xl font-bold text-text-primary mb-1">User Activity Stats</h2>
           <p className="text-text-muted">Track DSA solving progress, courses registered and completed by users.</p>
         </div>
         <div className="flex space-x-3">
@@ -77,7 +77,7 @@ export default function UserActivityManagement() {
         </div>
       </div>
 
-      <div className="bg-[#111827] border border-border rounded-2xl overflow-hidden shadow-xl">
+      <div className="bg-surface dark:bg-[#111827] border border-border rounded-2xl overflow-hidden shadow-xl">
         <div className="p-4 border-b border-border flex justify-between items-center bg-slate-900/50">
           <div className="relative w-96">
             <input 
@@ -85,7 +85,7 @@ export default function UserActivityManagement() {
               placeholder="Search by name or email..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-inverse focus:outline-none focus:border-rose-500"
+              className="w-full bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-primary focus:outline-none focus:border-rose-500"
             />
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
           </div>
@@ -118,12 +118,12 @@ export default function UserActivityManagement() {
                 {filtered.map(activity => (
                   <tr key={activity.id} className="hover:bg-slate-800/30 transition-colors">
                     <td className="px-6 py-4">
-                      <div className="font-semibold text-text-inverse">{activity.name}</div>
+                      <div className="font-semibold text-text-primary">{activity.name}</div>
                       <div className="text-xs text-text-muted">{activity.email}</div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col space-y-1">
-                        <div className="flex items-center space-x-2 font-bold text-text-inverse">
+                        <div className="flex items-center space-x-2 font-bold text-text-primary">
                            <Code className="w-4 h-4 text-primary" /> 
                            <span>{activity.dsa.total} Total</span>
                         </div>

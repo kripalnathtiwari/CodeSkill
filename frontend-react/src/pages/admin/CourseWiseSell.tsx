@@ -93,13 +93,13 @@ export default function CourseWiseSell() {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold text-text-inverse mb-1">Course Wise Sell</h2>
+          <h2 className="text-3xl font-bold text-text-primary mb-1">Course Wise Sell</h2>
           <p className="text-text-muted">Track revenue and enrollments for each course.</p>
         </div>
       </div>
 
       {/* Tabs Navigation */}
-      <div className="bg-[#111827] rounded-xl border border-border overflow-hidden shadow-2xl">
+      <div className="bg-surface dark:bg-[#111827] rounded-xl border border-border overflow-hidden shadow-2xl">
         <div className="p-4 border-b border-border flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-900/50">
           <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 hide-scrollbar">
             <button
@@ -156,14 +156,14 @@ export default function CourseWiseSell() {
                           <BookOpen className="w-6 h-6" />
                         </div>
                       </div>
-                      <h3 className="text-xl font-bold text-text-inverse mb-2 line-clamp-2" title={courseName}>{courseName}</h3>
+                      <h3 className="text-xl font-bold text-text-primary mb-2 line-clamp-2" title={courseName}>{courseName}</h3>
                       <div className="space-y-4 mt-6">
                         <div className="flex items-center justify-between p-3 bg-slate-800/50 rounded-xl">
                           <div className="flex items-center space-x-3">
                             <Users className="w-5 h-5 text-text-muted" />
                             <span className="text-sm text-text-secondary">Enrollments</span>
                           </div>
-                          <span className="font-bold text-text-inverse">{courseSales.length}</span>
+                          <span className="font-bold text-text-primary">{courseSales.length}</span>
                         </div>
                         <div className="flex items-center justify-between p-3 bg-primary/5 rounded-xl border border-primary/10">
                           <div className="flex items-center space-x-3">
@@ -213,7 +213,7 @@ export default function CourseWiseSell() {
             <div className="space-y-6 animate-in fade-in duration-300">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900/50 p-6 rounded-2xl border border-border">
                 <div>
-                  <h3 className="text-2xl font-bold text-text-inverse">{activeTab}</h3>
+                  <h3 className="text-2xl font-bold text-text-primary">{activeTab}</h3>
                   <div className="flex flex-wrap gap-4 md:gap-6 mt-3">
                      <div className="flex items-center gap-2 text-text-secondary bg-slate-800/50 px-3 py-1.5 rounded-lg border border-border/50">
                        <Users className="w-4 h-4 text-primary" />
@@ -268,7 +268,7 @@ export default function CourseWiseSell() {
                               <Receipt className="w-5 h-5" />
                             </div>
                             <div>
-                              <div className="font-semibold text-text-inverse line-clamp-1">{sale.courseName}</div>
+                              <div className="font-semibold text-text-primary line-clamp-1">{sale.courseName}</div>
                               <div className="text-xs text-text-muted uppercase tracking-wider">TXN-{Math.random().toString(36).substr(2, 8)}</div>
                             </div>
                           </div>

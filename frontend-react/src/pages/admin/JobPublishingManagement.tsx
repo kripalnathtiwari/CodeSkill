@@ -228,7 +228,7 @@ export default function JobPublishingManagement() {
           <Link
             to="/jobs"
             target="_blank"
-            className="inline-flex items-center space-x-2 px-4 py-3 bg-slate-800 hover:bg-slate-700 text-text-secondary font-semibold rounded-xl border border-border transition-all text-sm"
+            className="inline-flex items-center space-x-2 px-4 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-text-secondary font-semibold rounded-xl border border-border transition-all text-sm"
           >
             <Eye className="w-4 h-4 text-primary" />
             <span>View Live Career Site</span>
@@ -350,15 +350,15 @@ export default function JobPublishingManagement() {
                 </div>
 
                 <div className="flex flex-wrap gap-2 text-xs text-text-muted">
-                  <span className="flex items-center space-x-1 bg-slate-800/80 px-2.5 py-1 rounded-lg">
+                  <span className="flex items-center space-x-1 bg-slate-100/80 dark:bg-slate-800/80 px-2.5 py-1 rounded-lg">
                     <MapPin className="w-3.5 h-3.5 text-text-muted" />
                     <span>{job.location}</span>
                   </span>
-                  <span className="flex items-center space-x-1 bg-slate-800/80 px-2.5 py-1 rounded-lg">
+                  <span className="flex items-center space-x-1 bg-slate-100/80 dark:bg-slate-800/80 px-2.5 py-1 rounded-lg">
                     <DollarSign className="w-3.5 h-3.5 text-primary" />
                     <span>{job.salary}</span>
                   </span>
-                  <span className="flex items-center space-x-1 bg-slate-800/80 px-2.5 py-1 rounded-lg">
+                  <span className="flex items-center space-x-1 bg-slate-100/80 dark:bg-slate-800/80 px-2.5 py-1 rounded-lg">
                     <Briefcase className="w-3.5 h-3.5 text-primary" />
                     <span>{job.type} ({job.workplace})</span>
                   </span>
@@ -399,7 +399,7 @@ export default function JobPublishingManagement() {
                   <Link
                     to="/jobs"
                     target="_blank"
-                    className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-text-secondary font-semibold transition-colors flex items-center space-x-1"
+                    className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-text-secondary font-semibold transition-colors flex items-center space-x-1"
                   >
                     <span>View</span>
                     <ExternalLink className="w-3 h-3" />

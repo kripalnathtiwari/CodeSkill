@@ -565,7 +565,7 @@ export default function ProblemManagement() {
                             newTc[idx].isHidden = e.target.checked;
                             setTestCases(newTc);
                           }}
-                          className="w-3.5 h-3.5 rounded border-slate-600 text-primary focus:ring-blue-500 focus:ring-offset-slate-900 bg-slate-800"
+                          className="w-3.5 h-3.5 rounded border-slate-600 text-primary focus:ring-blue-500 focus:ring-offset-slate-900 bg-slate-100 dark:bg-slate-800"
                         />
                         <span>Hidden Test</span>
                       </label>
@@ -700,7 +700,7 @@ export default function ProblemManagement() {
               {loading ? (
                 <tr><td colSpan={5} className="px-6 py-8 text-center text-text-muted">Loading problems...</td></tr>
               ) : filtered.map((problem, idx) => (
-                <tr key={problem._id || problem.id || `fallback-key-${idx}`} className="hover:bg-slate-800/30 transition-colors">
+                <tr key={problem._id || problem.id || `fallback-key-${idx}`} className="hover:bg-slate-200/30 dark:hover:bg-slate-800/30 transition-colors">
                   <td className="px-6 py-4 font-medium text-text-primary">
                     <div className="flex items-center space-x-3">
                       <Code2 className="w-5 h-5 text-primary shrink-0" />
@@ -719,7 +719,7 @@ export default function ProblemManagement() {
                   <td className="px-6 py-4">
                     <div className="flex gap-1.5 flex-wrap">
                       {(problem.topicTags || []).slice(0, 2).map((tag: any, idx: number) => (
-                        <span key={idx} className="bg-slate-800 text-text-secondary text-[10px] px-2 py-1 rounded-md uppercase tracking-wider">
+                        <span key={idx} className="bg-slate-100 dark:bg-slate-800 text-text-secondary text-[10px] px-2 py-1 rounded-md uppercase tracking-wider">
                           {tag.name || tag}
                         </span>
                       ))}
@@ -729,7 +729,7 @@ export default function ProblemManagement() {
                   <td className="px-6 py-4">
                     {isCustomProblem(problem._id || problem.id)
                       ? <span className="text-xs px-2 py-1 rounded-md bg-primary/10 text-primary font-medium">Custom</span>
-                      : <span className="text-xs px-2 py-1 rounded-md bg-slate-700 text-text-muted font-medium">Default</span>
+                      : <span className="text-xs px-2 py-1 rounded-md bg-slate-200 dark:bg-slate-700 text-text-muted font-medium">Default</span>
                     }
                   </td>
                   <td className="px-6 py-4 text-right">
@@ -781,7 +781,7 @@ export default function ProblemManagement() {
                   </div>
                 </div>
                 <div className="mt-6 flex justify-end">
-                  <button onClick={() => setDeleteConfirmId(null)} className="px-5 py-2.5 text-sm font-semibold rounded-xl border border-border text-text-secondary hover:bg-slate-800 transition-colors">Close</button>
+                  <button onClick={() => setDeleteConfirmId(null)} className="px-5 py-2.5 text-sm font-semibold rounded-xl border border-border text-text-secondary hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">Close</button>
                 </div>
               </>
             ) : (
@@ -796,7 +796,7 @@ export default function ProblemManagement() {
                   </div>
                 </div>
                 <div className="mt-6 flex items-center justify-end space-x-3">
-                  <button onClick={() => setDeleteConfirmId(null)} className="px-5 py-2.5 text-sm font-semibold rounded-xl border border-border text-text-secondary hover:bg-slate-800 transition-colors">Cancel</button>
+                  <button onClick={() => setDeleteConfirmId(null)} className="px-5 py-2.5 text-sm font-semibold rounded-xl border border-border text-text-secondary hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">Cancel</button>
                   <button onClick={confirmDelete} className="px-5 py-2.5 text-sm font-semibold rounded-xl bg-rose-600 hover:bg-rose-500 text-text-inverse flex items-center space-x-2 shadow-lg shadow-rose-500/20 transition-colors">
                     <Trash2 className="w-4 h-4" />
                     <span>Delete Problem</span>

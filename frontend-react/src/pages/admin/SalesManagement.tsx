@@ -176,7 +176,7 @@ export default function SalesManagement() {
             </thead>
             <tbody className="divide-y divide-slate-800">
               {filtered.slice().reverse().map((sale, idx) => (
-                <tr key={idx} className="hover:bg-slate-800/30 transition-colors">
+                <tr key={idx} className="hover:bg-slate-200/30 dark:hover:bg-slate-800/30 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">

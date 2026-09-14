@@ -96,7 +96,7 @@ export default function AdminDashboard() {
               className={`w-full flex items-center space-x-3 px-3 py-3 rounded-xl transition-all ${
                 activeTab === item.id 
                   ? "bg-rose-500/10 text-rose-500 border border-rose-500/20" 
-                  : "text-text-muted hover:bg-slate-800/50 hover:text-text-secondary border border-transparent"
+                  : "text-text-muted hover:bg-slate-200/50 dark:hover:bg-slate-800/50 hover:text-text-secondary border border-transparent"
               } ${!isSidebarOpen && "justify-center"}`}
               title={!isSidebarOpen ? item.label : ""}
             >

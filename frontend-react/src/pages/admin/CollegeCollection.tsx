@@ -445,7 +445,7 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
             <div key={collection.id} className="bg-surface dark:bg-[#111827] rounded-2xl border border-border shadow-lg overflow-hidden transition-all">
               {/* Collection Header */}
               <div
-                className="p-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/30 transition-colors"
+                className="p-5 flex items-center justify-between cursor-pointer hover:bg-slate-200/30 dark:hover:bg-slate-800/30 transition-colors"
                 onClick={() => setExpandedId(expandedId === collection.id ? null : collection.id)}
               >
                 <div className="flex items-center space-x-4">
@@ -508,7 +508,7 @@ export default function CollegeCollection({ targetCollegeName, targetCollegeEmai
                           <tr><td colSpan={5} className="px-4 py-4 text-center">No students added yet.</td></tr>
                         )}
                         {collection.students.map((student, idx) => (
-                          <tr key={student.id} className="border-b border-border/50 hover:bg-slate-800/20">
+                          <tr key={student.id} className="border-b border-border/50 hover:bg-slate-200/20 dark:hover:bg-slate-800/20">
                             <td className="px-4 py-3">{idx + 1}</td>
                             <td className="px-4 py-3 font-medium text-text-primary">{student.name}</td>
                             <td className="px-4 py-3 text-primary">{student.email}</td>

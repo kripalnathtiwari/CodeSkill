@@ -67,7 +67,7 @@ export default function DashboardOverview({ setActiveTab }: { setActiveTab?: (ta
     >
       <div className="flex justify-between items-center">
         <motion.h2 variants={itemVariants} className="text-3xl font-bold text-text-primary">Platform Overview</motion.h2>
-        <motion.div variants={itemVariants} className="text-sm text-text-muted bg-slate-800/50 px-4 py-2 rounded-lg border border-border backdrop-blur-sm">
+        <motion.div variants={itemVariants} className="text-sm text-text-muted bg-slate-100/50 dark:bg-slate-800/50 px-4 py-2 rounded-lg border border-border backdrop-blur-sm">
           Last updated: Just now
         </motion.div>
       </div>
@@ -117,7 +117,7 @@ export default function DashboardOverview({ setActiveTab }: { setActiveTab?: (ta
             <div className="p-3 bg-amber-500/10 rounded-xl text-amber-400 group-hover:bg-amber-500/20 transition-colors">
               <Activity className="w-6 h-6" />
             </div>
-            <span className="flex items-center text-text-muted text-sm font-bold bg-slate-800 px-2 py-1 rounded-md">
+            <span className="flex items-center text-text-muted text-sm font-bold bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-md">
               Live
             </span>
           </div>
@@ -135,7 +135,7 @@ export default function DashboardOverview({ setActiveTab }: { setActiveTab?: (ta
             <div className="p-3 bg-purple-500/10 rounded-xl text-purple-400 group-hover:bg-purple-500/20 transition-colors">
               <Building2 className="w-6 h-6" />
             </div>
-            <span className="flex items-center text-text-muted text-sm font-bold bg-slate-800 px-2 py-1 rounded-md">
+            <span className="flex items-center text-text-muted text-sm font-bold bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-md">
               View All
             </span>
           </div>
@@ -153,7 +153,7 @@ export default function DashboardOverview({ setActiveTab }: { setActiveTab?: (ta
             <div className="p-3 bg-sky-500/10 rounded-xl text-sky-400 group-hover:bg-sky-500/20 transition-colors">
               <UserCheck className="w-6 h-6" />
             </div>
-            <span className="flex items-center text-text-muted text-sm font-bold bg-slate-800 px-2 py-1 rounded-md">
+            <span className="flex items-center text-text-muted text-sm font-bold bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-md">
               View All
             </span>
           </div>
@@ -217,7 +217,7 @@ export default function DashboardOverview({ setActiveTab }: { setActiveTab?: (ta
                      <span className="text-text-muted text-xs mt-0.5">User {Math.floor(Math.random() * 9000) + 1000} enrolled in "System Design Masterclass"</span>
                    </div>
                  </div>
-                 <span className="text-text-muted text-xs font-mono bg-slate-800/50 px-2 py-1 rounded-md">{i * 12}m</span>
+                 <span className="text-text-muted text-xs font-mono bg-slate-100/50 dark:bg-slate-800/50 px-2 py-1 rounded-md">{i * 12}m</span>
                </motion.div>
              ))}
            </div>

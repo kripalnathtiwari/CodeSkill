@@ -340,7 +340,7 @@ export default function OtherPracticeManagement() {
               <div className="p-8 text-center text-text-muted">No subjects added yet.</div>
             ) : (
               subjects.map(s => (
-                <div key={s} className="flex justify-between items-center p-4 hover:bg-slate-800/30 transition-colors">
+                <div key={s} className="flex justify-between items-center p-4 hover:bg-slate-200/30 dark:hover:bg-slate-800/30 transition-colors">
                   <div className="flex flex-col gap-1">
                      <span className="text-text-primary font-medium">{String(s)}</span>
                      {subjectNotes[String(s)] && (
@@ -455,7 +455,7 @@ export default function OtherPracticeManagement() {
                 <input type="file" accept=".pdf" id="pdf-upload" className="hidden" onChange={handlePdfUpload} disabled={isParsingPdf} />
                 <label 
                   htmlFor="pdf-upload"
-                  className={`cursor-pointer bg-slate-800 hover:bg-slate-700 text-rose-500 font-bold px-4 py-2.5 rounded-xl transition-colors flex items-center space-x-2 border ${isParsingPdf ? 'border-rose-500 opacity-70' : 'border-rose-500/30'}`}
+                  className={`cursor-pointer bg-slate-100 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-rose-500 font-bold px-4 py-2.5 rounded-xl transition-colors flex items-center space-x-2 border ${isParsingPdf ? 'border-rose-500 opacity-70' : 'border-rose-500/30'}`}
                 >
                   {isParsingPdf ? (
                     <span className="flex items-center gap-2"><Loader2 className="w-5 h-5 animate-spin" /> Extracting...</span>
@@ -596,11 +596,11 @@ export default function OtherPracticeManagement() {
                         {t.subject}
                       </span>
                     )}
-                    <span className="flex items-center space-x-1 text-text-muted text-xs font-bold bg-slate-800 px-2.5 py-0.5 rounded-full border border-border">
+                    <span className="flex items-center space-x-1 text-text-muted text-xs font-bold bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 rounded-full border border-border">
                       <Clock className="w-3.5 h-3.5" />
                       <span>{t.duration}</span>
                     </span>
-                    <span className="flex items-center space-x-1 text-text-muted text-xs font-bold bg-slate-800 px-2.5 py-0.5 rounded-full border border-border">
+                    <span className="flex items-center space-x-1 text-text-muted text-xs font-bold bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 rounded-full border border-border">
                       <Users className="w-3.5 h-3.5" />
                       <span>{t.questions?.length || 0} Qs</span>
                     </span>

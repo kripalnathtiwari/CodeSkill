@@ -1538,10 +1538,10 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                   {/* Category Header */}
                   <div
                     onClick={() => toggleCategoryExpand(categoryName)}
-                    className="bg-slate-800/60 hover:bg-slate-800/80 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer border-b border-border/80 transition-all select-none"
+                    className="bg-slate-100/60 dark:bg-slate-800/60 hover:bg-slate-200/80 dark:hover:bg-slate-800/80 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer border-b border-border/80 transition-all select-none"
                   >
                     <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 rounded-lg bg-slate-700/60 flex items-center justify-center text-text-secondary">
+                      <div className="w-8 h-8 rounded-lg bg-slate-200/60 dark:bg-slate-700/60 flex items-center justify-center text-text-secondary">
                         {isExpanded ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
                       </div>
                       <h3 className="text-xl font-bold text-primary flex items-center">
@@ -1570,7 +1570,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                         disabled={allCategoryScores.length === 0}
                         className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-bold text-sm transition-all shadow-md ${allCategoryScores.length > 0
                             ? "bg-primary hover:bg-primary text-text-inverse shadow-blue-600/20"
-                            : "bg-slate-800 text-text-muted cursor-not-allowed border border-border"
+                            : "bg-slate-100 dark:bg-slate-800 text-text-muted cursor-not-allowed border border-border"
                           }`}
                         title="Download CSV for this entire Course Category"
                       >
@@ -1644,7 +1644,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                                     disabled={sectionScores.length === 0}
                                     className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-bold text-sm transition-all shadow-md ${sectionScores.length > 0
                                         ? "bg-primary hover:bg-primary text-text-inverse shadow-blue-600/20"
-                                        : "bg-slate-800 text-text-muted cursor-not-allowed border border-border"
+                                        : "bg-slate-100 dark:bg-slate-800 text-text-muted cursor-not-allowed border border-border"
                                       }`}
                                     title="Download CSV for this assigned section"
                                   >
@@ -1744,7 +1744,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
               </thead>
               <tbody className="divide-y divide-slate-800/60 text-sm">
                 {filteredMasterStudents.map((s, idx) => (
-                  <tr key={idx} className="hover:bg-slate-800/40 transition-colors">
+                  <tr key={idx} className="hover:bg-slate-200/40 dark:hover:bg-slate-800/40 transition-colors">
                     <td className="py-4 pr-4 font-bold text-text-primary">{s.name || "N/A"}</td>
                     <td className="py-4 px-4 text-text-secondary font-mono">{s.regNum || "N/A"}</td>
                     <td className="py-4 px-4 text-text-muted">{s.email || "unknown"}</td>
@@ -1754,7 +1754,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                     </td>
                     <td className="py-4 px-4">
                       <div className="flex items-center space-x-1.5 flex-wrap gap-y-1">
-                        <span className="px-2 py-0.5 bg-slate-800 text-text-secondary rounded text-xs font-semibold">
+                        <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-text-secondary rounded text-xs font-semibold">
                           Att: {s.dsaAttempted}
                         </span>
                         <span className="px-2 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded text-xs font-bold">
@@ -1767,7 +1767,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                     </td>
                     <td className="py-4 px-4">
                       <div className="flex items-center space-x-1.5 flex-wrap gap-y-1">
-                        <span className="px-2 py-0.5 bg-slate-800 text-text-secondary rounded text-xs font-semibold">
+                        <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-text-secondary rounded text-xs font-semibold">
                           Att: {s.aptAttempted}
                         </span>
                         <span className="px-2 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded text-xs font-bold">
@@ -1781,7 +1781,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                     <td className="py-4 pl-4 text-right">
                       <button
                         onClick={() => setEditingStudentStats({ ...s })}
-                        className="inline-flex items-center space-x-1 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-purple-300 rounded-lg text-xs font-semibold border border-border transition-colors"
+                        className="inline-flex items-center space-x-1 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-purple-300 rounded-lg text-xs font-semibold border border-border transition-colors"
                       >
                         <Edit2 className="w-3.5 h-3.5 mr-1" />
                         <span>Edit Stats</span>
@@ -1916,7 +1916,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
             <div className="flex justify-end space-x-3 pt-2">
               <button
                 onClick={() => setEditingStudentStats(null)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-text-secondary rounded-xl text-sm font-semibold"
+                className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-text-secondary rounded-xl text-sm font-semibold"
               >
                 Cancel
               </button>
@@ -2095,7 +2095,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
               <button
                 type="button"
                 onClick={() => setIsAddStudentModalOpen(false)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-text-secondary rounded-xl text-sm font-semibold"
+                className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-text-secondary rounded-xl text-sm font-semibold"
               >
                 Cancel
               </button>

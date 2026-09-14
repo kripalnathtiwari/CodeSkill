@@ -17,7 +17,7 @@ export default function QuestionsMaster() {
           className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all ${
             activeTab === "dsa"
               ? "bg-rose-500 text-text-inverse"
-              : "bg-slate-800 text-text-secondary hover:bg-slate-700"
+              : "bg-slate-100 dark:bg-slate-800 text-text-secondary hover:bg-slate-300 dark:hover:bg-slate-700"
           }`}
         >
           <Code className="w-5 h-5" />
@@ -29,7 +29,7 @@ export default function QuestionsMaster() {
           className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all ${
             activeTab === "interview"
               ? "bg-rose-500 text-text-inverse"
-              : "bg-slate-800 text-text-secondary hover:bg-slate-700"
+              : "bg-slate-100 dark:bg-slate-800 text-text-secondary hover:bg-slate-300 dark:hover:bg-slate-700"
           }`}
         >
           <Building2 className="w-5 h-5" />
@@ -41,7 +41,7 @@ export default function QuestionsMaster() {
           className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all ${
             activeTab === "aptitude"
               ? "bg-rose-500 text-text-inverse"
-              : "bg-slate-800 text-text-secondary hover:bg-slate-700"
+              : "bg-slate-100 dark:bg-slate-800 text-text-secondary hover:bg-slate-300 dark:hover:bg-slate-700"
           }`}
         >
           <BrainCircuit className="w-5 h-5" />
@@ -53,7 +53,7 @@ export default function QuestionsMaster() {
           className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all ${
             activeTab === "other"
               ? "bg-rose-500 text-text-inverse"
-              : "bg-slate-800 text-text-secondary hover:bg-slate-700"
+              : "bg-slate-100 dark:bg-slate-800 text-text-secondary hover:bg-slate-300 dark:hover:bg-slate-700"
           }`}
         >
           <FolderGit2 className="w-5 h-5" />

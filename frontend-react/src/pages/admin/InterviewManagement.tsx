@@ -692,7 +692,7 @@ export default function InterviewManagement() {
                           {isCustom && (
                             <button
                               onClick={(e) => handleDeleteCompany(comp.name, e)}
-                              className="text-text-muted hover:text-rose-400 p-1.5 rounded-lg hover:bg-slate-800 transition-colors"
+                              className="text-text-muted hover:text-rose-400 p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
                               title="Delete Company"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -702,7 +702,7 @@ export default function InterviewManagement() {
                       </div>
 
                       <div className="flex items-center space-x-2 mt-2">
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-text-secondary font-semibold uppercase tracking-wider">
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-text-secondary font-semibold uppercase tracking-wider">
                           {comp.category}
                         </span>
                       </div>
@@ -844,7 +844,7 @@ export default function InterviewManagement() {
                         : (q.topicTags ? q.topicTags.split(",") : []);
 
                       return (
-                        <tr key={q._id || q.id} className="hover:bg-slate-800/40 transition-colors cursor-pointer" onClick={() => { if (q.isTestSeries) setSelectedTestSeries(q.title) }}>
+                        <tr key={q._id || q.id} className="hover:bg-slate-200/40 dark:hover:bg-slate-800/40 transition-colors cursor-pointer" onClick={() => { if (q.isTestSeries) setSelectedTestSeries(q.title) }}>
                           <td className="px-6 py-4 font-medium text-text-primary">
                             <div className="flex items-center space-x-2">
                               {q.isTestSeries ? (
@@ -886,7 +886,7 @@ export default function InterviewManagement() {
                           <td className="px-6 py-4">
                             <div className="flex flex-wrap gap-1">
                               {topics.slice(0, 3).map((t: string, i: number) => (
-                                <span key={i} className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-text-secondary">
+                                <span key={i} className="text-[10px] px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-text-secondary">
                                   {t}
                                 </span>
                               ))}
@@ -899,14 +899,14 @@ export default function InterviewManagement() {
                             <div className="flex items-center justify-end space-x-2">
                               <button
                                 onClick={(e) => { e.stopPropagation(); handleOpenEditProblem(q); }}
-                                className="p-1.5 text-text-muted hover:text-primary hover:bg-slate-800 rounded-lg transition-colors"
+                                className="p-1.5 text-text-muted hover:text-primary hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg transition-colors"
                                 title="Edit Question"
                               >
                                 <Edit className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={(e) => { e.stopPropagation(); setDeleteConfirmId(q._id || q.id); }}
-                                className="p-1.5 text-text-muted hover:text-rose-400 hover:bg-slate-800 rounded-lg transition-colors"
+                                className="p-1.5 text-text-muted hover:text-rose-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg transition-colors"
                                 title="Delete Question"
                               >
                                 <Trash2 className="w-4 h-4" />

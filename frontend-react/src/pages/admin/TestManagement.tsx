@@ -154,7 +154,7 @@ function TestCard({ test, colleges, onDelete, onDownloadCSV, onViewResults }: { 
             </span>
           )}
           {status === "ended" && (
-            <span className="text-xs font-bold text-text-secondary bg-slate-800 border border-border px-2.5 py-0.5 rounded-full">ENDED</span>
+            <span className="text-xs font-bold text-text-secondary bg-slate-100 dark:bg-slate-800 border border-border px-2.5 py-0.5 rounded-full">ENDED</span>
           )}
           {test.category && (
             <span className="text-xs font-bold text-blue-300 bg-primary/20 px-2.5 py-0.5 rounded-full border border-primary/30">Cat: {test.category}</span>
@@ -166,10 +166,10 @@ function TestCard({ test, colleges, onDelete, onDownloadCSV, onViewResults }: { 
         </div>
 
         <div className="flex flex-wrap gap-2.5 mt-3 text-xs text-text-secondary font-medium">
-          <span className="flex items-center space-x-1.5 bg-slate-800/80 px-3 py-1 rounded-lg border border-border/60"><Clock className="w-3.5 h-3.5 text-indigo-400" /><span>{test.duration}</span></span>
-          <span className="flex items-center space-x-1.5 bg-slate-800/80 px-3 py-1 rounded-lg border border-border/60"><Users className="w-3.5 h-3.5 text-indigo-400" /><span>{test.questions?.length || 0} Qs</span></span>
+          <span className="flex items-center space-x-1.5 bg-slate-100/80 dark:bg-slate-800/80 px-3 py-1 rounded-lg border border-border/60"><Clock className="w-3.5 h-3.5 text-indigo-400" /><span>{test.duration}</span></span>
+          <span className="flex items-center space-x-1.5 bg-slate-100/80 dark:bg-slate-800/80 px-3 py-1 rounded-lg border border-border/60"><Users className="w-3.5 h-3.5 text-indigo-400" /><span>{test.questions?.length || 0} Qs</span></span>
           {test.requiresCode && <span className="flex items-center space-x-1.5 text-rose-300 bg-rose-500/20 px-3 py-1 rounded-lg border border-rose-500/30 font-bold"><ShieldAlert className="w-3.5 h-3.5 text-rose-400" /><span>Protected</span></span>}
-          {test.scheduledAt && <span className="flex items-center space-x-1.5 bg-slate-800/80 px-3 py-1 rounded-lg border border-border/60"><CalendarClock className="w-3.5 h-3.5 text-indigo-400" /><span>{formatScheduled(test.scheduledAt)}</span></span>}
+          {test.scheduledAt && <span className="flex items-center space-x-1.5 bg-slate-100/80 dark:bg-slate-800/80 px-3 py-1 rounded-lg border border-border/60"><CalendarClock className="w-3.5 h-3.5 text-indigo-400" /><span>{formatScheduled(test.scheduledAt)}</span></span>}
           {displayName && <span className="flex items-center space-x-1.5 text-indigo-200 bg-indigo-500/20 px-3 py-1 rounded-lg border border-indigo-500/30 font-semibold"><span>By: {displayName}</span></span>}
         </div>
 
@@ -984,7 +984,7 @@ export default function TestManagement() {
         </div>
 
         {/* â”€â”€ Scheduling â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-        <div className="bg-slate-800/50 rounded-2xl border border-border p-5 space-y-4">
+        <div className="bg-slate-100/50 dark:bg-slate-800/50 rounded-2xl border border-border p-5 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <CalendarClock className="w-5 h-5 text-amber-400" />
@@ -1056,7 +1056,7 @@ export default function TestManagement() {
         </div>
 
         {/* Access Code */}
-        <div className="bg-slate-800/50 p-5 rounded-2xl border border-border">
+        <div className="bg-slate-100/50 dark:bg-slate-800/50 p-5 rounded-2xl border border-border">
           <label className="flex items-center space-x-3 cursor-pointer">
             <input type="checkbox" checked={requiresCode} onChange={e => setRequiresCode(e.target.checked)} className="w-5 h-5 rounded border-slate-600 text-primary focus:ring-blue-500 bg-background dark:bg-[#0B0F19]" />
             <span className="font-bold text-text-primary">Require Access Code</span>
@@ -1077,7 +1077,7 @@ export default function TestManagement() {
             <input type="file" accept=".pdf" id="pdf-upload" className="hidden" onChange={handlePdfUpload} />
             <label
               htmlFor="pdf-upload"
-              className={`cursor-pointer bg-slate-800 hover:bg-slate-700 text-primary font-bold px-4 py-2.5 rounded-xl transition-colors flex items-center space-x-2 border ${isParsingPdf ? 'border-primary' : 'border-primary/30'}`}
+              className={`cursor-pointer bg-slate-100 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-primary font-bold px-4 py-2.5 rounded-xl transition-colors flex items-center space-x-2 border ${isParsingPdf ? 'border-primary' : 'border-primary/30'}`}
             >
               {isParsingPdf ? (
                 <span className="animate-pulse">Parsing PDF Content...</span>
@@ -1484,7 +1484,7 @@ function ResultsModal({ test, onClose }: { test: any; onClose: () => void }) {
                                   <div className="flex items-center space-x-2 mt-2">
                                     <button
                                       onClick={() => setSelectedStudentForSnapshots(student)}
-                                      className="text-xs flex items-center space-x-1 text-text-secondary hover:text-primary bg-slate-800 hover:bg-primary/10 px-2.5 py-1 rounded-lg border border-border/60 transition-colors"
+                                      className="text-xs flex items-center space-x-1 text-text-secondary hover:text-primary bg-slate-100 dark:bg-slate-800 hover:bg-primary/10 px-2.5 py-1 rounded-lg border border-border/60 transition-colors"
                                       title="View Camera Log"
                                     >
                                       <Video className="w-3 h-3" />

@@ -158,7 +158,7 @@ export default function CourseWiseSell() {
                       </div>
                       <h3 className="text-xl font-bold text-text-primary mb-2 line-clamp-2" title={courseName}>{courseName}</h3>
                       <div className="space-y-4 mt-6">
-                        <div className="flex items-center justify-between p-3 bg-slate-800/50 rounded-xl">
+                        <div className="flex items-center justify-between p-3 bg-slate-100/50 dark:bg-slate-800/50 rounded-xl">
                           <div className="flex items-center space-x-3">
                             <Users className="w-5 h-5 text-text-muted" />
                             <span className="text-sm text-text-secondary">Enrollments</span>
@@ -174,7 +174,7 @@ export default function CourseWiseSell() {
                         </div>
                       </div>
                     </div>
-                    <div className="p-4 border-t border-border bg-slate-800/30 space-y-2">
+                    <div className="p-4 border-t border-border bg-slate-100/30 dark:bg-slate-800/30 space-y-2">
                       <button
                         onClick={(e) => { e.stopPropagation(); downloadCSV(courseName, courseSales); }}
                         className="w-full flex items-center justify-center space-x-2 bg-slate-800 hover:bg-slate-700 text-text-inverse px-4 py-2.5 rounded-xl font-semibold transition-all text-sm"
@@ -215,7 +215,7 @@ export default function CourseWiseSell() {
                 <div>
                   <h3 className="text-2xl font-bold text-text-primary">{activeTab}</h3>
                   <div className="flex flex-wrap gap-4 md:gap-6 mt-3">
-                     <div className="flex items-center gap-2 text-text-secondary bg-slate-800/50 px-3 py-1.5 rounded-lg border border-border/50">
+                     <div className="flex items-center gap-2 text-text-secondary bg-slate-100/50 dark:bg-slate-800/50 px-3 py-1.5 rounded-lg border border-border/50">
                        <Users className="w-4 h-4 text-primary" />
                        <span className="font-medium text-sm">{activeCourseSales.length} Enrollments</span>
                      </div>
@@ -261,7 +261,7 @@ export default function CourseWiseSell() {
                   </thead>
                   <tbody className="divide-y divide-slate-800">
                     {filteredActiveSales.slice().reverse().map((sale: any, idx: number) => (
-                      <tr key={idx} className="hover:bg-slate-800/30 transition-colors group">
+                      <tr key={idx} className="hover:bg-slate-200/30 dark:hover:bg-slate-800/30 transition-colors group">
                         <td className="px-6 py-4">
                           <div className="flex items-center space-x-3">
                             <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">

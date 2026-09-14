@@ -269,10 +269,10 @@ export default function UserManagement() {
 
             {isRoleDropdownOpen && (
               <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-[#1a2333] border border-border rounded-xl shadow-2xl z-50 overflow-hidden">
-                <button onClick={() => { setUploadRole('STUDENT'); setIsRoleDropdownOpen(false) }} className="w-full text-left px-4 py-2.5 text-sm text-text-secondary hover:bg-slate-800 hover:text-primary font-bold transition-colors">Student</button>
-                <button onClick={() => { setUploadRole('INSTRUCTOR'); setIsRoleDropdownOpen(false) }} className="w-full text-left px-4 py-2.5 text-sm text-text-secondary hover:bg-slate-800 hover:text-primary font-bold transition-colors">Instructor</button>
-                <button onClick={() => { setUploadRole('COLLEGE_ADMIN'); setIsRoleDropdownOpen(false) }} className="w-full text-left px-4 py-2.5 text-sm text-text-secondary hover:bg-slate-800 hover:text-primary font-bold transition-colors">College Admin</button>
-                <button onClick={() => { setUploadRole('ADMIN'); setIsRoleDropdownOpen(false) }} className="w-full text-left px-4 py-2.5 text-sm text-text-secondary hover:bg-slate-800 hover:text-primary font-bold transition-colors">Admin</button>
+                <button onClick={() => { setUploadRole('STUDENT'); setIsRoleDropdownOpen(false) }} className="w-full text-left px-4 py-2.5 text-sm text-text-secondary hover:bg-slate-200 dark:hover:bg-slate-800 hover:text-primary font-bold transition-colors">Student</button>
+                <button onClick={() => { setUploadRole('INSTRUCTOR'); setIsRoleDropdownOpen(false) }} className="w-full text-left px-4 py-2.5 text-sm text-text-secondary hover:bg-slate-200 dark:hover:bg-slate-800 hover:text-primary font-bold transition-colors">Instructor</button>
+                <button onClick={() => { setUploadRole('COLLEGE_ADMIN'); setIsRoleDropdownOpen(false) }} className="w-full text-left px-4 py-2.5 text-sm text-text-secondary hover:bg-slate-200 dark:hover:bg-slate-800 hover:text-primary font-bold transition-colors">College Admin</button>
+                <button onClick={() => { setUploadRole('ADMIN'); setIsRoleDropdownOpen(false) }} className="w-full text-left px-4 py-2.5 text-sm text-text-secondary hover:bg-slate-200 dark:hover:bg-slate-800 hover:text-primary font-bold transition-colors">Admin</button>
               </div>
             )}
           </div>
@@ -412,7 +412,7 @@ export default function UserManagement() {
                   <td colSpan={5} className="px-6 py-12 text-center text-text-muted">No users found matching your search.</td>
                 </tr>
               ) : filtered.map(user => (
-                <tr key={user.id} className="hover:bg-slate-800/30 transition-colors">
+                <tr key={user.id} className="hover:bg-slate-200/30 dark:hover:bg-slate-800/30 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-indigo-500 flex items-center justify-center text-text-primary font-bold shrink-0">
@@ -430,7 +430,7 @@ export default function UserManagement() {
                       className={`px-3 py-1 rounded text-xs font-bold transition-colors ${user.role === 'ADMIN' ? 'bg-rose-500/10 text-rose-500 hover:bg-rose-500/20' :
                           user.role === 'INSTRUCTOR' ? 'bg-primary/10 text-primary hover:bg-primary/20' :
                             user.role === 'COLLEGE_ADMIN' ? 'bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20' :
-                              'bg-slate-700 text-text-secondary hover:bg-slate-600'
+                              'bg-slate-200 dark:bg-slate-700 text-text-secondary hover:bg-slate-600'
                         }`}
                       title="Click to cycle role"
                     >

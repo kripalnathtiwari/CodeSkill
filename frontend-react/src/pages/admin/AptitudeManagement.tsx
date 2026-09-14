@@ -380,7 +380,7 @@ export default function AptitudeManagement() {
                     className={`p-4 border-2 rounded-xl flex items-center space-x-3 cursor-pointer transition-all ${
                       q.correctOption === opt 
                         ? 'bg-primary/10 border-primary shadow-[0_0_15px_rgba(16,185,129,0.15)]' 
-                        : 'bg-background dark:bg-[#0B0F19] border-border hover:border-slate-500 hover:bg-slate-800'
+                        : 'bg-background dark:bg-[#0B0F19] border-border hover:border-slate-500 hover:bg-slate-200 dark:hover:bg-slate-800'
                     }`} 
                     onClick={() => {
                       const newQs = [...pendingBulkQuestions];
@@ -610,7 +610,7 @@ export default function AptitudeManagement() {
                 <h3 className="text-xl font-bold text-text-primary flex items-center gap-2">
                   <BrainCircuit className="w-5 h-5 text-purple-500" />
                   {topicName}
-                  <span className="text-xs bg-slate-800 text-text-muted px-2 py-1 rounded-full font-medium ml-2">
+                  <span className="text-xs bg-slate-100 dark:bg-slate-800 text-text-muted px-2 py-1 rounded-full font-medium ml-2">
                     {groupedByTopic[topicName].length} {groupedByTopic[topicName].length === 1 ? 'question' : 'questions'}
                   </span>
                 </h3>
@@ -636,7 +636,7 @@ export default function AptitudeManagement() {
                   </thead>
                   <tbody className="divide-y divide-slate-800">
                     {groupedByTopic[topicName].map((problem: any, idx: number) => (
-                      <tr key={problem._id || `fallback-key-${idx}`} className="hover:bg-slate-800/30 transition-colors">
+                      <tr key={problem._id || `fallback-key-${idx}`} className="hover:bg-slate-200/30 dark:hover:bg-slate-800/30 transition-colors">
                         <td className="px-6 py-4 font-medium text-text-primary">
                           <span className="line-clamp-1">{problem.title}</span>
                         </td>
@@ -651,7 +651,7 @@ export default function AptitudeManagement() {
                         </td>
                         <td className="px-6 py-4">
                           {problem.company ? (
-                            <span className="text-xs px-2 py-1 rounded bg-slate-800 text-text-secondary font-medium">
+                            <span className="text-xs px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-text-secondary font-medium">
                               {problem.company}
                             </span>
                           ) : (
@@ -709,7 +709,7 @@ export default function AptitudeManagement() {
               </div>
             </div>
             <div className="mt-6 flex items-center justify-end space-x-3">
-              <button onClick={() => setDeleteConfirmId(null)} className="px-5 py-2.5 text-sm font-semibold rounded-xl border border-border text-text-secondary hover:bg-slate-800 transition-colors">Cancel</button>
+              <button onClick={() => setDeleteConfirmId(null)} className="px-5 py-2.5 text-sm font-semibold rounded-xl border border-border text-text-secondary hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">Cancel</button>
               <button onClick={confirmDelete} className="px-5 py-2.5 text-sm font-semibold rounded-xl bg-rose-600 hover:bg-rose-500 text-text-inverse flex items-center space-x-2 shadow-lg shadow-rose-500/20 transition-colors">
                 <Trash2 className="w-4 h-4" />
                 <span>Delete Question</span>
@@ -736,7 +736,7 @@ export default function AptitudeManagement() {
             <div className="space-y-4">
               <div className="bg-white dark:bg-[#1a2333] p-4 rounded-xl border border-border">
                 <div className="flex items-start gap-3">
-                  <div className="p-2 bg-slate-800 rounded-lg shrink-0">
+                  <div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg shrink-0">
                     <FileJson className="w-5 h-5 text-amber-400" />
                   </div>
                   <div>
@@ -753,7 +753,7 @@ export default function AptitudeManagement() {
 
               <div className="bg-white dark:bg-[#1a2333] p-4 rounded-xl border border-border">
                 <div className="flex items-start gap-3">
-                  <div className="p-2 bg-slate-800 rounded-lg shrink-0">
+                  <div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg shrink-0">
                     <FileText className="w-5 h-5 text-rose-400" />
                   </div>
                   <div className="w-full">

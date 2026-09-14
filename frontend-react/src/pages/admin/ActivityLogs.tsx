@@ -23,11 +23,11 @@ export default function ActivityLogs() {
   const getActionStyle = (action: string) => {
     switch(action) {
       case 'LOGIN': return 'bg-primary/10 text-primary';
-      case 'LOGOUT': return 'bg-slate-700 text-text-secondary';
+      case 'LOGOUT': return 'bg-slate-200 dark:bg-slate-700 text-text-secondary';
       case 'COURSE_PURCHASE': return 'bg-primary/10 text-primary';
       case 'LESSON_COMPLETED': return 'bg-purple-500/10 text-purple-400';
       case 'PASSWORD_CHANGE': return 'bg-amber-500/10 text-amber-400';
-      default: return 'bg-slate-800 text-text-secondary';
+      default: return 'bg-slate-100 dark:bg-slate-800 text-text-secondary';
     }
   };
 
@@ -43,7 +43,7 @@ export default function ActivityLogs() {
           <p className="text-text-muted">Monitor system access, security events, and learning activity.</p>
         </div>
         <div className="flex space-x-3">
-          <button className="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-text-secondary px-4 py-2 rounded-xl font-bold transition-all">
+          <button className="flex items-center space-x-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-text-secondary px-4 py-2 rounded-xl font-bold transition-all">
             <RefreshCw className="w-4 h-4" />
             <span>Refresh</span>
           </button>
@@ -103,7 +103,7 @@ export default function ActivityLogs() {
             </thead>
             <tbody className="divide-y divide-slate-800">
               {filtered.map(log => (
-                <tr key={log.id} className="hover:bg-slate-800/30 transition-colors">
+                <tr key={log.id} className="hover:bg-slate-200/30 dark:hover:bg-slate-800/30 transition-colors">
                   <td className="px-6 py-4">
                     <div className="font-semibold text-text-primary">{log.user}</div>
                     <div className="text-xs text-text-muted">{log.email}</div>

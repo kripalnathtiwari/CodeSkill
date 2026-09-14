@@ -207,7 +207,7 @@ export default function MyCourses() {
                 <div className="mt-6 pt-6 border-t border-slate-100 dark:border-border flex justify-end space-x-3">
                   {(course.status === 'completed' || courseSettings[course.courseName]?.certificatePublished) ? (
                     <>
-                      <Link to={`/course/${course.courseId}`} className="mr-2">
+                      <Link to={`/dashboard/course/${course.courseId}`} className="mr-2">
                         <button className="flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-text-inverse font-bold rounded-lg transition-colors shadow-lg">
                           <PlayCircle className="w-4 h-4 mr-2" />
                           Go to Course
@@ -239,14 +239,14 @@ export default function MyCourses() {
                       >
                         Cancel
                       </button>
-                      <Link to={`/payment/${course.courseId}`} state={{ newEnrollment: course }}>
+                      <Link to={`/dashboard/payment/${course.courseId}`} state={{ newEnrollment: course }}>
                         <button className="flex items-center px-4 py-2 bg-amber-500 hover:bg-amber-400 text-text-inverse font-bold rounded-lg transition-colors shadow-lg">
                           Make Payment
                         </button>
                       </Link>
                     </>
                   ) : (
-                      <Link to={`/course/${course.courseId}`} className="mr-2">
+                      <Link to={`/dashboard/course/${course.courseId}`} className="mr-2">
                         <button className="flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-text-inverse font-bold rounded-lg transition-colors shadow-lg">
                           <PlayCircle className="w-4 h-4 mr-2" />
                           Go to Course

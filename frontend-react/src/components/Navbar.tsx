@@ -60,97 +60,16 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 glass border-b border-border dark:border-border px-6 py-3 flex items-center justify-between transition-colors">
       
-      {/* LEFT SIDE: Theme Toggle, Login/Profile, Mobile Menu */}
-      <div className="flex items-center space-x-4">
-        {/* Theme Toggle */}
-        <button 
-          onClick={toggleTheme} 
-          className="p-2 rounded-full bg-surface-secondary dark:bg-slate-800 text-text-secondary dark:text-text-secondary hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-          title="Toggle Dark Mode"
-        >
-          {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-        </button>
-
-        {user ? (
-          <>
-            {/* User Profile Dropdown / Card */}
-            <div className="relative" ref={profileRef}>
-              <button 
-                onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="flex items-center space-x-3 bg-surface dark:bg-background border border-border dark:border-border px-3 py-1.5 rounded-lg hover:bg-background dark:hover:bg-slate-800 transition-colors focus:outline-none"
-              >
-                <div className="h-7 w-7 bg-primary rounded-full flex items-center justify-center font-bold text-text-inverse text-sm shadow-sm">
-                  {user.email.charAt(0).toUpperCase()}
-                </div>
-                <span className="hidden sm:inline text-base font-medium text-slate-950 dark:text-text-inverse">
-                  {user.profile?.firstName ? `${user.profile.firstName} ${user.profile.lastName}` : user.email.split('@')[0]}
-                </span>
-              </button>
-
-              {/* Dropdown Menu */}
-              {isProfileOpen && (
-                <div className="absolute left-0 mt-2 w-64 bg-surface dark:bg-[#1e2327] rounded-xl shadow-2xl border border-border dark:border-border/60 overflow-hidden z-50 py-2">
-                  <div className="px-4 py-3 border-b border-slate-100 dark:border-border/60">
-                    <p className="text-sm font-bold text-text-primary dark:text-text-inverse truncate">
-                      {user.profile?.firstName ? `${user.profile.firstName} ${user.profile.lastName}` : user.email}
-                    </p>
-                    <p className="text-xs text-text-muted dark:text-text-muted truncate mt-0.5">{user.email}</p>
-                  </div>
-                  
-                  <div className="py-2">
-                    <Link to="/dashboard" onClick={() => setIsProfileOpen(false)} className="flex items-center px-4 py-2 text-sm text-text-primary dark:text-text-secondary hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary dark:hover:text-primary transition-colors">
-                      <User className="w-4 h-4 mr-3" />
-                      My Profile
-                    </Link>
-                    <Link to="/my-courses" onClick={() => setIsProfileOpen(false)} className="flex items-center px-4 py-2 text-sm text-text-primary dark:text-text-secondary hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary dark:hover:text-primary transition-colors">
-                      <BookOpen className="w-4 h-4 mr-3" />
-                      My Courses
-                    </Link>
-                    <Link to="/edit-profile" onClick={() => setIsProfileOpen(false)} className="flex items-center px-4 py-2 text-sm text-text-primary dark:text-text-secondary hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary dark:hover:text-primary transition-colors">
-                      <Settings className="w-4 h-4 mr-3" />
-                      Edit Profile
-                    </Link>
-                    <Link to="/verify" onClick={() => setIsProfileOpen(false)} className="flex items-center px-4 py-2 text-sm text-text-primary dark:text-text-secondary hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary dark:hover:text-primary transition-colors">
-                      <ShieldAlert className="w-4 h-4 mr-3" />
-                      Verify Certificate
-                    </Link>
-                    <Link to="/change-password" onClick={() => setIsProfileOpen(false)} className="flex items-center px-4 py-2 text-sm text-text-primary dark:text-text-secondary hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary dark:hover:text-primary transition-colors">
-                      <Lock className="w-4 h-4 mr-3" />
-                      Change Password
-                    </Link>
-                  </div>
-
-                  <div className="border-t border-slate-100 dark:border-border/60 py-2">
-                    <button 
-                      onClick={() => { setIsProfileOpen(false); logout(); }}
-                      className="flex w-full items-center px-4 py-2 text-sm text-text-primary dark:text-text-secondary hover:bg-rose-50 dark:hover:bg-rose-500/10 hover:text-rose-600 dark:hover:text-rose-400 transition-colors"
-                    >
-                      <LogOut className="w-4 h-4 mr-3" />
-                      Logout
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </>
-        ) : (
-          !isLoading && (
-            <div className="flex items-center space-x-3">
-              <Link to="/login" className="bg-primary hover:bg-primary text-text-inverse text-base font-bold px-4 py-2 rounded-lg transition-colors">
-                Log In
-              </Link>
-            </div>
-          )
-        )}
-
-        {/* Mobile Menu Toggle */}
-        <button 
-          className="lg:hidden p-2 text-text-secondary dark:text-text-secondary hover:bg-surface-secondary dark:hover:bg-slate-800 rounded-md transition-colors"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
-      </div>
+      {/* LEFT SIDE: Logo */}
+      <Link to="/" className="flex items-center text-2xl font-extrabold tracking-tight">
+        <img 
+          src="/favicon.svg" 
+          alt="CodeSkill Logo" 
+          className="h-8 w-8 object-contain mr-2" 
+        />
+        {/* No space between Code and Skill */}
+        <span className="text-black dark:text-white">Code</span><span className="text-primary">Skill</span>
+      </Link>
 
       {/* CENTER: Navigation Links */}
       <nav className="hidden lg:flex items-center space-x-3 xl:space-x-5 text-xs lg:text-[13px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 whitespace-nowrap">
@@ -270,15 +189,97 @@ export default function Navbar() {
         )}
       </nav>
 
-      {/* RIGHT SIDE: Logo */}
-      <Link to="/" className="flex items-center gap-2 text-2xl font-extrabold tracking-tight">
-        <img 
-          src="/favicon.svg" 
-          alt="CodeSkill Logo" 
-          className="h-8 w-8 object-contain" 
-        />
-        <span className="text-black dark:text-white">Code</span><span className="text-primary">Skill</span>
-      </Link>
+      {/* RIGHT SIDE: Theme Toggle, Login/Profile, Mobile Menu */}
+      <div className="flex items-center space-x-4">
+        {/* Theme Toggle */}
+        <button 
+          onClick={toggleTheme} 
+          className="p-2 rounded-full bg-surface-secondary dark:bg-slate-800 text-text-secondary dark:text-text-secondary hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+          title="Toggle Dark Mode"
+        >
+          {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+        </button>
+
+        {user ? (
+          <>
+            {/* User Profile Dropdown / Card */}
+            <div className="relative" ref={profileRef}>
+              <button 
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                className="flex items-center space-x-3 bg-surface dark:bg-background border border-border dark:border-border px-3 py-1.5 rounded-lg hover:bg-background dark:hover:bg-slate-800 transition-colors focus:outline-none"
+              >
+                <div className="h-7 w-7 bg-primary rounded-full flex items-center justify-center font-bold text-text-inverse text-sm shadow-sm">
+                  {user.email.charAt(0).toUpperCase()}
+                </div>
+                <span className="hidden sm:inline text-base font-medium text-slate-950 dark:text-text-inverse">
+                  {user.profile?.firstName ? `${user.profile.firstName} ${user.profile.lastName}` : user.email.split('@')[0]}
+                </span>
+              </button>
+
+              {/* Dropdown Menu */}
+              {isProfileOpen && (
+                <div className="absolute right-0 mt-2 w-64 bg-surface dark:bg-[#1e2327] rounded-xl shadow-2xl border border-border dark:border-border/60 overflow-hidden z-50 py-2">
+                  <div className="px-4 py-3 border-b border-slate-100 dark:border-border/60">
+                    <p className="text-sm font-bold text-text-primary dark:text-text-inverse truncate">
+                      {user.profile?.firstName ? `${user.profile.firstName} ${user.profile.lastName}` : user.email}
+                    </p>
+                    <p className="text-xs text-text-muted dark:text-text-muted truncate mt-0.5">{user.email}</p>
+                  </div>
+                  
+                  <div className="py-2">
+                    <Link to="/dashboard" onClick={() => setIsProfileOpen(false)} className="flex items-center px-4 py-2 text-sm text-text-primary dark:text-text-secondary hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary dark:hover:text-primary transition-colors">
+                      <User className="w-4 h-4 mr-3" />
+                      My Profile
+                    </Link>
+                    <Link to="/my-courses" onClick={() => setIsProfileOpen(false)} className="flex items-center px-4 py-2 text-sm text-text-primary dark:text-text-secondary hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary dark:hover:text-primary transition-colors">
+                      <BookOpen className="w-4 h-4 mr-3" />
+                      My Courses
+                    </Link>
+                    <Link to="/edit-profile" onClick={() => setIsProfileOpen(false)} className="flex items-center px-4 py-2 text-sm text-text-primary dark:text-text-secondary hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary dark:hover:text-primary transition-colors">
+                      <Settings className="w-4 h-4 mr-3" />
+                      Edit Profile
+                    </Link>
+                    <Link to="/verify" onClick={() => setIsProfileOpen(false)} className="flex items-center px-4 py-2 text-sm text-text-primary dark:text-text-secondary hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary dark:hover:text-primary transition-colors">
+                      <ShieldAlert className="w-4 h-4 mr-3" />
+                      Verify Certificate
+                    </Link>
+                    <Link to="/change-password" onClick={() => setIsProfileOpen(false)} className="flex items-center px-4 py-2 text-sm text-text-primary dark:text-text-secondary hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary dark:hover:text-primary transition-colors">
+                      <Lock className="w-4 h-4 mr-3" />
+                      Change Password
+                    </Link>
+                  </div>
+
+                  <div className="border-t border-slate-100 dark:border-border/60 py-2">
+                    <button 
+                      onClick={() => { setIsProfileOpen(false); logout(); }}
+                      className="flex w-full items-center px-4 py-2 text-sm text-text-primary dark:text-text-secondary hover:bg-rose-50 dark:hover:bg-rose-500/10 hover:text-rose-600 dark:hover:text-rose-400 transition-colors"
+                    >
+                      <LogOut className="w-4 h-4 mr-3" />
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </>
+        ) : (
+          !isLoading && (
+            <div className="flex items-center space-x-3">
+              <Link to="/login" className="bg-primary hover:bg-primary text-text-inverse text-base font-bold px-4 py-2 rounded-lg transition-colors">
+                Log In
+              </Link>
+            </div>
+          )
+        )}
+
+        {/* Mobile Menu Toggle */}
+        <button 
+          className="lg:hidden p-2 text-text-secondary dark:text-text-secondary hover:bg-surface-secondary dark:hover:bg-slate-800 rounded-md transition-colors"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </button>
+      </div>
 
       {/* Mobile Navigation Menu */}
       {isMobileMenuOpen && (

@@ -24,8 +24,8 @@ export default function WelcomeBanner({ solvedCount, totalCount, userRank }: { s
         <p className="text-primary-light/80 text-lg max-w-lg mb-6 leading-relaxed">
           You've solved <span className="font-bold text-white">{solvedCount}</span> problems so far. Keep up the great work and complete your daily goals!
           <br/>
-          <span className="inline-block mt-3 font-black text-white text-lg tracking-wide bg-white/20 px-4 py-1.5 rounded-xl border border-white/30 shadow-sm backdrop-blur-md">
-            Code Today, Grow in Future 🚀
+          <span className="inline-block mt-3 font-black text-white text-2xl tracking-wide bg-white/20 px-5 py-2 rounded-xl border border-white/30 shadow-sm backdrop-blur-md">
+            Code Today, Grow in Future
           </span>
         </p>
         

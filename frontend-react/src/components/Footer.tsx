@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Code2, MapPin, Globe, Share2, MessageCircle, Video } from "lucide-react";
+import { Code2, MapPin, ArrowUp, Facebook, Instagram, Linkedin, Youtube } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function Footer() {
   const location = useLocation();
@@ -10,13 +11,17 @@ export default function Footer() {
     return null;
   }
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
-    <footer className="bg-[#111111] dark:bg-background text-text-secondary py-16 px-6 border-t border-border">
-      <div className="max-w-[90rem] mx-auto flex flex-col xl:flex-row gap-16 xl:gap-12 justify-between">
+    <footer className="bg-[#111111] dark:bg-background text-text-secondary py-16 px-6 border-t border-border relative overflow-hidden">
+      <div className="max-w-[90rem] mx-auto flex flex-col xl:flex-row gap-16 xl:gap-12 justify-between relative z-10">
 
         {/* Brand & Address Section */}
         <div className="w-full xl:w-1/4 space-y-6">
-          <Link to="/" className="flex items-center space-x-2 mb-4">
+          <Link to="/" className="flex items-center space-x-2 mb-4 group">
             <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center transform rotate-12 transition-transform group-hover:rotate-0">
               <Code2 className="w-6 h-6 text-text-inverse" />
             </div>
@@ -29,6 +34,22 @@ export default function Footer() {
           <p className="text-sm text-text-muted leading-relaxed mb-6 pr-4">
             CodeSkill is an advanced interactive learning platform designed to empower developers. We bridge the gap between academic learning and industry requirements with real-world projects, guided courses, and practical coding challenges.
           </p>
+
+          {/* Social Icons */}
+          <div className="flex items-center space-x-3 pb-4">
+            <Link to="#" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-text-muted hover:text-primary hover:border-primary/50 transition-all">
+              <Linkedin className="w-4 h-4" />
+            </Link>
+            <Link to="#" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-text-muted hover:text-primary hover:border-primary/50 transition-all">
+              <Instagram className="w-4 h-4" />
+            </Link>
+            <Link to="#" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-text-muted hover:text-primary hover:border-primary/50 transition-all">
+              <Facebook className="w-4 h-4" />
+            </Link>
+            <Link to="#" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-text-muted hover:text-primary hover:border-primary/50 transition-all">
+              <Youtube className="w-4 h-4" />
+            </Link>
+          </div>
 
           <div className="space-y-4">
             <div className="flex items-start space-x-3 text-sm">
@@ -120,6 +141,73 @@ export default function Footer() {
 
         </div>
       </div>
+
+      {/* MIDDLE: Big Brand Name with Shine Animation */}
+      <div className="relative w-full max-w-[90rem] mx-auto py-12 md:py-16 my-12 border-t border-b border-white/10 overflow-hidden">
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="relative text-center text-[14vw] md:text-[10vw] lg:text-[8rem] xl:text-[10rem] font-black tracking-tighter leading-none select-none"
+        >
+          {/* Base text (dim) */}
+          <span className="text-white/5">
+            CodeSkill
+          </span>
+          
+          {/* Shining gradient overlay */}
+          <span 
+            className="absolute inset-0 bg-clip-text text-transparent bg-[length:200%_100%] animate-shine"
+            style={{
+              backgroundImage: "linear-gradient(110deg, transparent 40%, rgba(16,185,129,0.9) 50%, transparent 60%)"
+            }}
+          >
+            CodeSkill
+          </span>
+        </motion.h1>
+      </div>
+
+      {/* BOTTOM: Copyright & Legal Links */}
+      <div className="max-w-[90rem] mx-auto flex flex-col md:flex-row items-center justify-between gap-4 pt-4 relative z-10">
+        <p className="text-sm text-text-muted text-center md:text-left">
+          © {new Date().getFullYear()} CodeSkill | All Rights Reserved
+        </p>
+        
+        <div className="flex items-center gap-6">
+          <Link to="/terms" className="text-sm text-text-muted hover:text-primary transition-colors">
+            Terms & Condition
+          </Link>
+          <Link to="/privacy" className="text-sm text-text-muted hover:text-primary transition-colors">
+            Privacy Policy
+          </Link>
+          <Link to="/refund" className="text-sm text-text-muted hover:text-primary transition-colors">
+            Cancellation & Refund Policy
+          </Link>
+        </div>
+      </div>
+
+      {/* Floating Scroll to Top Button */}
+      <motion.button
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={scrollToTop}
+        className="fixed bottom-24 right-8 z-40 w-12 h-12 rounded-full bg-primary text-white shadow-lg shadow-primary/40 flex items-center justify-center hover:bg-primary/90 transition-colors"
+        title="Scroll to top"
+      >
+        <ArrowUp className="w-5 h-5" />
+      </motion.button>
+
+      {/* Shine Animation Keyframes */}
+      <style>{`
+        @keyframes shine {
+          0% { background-position: 200% center; }
+          100% { background-position: -200% center; }
+        }
+        .animate-shine {
+          animation: shine 4s linear infinite;
+        }
+      `}</style>
     </footer>
   );
 }

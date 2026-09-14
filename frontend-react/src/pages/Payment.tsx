@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { CreditCard, ShieldCheck, Lock, CheckCircle2, Building, Smartphone, ChevronRight, Loader2, Tag, AlertCircle } from "lucide-react";
 import { getCourseById } from "../data/coursesData";
@@ -501,7 +501,7 @@ export default function Payment() {
                 />
                 <button 
                   onClick={applyPromoCode}
-                  className="bg-slate-700 hover:bg-slate-600 text-text-primary dark:text-text-inverse px-4 py-2.5 rounded-lg font-semibold transition-colors"
+                  className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2.5 rounded-lg font-semibold transition-colors"
                 >
                   Apply
                 </button>

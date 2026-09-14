@@ -4,6 +4,7 @@ import { Award, ArrowRight, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 import letsGoImg from "../assets/lets-go.png";
+import Footer from "../components/Footer";
 
 const FeaturedCourses = lazy(() => import("../components/home/FeaturedCourses"));
 const CampusDrives = lazy(() => import("../components/home/CampusDrives"));
@@ -248,6 +249,26 @@ export default function Home() {
         </motion.div>
       </Link>
 
+            {/* Floating Chat Button */}
+      <Link to="/contact">
+        <motion.div
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          className="fixed bottom-8 right-8 z-50 bg-primary text-text-inverse p-4 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.4)] cursor-pointer flex items-center justify-center group"
+        >
+          <MessageCircle className="w-6 h-6" />
+          <span className="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs group-hover:ml-3 transition-all duration-300 ease-in-out font-bold">
+            Chat with us
+          </span>
+        </motion.div>
+      </Link>
+
+      {/* ADD FOOTER HERE */}
+      <Footer />
+
+    </div>   // <-- This is the main wrapper's closing div
+  );
+}
     </div>
   );
 }

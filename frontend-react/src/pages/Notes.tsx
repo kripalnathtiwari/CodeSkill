@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Trash2, Edit2, X, Save, Clock, StickyNote } from 'lucide-react';
+import { Search, Download, Clock, StickyNote, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 
@@ -15,12 +15,6 @@ export default function Notes() {
   const { user } = useAuth();
   const [notes, setNotes] = useState<Note[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isEditing, setIsEditing] = useState(false);
-  const [currentNote, setCurrentNote] = useState<Note | null>(null);
-  
-  // Form states
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
 
   useEffect(() => {
     if (user) {
@@ -35,65 +29,15 @@ export default function Notes() {
     }
   }, [user]);
 
-  const saveNotesToStorage = (updatedNotes: Note[]) => {
-    if (user) {
-      localStorage.setItem(`codeSklii_notes_${user.email}`, JSON.stringify(updatedNotes));
-    }
-    setNotes(updatedNotes);
-  };
-
-  const handleSave = () => {
-    if (!title.trim() && !content.trim()) return;
-
-    const now = new Date().toISOString();
-    
-    if (currentNote) {
-      // Update existing
-      const updated = notes.map(n => 
-        n.id === currentNote.id 
-          ? { ...n, title, content, updatedAt: now } 
-          : n
-      );
-      saveNotesToStorage(updated);
-    } else {
-      // Create new
-      const newNote: Note = {
-        id: Date.now().toString(),
-        title: title || 'Untitled Note',
-        content,
-        createdAt: now,
-        updatedAt: now
-      };
-      saveNotesToStorage([newNote, ...notes]);
-    }
-
-    closeEditor();
-  };
-
-  const handleDelete = (id: string, e: React.MouseEvent) => {
+  const handleDownload = (note: Note, e: React.MouseEvent) => {
     e.stopPropagation();
-    const updated = notes.filter(n => n.id !== id);
-    saveNotesToStorage(updated);
-  };
-
-  const openEditor = (note?: Note) => {
-    if (note) {
-      setCurrentNote(note);
-      setTitle(note.title);
-      setContent(note.content);
-    } else {
-      setCurrentNote(null);
-      setTitle('');
-      setContent('');
-    }
-    setIsEditing(true);
-  };
-
-  const closeEditor = () => {
-    setIsEditing(false);
-    setCurrentNote(null);
-    setTitle('');
-    setContent('');
+    const element = document.createElement("a");
+    const file = new Blob([note.content], { type: 'text/plain' });
+    element.href = URL.createObjectURL(file);
+    element.download = `${note.title.replace(/\s+/g, '_')}.txt`;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
   };
 
   const filteredNotes = notes.filter(n => 
@@ -130,86 +74,17 @@ export default function Notes() {
             />
             <Search className="w-4 h-4 text-text-muted absolute left-3.5 top-3" />
           </div>
-          
-          <button 
-            onClick={() => openEditor()}
-            className="flex items-center gap-2 bg-primary text-text-inverse px-5 py-2.5 rounded-xl font-bold shadow-lg shadow-primary/20 hover:scale-105 transition-all whitespace-nowrap"
-          >
-            <Plus className="w-5 h-5" />
-            New Note
-          </button>
         </div>
       </div>
 
-      {/* Editor Modal */}
-      <AnimatePresence>
-        {isEditing && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6 bg-black/60 backdrop-blur-sm">
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-surface dark:bg-slate-900 w-full max-w-3xl rounded-2xl shadow-2xl flex flex-col h-[80vh] overflow-hidden border border-border"
-            >
-              {/* Editor Header */}
-              <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-surface-secondary dark:bg-slate-800/50">
-                <input 
-                  type="text" 
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Note Title..."
-                  className="bg-transparent text-xl font-bold text-text-primary placeholder:text-text-muted/50 focus:outline-none w-full mr-4"
-                  autoFocus
-                />
-                <button 
-                  onClick={closeEditor}
-                  className="p-2 text-text-muted hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-full transition-colors shrink-0"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-              
-              {/* Editor Body */}
-              <div className="flex-1 p-6 overflow-y-auto">
-                <textarea 
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  placeholder="Write your note here... (Markdown supported mentally)"
-                  className="w-full h-full bg-transparent resize-none focus:outline-none text-text-secondary leading-relaxed"
-                />
-              </div>
-              
-              {/* Editor Footer */}
-              <div className="px-6 py-4 border-t border-border flex items-center justify-between bg-surface-secondary dark:bg-slate-800/50">
-                <div className="text-sm text-text-muted">
-                  {currentNote ? `Last updated: ${formatDate(currentNote.updatedAt)}` : 'Drafting new note'}
-                </div>
-                <button 
-                  onClick={handleSave}
-                  className="flex items-center gap-2 bg-primary text-text-inverse px-6 py-2.5 rounded-xl font-bold hover:brightness-110 transition-all"
-                >
-                  <Save className="w-4 h-4" />
-                  Save Note
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+
 
       {/* Notes Grid */}
       {notes.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center bg-surface-secondary/50 dark:bg-slate-800/20 rounded-3xl border border-dashed border-border/60">
-          <StickyNote className="w-16 h-16 text-text-muted/30 mb-4" />
-          <h3 className="text-xl font-bold text-text-primary mb-2">No notes yet</h3>
-          <p className="text-text-muted max-w-md mb-6">Create your first note to store important coding concepts, snippets, or ideas you want to revisit later.</p>
-          <button 
-            onClick={() => openEditor()}
-            className="flex items-center gap-2 bg-surface border-2 border-primary/20 text-primary px-6 py-3 rounded-xl font-bold hover:bg-primary hover:text-text-inverse hover:border-primary transition-all"
-          >
-            <Plus className="w-5 h-5" />
-            Create First Note
-          </button>
+          <FileText className="w-16 h-16 text-text-muted/30 mb-4" />
+          <h3 className="text-xl font-bold text-text-primary mb-2">No notes available</h3>
+          <p className="text-text-muted max-w-md mb-6">Notes added by the administrator will appear here for you to read and download.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -219,16 +94,16 @@ export default function Notes() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               key={note.id}
-              onClick={() => openEditor(note)}
-              className="bg-surface dark:bg-[#111827] border border-border hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5 p-6 rounded-2xl flex flex-col h-64 cursor-pointer transition-all group"
+              className="bg-surface dark:bg-[#111827] border border-border hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5 p-6 rounded-2xl flex flex-col h-64 transition-all group"
             >
               <div className="flex justify-between items-start mb-3">
                 <h3 className="font-bold text-text-primary text-lg line-clamp-1 flex-1 pr-2 group-hover:text-primary transition-colors">{note.title}</h3>
                 <button 
-                  onClick={(e) => handleDelete(note.id, e)}
-                  className="text-text-muted/50 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 p-1.5 rounded-lg transition-colors opacity-0 group-hover:opacity-100 shrink-0"
+                  onClick={(e) => handleDownload(note, e)}
+                  className="text-text-muted hover:text-primary hover:bg-primary/10 p-1.5 rounded-lg transition-colors opacity-0 group-hover:opacity-100 shrink-0"
+                  title="Download Note"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Download className="w-4 h-4" />
                 </button>
               </div>
               <p className="text-text-secondary text-sm leading-relaxed flex-1 line-clamp-5 whitespace-pre-wrap">

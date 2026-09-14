@@ -12,6 +12,7 @@ import WelcomeBanner from "../components/dashboard/WelcomeBanner";
 const AnalyticsCharts = lazy(() => import("../components/dashboard/AnalyticsCharts"));
 const ActivitySection = lazy(() => import("../components/dashboard/ActivitySection"));
 const StudentPerformance = lazy(() => import("../components/dashboard/StudentPerformance"));
+const PracticeStatistics = lazy(() => import("../components/dashboard/PracticeStatistics"));
 
 // Skeletons
 const ChartSkeleton = () => (
@@ -307,6 +308,9 @@ export default function Dashboard() {
                 onGenerateCert={(idx: number, name: string) => { setGeneratingCertIdx(idx); setCertNameInput(name); }} 
                 onViewCert={setSelectedCert} 
               />
+            </Suspense>
+            <Suspense fallback={<ActivitySkeleton />}>
+              <PracticeStatistics />
             </Suspense>
           </div>
 

@@ -155,9 +155,9 @@ export default function AnalyticsCharts({ dsaStats, testStats, mcqTotal, mcqStat
       </div>
 
       {/* MCQ Card - Premium Design */}
-      <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl p-7 shadow-xl border border-slate-700/50 hover:shadow-2xl hover:border-slate-600 transition-all duration-300 group flex flex-col h-full relative overflow-hidden">
+      <div className="bg-white rounded-3xl p-7 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 group flex flex-col h-full relative overflow-hidden">
         {/* Decorative background element */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-emerald-500/20 transition-colors duration-500" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-emerald-500/10 transition-colors duration-500" />
         
         <div className="relative z-10 flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
@@ -165,8 +165,8 @@ export default function AnalyticsCharts({ dsaStats, testStats, mcqTotal, mcqStat
               <Target className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-extrabold text-white">MCQ Assessments</h3>
-              <p className="text-xs font-semibold text-slate-400">Multiple Choice Questions</p>
+              <h3 className="text-base font-extrabold text-slate-800">MCQ Assessments</h3>
+              <p className="text-xs font-semibold text-slate-500">Multiple Choice Questions</p>
             </div>
           </div>
         </div>
@@ -179,8 +179,8 @@ export default function AnalyticsCharts({ dsaStats, testStats, mcqTotal, mcqStat
                 value={mcq.correct} 
                 total={mcq.solved || 1}
                 color="#34D399" // emerald-400
-                trackColor="#1E293B" // slate-800
-                labelColor="text-white"
+                trackColor="#F1F5F9" // slate-100
+                labelColor="text-slate-800"
                 size={140}
                 strokeWidth={12}
                 label1="Accuracy"
@@ -190,24 +190,24 @@ export default function AnalyticsCharts({ dsaStats, testStats, mcqTotal, mcqStat
           </div>
           
           <div className="flex-grow w-full space-y-4">
-            <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 p-4 rounded-2xl flex items-center justify-between group/stat hover:bg-slate-800 transition-colors">
+            <div className="bg-slate-50 border border-slate-100 p-4 rounded-2xl flex items-center justify-between group/stat hover:bg-slate-100 transition-colors">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-500/10 rounded-xl text-blue-400">
+                <div className="p-2 bg-blue-500/10 rounded-xl text-blue-500">
                   <ListChecks className="w-4 h-4" />
                 </div>
-                <span className="text-sm font-bold text-slate-300">Attempted</span>
+                <span className="text-sm font-bold text-slate-600">Attempted</span>
               </div>
-              <span className="text-xl font-black text-white">{mcq.solved}</span>
+              <span className="text-xl font-black text-slate-800">{mcq.solved}</span>
             </div>
             
-            <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 p-4 rounded-2xl flex items-center justify-between group/stat hover:bg-slate-800 transition-colors">
+            <div className="bg-slate-50 border border-slate-100 p-4 rounded-2xl flex items-center justify-between group/stat hover:bg-slate-100 transition-colors">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-emerald-500/10 rounded-xl text-emerald-400">
+                <div className="p-2 bg-emerald-500/10 rounded-xl text-emerald-500">
                   <CheckCircle2 className="w-4 h-4" />
                 </div>
-                <span className="text-sm font-bold text-slate-300">Correct</span>
+                <span className="text-sm font-bold text-slate-600">Correct</span>
               </div>
-              <span className="text-xl font-black text-emerald-400">{mcq.correct}</span>
+              <span className="text-xl font-black text-emerald-500">{mcq.correct}</span>
             </div>
           </div>
         </div>

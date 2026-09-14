@@ -174,7 +174,7 @@ export default function MyCourses() {
             </div>
             <h3 className="text-2xl font-bold mb-3 text-text-primary dark:text-text-primary">you haven't purchesed any course</h3>
             <p className="text-text-muted dark:text-text-muted mb-8 max-w-md mx-auto text-lg">visite course secction</p>
-            <Link to="/courses-training">
+            <Link to="/dashboard/courses">
               <button className="px-8 py-4 bg-primary hover:bg-primary text-text-inverse font-bold rounded-xl transition-all shadow-lg shadow-blue-600/30 hover:shadow-blue-600/50 hover:-translate-y-1">
                 Explore Courses Now
               </button>

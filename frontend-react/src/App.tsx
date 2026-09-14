@@ -43,6 +43,7 @@ const ATSChecker = lazy(() => import('./pages/ATSChecker'));
 const Jobs = lazy(() => import('./pages/Jobs'));
 const TestSeries = lazy(() => import('./pages/TestSeries'));
 const OurProduct = lazy(() => import('./pages/OurProduct'));
+const ProjectIdeas = lazy(() => import('./pages/ProjectIdeas'));
 
 import ErrorBoundary from './components/ErrorBoundary';
 
@@ -73,6 +74,7 @@ function AppContent() {
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/dashboard/courses" element={<ProtectedRoute><DashboardLayout><CoursesTraining /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/practice" element={<ProtectedRoute><DashboardLayout><Problems /></DashboardLayout></ProtectedRoute>} />
+              <Route path="/dashboard/practice/:tag" element={<ProtectedRoute><DashboardLayout><TagProblems /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/practice/company-problems" element={<ProtectedRoute><DashboardLayout><CompanyProblems /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/practice/aptitude" element={<ProtectedRoute><DashboardLayout><Aptitude /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/practice/other" element={<ProtectedRoute><DashboardLayout><OtherPractice /></DashboardLayout></ProtectedRoute>} />
@@ -82,6 +84,7 @@ function AppContent() {
               <Route path="/dashboard/career" element={<ProtectedRoute><DashboardLayout><Jobs /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/career/resume-maker" element={<ProtectedRoute><DashboardLayout><CVBuilder /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/career/resume-analysis" element={<ProtectedRoute><DashboardLayout><ATSChecker /></DashboardLayout></ProtectedRoute>} />
+              <Route path="/dashboard/projects" element={<ProtectedRoute><DashboardLayout><ProjectIdeas /></DashboardLayout></ProtectedRoute>} />
               <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
               <Route path="/my-courses" element={<ProtectedRoute><MyCourses /></ProtectedRoute>} />
               <Route path="/problems" element={<Problems />} />

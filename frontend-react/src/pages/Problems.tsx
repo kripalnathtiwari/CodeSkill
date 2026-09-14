@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { getApiUrl } from '../utils/apiConfig';
 import { Loader2, Code2, ArrowUpRight, Bookmark, CheckCircle2, Layers, Cpu, Database, Binary, Hash, GitBranch } from 'lucide-react';
@@ -9,6 +9,8 @@ export default function Problems() {
   const [tagCounts, setTagCounts] = useState<Record<string, number>>({});
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const isDashboardRoute = location.pathname.startsWith('/dashboard');
 
   useEffect(() => {
     fetchQuestions();
@@ -144,7 +146,7 @@ export default function Problems() {
                     <Bookmark className="w-5 h-5" />
                   </button>
                   <button 
-                    onClick={() => navigate(`/problems/${encodeURIComponent(tag)}`)}
+                    onClick={() => navigate(isDashboardRoute ? `/dashboard/practice/${encodeURIComponent(tag)}` : `/problems/${encodeURIComponent(tag)}`)}
                     className="flex-1 ml-4 bg-primary hover:bg-primary text-text-inverse font-bold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-sm"
                   >
                     <span>Start Preparing</span>

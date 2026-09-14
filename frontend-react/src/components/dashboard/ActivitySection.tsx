@@ -10,7 +10,7 @@ export default function ActivitySection({ enrollments, onGenerateCert, onViewCer
         <BookOpen className="w-12 h-12 text-text-muted mx-auto mb-4" />
         <h3 className="text-xl font-bold text-text-primary mb-2">No Recent Activity</h3>
         <p className="text-text-secondary mb-6">You haven't enrolled in any courses yet.</p>
-        <Link to="/courses-training" className="bg-primary hover:bg-primary-hover text-text-inverse px-6 py-2.5 rounded-xl font-bold transition-colors">
+        <Link to="/dashboard/courses" className="bg-primary hover:bg-primary-hover text-text-inverse px-6 py-2.5 rounded-xl font-bold transition-colors">
           Explore Courses
         </Link>
       </div>

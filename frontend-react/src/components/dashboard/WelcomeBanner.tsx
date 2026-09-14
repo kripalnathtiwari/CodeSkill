@@ -47,23 +47,6 @@ export default function WelcomeBanner({ solvedCount, totalCount, userRank }: { s
           </div>
         )}
 
-        {/* Overall Progress */}
-        <div className="flex flex-col items-center justify-center bg-surface/10 p-6 rounded-2xl backdrop-blur-sm border border-white/20 w-full md:w-auto h-full min-w-[200px]">
-          <div className="text-center mb-4">
-            <p className="text-primary-light text-sm font-semibold mb-1">Overall Progress</p>
-          <div className="flex items-end justify-center space-x-1">
-            <span className="text-4xl font-black">{percentage}%</span>
-          </div>
-        </div>
-        
-        {/* Simple Progress Bar */}
-        <div className="w-48 h-2 bg-black/20 rounded-full overflow-hidden">
-          <div 
-            className="h-full bg-surface rounded-full transition-all duration-1000 ease-out" 
-            style={{ width: `${percentage}%` }}
-          ></div>
-          </div>
-        </div>
       </div>
     </div>
   );

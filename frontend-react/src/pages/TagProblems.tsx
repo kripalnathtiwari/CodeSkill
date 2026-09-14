@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { getApiUrl } from '../utils/apiConfig';
 import { Loader2, ArrowLeft, Search, Code2, Trophy, Target, Flame } from 'lucide-react';
@@ -16,6 +16,8 @@ interface Question {
 export default function TagProblems() {
   const { tag } = useParams<{ tag: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isDashboardRoute = location.pathname.startsWith('/dashboard');
   const [loading, setLoading] = useState(true);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -128,7 +130,7 @@ export default function TagProblems() {
         <div className="text-center bg-surface dark:bg-[#1e2327] p-8 rounded-2xl shadow-sm border border-rose-200 dark:border-rose-900/50 max-w-md w-full">
            <h2 className="text-xl font-bold text-rose-600 dark:text-rose-400 mb-2">Error</h2>
            <p className="text-text-secondary dark:text-text-muted">{error}</p>
-           <button onClick={() => navigate('/problems')} className="mt-6 px-4 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-text-primary dark:text-text-primary rounded-lg transition-colors">
+           <button onClick={() => navigate(isDashboardRoute ? '/dashboard/practice' : '/problems')} className="mt-6 px-4 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-text-primary dark:text-text-primary rounded-lg transition-colors">
              Go Back
            </button>
         </div>
@@ -144,7 +146,7 @@ export default function TagProblems() {
         
         {/* Top Navigation */}
         <button 
-          onClick={() => navigate('/problems')}
+          onClick={() => navigate(isDashboardRoute ? '/dashboard/practice' : '/problems')}
           className="flex items-center text-text-secondary dark:text-text-muted hover:text-text-primary dark:hover:text-text-inverse transition-colors text-sm font-medium"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />

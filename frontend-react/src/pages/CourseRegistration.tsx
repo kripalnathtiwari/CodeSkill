@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { CheckCircle2, Calendar, Clock, ChevronDown } from "lucide-react";
 import { getCourseById } from "../data/coursesData";
 import { useAuth } from "../context/AuthContext";
@@ -7,6 +7,7 @@ import { useAuth } from "../context/AuthContext";
 export default function CourseRegistration() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const course = getCourseById(id || "");
   const { user } = useAuth();
 
@@ -103,7 +104,9 @@ export default function CourseRegistration() {
     localStorage.setItem("enrolledCourses", JSON.stringify(enrollments));
 
     // Redirect to Payment
-    navigate(`/payment/${id || "c-1"}`, { state: { newEnrollment } });
+    const isDashboard = location.pathname.startsWith("/dashboard");
+    const nextPath = isDashboard ? `/dashboard/payment/${id || "c-1"}` : `/payment/${id || "c-1"}`;
+    navigate(nextPath, { state: { newEnrollment } });
   };
 
   return (

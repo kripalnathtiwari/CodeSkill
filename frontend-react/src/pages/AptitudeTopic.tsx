@@ -117,7 +117,7 @@ export default function AptitudeTopic() {
                           if (user) {
                             sessionStorage.setItem('current_aptitude_list', JSON.stringify(topicQuestions));
                             sessionStorage.setItem('current_aptitude', JSON.stringify(q));
-                            navigate(`/aptitude/${q._id || q.id}`);
+                            navigate(window.location.pathname.startsWith('/dashboard') ? `/dashboard/aptitude/${q._id || q.id}` : `/aptitude/${q._id || q.id}`);
                           }
                         }}>
                       {q.title}
@@ -154,7 +154,7 @@ export default function AptitudeTopic() {
                       onClick={() => {
                         sessionStorage.setItem('current_aptitude_list', JSON.stringify(topicQuestions));
                         sessionStorage.setItem('current_aptitude', JSON.stringify(q));
-                        navigate(`/aptitude/${q._id || q.id}`);
+                        navigate(window.location.pathname.startsWith('/dashboard') ? `/dashboard/aptitude/${q._id || q.id}` : `/aptitude/${q._id || q.id}`);
                       }}
                       className="w-full md:w-auto flex items-center justify-center space-x-1 font-semibold text-sm px-6 py-2 rounded-lg transition-colors border bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/30 hover:bg-emerald-100 dark:hover:bg-emerald-500/20"
                     >
@@ -166,7 +166,7 @@ export default function AptitudeTopic() {
                       onClick={() => {
                         sessionStorage.setItem('current_aptitude_list', JSON.stringify(topicQuestions));
                         sessionStorage.setItem('current_aptitude', JSON.stringify(q));
-                        navigate(`/aptitude/${q._id || q.id}`);
+                        navigate(window.location.pathname.startsWith('/dashboard') ? `/dashboard/aptitude/${q._id || q.id}` : `/aptitude/${q._id || q.id}`);
                       }}
                       className="w-full md:w-auto flex items-center justify-center space-x-1 font-semibold text-sm px-6 py-2 rounded-lg transition-colors border bg-surface-secondary dark:bg-slate-800 text-text-primary dark:text-text-secondary border-border dark:border-border hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-primary dark:hover:text-primary"
                     >

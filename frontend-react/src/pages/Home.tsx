@@ -61,7 +61,6 @@ const CourseTicker = () => {
     { name: "System Design", color: "text-rose-500", bg: "bg-rose-500/10" },
   ];
 
-  // Duplicate the array 4 times to ensure it's wide enough for a seamless loop
   const duplicatedCourses = [...courses, ...courses, ...courses, ...courses];
 
   return (
@@ -69,7 +68,6 @@ const CourseTicker = () => {
       <motion.div
         className="flex whitespace-nowrap gap-6 items-center w-max"
         animate={{ x: ["0%", "-50%"] }}
-        // INCREASED DURATION FROM 30 TO 60 TO SLOW IT DOWN
         transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
       >
         {duplicatedCourses.map((course, index) => (
@@ -91,7 +89,7 @@ export default function Home() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const handleActionClick = (e: React.MouseEvent, path: string) => {
+  const handleActionClick = (e, path) => {
     e.preventDefault();
     if (user) {
       navigate(path);
@@ -114,36 +112,48 @@ export default function Home() {
         className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-sky-600/20 rounded-full blur-[120px]"
       />
 
-      {/* Course Ticker - Fills the top empty space with transparent background */}
+      {/* Course Ticker */}
       <CourseTicker />
 
-      {/* Hero section - Reduced side padding and increased max-width for tighter side margins */}
+      {/* Hero section */}
       <section className="pt-8 pb-20 px-3 sm:px-5 lg:px-8 w-full max-w-[1400px] mx-auto z-10 relative">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Left Column: Text */}
-          <motion.div 
-            variants={containerVariants} 
-            initial="hidden" 
-            animate="visible" 
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
             className="space-y-8 flex flex-col items-start text-left lg:col-span-5"
           >
-            <motion.div variants={itemVariants} className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/30 px-5 py-2 rounded-full text-sm font-semibold text-primary dark:text-primary backdrop-blur-md shadow-[0_0_15px_rgba(var(--primary),0.15)]">
+            <motion.div
+              variants={itemVariants}
+              className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/30 px-5 py-2 rounded-full text-sm font-semibold text-primary dark:text-primary backdrop-blur-md shadow-[0_0_15px_rgba(var(--primary),0.15)]"
+            >
               <Award className="h-4 w-4" />
               <span>CodeSkill Assessment Suite v2.0</span>
             </motion.div>
 
-            <motion.h1 variants={itemVariants} className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.15] text-text-primary dark:text-text-primary">
+            <motion.h1
+              variants={itemVariants}
+              className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.15] text-text-primary dark:text-text-primary"
+            >
               One Platform for Training, <br />
               <span className="text-primary drop-shadow-sm">
                 Certifications & Career Growth.
               </span>
             </motion.h1>
 
-            <motion.p variants={itemVariants} className="text-base sm:text-lg text-text-secondary dark:text-text-secondary max-w-2xl leading-relaxed font-medium">
+            <motion.p
+              variants={itemVariants}
+              className="text-base sm:text-lg text-text-secondary dark:text-text-secondary max-w-2xl leading-relaxed font-medium"
+            >
               Create, edit, compile, and execute code solutions dynamically in 10+ programming languages. Backed by highly scalable, interactive environments.
             </motion.p>
 
-            <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center gap-4 pt-4 w-full sm:w-auto">
+            <motion.div
+              variants={itemVariants}
+              className="flex flex-col sm:flex-row items-center gap-4 pt-4 w-full sm:w-auto"
+            >
               <div onClick={(e) => handleActionClick(e, "/dashboard/practice")} className="w-full sm:w-auto cursor-pointer">
                 <motion.button
                   whileHover={{ scale: 1.04 }}
@@ -168,7 +178,7 @@ export default function Home() {
           </motion.div>
 
           {/* Right Column: Image */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
@@ -177,43 +187,43 @@ export default function Home() {
             style={{ perspective: 1000 }}
           >
             <div className="absolute inset-0 bg-primary/20 blur-[100px] rounded-full pointer-events-none"></div>
-            
+
             <motion.div
               className="absolute inset-0 z-10 drop-shadow-2xl rounded-2xl border border-white/10 transition-shadow group-hover:shadow-[0_0_30px_rgba(var(--primary),0.3)]"
               animate={{ rotateY: isFlipped ? 180 : 0 }}
               transition={{ duration: 0.8, type: "spring", stiffness: 100, damping: 15 }}
               style={{ transformStyle: "preserve-3d" }}
             >
-              {/* Front side (hero-illustration) */}
-              <div 
+              {/* Front side */}
+              <div
                 className="absolute inset-0 w-full h-full bg-surface dark:bg-slate-900 rounded-2xl overflow-hidden"
-                style={{ 
+                style={{
                   transform: "rotateY(0deg)",
                   opacity: isFlipped ? 0 : 1,
                   transition: "opacity 0.3s",
-                  zIndex: isFlipped ? 0 : 10
+                  zIndex: isFlipped ? 0 : 10,
                 }}
               >
-                <img 
-                  src="/assets/hero-illustration.png" 
-                  alt="CodeSkill Platform Illustration" 
+                <img
+                  src="/assets/hero-illustration.png"
+                  alt="CodeSkill Platform Illustration"
                   className="w-full h-full object-cover rounded-2xl bg-surface dark:bg-slate-900"
                 />
               </div>
 
-              {/* Back side ("Let's Go" image) */}
-              <div 
+              {/* Back side */}
+              <div
                 className="absolute inset-0 w-full h-full bg-surface dark:bg-slate-900 rounded-2xl flex items-center justify-center overflow-hidden"
-                style={{ 
+                style={{
                   transform: "rotateY(180deg)",
                   opacity: isFlipped ? 1 : 0,
                   transition: "opacity 0.3s",
-                  zIndex: isFlipped ? 10 : 0
+                  zIndex: isFlipped ? 10 : 0,
                 }}
               >
-                <img 
-                  src={letsGoImg} 
-                  alt="Let's Go" 
+                <img
+                  src={letsGoImg}
+                  alt="Let's Go"
                   className="w-full h-full object-cover rounded-2xl bg-surface dark:bg-slate-900"
                 />
               </div>
@@ -222,7 +232,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Lazy Loaded Below-the-fold Sections - Wrapped in max-width for consistent side margins */}
+      {/* Lazy Loaded Sections */}
       <div className="w-full max-w-[1400px] mx-auto px-3 sm:px-5 lg:px-8 pb-24">
         <Suspense fallback={<SectionSkeleton />}>
           <FeaturedCourses />
@@ -249,26 +259,8 @@ export default function Home() {
         </motion.div>
       </Link>
 
-            {/* Floating Chat Button */}
-      <Link to="/contact">
-        <motion.div
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          className="fixed bottom-8 right-8 z-50 bg-primary text-text-inverse p-4 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.4)] cursor-pointer flex items-center justify-center group"
-        >
-          <MessageCircle className="w-6 h-6" />
-          <span className="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs group-hover:ml-3 transition-all duration-300 ease-in-out font-bold">
-            Chat with us
-          </span>
-        </motion.div>
-      </Link>
-
-      {/* ADD FOOTER HERE */}
+      {/* Footer */}
       <Footer />
-
-    </div>   // <-- This is the main wrapper's closing div
-  );
-}
     </div>
   );
 }

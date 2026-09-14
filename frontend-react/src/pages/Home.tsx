@@ -45,12 +45,19 @@ const CourseTicker = () => {
   const courses = [
     { name: "Python", color: "text-blue-500", bg: "bg-blue-500/10" },
     { name: "Java", color: "text-orange-500", bg: "bg-orange-500/10" },
-    { name: "Web Dev", color: "text-emerald-500", bg: "bg-emerald-500/10" },
-    { name: "DS & Algo", color: "text-purple-500", bg: "bg-purple-500/10" },
-    { name: "System Design", color: "text-rose-500", bg: "bg-rose-500/10" },
-    { name: "C++", color: "text-indigo-500", bg: "bg-indigo-500/10" },
     { name: "JavaScript", color: "text-yellow-500", bg: "bg-yellow-500/10" },
+    { name: "TypeScript", color: "text-blue-600", bg: "bg-blue-600/10" },
+    { name: "C++", color: "text-indigo-500", bg: "bg-indigo-500/10" },
     { name: "React", color: "text-cyan-500", bg: "bg-cyan-500/10" },
+    { name: "Django", color: "text-green-700", bg: "bg-green-700/10" },
+    { name: "Web Dev", color: "text-emerald-500", bg: "bg-emerald-500/10" },
+    { name: "ADSA", color: "text-pink-500", bg: "bg-pink-500/10" },
+    { name: "Data Science", color: "text-teal-500", bg: "bg-teal-500/10" },
+    { name: "Machine Learning", color: "text-violet-500", bg: "bg-violet-500/10" },
+    { name: "Cyber Security", color: "text-red-500", bg: "bg-red-500/10" },
+    { name: "DevOps", color: "text-amber-500", bg: "bg-amber-500/10" },
+    { name: "Cloud Computing", color: "text-sky-500", bg: "bg-sky-500/10" },
+    { name: "System Design", color: "text-rose-500", bg: "bg-rose-500/10" },
   ];
 
   // Duplicate the array 4 times to ensure it's wide enough for a seamless loop

@@ -106,10 +106,10 @@ export default function Sidebar() {
                       <Link
                         key={subItem.path}
                         to={subItem.path}
-                        className={`text-[13px] font-semibold py-2 px-3 rounded-lg transition-all duration-200 flex items-center ${
+                        className={`text-xs uppercase tracking-wider font-bold py-2 px-3 rounded-lg transition-all duration-200 flex items-center ${
                           isSubActive 
                             ? 'bg-primary/10 text-primary translate-x-1' 
-                            : 'text-text-secondary hover:text-primary hover:bg-primary/5 hover:translate-x-1'
+                            : 'text-text-primary hover:text-primary hover:bg-primary/5 hover:translate-x-1'
                         }`}
                       >
                         {subItem.label}

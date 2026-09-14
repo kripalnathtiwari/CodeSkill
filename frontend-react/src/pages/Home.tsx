@@ -40,6 +40,40 @@ const SectionSkeleton = () => (
   </div>
 );
 
+// Course Ticker Component
+const CourseTicker = () => {
+  const courses = [
+    { name: "Python", color: "text-blue-500", bg: "bg-blue-500/10" },
+    { name: "Java", color: "text-orange-500", bg: "bg-orange-500/10" },
+    { name: "Web Dev", color: "text-emerald-500", bg: "bg-emerald-500/10" },
+    { name: "DS & Algo", color: "text-purple-500", bg: "bg-purple-500/10" },
+    { name: "System Design", color: "text-rose-500", bg: "bg-rose-500/10" },
+    { name: "C++", color: "text-indigo-500", bg: "bg-indigo-500/10" },
+    { name: "JavaScript", color: "text-yellow-500", bg: "bg-yellow-500/10" },
+    { name: "React", color: "text-cyan-500", bg: "bg-cyan-500/10" },
+  ];
+
+  return (
+    <div className="w-full overflow-hidden bg-surface dark:bg-slate-900/50 border-y border-border py-3 backdrop-blur-sm z-20 relative">
+      <motion.div
+        className="flex whitespace-nowrap gap-6 items-center w-max"
+        animate={{ x: ["0%", "-50%"] }}
+        transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+      >
+        {[...courses, ...courses].map((course, index) => (
+          <div
+            key={index}
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-full ${course.bg} ${course.color} font-semibold text-sm border border-current/20`}
+          >
+            <span className="w-2 h-2 rounded-full bg-current animate-pulse"></span>
+            {course.name}
+          </div>
+        ))}
+      </motion.div>
+    </div>
+  );
+};
+
 export default function Home() {
   const [isFlipped, setIsFlipped] = useState(false);
   const { user } = useAuth();
@@ -53,9 +87,9 @@ export default function Home() {
       navigate("/login");
     }
   };
-  return (
-    <div className="flex-grow flex flex-col justify-center items-center relative overflow-hidden bg-background dark:bg-background">
 
+  return (
+    <div className="flex-grow flex flex-col justify-center items-center relative overflow-hidden bg-background dark:bg-background w-full">
       {/* Dynamic Animated Background Orbs */}
       <motion.div
         animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.2, 0.1] }}
@@ -68,12 +102,19 @@ export default function Home() {
         className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-sky-600/20 rounded-full blur-[120px]"
       />
 
-      {/* Hero section */}
-      <section className="py-24 px-6 w-full z-10 relative">
+      {/* Course Ticker - Fills the top empty space */}
+      <CourseTicker />
+
+      {/* Hero section - Adjusted padding and max-width for side margins */}
+      <section className="pt-12 pb-20 px-4 sm:px-6 lg:px-8 w-full max-w-7xl mx-auto z-10 relative">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Left Column: Text */}
-          <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-8 flex flex-col items-start text-left lg:col-span-5">
-
+          <motion.div 
+            variants={containerVariants} 
+            initial="hidden" 
+            animate="visible" 
+            className="space-y-8 flex flex-col items-start text-left lg:col-span-5"
+          >
             <motion.div variants={itemVariants} className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/30 px-5 py-2 rounded-full text-sm font-semibold text-primary dark:text-primary backdrop-blur-md shadow-[0_0_15px_rgba(var(--primary),0.15)]">
               <Award className="h-4 w-4" />
               <span>CodeSkill Assessment Suite v2.0</span>
@@ -169,16 +210,18 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Lazy Loaded Below-the-fold Sections */}
-      <Suspense fallback={<SectionSkeleton />}>
-        <FeaturedCourses />
-        <CampusDrives />
-        <EngineSection />
-        <TrainerReviews />
-        <CareerTools />
-        <CompilerSection />
-        <FeaturesGrid />
-      </Suspense>
+      {/* Lazy Loaded Below-the-fold Sections - Wrapped in max-width for consistent side margins */}
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+        <Suspense fallback={<SectionSkeleton />}>
+          <FeaturedCourses />
+          <CampusDrives />
+          <EngineSection />
+          <TrainerReviews />
+          <CareerTools />
+          <CompilerSection />
+          <FeaturesGrid />
+        </Suspense>
+      </div>
 
       {/* Floating Chat Button */}
       <Link to="/contact">

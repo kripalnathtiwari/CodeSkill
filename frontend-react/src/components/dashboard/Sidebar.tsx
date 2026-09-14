@@ -58,10 +58,12 @@ export default function Sidebar() {
     <aside className={`bg-surface border-r border-border h-screen sticky top-0 flex flex-col hidden lg:flex shrink-0 transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-64'}`}>
       {/* Logo */}
       <div className="h-16 flex items-center justify-between px-4 border-b border-border">
-        <Link to="/" className={`flex items-center space-x-2 text-xl font-bold tracking-tight text-primary ${isCollapsed ? 'hidden' : 'block'}`}>
-          <Code2 className="h-6 w-6 text-primary shrink-0" />
-          <span>CodeSkill</span>
-        </Link>
+        <div className={`flex items-center space-x-2 text-2xl font-black tracking-tight ${isCollapsed ? 'hidden' : 'block'}`}>
+          <span>
+            <span className="text-black dark:text-white">Code</span>
+            <span className="text-primary">Skill</span>
+          </span>
+        </div>
         <button onClick={() => setIsCollapsed(!isCollapsed)} className="p-2 rounded-lg hover:bg-background text-text-secondary flex-shrink-0 mx-auto">
           <Menu className="h-5 w-5" />
         </button>
@@ -88,7 +90,7 @@ export default function Sidebar() {
               >
                 <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'}`}>
                   <item.icon className={`h-5 w-5 shrink-0 ${isActive || isExpanded ? 'text-primary' : 'text-text-muted'}`} />
-                  {!isCollapsed && <span className={isExpanded ? 'text-text-primary font-bold' : ''}>{item.label}</span>}
+                  {!isCollapsed && <span className={`uppercase tracking-wider font-bold text-xs ${isExpanded ? 'text-text-primary' : ''}`}>{item.label}</span>}
                 </div>
                 {!isCollapsed && hasSubItems && (
                   <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isExpanded ? 'rotate-180 text-primary' : 'text-text-muted'}`} />

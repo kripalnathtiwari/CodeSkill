@@ -189,7 +189,7 @@ export default function AptitudePage() {
             {paginatedTopics.map((topic, topicIdx) => (
               <div 
                 key={topic} 
-                onClick={() => navigate(`/aptitude/topic/${encodeURIComponent(topic)}`)}
+                onClick={() => navigate(window.location.pathname.startsWith('/dashboard') ? `/dashboard/aptitude/topic/${encodeURIComponent(topic)}` : `/aptitude/topic/${encodeURIComponent(topic)}`)}
                 className="border border-border dark:border-border rounded-xl bg-surface dark:bg-background overflow-hidden shadow-sm flex items-center justify-between p-5 cursor-pointer hover:bg-background dark:hover:bg-slate-900/50 transition-colors group"
               >
                 <div className="flex items-center space-x-4">

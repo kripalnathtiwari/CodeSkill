@@ -105,13 +105,19 @@ function AppContent() {
               <Route path="/contests" element={<Contests />} />
               <Route path="/take-test/:id" element={<ProtectedRoute><DashboardLayout><TakeTest /></DashboardLayout></ProtectedRoute>} />
               <Route path="/solve/:id" element={<ProtectedRoute><SolveProblem /></ProtectedRoute>} />
+              <Route path="/dashboard/solve/:id" element={<ProtectedRoute><DashboardLayout><SolveProblem /></DashboardLayout></ProtectedRoute>} />
               <Route path="/aptitude/:id" element={<ProtectedRoute><SolveAptitude /></ProtectedRoute>} />
+              <Route path="/dashboard/aptitude/:id" element={<ProtectedRoute><DashboardLayout><SolveAptitude /></DashboardLayout></ProtectedRoute>} />
+              <Route path="/dashboard/aptitude/topic/:topic" element={<ProtectedRoute><DashboardLayout><AptitudeTopic /></DashboardLayout></ProtectedRoute>} />
               <Route path="/other-practice" element={<OtherPractice />} />
               <Route path="/other-practice/topic/:topic" element={<OtherPracticeTopic />} />
+              <Route path="/dashboard/other-practice/topic/:topic" element={<ProtectedRoute><DashboardLayout><OtherPracticeTopic /></DashboardLayout></ProtectedRoute>} />
               <Route path="/other-practice/solve/:id" element={<ProtectedRoute><SolveOtherPractice /></ProtectedRoute>} />
+              <Route path="/dashboard/other-practice/solve/:id" element={<ProtectedRoute><DashboardLayout><SolveOtherPractice /></DashboardLayout></ProtectedRoute>} />
               <Route path="/verify" element={<VerifyCertificate />} />
               <Route path="/cv-builder" element={<CVBuilder />} />
               <Route path="/cv-templates" element={<CVTemplates />} />
+              <Route path="/dashboard/career/cv-templates" element={<ProtectedRoute><DashboardLayout><CVTemplates /></DashboardLayout></ProtectedRoute>} />
               <Route path="/ats-checker" element={<ATSChecker />} />
               <Route path="/jobs" element={<Jobs />} />
               <Route path="/our-product" element={<OurProduct />} />

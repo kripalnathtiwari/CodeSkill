@@ -1635,7 +1635,7 @@ export default function CVBuilder() {
 
               <div className="pt-2">
                 <motion.button
-                  onClick={() => navigate('/cv-templates')}
+                  onClick={() => navigate(window.location.pathname.startsWith('/dashboard') ? '/dashboard/career/cv-templates' : '/cv-templates')}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="flex items-center justify-center bg-gradient-to-r from-primary via-primary to-primary hover:from-blue-400 hover:to-primary text-text-inverse font-extrabold px-8 py-4 rounded-xl border-2 border-white/90 transition-all shadow-[0_0_25px_rgba(16,185,129,0.4)] text-base sm:text-lg tracking-wide"

@@ -281,7 +281,7 @@ export default function TagProblems() {
                     </div>
                     
                     <Link 
-                      to={`/solve/${q.id}`}
+                      to={window.location.pathname.startsWith('/dashboard') ? `/dashboard/solve/${q.id}` : `/solve/${q.id}`}
                       className="sm:ml-4 flex items-center justify-center px-6 py-2.5 bg-blue-50 dark:bg-primary/10 hover:bg-primary text-primary dark:text-primary hover:text-text-inverse border border-blue-200 dark:border-primary/20 hover:border-primary font-bold rounded-lg transition-all shadow-sm dark:shadow-none"
                     >
                       Solve Challenge

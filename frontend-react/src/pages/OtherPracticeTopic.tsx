@@ -114,7 +114,7 @@ export default function OtherPracticeTopic() {
                     <button
                       onClick={() => {
                         sessionStorage.setItem('current_other_practice_list', JSON.stringify(questions));
-                        navigate(`/other-practice/solve/${q._id}`);
+                        navigate(window.location.pathname.startsWith('/dashboard') ? `/dashboard/other-practice/solve/${q._id}` : `/other-practice/solve/${q._id}`);
                       }}
                       className="w-full py-2.5 rounded-xl font-bold transition-all text-emerald-600 bg-emerald-50 hover:bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-500/10 dark:hover:bg-emerald-500/20 border border-emerald-200 dark:border-emerald-500/30 flex justify-center items-center gap-2"
                     >
@@ -124,7 +124,7 @@ export default function OtherPracticeTopic() {
                     <button
                       onClick={() => {
                         sessionStorage.setItem('current_other_practice_list', JSON.stringify(questions));
-                        navigate(`/other-practice/solve/${q._id}`);
+                        navigate(window.location.pathname.startsWith('/dashboard') ? `/dashboard/other-practice/solve/${q._id}` : `/other-practice/solve/${q._id}`);
                       }}
                       className="w-full bg-rose-500 hover:bg-rose-600 text-white py-2.5 rounded-xl font-bold transition-all shadow-md shadow-rose-500/20 hover:shadow-lg hover:shadow-rose-500/30"
                     >

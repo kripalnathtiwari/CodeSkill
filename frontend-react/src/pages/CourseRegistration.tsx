@@ -194,7 +194,7 @@ export default function CourseRegistration() {
 
             <button 
               type="submit"
-              className="w-full py-3.5 mt-4 bg-blue-700 hover:bg-primary text-text-inverse font-bold rounded-lg transition-colors shadow-lg"
+              className="w-full py-3.5 mt-4 bg-blue-700 hover:bg-primary text-text-primary dark:text-text-inverse font-bold rounded-lg transition-colors shadow-lg"
             >
               Save & Continue
             </button>
@@ -221,7 +221,7 @@ export default function CourseRegistration() {
               <div className="p-6 relative">
                 <div className="absolute top-6 left-5">
                   <div className="bg-primary rounded-full w-6 h-6 flex items-center justify-center">
-                    <CheckCircle2 className="w-4 h-4 text-text-inverse" />
+                    <CheckCircle2 className="w-4 h-4 text-text-primary dark:text-text-inverse" />
                   </div>
                 </div>
                 
@@ -241,7 +241,7 @@ export default function CourseRegistration() {
                 </div>
               </div>
               
-              <div className="bg-slate-50 hover:bg-slate-100 dark:bg-[#151d2d] dark:hover:bg-[#1a2438] px-6 py-4 flex justify-between items-center cursor-pointer transition-colors border-t border-border/50">
+              <div className="bg-slate-50 hover:bg-slate-100 dark:bg-background dark:hover:bg-surface px-6 py-4 flex justify-between items-center cursor-pointer transition-colors border-t border-border/50">
                 <span className="text-primary font-semibold text-sm">View Mentor</span>
                 <ChevronDown className="w-4 h-4 text-primary" />
               </div>

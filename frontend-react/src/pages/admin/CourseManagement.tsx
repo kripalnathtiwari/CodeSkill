@@ -13,7 +13,7 @@ export default function CourseManagement() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("summer");
-  const [price, setPrice] = useState("â‚¹2,999");
+  const [price, setPrice] = useState("₹2,999");
   const [image, setImage] = useState("");
   const [tags, setTags] = useState("");
   const [duration, setDuration] = useState("4 Weeks");
@@ -35,7 +35,7 @@ export default function CourseManagement() {
 
   const resetForm = () => {
     setTitle(""); setDescription(""); setCategory("summer");
-    setPrice("â‚¹2,999"); setImage(""); setTags("");
+    setPrice("₹2,999"); setImage(""); setTags("");
     setDuration("4 Weeks"); setLevel("Beginner to Advanced");
     setLanguage("English"); setVisibility("PUBLIC"); setPublishStatus("DRAFT");
     setSeoTitle(""); setOverview(""); setSkillsYouWillLearn(""); setTechStack("");
@@ -51,7 +51,7 @@ export default function CourseManagement() {
     setTitle(course.title || "");
     setDescription(course.description || "");
     setCategory(course.category || "summer");
-    setPrice(course.price || "â‚¹2,999");
+    setPrice(course.price || "₹2,999");
     setImage(course.image || "");
     setTags(Array.isArray(course.tags) ? course.tags.join(", ") : (course.tags || ""));
     setDuration(course.duration || "4 Weeks");
@@ -222,7 +222,7 @@ export default function CourseManagement() {
                   type="text" value={price} onChange={e => setPrice(e.target.value)}
                   disabled={!!isEditingDefault}
                   className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
-                  placeholder="e.g. â‚¹2,999"
+                  placeholder="e.g. ₹2,999"
                 />
               </div>
               <div>

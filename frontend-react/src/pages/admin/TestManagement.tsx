@@ -979,7 +979,7 @@ export default function TestManagement() {
           </div>
           <div>
             <label className="block text-sm font-bold text-text-muted mb-2">Prize / Reward</label>
-            <input type="text" value={prize} onChange={e => setPrize(e.target.value)} className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary" placeholder="e.g. â‚¹5,000 or Skill Badge" />
+            <input type="text" value={prize} onChange={e => setPrize(e.target.value)} className="w-full bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-inverse focus:outline-none focus:border-primary" placeholder="e.g. ₹5,000 or Skill Badge" />
           </div>
         </div>
 

@@ -329,7 +329,7 @@ export default function CourseDetails() {
           </div>
 
           {/* Right Image */}
-          <div className="w-full md:w-1/2 bg-slate-50 dark:bg-[#171b26] p-8 flex items-center justify-center border-l border-border/50">
+          <div className="w-full md:w-1/2 bg-slate-50 dark:bg-background p-8 flex items-center justify-center border-l border-border/50">
             <img 
               src="/images/certificate.png" 
               alt="IBM Certification" 

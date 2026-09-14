@@ -12,7 +12,7 @@ export default function Payment() {
   const course = getCourseById(newEnrollment?.courseId || "c-1");
   
   // Parse base price
-  const basePriceStr = course?.price || "â‚¹3,999";
+  const basePriceStr = course?.price || "₹3,999";
   const basePriceNum = parseInt(basePriceStr.replace(/[^0-9]/g, "")) || 3999;
 
   const [paymentMethod, setPaymentMethod] = useState("card"); // card, upi, netbanking
@@ -49,10 +49,10 @@ export default function Payment() {
   const applyPromoCode = () => {
     if (promoCode.toUpperCase() === "CODESKILL50") {
       setDiscount(500);
-      setPromoMessage("â‚¹500 discount applied successfully!");
+      setPromoMessage("₹500 discount applied successfully!");
     } else if (promoCode.toUpperCase() === "WELCOME") {
       setDiscount(200);
-      setPromoMessage("â‚¹200 discount applied!");
+      setPromoMessage("₹200 discount applied!");
     } else {
       setDiscount(0);
       setPromoMessage("Invalid or expired promo code.");
@@ -160,11 +160,11 @@ export default function Payment() {
   // ---------------- SUCCESS SCREEN ----------------
   if (isSuccess) {
     return (
-      <div className="flex-1 bg-[#0B0F19] w-full min-h-screen py-20 px-6 flex items-center justify-center">
+      <div className="flex-1 bg-background w-full min-h-screen py-20 px-6 flex items-center justify-center">
         <motion.div 
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="max-w-md w-full bg-[#111827] rounded-3xl p-10 border border-primary/30 shadow-[0_0_40px_rgba(16,185,129,0.2)] text-center"
+          className="max-w-md w-full bg-surface rounded-3xl p-10 border border-primary/30 shadow-[0_0_40px_rgba(16,185,129,0.2)] text-center"
         >
           <motion.div 
             initial={{ scale: 0 }}
@@ -174,7 +174,7 @@ export default function Payment() {
           >
             <CheckCircle2 className="h-12 w-12 text-primary" />
           </motion.div>
-          <h2 className="text-3xl font-bold text-text-inverse mb-2">Payment Successful!</h2>
+          <h2 className="text-3xl font-bold text-text-primary dark:text-text-inverse mb-2">Payment Successful!</h2>
           <p className="text-text-muted mb-2">Transaction ID: TXN-{Math.floor(Math.random() * 1000000000)}</p>
           <p className="text-text-muted mb-8">You are now enrolled in {course?.title}. Redirecting to your dashboard...</p>
           <div className="w-8 h-8 border-4 border-primary/30 border-t-blue-500 rounded-full animate-spin mx-auto" />
@@ -186,24 +186,24 @@ export default function Payment() {
   // ---------------- OTP SCREEN ----------------
   if (showOTP) {
     return (
-      <div className="flex-1 bg-[#0B0F19] w-full min-h-screen py-20 px-6 flex items-center justify-center">
+      <div className="flex-1 bg-background w-full min-h-screen py-20 px-6 flex items-center justify-center">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-md w-full bg-[#111827] rounded-3xl p-8 border border-border shadow-2xl relative overflow-hidden"
+          className="max-w-md w-full bg-surface rounded-3xl p-8 border border-border shadow-2xl relative overflow-hidden"
         >
           {/* Fake Bank Header */}
           <div className="absolute top-0 left-0 w-full h-2 bg-primary" />
           <div className="flex justify-between items-center mb-8 pt-2">
-            <h3 className="text-xl font-bold text-text-inverse flex items-center">
+            <h3 className="text-xl font-bold text-text-primary dark:text-text-inverse flex items-center">
               <ShieldCheck className="w-6 h-6 text-primary mr-2" />
               Secure Banking
             </h3>
-            <span className="text-sm text-text-muted">â‚¹{finalAmount.toLocaleString('en-IN')}</span>
+            <span className="text-sm text-text-muted">₹{finalAmount.toLocaleString('en-IN')}</span>
           </div>
 
           <p className="text-text-secondary text-sm leading-relaxed mb-6">
-            An OTP has been sent to your registered mobile number ending in <span className="font-bold text-text-inverse">XXXXXX1234</span>. Please enter it below to authenticate this transaction.
+            An OTP has been sent to your registered mobile number ending in <span className="font-bold text-text-primary dark:text-text-inverse">XXXXXX1234</span>. Please enter it below to authenticate this transaction.
           </p>
 
           <form onSubmit={handleOTPSubmit}>
@@ -216,14 +216,14 @@ export default function Payment() {
                 value={otp}
                 onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
                 placeholder="â€¢ â€¢ â€¢ â€¢ â€¢ â€¢"
-                className="w-full bg-[#1a2333] border border-border rounded-xl px-4 py-4 text-center text-2xl tracking-widest text-text-inverse focus:outline-none focus:border-primary transition-colors"
+                className="w-full bg-background border border-border rounded-xl px-4 py-4 text-center text-2xl tracking-widest text-text-primary dark:text-text-inverse focus:outline-none focus:border-primary transition-colors"
               />
             </div>
 
             <button 
               type="submit"
               disabled={isProcessing || otp.length < 4}
-              className="w-full py-4 bg-primary hover:bg-primary disabled:bg-primary/50 text-text-inverse font-bold rounded-xl transition-all shadow-lg flex items-center justify-center disabled:cursor-not-allowed"
+              className="w-full py-4 bg-primary hover:bg-primary disabled:bg-primary/50 text-text-primary dark:text-text-inverse font-bold rounded-xl transition-all shadow-lg flex items-center justify-center disabled:cursor-not-allowed"
             >
               {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : "Verify & Pay"}
             </button>
@@ -239,39 +239,39 @@ export default function Payment() {
 
   // ---------------- MAIN CHECKOUT SCREEN ----------------
   return (
-    <div className="flex-1 bg-[#0B0F19] w-full min-h-screen py-16 px-6">
+    <div className="flex-1 bg-background w-full min-h-screen py-16 px-6">
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-8">
         
         {/* Left: Payment Methods */}
         <div className="w-full lg:w-[65%] space-y-6">
           <div>
-            <h1 className="text-3xl font-bold text-text-inverse mb-2">Checkout</h1>
+            <h1 className="text-3xl font-bold text-text-primary dark:text-text-inverse mb-2">Checkout</h1>
             <p className="text-text-muted flex items-center">
               <Lock className="w-4 h-4 mr-2" />
               Secure 256-bit SSL encryption
             </p>
           </div>
 
-          <div className="bg-[#111827] rounded-2xl border border-border/50 overflow-hidden shadow-xl">
+          <div className="bg-surface rounded-2xl border border-border/50 overflow-hidden shadow-xl">
             {/* Payment Method Tabs */}
             <div className="flex border-b border-border/50 overflow-x-auto hide-scrollbar">
               <button 
                 onClick={() => setPaymentMethod('card')}
-                className={`flex-1 py-4 px-6 flex items-center justify-center space-x-2 font-semibold transition-colors border-b-2 whitespace-nowrap ${paymentMethod === 'card' ? 'border-primary text-primary bg-primary/5' : 'border-transparent text-text-muted hover:text-text-inverse hover:bg-slate-800/50'}`}
+                className={`flex-1 py-4 px-6 flex items-center justify-center space-x-2 font-semibold transition-colors border-b-2 whitespace-nowrap ${paymentMethod === 'card' ? 'border-primary text-primary bg-primary/5' : 'border-transparent text-text-muted hover:text-text-primary dark:text-text-inverse hover:bg-slate-800/50'}`}
               >
                 <CreditCard className="w-5 h-5" />
                 <span>Credit / Debit Card</span>
               </button>
               <button 
                 onClick={() => setPaymentMethod('upi')}
-                className={`flex-1 py-4 px-6 flex items-center justify-center space-x-2 font-semibold transition-colors border-b-2 whitespace-nowrap ${paymentMethod === 'upi' ? 'border-primary text-primary bg-primary/5' : 'border-transparent text-text-muted hover:text-text-inverse hover:bg-slate-800/50'}`}
+                className={`flex-1 py-4 px-6 flex items-center justify-center space-x-2 font-semibold transition-colors border-b-2 whitespace-nowrap ${paymentMethod === 'upi' ? 'border-primary text-primary bg-primary/5' : 'border-transparent text-text-muted hover:text-text-primary dark:text-text-inverse hover:bg-slate-800/50'}`}
               >
                 <Smartphone className="w-5 h-5" />
                 <span>UPI</span>
               </button>
               <button 
                 onClick={() => setPaymentMethod('netbanking')}
-                className={`flex-1 py-4 px-6 flex items-center justify-center space-x-2 font-semibold transition-colors border-b-2 whitespace-nowrap ${paymentMethod === 'netbanking' ? 'border-primary text-primary bg-primary/5' : 'border-transparent text-text-muted hover:text-text-inverse hover:bg-slate-800/50'}`}
+                className={`flex-1 py-4 px-6 flex items-center justify-center space-x-2 font-semibold transition-colors border-b-2 whitespace-nowrap ${paymentMethod === 'netbanking' ? 'border-primary text-primary bg-primary/5' : 'border-transparent text-text-muted hover:text-text-primary dark:text-text-inverse hover:bg-slate-800/50'}`}
               >
                 <Building className="w-5 h-5" />
                 <span>Net Banking</span>
@@ -297,7 +297,7 @@ export default function Payment() {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="e.g. John Doe"
-                        className={`w-full bg-[#1a2333] border rounded-xl px-4 py-3.5 text-text-inverse focus:outline-none transition-all ${errors.name ? 'border-red-500 focus:ring-red-500' : 'border-border focus:border-primary focus:ring-1 focus:ring-blue-500'}`}
+                        className={`w-full bg-background border rounded-xl px-4 py-3.5 text-text-primary dark:text-text-inverse focus:outline-none transition-all ${errors.name ? 'border-red-500 focus:ring-red-500' : 'border-border focus:border-primary focus:ring-1 focus:ring-blue-500'}`}
                       />
                       {errors.name && <p className="text-red-500 text-xs mt-1 flex items-center"><AlertCircle className="w-3 h-3 mr-1"/>{errors.name}</p>}
                     </div>
@@ -311,7 +311,7 @@ export default function Payment() {
                           value={cardNumber}
                           onChange={handleCardChange}
                           placeholder="0000 0000 0000 0000"
-                          className={`w-full bg-[#1a2333] border rounded-xl pl-12 pr-4 py-3.5 text-text-inverse font-mono focus:outline-none transition-all ${errors.card ? 'border-red-500 focus:ring-red-500' : 'border-border focus:border-primary focus:ring-1 focus:ring-blue-500'}`}
+                          className={`w-full bg-background border rounded-xl pl-12 pr-4 py-3.5 text-text-primary dark:text-text-inverse font-mono focus:outline-none transition-all ${errors.card ? 'border-red-500 focus:ring-red-500' : 'border-border focus:border-primary focus:ring-1 focus:ring-blue-500'}`}
                         />
                         <CreditCard className="absolute left-4 top-4 w-5 h-5 text-text-muted" />
                       </div>
@@ -327,7 +327,7 @@ export default function Payment() {
                           value={expiry}
                           onChange={handleExpiryChange}
                           placeholder="MM/YY"
-                          className={`w-full bg-[#1a2333] border rounded-xl px-4 py-3.5 text-text-inverse font-mono focus:outline-none transition-all ${errors.expiry ? 'border-red-500 focus:ring-red-500' : 'border-border focus:border-primary focus:ring-1 focus:ring-blue-500'}`}
+                          className={`w-full bg-background border rounded-xl px-4 py-3.5 text-text-primary dark:text-text-inverse font-mono focus:outline-none transition-all ${errors.expiry ? 'border-red-500 focus:ring-red-500' : 'border-border focus:border-primary focus:ring-1 focus:ring-blue-500'}`}
                         />
                         {errors.expiry && <p className="text-red-500 text-xs mt-1 flex items-center"><AlertCircle className="w-3 h-3 mr-1"/>{errors.expiry}</p>}
                       </div>
@@ -343,7 +343,7 @@ export default function Payment() {
                             if(errors.cvv) setErrors({...errors, cvv: null});
                           }}
                           placeholder="123"
-                          className={`w-full bg-[#1a2333] border rounded-xl px-4 py-3.5 text-text-inverse font-mono focus:outline-none transition-all ${errors.cvv ? 'border-red-500 focus:ring-red-500' : 'border-border focus:border-primary focus:ring-1 focus:ring-blue-500'}`}
+                          className={`w-full bg-background border rounded-xl px-4 py-3.5 text-text-primary dark:text-text-inverse font-mono focus:outline-none transition-all ${errors.cvv ? 'border-red-500 focus:ring-red-500' : 'border-border focus:border-primary focus:ring-1 focus:ring-blue-500'}`}
                         />
                         {errors.cvv && <p className="text-red-500 text-xs mt-1 flex items-center"><AlertCircle className="w-3 h-3 mr-1"/>{errors.cvv}</p>}
                       </div>
@@ -352,7 +352,7 @@ export default function Payment() {
                     <button 
                       type="submit"
                       disabled={isProcessing}
-                      className="w-full py-4 mt-4 bg-primary hover:bg-primary disabled:bg-primary/50 text-text-inverse font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] flex items-center justify-center space-x-2 disabled:cursor-not-allowed"
+                      className="w-full py-4 mt-4 bg-primary hover:bg-primary disabled:bg-primary/50 text-text-primary dark:text-text-inverse font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] flex items-center justify-center space-x-2 disabled:cursor-not-allowed"
                     >
                       {isProcessing ? (
                         <>
@@ -362,7 +362,7 @@ export default function Payment() {
                       ) : (
                         <>
                           <ShieldCheck className="h-5 w-5" />
-                          <span>Pay â‚¹{finalAmount.toLocaleString('en-IN')} Securely</span>
+                          <span>Pay ₹{finalAmount.toLocaleString('en-IN')} Securely</span>
                         </>
                       )}
                     </button>
@@ -378,7 +378,7 @@ export default function Payment() {
                     onSubmit={handleInitialSubmit} 
                     className="space-y-6"
                   >
-                    <div className="text-center p-6 bg-[#1a2333] rounded-xl border border-border">
+                    <div className="text-center p-6 bg-background rounded-xl border border-border">
                       <div className="w-40 h-40 bg-surface p-2 rounded-xl mx-auto mb-4 flex items-center justify-center">
                         <div className="w-full h-full border-4 border-dashed border-border flex items-center justify-center text-text-muted font-bold bg-background">
                           Scan QR Code
@@ -397,12 +397,12 @@ export default function Payment() {
                           type="text" 
                           required
                           placeholder="username@upi"
-                          className="flex-1 bg-[#111827] border border-slate-600 rounded-xl px-4 py-3.5 text-text-inverse focus:outline-none focus:border-primary transition-colors"
+                          className="flex-1 bg-surface border border-slate-600 rounded-xl px-4 py-3.5 text-text-primary dark:text-text-inverse focus:outline-none focus:border-primary transition-colors"
                         />
                         <button 
                           type="submit"
                           disabled={isProcessing}
-                          className="px-8 bg-primary hover:bg-primary disabled:bg-primary/50 text-text-inverse font-bold rounded-xl transition-colors disabled:cursor-not-allowed flex items-center"
+                          className="px-8 bg-primary hover:bg-primary disabled:bg-primary/50 text-text-primary dark:text-text-inverse font-bold rounded-xl transition-colors disabled:cursor-not-allowed flex items-center"
                         >
                           {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : "Verify"}
                         </button>
@@ -430,7 +430,7 @@ export default function Payment() {
                               setSelectedBank(bank);
                               if(errors.bank) setErrors({...errors, bank: null});
                             }}
-                            className={`border ${selectedBank === bank ? 'border-primary bg-primary/10' : 'border-border hover:border-primary/50 bg-[#1a2333] hover:bg-primary/5'} rounded-xl p-4 text-center cursor-pointer transition-colors`}
+                            className={`border ${selectedBank === bank ? 'border-primary bg-primary/10' : 'border-border hover:border-primary/50 bg-background hover:bg-primary/5'} rounded-xl p-4 text-center cursor-pointer transition-colors`}
                           >
                             <Building className={`w-6 h-6 mx-auto mb-2 ${selectedBank === bank ? 'text-primary' : 'text-text-muted'}`} />
                             <span className="text-sm text-text-secondary font-medium">{bank}</span>
@@ -442,7 +442,7 @@ export default function Payment() {
                       <button 
                         type="submit"
                         disabled={isProcessing}
-                        className="w-full py-4 mt-6 bg-primary hover:bg-primary disabled:bg-primary/50 text-text-inverse font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] flex items-center justify-center space-x-2 disabled:cursor-not-allowed"
+                        className="w-full py-4 mt-6 bg-primary hover:bg-primary disabled:bg-primary/50 text-text-primary dark:text-text-inverse font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] flex items-center justify-center space-x-2 disabled:cursor-not-allowed"
                       >
                         {isProcessing ? (
                           <>
@@ -463,25 +463,25 @@ export default function Payment() {
             </div>
             
             <div className="bg-slate-800/30 p-4 border-t border-border/50 flex justify-center space-x-6 grayscale opacity-60 text-sm">
-              <span className="text-text-inverse font-bold tracking-wider italic">VISA</span>
-              <span className="text-text-inverse font-bold tracking-wider">MasterCard</span>
-              <span className="text-text-inverse font-bold tracking-wider">RuPay</span>
-              <span className="text-text-inverse font-bold tracking-wider italic">UPI</span>
+              <span className="text-text-primary dark:text-text-inverse font-bold tracking-wider italic">VISA</span>
+              <span className="text-text-primary dark:text-text-inverse font-bold tracking-wider">MasterCard</span>
+              <span className="text-text-primary dark:text-text-inverse font-bold tracking-wider">RuPay</span>
+              <span className="text-text-primary dark:text-text-inverse font-bold tracking-wider italic">UPI</span>
             </div>
           </div>
         </div>
 
         {/* Right: Order Summary */}
         <div className="w-full lg:w-[35%]">
-          <div className="bg-[#1a2333] rounded-2xl border border-border/50 p-6 shadow-xl sticky top-24">
-            <h2 className="text-xl font-bold text-text-inverse mb-6 border-b border-border/50 pb-4">Order Summary</h2>
+          <div className="bg-background rounded-2xl border border-border/50 p-6 shadow-xl sticky top-24">
+            <h2 className="text-xl font-bold text-text-primary dark:text-text-inverse mb-6 border-b border-border/50 pb-4">Order Summary</h2>
             
             <div className="flex gap-4 mb-6">
-              <div className="w-20 h-20 bg-[#111827] rounded-xl border border-border overflow-hidden shrink-0">
+              <div className="w-20 h-20 bg-surface rounded-xl border border-border overflow-hidden shrink-0">
                 <img src={course?.image} alt={course?.title} loading="lazy" className="w-full h-full object-cover opacity-80" />
               </div>
               <div>
-                <h3 className="text-text-inverse font-bold leading-tight mb-1">{course?.title}</h3>
+                <h3 className="text-text-primary dark:text-text-inverse font-bold leading-tight mb-1">{course?.title}</h3>
                 <p className="text-primary text-sm font-semibold">{course?.category === 'summer' ? 'Summer Bootcamp' : 'Self-Paced Course'}</p>
               </div>
             </div>
@@ -497,11 +497,11 @@ export default function Payment() {
                   value={promoCode}
                   onChange={(e) => setPromoCode(e.target.value)}
                   placeholder="e.g. CODESKILL50"
-                  className="flex-1 bg-[#111827] border border-border rounded-lg px-4 py-2.5 text-text-inverse focus:outline-none focus:border-primary uppercase transition-colors"
+                  className="flex-1 bg-surface border border-border rounded-lg px-4 py-2.5 text-text-primary dark:text-text-inverse focus:outline-none focus:border-primary uppercase transition-colors"
                 />
                 <button 
                   onClick={applyPromoCode}
-                  className="bg-slate-700 hover:bg-slate-600 text-text-inverse px-4 py-2.5 rounded-lg font-semibold transition-colors"
+                  className="bg-slate-700 hover:bg-slate-600 text-text-primary dark:text-text-inverse px-4 py-2.5 rounded-lg font-semibold transition-colors"
                 >
                   Apply
                 </button>
@@ -516,12 +516,12 @@ export default function Payment() {
             <div className="space-y-4 text-sm mb-6 border-b border-border/50 pb-6">
               <div className="flex justify-between text-text-secondary">
                 <span>Course Price</span>
-                <span>â‚¹{basePriceNum.toLocaleString('en-IN')}</span>
+                <span>₹{basePriceNum.toLocaleString('en-IN')}</span>
               </div>
               {discount > 0 && (
                 <div className="flex justify-between text-primary">
                   <span>Discount Applied</span>
-                  <span>-â‚¹{discount.toLocaleString('en-IN')}</span>
+                  <span>-₹{discount.toLocaleString('en-IN')}</span>
                 </div>
               )}
               <div className="flex justify-between text-text-secondary">
@@ -532,7 +532,7 @@ export default function Payment() {
 
             <div className="flex justify-between items-center mb-8">
               <span className="text-lg text-text-secondary font-medium">Total Amount</span>
-              <span className="text-3xl font-extrabold text-primary">â‚¹{finalAmount.toLocaleString('en-IN')}</span>
+              <span className="text-3xl font-extrabold text-primary">₹{finalAmount.toLocaleString('en-IN')}</span>
             </div>
 
             <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 flex items-start space-x-3">

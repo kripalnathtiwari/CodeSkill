@@ -44,7 +44,7 @@ const DEFAULT_PUBLISHED_JOBS: PublishedJob[] = [
     location: 'Bangalore, India',
     type: 'Full-time',
     workplace: 'Hybrid',
-    salary: 'â‚¹14,00,000 - â‚¹20,00,000 PA',
+    salary: '₹14,00,000 - ₹20,00,000 PA',
     experience: '0-2 Years',
     skills: ['React', 'TypeScript', 'Next.js', 'Tailwind CSS', 'Redux'],
     posted: 'Just now',
@@ -59,7 +59,7 @@ const DEFAULT_PUBLISHED_JOBS: PublishedJob[] = [
     location: 'Remote',
     type: 'Internship',
     workplace: 'Remote',
-    salary: 'â‚¹35,000 / month + PPO',
+    salary: '₹35,000 / month + PPO',
     experience: 'Internship',
     skills: ['Node.js', 'TypeScript', 'Express', 'PostgreSQL', 'Docker'],
     posted: '1 day ago',
@@ -74,7 +74,7 @@ const DEFAULT_PUBLISHED_JOBS: PublishedJob[] = [
     location: 'Hyderabad, India',
     type: 'Full-time',
     workplace: 'On-site',
-    salary: 'â‚¹16,00,000 - â‚¹24,00,000 PA',
+    salary: '₹16,00,000 - ₹24,00,000 PA',
     experience: '0-2 Years',
     skills: ['Python', 'PyTorch', 'Transformers', 'LangChain', 'FastAPI'],
     posted: '2 days ago',
@@ -516,7 +516,7 @@ export default function JobPublishingManagement() {
                     required
                     value={salary}
                     onChange={(e) => setSalary(e.target.value)}
-                    placeholder="e.g. â‚¹12,00,000 - â‚¹18,00,000 PA"
+                    placeholder="e.g. ₹12,00,000 - ₹18,00,000 PA"
                     className="w-full px-4 py-2.5 bg-[#0B0F19] border border-border rounded-xl text-text-inverse placeholder-slate-500 focus:outline-none focus:border-rose-500"
                   />
                 </div>

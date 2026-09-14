@@ -619,7 +619,7 @@ export default function CvManagement() {
                 return (
                   <div key={sample.id} className="bg-surface dark:bg-background border border-border dark:border-border rounded-2xl p-5 relative group flex flex-col justify-between">
                     <div>
-                      <div className="mb-4 rounded-xl overflow-hidden bg-surface-secondary dark:bg-slate-100 dark:bg-slate-800 h-44 flex items-center justify-center border border-border dark:border-border">
+                      <div className="mb-4 rounded-xl overflow-hidden bg-surface-secondary dark:bg-slate-800 h-44 flex items-center justify-center border border-border dark:border-border">
                         <DriveImage sample={sample} apiUrl={API_URL} />
                       </div>
                       <div className="flex items-center space-x-2 mb-2">
@@ -629,7 +629,7 @@ export default function CvManagement() {
                       <p className="text-sm text-text-muted line-clamp-2 mb-2">{sample.description || 'No description'}</p>
                       <div className="flex flex-wrap gap-2 mt-2">
                         {sample.category && (
-                          <span className="px-3 py-1 bg-surface-secondary dark:bg-slate-100 dark:bg-slate-800 text-xs font-semibold rounded-full text-text-secondary dark:text-text-secondary">
+                          <span className="px-3 py-1 bg-surface-secondary dark:bg-slate-800 text-xs font-semibold rounded-full text-text-secondary dark:text-text-secondary">
                             {sample.category}
                           </span>
                         )}
@@ -710,7 +710,7 @@ export default function CvManagement() {
                     className="flex-1 bg-background dark:bg-background border border-border dark:border-border rounded-xl px-4 py-2 focus:ring-2 focus:ring-fuchsia-500"
                     placeholder="e.g. Node.js"
                   />
-                  <button type="button" onClick={addSkillToCurrent} className="bg-slate-200 dark:bg-slate-100 dark:bg-slate-800 hover:bg-slate-300 px-4 rounded-xl font-bold">Add</button>
+                  <button type="button" onClick={addSkillToCurrent} className="bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 px-4 rounded-xl font-bold">Add</button>
                 </div>
               </div>
 
@@ -751,7 +751,7 @@ export default function CvManagement() {
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {map.skills.map((skill, index) => (
-                      <div key={index} className="flex items-center space-x-2 bg-surface-secondary dark:bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg text-sm border border-border dark:border-border group">
+                      <div key={index} className="flex items-center space-x-2 bg-surface-secondary dark:bg-slate-800 px-3 py-1.5 rounded-lg text-sm border border-border dark:border-border group">
                         <Tag className="w-3 h-3 text-text-muted" />
                         <span className="font-semibold text-text-primary dark:text-text-secondary">{skill}</span>
                         <button onClick={() => removeIndividualSkill(map.id, skill)} className="text-text-muted hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -795,13 +795,13 @@ export default function CvManagement() {
                 </div>
               </div>
               <div className="flex items-center space-x-3 shrink-0">
-                <div className="text-right px-4 py-2 bg-surface dark:bg-slate-100 dark:bg-slate-800 rounded-xl border border-border dark:border-border">
+                <div className="text-right px-4 py-2 bg-surface dark:bg-slate-800 rounded-xl border border-border dark:border-border">
                   <div className="text-[11px] text-text-muted font-bold uppercase">Total Stored</div>
                   <div className="text-lg font-black text-primary dark:text-primary">
                     {userCvs.length} Resumes
                   </div>
                 </div>
-                <div className="text-right px-4 py-2 bg-surface dark:bg-slate-100 dark:bg-slate-800 rounded-xl border border-border dark:border-border">
+                <div className="text-right px-4 py-2 bg-surface dark:bg-slate-800 rounded-xl border border-border dark:border-border">
                   <div className="text-[11px] text-text-muted font-bold uppercase">Total Storage Size</div>
                   <div className="text-lg font-black text-indigo-600 dark:text-indigo-400">
                     {(userCvs.reduce((acc, cv) => acc + (cv.storageSizeKB || 1.3), 0)).toFixed(2)} KB
@@ -867,7 +867,7 @@ export default function CvManagement() {
                       </span>
                     </div>
 
-                    <div className="bg-background dark:bg-slate-100/60 dark:bg-slate-800/60 rounded-xl p-3 space-y-1 text-xs">
+                    <div className="bg-background dark:bg-slate-800 rounded-xl p-3 space-y-1 text-xs">
                       <div className="flex items-center justify-between">
                         <span className="text-text-muted font-semibold uppercase text-[10px]">Applied Role</span>
                         <span className="font-bold text-text-primary dark:text-text-secondary">{cv.appliedRole}</span>
@@ -888,13 +888,13 @@ export default function CvManagement() {
                         {cv.resumeData.skills.slice(0, 5).map((skill, idx) => (
                           <span
                             key={idx}
-                            className="px-2 py-0.5 bg-surface-secondary dark:bg-slate-100 dark:bg-slate-800 text-text-primary dark:text-text-secondary rounded-md text-[11px] font-semibold border border-border dark:border-border"
+                            className="px-2 py-0.5 bg-surface-secondary dark:bg-slate-800 text-text-primary dark:text-text-secondary rounded-md text-[11px] font-semibold border border-border dark:border-border"
                           >
                             {skill}
                           </span>
                         ))}
                         {cv.resumeData.skills.length > 5 && (
-                          <span className="px-1.5 py-0.5 bg-surface-secondary dark:bg-slate-100 dark:bg-slate-800 text-text-muted rounded-md text-[10px] font-bold">
+                          <span className="px-1.5 py-0.5 bg-surface-secondary dark:bg-slate-800 text-text-muted rounded-md text-[10px] font-bold">
                             +{cv.resumeData.skills.length - 5}
                           </span>
                         )}
@@ -915,7 +915,7 @@ export default function CvManagement() {
                       </button>
                       <button
                         onClick={() => handleDownloadPdf(cv)}
-                        className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-surface-secondary hover:bg-slate-200 dark:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-300 dark:hover:bg-slate-700 text-text-primary dark:text-text-secondary font-bold rounded-lg text-xs transition-colors"
+                        className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-surface-secondary hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-text-primary dark:text-text-secondary font-bold rounded-lg text-xs transition-colors"
                         title="Download PDF Resume file"
                       >
                         <Download className="w-3.5 h-3.5" />
@@ -936,7 +936,7 @@ export default function CvManagement() {
 
           {userCvs.length === 0 && (
             <div className="py-16 text-center bg-surface dark:bg-background border border-border dark:border-border rounded-2xl space-y-3">
-              <div className="w-12 h-12 rounded-full bg-surface-secondary dark:bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto text-text-muted">
+              <div className="w-12 h-12 rounded-full bg-surface-secondary dark:bg-slate-800 flex items-center justify-center mx-auto text-text-muted">
                 <FileCode className="w-6 h-6" />
               </div>
               <p className="text-text-secondary dark:text-text-muted font-medium">
@@ -996,7 +996,7 @@ export default function CvManagement() {
             ) : (
               /* Fallback Visual View for entries without stored PDF bytes */
               <div className="space-y-6 text-sm">
-                <div className="p-4 bg-background dark:bg-slate-100/60 dark:bg-slate-800/60 rounded-xl space-y-2">
+                <div className="p-4 bg-background dark:bg-slate-800 rounded-xl space-y-2">
                   <div className="flex flex-wrap items-center justify-between text-xs text-text-secondary dark:text-text-secondary">
                     <div><strong>Email:</strong> {selectedCvForView.resumeData.email}</div>
                     <div><strong>Phone:</strong> {selectedCvForView.resumeData.phone}</div>
@@ -1006,7 +1006,7 @@ export default function CvManagement() {
 
                 <div>
                   <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Professional Summary</h4>
-                  <p className="text-text-primary dark:text-text-secondary bg-surface dark:bg-slate-100 dark:bg-slate-800 p-4 rounded-xl border border-border dark:border-border">
+                  <p className="text-text-primary dark:text-text-secondary bg-surface dark:bg-slate-800 p-4 rounded-xl border border-border dark:border-border">
                     {selectedCvForView.resumeData.summary}
                   </p>
                 </div>
@@ -1029,7 +1029,7 @@ export default function CvManagement() {
                   <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Experience</h4>
                   <div className="space-y-3">
                     {selectedCvForView.resumeData.experience.map((exp, idx) => (
-                      <div key={idx} className="p-4 bg-background dark:bg-slate-100/60 dark:bg-slate-800/60 rounded-xl border border-border dark:border-border space-y-1">
+                      <div key={idx} className="p-4 bg-background dark:bg-slate-800 rounded-xl border border-border dark:border-border space-y-1">
                         <div className="flex items-center justify-between font-bold text-text-primary dark:text-text-primary">
                           <span>{exp.role} @ {exp.company}</span>
                           <span className="text-xs text-primary dark:text-primary">{exp.duration}</span>
@@ -1044,7 +1044,7 @@ export default function CvManagement() {
                   <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Education</h4>
                   <div className="space-y-2">
                     {selectedCvForView.resumeData.education.map((edu, idx) => (
-                      <div key={idx} className="p-3 bg-background dark:bg-slate-100/60 dark:bg-slate-800/60 rounded-xl flex items-center justify-between text-xs">
+                      <div key={idx} className="p-3 bg-background dark:bg-slate-800 rounded-xl flex items-center justify-between text-xs">
                         <span className="font-bold text-text-primary dark:text-text-primary">{edu.degree} - {edu.institution}</span>
                         <span className="text-text-muted">{edu.year}</span>
                       </div>
@@ -1064,7 +1064,7 @@ export default function CvManagement() {
               </button>
               <button
                 onClick={() => setSelectedCvForView(null)}
-                className="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-300 dark:hover:bg-slate-700 text-text-primary dark:text-text-secondary font-bold rounded-xl text-sm transition-colors"
+                className="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-text-primary dark:text-text-secondary font-bold rounded-xl text-sm transition-colors"
               >
                 Close
               </button>

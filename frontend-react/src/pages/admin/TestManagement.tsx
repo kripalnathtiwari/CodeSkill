@@ -877,7 +877,7 @@ export default function TestManagement() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-3">
-          <button onClick={() => setIsCreating(false)} className="p-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-text-muted hover:text-text-inverse transition-colors">
+          <button onClick={() => setIsCreating(false)} className="p-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 rounded-xl text-text-muted hover:text-text-inverse transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
@@ -1186,7 +1186,7 @@ function SnapshotViewerModal({ testId, studentEmail, studentName, onClose }: { t
             <h2 className="text-2xl font-bold text-text-primary mb-1">Camera Log: {studentName}</h2>
             <p className="text-text-muted text-sm">{studentEmail}</p>
           </div>
-          <button onClick={onClose} className="p-2 text-text-muted hover:text-text-inverse bg-slate-800 hover:bg-rose-500/20 hover:text-rose-500 rounded-xl transition-colors">
+          <button onClick={onClose} className="p-2 text-text-muted hover:text-text-inverse bg-slate-100 dark:bg-slate-800 hover:bg-rose-500/20 hover:text-rose-500 rounded-xl transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -1366,7 +1366,7 @@ function ResultsModal({ test, onClose }: { test: any; onClose: () => void }) {
             <h2 className="text-2xl font-bold text-text-primary mb-1">Results: {test.title}</h2>
             <p className="text-text-muted text-sm">Grouped by College and Section</p>
           </div>
-          <button onClick={onClose} className="p-2 text-text-muted hover:text-text-inverse bg-slate-800 hover:bg-rose-500/20 hover:text-rose-500 rounded-xl transition-colors">
+          <button onClick={onClose} className="p-2 text-text-muted hover:text-text-inverse bg-slate-100 dark:bg-slate-800 hover:bg-rose-500/20 hover:text-rose-500 rounded-xl transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>

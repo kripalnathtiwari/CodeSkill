@@ -627,7 +627,7 @@ export default function CourseCategorySection({
               setIsCreatingCourse(false);
               setEditingCourseId(null);
             }}
-            className="absolute top-6 right-6 p-2 text-text-muted hover:text-text-inverse bg-slate-800/60 rounded-full transition-colors"
+            className="absolute top-6 right-6 p-2 text-text-muted hover:text-text-inverse bg-slate-100/60 dark:bg-slate-800/60 rounded-full transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -741,7 +741,7 @@ export default function CourseCategorySection({
                       onClick={() =>
                         setExpandedCourseId(isExpanded ? null : course.id)
                       }
-                      className="px-4 py-2 bg-slate-800/80 hover:bg-slate-800 text-text-secondary hover:text-text-inverse rounded-xl text-xs font-bold transition-colors flex items-center"
+                      className="px-4 py-2 bg-slate-100/80 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-800 text-text-secondary hover:text-text-inverse rounded-xl text-xs font-bold transition-colors flex items-center"
                     >
                       {isExpanded ? "Hide Details" : "Manage Course"}
                       {isExpanded ? (
@@ -1028,7 +1028,7 @@ export default function CourseCategorySection({
                           <div className="flex justify-end mt-4 space-x-3">
                             <button
                               onClick={() => setCreatingClassCourseId(null)}
-                              className="px-4 py-2 bg-slate-800 text-text-secondary hover:text-text-inverse rounded-xl text-xs font-bold"
+                              className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-text-secondary hover:text-text-inverse rounded-xl text-xs font-bold"
                             >
                               Cancel
                             </button>
@@ -1130,7 +1130,7 @@ export default function CourseCategorySection({
                                             [cls.id]: prev[cls.id] === false ? true : false
                                           }))
                                         }
-                                        className="px-3 py-1.5 bg-slate-800/80 hover:bg-slate-800 text-text-secondary hover:text-text-inverse rounded-xl text-xs font-bold transition-all flex items-center shadow-sm border border-border/60"
+                                        className="px-3 py-1.5 bg-slate-100/80 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-800 text-text-secondary hover:text-text-inverse rounded-xl text-xs font-bold transition-all flex items-center shadow-sm border border-border/60"
                                         title={
                                           isMinimized
                                             ? "Show student & instructor details"

@@ -367,7 +367,7 @@ export default function ProblemManagement() {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-3">
-            <button onClick={handleCancel} className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-text-muted hover:text-text-inverse transition-colors">
+            <button onClick={handleCancel} className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-text-muted hover:text-text-inverse transition-colors">
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div>
@@ -765,7 +765,7 @@ export default function ProblemManagement() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setDeleteConfirmId(null)} />
           <div className="relative bg-slate-50 dark:bg-slate-900 border border-border rounded-2xl shadow-2xl p-6 w-full max-w-md">
-            <button onClick={() => setDeleteConfirmId(null)} className="absolute top-4 right-4 p-1.5 text-text-muted hover:text-text-inverse hover:bg-slate-800 rounded-lg transition-colors">
+            <button onClick={() => setDeleteConfirmId(null)} className="absolute top-4 right-4 p-1.5 text-text-muted hover:text-text-inverse hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg transition-colors">
               <X className="w-4 h-4" />
             </button>
 

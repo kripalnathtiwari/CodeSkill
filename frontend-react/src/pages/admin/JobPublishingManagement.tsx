@@ -391,7 +391,7 @@ export default function JobPublishingManagement() {
                     className={`px-3 py-1.5 rounded-xl font-semibold transition-colors ${
                       job.featured
                         ? 'bg-amber-500/10 text-amber-400 hover:bg-amber-500/20'
-                        : 'bg-slate-800 text-text-muted hover:text-text-inverse'
+                        : 'bg-slate-100 dark:bg-slate-800 text-text-muted hover:text-text-inverse'
                     }`}
                   >
                     {job.featured ? 'â˜… Featured' : 'â˜† Make Featured'}

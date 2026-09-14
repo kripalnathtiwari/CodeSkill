@@ -430,7 +430,7 @@ export default function UserManagement() {
                       className={`px-3 py-1 rounded text-xs font-bold transition-colors ${user.role === 'ADMIN' ? 'bg-rose-500/10 text-rose-500 hover:bg-rose-500/20' :
                           user.role === 'INSTRUCTOR' ? 'bg-primary/10 text-primary hover:bg-primary/20' :
                             user.role === 'COLLEGE_ADMIN' ? 'bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20' :
-                              'bg-slate-200 dark:bg-slate-700 text-text-secondary hover:bg-slate-600'
+                              'bg-slate-200 dark:bg-slate-700 text-text-secondary hover:bg-slate-300 dark:hover:bg-slate-600'
                         }`}
                       title="Click to cycle role"
                     >

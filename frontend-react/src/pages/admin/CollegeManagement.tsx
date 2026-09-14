@@ -390,7 +390,7 @@ export default function CollegeManagement() {
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => { setSelectedCollegeId(null); resetTutorForm(); setCollegeTab("tutors"); }}
-                className="p-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-text-muted hover:text-text-inverse transition-colors"
+                className="p-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 rounded-xl text-text-muted hover:text-text-inverse transition-colors"
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>
@@ -706,7 +706,7 @@ export default function CollegeManagement() {
                         </button>
                         <button
                           onClick={() => setSelectedCollegeId(college.id)}
-                          className="p-2 text-text-muted hover:text-text-inverse hover:bg-slate-800 rounded-lg transition-colors ml-2"
+                          className="p-2 text-text-muted hover:text-text-inverse hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg transition-colors ml-2"
                         >
                           <ChevronRight className="w-5 h-5" />
                         </button>
@@ -1481,7 +1481,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
             onClick={() => setResultsSubTab("categoryWise")}
             className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${resultsSubTab === "categoryWise"
                 ? "bg-purple-600 text-text-primary shadow-md shadow-purple-600/30"
-                : "bg-slate-800/80 hover:bg-slate-800 text-text-secondary hover:text-text-inverse"
+                : "bg-slate-100/80 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-800 text-text-secondary hover:text-text-inverse"
               }`}
           >
             <Layers className="w-4 h-4" />
@@ -1495,7 +1495,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
             onClick={() => setResultsSubTab("allRecord")}
             className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${resultsSubTab === "allRecord"
                 ? "bg-purple-600 text-text-primary shadow-md shadow-purple-600/30"
-                : "bg-slate-800/80 hover:bg-slate-800 text-text-secondary hover:text-text-inverse"
+                : "bg-slate-100/80 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-800 text-text-secondary hover:text-text-inverse"
               }`}
           >
             <ListFilter className="w-4 h-4" />

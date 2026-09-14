@@ -192,7 +192,7 @@ export default function CourseWiseSell() {
                         </label>
                         <button
                           onClick={(e) => { e.stopPropagation(); handlePublishCertificates(courseName, !courseSettings[courseName]?.certificatePublished); }}
-                          className={`w-full flex items-center justify-center px-4 py-2 rounded-xl font-semibold transition-all text-sm ${courseSettings[courseName]?.certificatePublished ? 'bg-primary hover:bg-blue-700 text-text-inverse' : 'bg-slate-700 hover:bg-slate-600 text-text-secondary'}`}
+                          className={`w-full flex items-center justify-center px-4 py-2 rounded-xl font-semibold transition-all text-sm ${courseSettings[courseName]?.certificatePublished ? 'bg-primary hover:bg-blue-700 text-text-inverse' : 'bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-text-secondary'}`}
                         >
                           <span>{courseSettings[courseName]?.certificatePublished ? 'Hide Certs' : 'Show Certs'}</span>
                         </button>
@@ -232,7 +232,7 @@ export default function CourseWiseSell() {
                   </label>
                   <button
                     onClick={() => handlePublishCertificates(activeTab, !courseSettings[activeTab]?.certificatePublished)}
-                    className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-semibold transition-all text-sm shrink-0 ${courseSettings[activeTab]?.certificatePublished ? 'bg-primary hover:bg-blue-700 text-text-inverse' : 'bg-slate-700 hover:bg-slate-600 text-text-secondary'}`}
+                    className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-semibold transition-all text-sm shrink-0 ${courseSettings[activeTab]?.certificatePublished ? 'bg-primary hover:bg-blue-700 text-text-inverse' : 'bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-text-secondary'}`}
                   >
                     <span>{courseSettings[activeTab]?.certificatePublished ? 'Hide Certificates' : 'Show Certificates'}</span>
                   </button>

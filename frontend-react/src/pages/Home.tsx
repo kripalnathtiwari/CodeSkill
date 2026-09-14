@@ -68,7 +68,8 @@ const CourseTicker = () => {
       <motion.div
         className="flex whitespace-nowrap gap-6 items-center w-max"
         animate={{ x: ["0%", "-50%"] }}
-        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+        // INCREASED DURATION FROM 30 TO 60 TO SLOW IT DOWN
+        transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
       >
         {duplicatedCourses.map((course, index) => (
           <div

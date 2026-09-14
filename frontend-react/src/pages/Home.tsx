@@ -53,17 +53,20 @@ const CourseTicker = () => {
     { name: "React", color: "text-cyan-500", bg: "bg-cyan-500/10" },
   ];
 
+  // Duplicate the array 4 times to ensure it's wide enough for a seamless loop
+  const duplicatedCourses = [...courses, ...courses, ...courses, ...courses];
+
   return (
-    <div className="w-full overflow-hidden bg-surface dark:bg-slate-900/50 border-y border-border py-3 backdrop-blur-sm z-20 relative">
+    <div className="w-full overflow-hidden py-4 z-20 relative">
       <motion.div
         className="flex whitespace-nowrap gap-6 items-center w-max"
         animate={{ x: ["0%", "-50%"] }}
-        transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
       >
-        {[...courses, ...courses].map((course, index) => (
+        {duplicatedCourses.map((course, index) => (
           <div
             key={index}
-            className={`flex items-center gap-2 px-4 py-1.5 rounded-full ${course.bg} ${course.color} font-semibold text-sm border border-current/20`}
+            className={`flex items-center gap-2 px-5 py-2 rounded-full ${course.bg} ${course.color} font-semibold text-sm border border-current/20`}
           >
             <span className="w-2 h-2 rounded-full bg-current animate-pulse"></span>
             {course.name}
@@ -102,11 +105,11 @@ export default function Home() {
         className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-sky-600/20 rounded-full blur-[120px]"
       />
 
-      {/* Course Ticker - Fills the top empty space */}
+      {/* Course Ticker - Fills the top empty space with transparent background */}
       <CourseTicker />
 
-      {/* Hero section - Adjusted padding and max-width for side margins */}
-      <section className="pt-12 pb-20 px-4 sm:px-6 lg:px-8 w-full max-w-7xl mx-auto z-10 relative">
+      {/* Hero section - Reduced side padding and increased max-width for tighter side margins */}
+      <section className="pt-8 pb-20 px-3 sm:px-5 lg:px-8 w-full max-w-[1400px] mx-auto z-10 relative">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Left Column: Text */}
           <motion.div 
@@ -211,7 +214,7 @@ export default function Home() {
       </section>
 
       {/* Lazy Loaded Below-the-fold Sections - Wrapped in max-width for consistent side margins */}
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+      <div className="w-full max-w-[1400px] mx-auto px-3 sm:px-5 lg:px-8 pb-24">
         <Suspense fallback={<SectionSkeleton />}>
           <FeaturedCourses />
           <CampusDrives />

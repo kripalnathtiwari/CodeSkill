@@ -67,7 +67,6 @@ export default function Navbar() {
           alt="CodeSkill Logo" 
           className="h-8 w-8 object-contain mr-2" 
         />
-        {/* No space between Code and Skill */}
         <span className="text-black dark:text-white">Code</span><span className="text-primary">Skill</span>
       </Link>
 
@@ -265,8 +264,20 @@ export default function Navbar() {
         ) : (
           !isLoading && (
             <div className="flex items-center space-x-3">
-              <Link to="/login" className="bg-primary hover:bg-primary text-text-inverse text-base font-bold px-4 py-2 rounded-lg transition-colors">
+              {/* Log In Button */}
+              <Link 
+                to="/login" 
+                className="bg-primary hover:bg-white text-text-inverse hover:text-primary border border-primary text-base font-bold px-4 py-2 rounded-lg transition-colors"
+              >
                 Log In
+              </Link>
+              
+              {/* Register Button */}
+              <Link 
+                to="/login" 
+                className="bg-white hover:bg-primary text-primary hover:text-text-inverse border border-primary text-base font-bold px-4 py-2 rounded-lg transition-colors"
+              >
+                Register
               </Link>
             </div>
           )
@@ -413,6 +424,7 @@ export default function Navbar() {
           {!user && !isLoading && (
              <div className="pt-4 mt-2 border-t border-border dark:border-border flex flex-col space-y-3">
                <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="w-full text-center py-2.5 font-bold text-text-inverse bg-primary hover:bg-primary rounded-lg transition-colors">Log In</Link>
+               <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="w-full text-center py-2.5 font-bold text-primary bg-white border border-primary hover:bg-primary hover:text-white rounded-lg transition-colors">Register</Link>
              </div>
           )}
         </div>

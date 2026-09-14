@@ -14,13 +14,15 @@ import {
   FileEdit,
   ScanSearch,
   StickyNote,
-  Lightbulb
+  Lightbulb,
+  GraduationCap
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const NAV_ITEMS = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/dashboard/courses', label: 'Courses', icon: BookOpen },
+  { path: '/dashboard/my-courses', label: 'Enrolled Courses', icon: GraduationCap },
   { 
     path: '/dashboard/practice', 
     label: 'Practice', 

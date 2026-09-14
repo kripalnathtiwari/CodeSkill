@@ -1,7 +1,8 @@
 import React, { lazy, Suspense, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Award, ArrowRight, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { useAuth } from "../context/AuthContext";
 import letsGoImg from "../assets/lets-go.png";
 
 const FeaturedCourses = lazy(() => import("../components/home/FeaturedCourses"));
@@ -41,6 +42,17 @@ const SectionSkeleton = () => (
 
 export default function Home() {
   const [isFlipped, setIsFlipped] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleActionClick = (e: React.MouseEvent, path: string) => {
+    e.preventDefault();
+    if (user) {
+      navigate(path);
+    } else {
+      navigate("/login");
+    }
+  };
   return (
     <div className="flex-grow flex flex-col justify-center items-center relative overflow-hidden bg-background dark:bg-background">
 
@@ -79,7 +91,7 @@ export default function Home() {
             </motion.p>
 
             <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center gap-4 pt-4 w-full sm:w-auto">
-              <Link to="/problems" className="w-full sm:w-auto">
+              <div onClick={(e) => handleActionClick(e, "/dashboard/practice")} className="w-full sm:w-auto cursor-pointer">
                 <motion.button
                   whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.96 }}
@@ -88,9 +100,9 @@ export default function Home() {
                   <span>Practice Playground</span>
                   <ArrowRight className="h-4 w-4" />
                 </motion.button>
-              </Link>
+              </div>
 
-              <Link to="/dashboard" className="w-full sm:w-auto">
+              <div onClick={(e) => handleActionClick(e, "/dashboard")} className="w-full sm:w-auto cursor-pointer">
                 <motion.button
                   whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.96 }}
@@ -98,7 +110,7 @@ export default function Home() {
                 >
                   <span>View Dashboard</span>
                 </motion.button>
-              </Link>
+              </div>
             </motion.div>
           </motion.div>
 

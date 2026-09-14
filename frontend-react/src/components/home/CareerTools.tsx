@@ -1,12 +1,25 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FileText, ShieldCheck, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useAuth } from "../../context/AuthContext";
 import kripalCvImage from "../../assets/kripal-cv-image.png";
 import originalCvImage from "../../assets/cv-image.jpg";
 import cvStackImage from "../../assets/cv-stack-image.png";
 
 export default function CareerTools() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleActionClick = (e: React.MouseEvent, path: string) => {
+    e.preventDefault();
+    if (user) {
+      navigate(path);
+    } else {
+      navigate("/login");
+    }
+  };
+
   return (
     <section className="py-20 px-6 w-full z-10 relative border-t border-border dark:border-border/50">
       <motion.div
@@ -53,7 +66,7 @@ export default function CareerTools() {
             </div>
 
             <div className="flex flex-wrap items-center gap-4 mt-auto pt-8">
-              <Link to="/cv-builder" className="inline-block w-full sm:w-auto">
+              <div onClick={(e) => handleActionClick(e, "/dashboard/career/resume-maker")} className="inline-block w-full sm:w-auto cursor-pointer">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -62,9 +75,9 @@ export default function CareerTools() {
                   <FileText className="w-5 h-5" />
                   <span>Make your CV</span>
                 </motion.button>
-              </Link>
+              </div>
 
-              <Link to="/ats-checker" className="inline-block w-full sm:w-auto">
+              <div onClick={(e) => handleActionClick(e, "/dashboard/career/resume-analysis")} className="inline-block w-full sm:w-auto cursor-pointer">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -73,7 +86,7 @@ export default function CareerTools() {
                   <ShieldCheck className="w-5 h-5 text-primary dark:text-primary" />
                   <span>Check ATS Score</span>
                 </motion.button>
-              </Link>
+              </div>
             </div>
           </div>
 

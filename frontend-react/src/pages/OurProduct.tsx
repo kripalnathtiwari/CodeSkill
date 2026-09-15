@@ -1,8 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Code2, Zap, Layout, MonitorPlay, Sparkles, Brain, FileText, Users, Briefcase } from 'lucide-react';
 import WeeklyTestSection from '../components/home/WeeklyTestSection';
 
+const sliderImages = [
+  "https://res.cloudinary.com/zihn8u4b/image/upload/v1789487013/course.png",
+  "https://res.cloudinary.com/zihn8u4b/image/upload/v1789486991/company_place.png",
+  "https://res.cloudinary.com/zihn8u4b/image/upload/v1789486941/career_2.png",
+  "https://res.cloudinary.com/zihn8u4b/image/upload/v1789486956/cvmaking.png",
+  "https://res.cloudinary.com/zihn8u4b/image/upload/v1789486976/other.png",
+  "https://res.cloudinary.com/zihn8u4b/image/upload/v1789487036/atscheking.png"
+];
+
 export default function OurProduct() {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % sliderImages.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="min-h-screen bg-background dark:bg-background relative pt-24 pb-20 overflow-hidden">
       {/* Decorative Grid Background */}
@@ -15,9 +33,9 @@ export default function OurProduct() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* Campus Placement Training Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-7xl mx-auto mb-32">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center max-w-7xl mx-auto mb-32">
           {/* Left Text Content */}
-          <div className="space-y-6">
+          <div className="lg:col-span-5 space-y-6">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-text-primary dark:text-text-inverse tracking-tight">
               Crack Your Campus Placement with <span className="text-primary">CodeSkill</span>
             </h2>
@@ -84,14 +102,18 @@ export default function OurProduct() {
           </div>
 
           {/* Image Section (Right Side) */}
-          <div className="relative mx-auto w-full rounded-2xl overflow-hidden glass-card p-2 md:p-4 hover-scale-premium duration-500 group">
-            <div className="absolute inset-0 bg-gradient-premium opacity-10 group-hover:opacity-20 transition-opacity duration-500" />
-            <img 
-              src="https://res.cloudinary.com/zihn8u4b/image/upload/v1789482217/placement.png" 
-              alt="Campus Placement Training" 
-              className="w-full h-auto rounded-xl object-cover shadow-2xl relative z-10"
-              loading="lazy"
-            />
+          <div className="lg:col-span-7 relative mx-auto w-full rounded-2xl glass-card p-2 md:p-4 hover-scale-premium duration-500 group hover:shadow-[0_0_40px_-15px_rgba(var(--primary),0.3)]">
+            <div className="absolute inset-0 bg-gradient-premium opacity-10 group-hover:opacity-20 transition-opacity duration-500 rounded-2xl" />
+            <div className="relative rounded-xl overflow-hidden z-10 shadow-2xl ring-1 ring-white/10">
+              <img 
+                src="https://res.cloudinary.com/zihn8u4b/image/upload/v1789482217/placement.png" 
+                alt="Campus Placement Training" 
+                className="w-full h-auto object-cover transform transition-all duration-700 ease-out group-hover:scale-105 group-hover:rotate-1"
+                loading="lazy"
+              />
+              {/* Subtle hover overlay for depth */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 mix-blend-overlay" />
+            </div>
           </div>
         </div>
 
@@ -108,9 +130,9 @@ export default function OurProduct() {
         </div>
 
         {/* Dashboard Split Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center max-w-7xl mx-auto">
           {/* Left Text Content */}
-          <div className="space-y-6">
+          <div className="lg:col-span-5 space-y-6">
             <h2 className="text-3xl md:text-4xl font-bold text-text-primary dark:text-text-inverse">
               Your Complete Coding Workspace
             </h2>
@@ -144,11 +166,11 @@ export default function OurProduct() {
           </div>
 
           {/* Main Product Image Section (Right Side) */}
-          <div className="relative mx-auto w-full rounded-2xl overflow-hidden glass-card p-2 md:p-4 hover-scale-premium duration-500 group">
+          <div className="lg:col-span-7 relative mx-auto w-full rounded-2xl overflow-hidden glass-card p-2 md:p-4 hover-scale-premium duration-500 group">
             <div className="absolute inset-0 bg-gradient-premium opacity-10 group-hover:opacity-20 transition-opacity duration-500" />
             
             {/* Top Bar for realistic editor look */}
-            <div className="bg-slate-800/80 backdrop-blur-md rounded-t-xl px-4 py-3 flex items-center justify-between border-b border-white/10">
+            <div className="bg-slate-800/80 backdrop-blur-md rounded-t-xl px-4 py-3 flex items-center justify-between border-b border-white/10 relative z-20">
               <div className="flex items-center space-x-2">
                 <div className="flex space-x-2 mr-4">
                   <div className="w-3 h-3 rounded-full bg-error" />
@@ -162,12 +184,17 @@ export default function OurProduct() {
               </div>
             </div>
             
-            <img 
-              src="https://res.cloudinary.com/zihn8u4b/image/upload/v1789467057/Screenshot_2026-09-15_153549.png" 
-              alt="CodeSklii Interactive Coding Environment" 
-              className="w-full h-auto rounded-b-xl object-cover shadow-2xl border border-white/5 relative z-10"
-              loading="lazy"
-            />
+            <div className="relative w-full rounded-b-xl overflow-hidden shadow-2xl border border-white/5 bg-slate-900/50 z-10">
+              {sliderImages.map((img, idx) => (
+                <img 
+                  key={img}
+                  src={img} 
+                  alt={`CodeSklii Interactive Environment ${idx + 1}`} 
+                  className={`w-full h-auto object-cover transition-opacity duration-1000 ease-in-out ${idx === currentImageIndex ? 'opacity-100 relative' : 'opacity-0 absolute top-0 left-0'}`}
+                  loading="lazy"
+                />
+              ))}
+            </div>
           </div>
         </div>
 

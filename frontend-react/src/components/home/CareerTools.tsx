@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FileText, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { FileText, ShieldCheck, TrendingUp, Target } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "../../context/AuthContext";
 
@@ -30,44 +30,84 @@ export default function CareerTools() {
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 dark:bg-primary/20 rounded-full blur-[80px]" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-sky-500/10 dark:bg-sky-500/20 rounded-full blur-[80px]" />
 
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-stretch">
-          <div className="flex flex-col h-full">
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          
+          {/* Visual/Image for ATS & CV (Left Side) */}
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="relative order-2 lg:order-1 glass-card p-2 md:p-3 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden group hover:-translate-y-1 transition-transform w-full"
+          >
+            <div className="absolute inset-0 bg-gradient-premium opacity-5 group-hover:opacity-10 transition-opacity duration-500" />
+            <img 
+              src="https://res.cloudinary.com/zihn8u4b/image/upload/v1789468294/career.png" 
+              alt="CodeSklii Career Tools & ATS Analysis" 
+              className="w-full h-auto rounded-xl object-cover relative z-10 shadow-sm border border-white/10"
+              loading="lazy"
+            />
+          </motion.div>
+
+          {/* Content (Right Side) */}
+          <div className="flex flex-col h-full order-1 lg:order-2 space-y-8 lg:pl-8">
             <div className="space-y-6">
-              <div className="inline-block px-3 py-1 bg-blue-100 dark:bg-primary/20 border border-blue-200 dark:border-primary/30 text-blue-700 dark:text-blue-300 text-xs font-bold uppercase tracking-widest rounded-full">
-                Career Tools
+              <div className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-100 dark:bg-primary/20 border border-blue-200 dark:border-primary/30 text-blue-700 dark:text-blue-300 text-xs font-bold uppercase tracking-widest rounded-full shadow-sm">
+                <Target className="w-4 h-4" />
+                <span>Career Advancement Tools</span>
               </div>
 
-              <h2 className="text-3xl md:text-5xl font-bold text-text-primary dark:text-text-primary leading-tight">
-                Optimize Your CV for <br />
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-text-primary dark:text-text-primary leading-tight tracking-tight">
+                Optimize Your CV for <br className="hidden md:block"/>
                 <span className="text-primary drop-shadow-sm">
                   Top Tech Companies
                 </span>
               </h2>
 
-              <p className="text-lg text-text-secondary dark:text-text-secondary leading-relaxed max-w-xl">
-                Don't let the Applicant Tracking System (ATS) reject your hard work. Use our AI-powered tools to build a standout resume and check your ATS score instantly.
+              <p className="text-lg text-text-secondary dark:text-text-secondary leading-relaxed max-w-xl font-medium">
+                Our comprehensive suite of career tools is engineered to ensure you don't let Applicant Tracking Systems (ATS) reject your hard work. 
+                We use intelligent parsing and advanced algorithms to analyze your resume's structure, keyword optimization, and overall readability.
               </p>
 
-              <ul className="space-y-4 pt-2">
-                {[
-                  "AI-driven keyword optimization for your target roles",
-                  "Professional, recruiter-approved formatting templates",
-                  "Instant readability and ATS compatibility score"
-                ].map((feature, idx) => (
-                  <li key={idx} className="flex items-center text-text-primary dark:text-text-secondary font-medium">
-                    <CheckCircle2 className="w-5 h-5 text-primary mr-3 flex-shrink-0" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+                <div className="flex items-start space-x-3 bg-surface/50 dark:bg-slate-800/40 p-4 rounded-xl border border-border/50 hover:border-primary/30 transition-colors">
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                    <TrendingUp className="w-4 h-4 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-text-primary dark:text-text-inverse text-sm">Keyword Matching</h4>
+                    <p className="text-xs text-text-secondary dark:text-text-muted mt-1">AI-driven extraction ensures your skills align with targeted job roles.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-3 bg-surface/50 dark:bg-slate-800/40 p-4 rounded-xl border border-border/50 hover:border-blue-500/30 transition-colors">
+                  <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0">
+                    <ShieldCheck className="w-4 h-4 text-blue-500" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-text-primary dark:text-text-inverse text-sm">ATS Compatibility</h4>
+                    <p className="text-xs text-text-secondary dark:text-text-muted mt-1">Receive an instant readability and ATS compatibility score before applying.</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-3 bg-surface/50 dark:bg-slate-800/40 p-4 rounded-xl border border-border/50 sm:col-span-2 hover:border-emerald-500/30 transition-colors">
+                  <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center shrink-0">
+                    <FileText className="w-4 h-4 text-emerald-500" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-text-primary dark:text-text-inverse text-sm">Recruiter-Approved Formats</h4>
+                    <p className="text-xs text-text-secondary dark:text-text-muted mt-1">Build standout resumes from scratch using professional, structured templates that recruiters love.</p>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-4 mt-auto pt-8">
+            <div className="flex flex-wrap items-center gap-4 mt-auto pt-6">
               <div onClick={(e) => handleActionClick(e, "/dashboard/career/resume-maker")} className="inline-block w-full sm:w-auto cursor-pointer">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="flex items-center justify-center space-x-2 bg-primary hover:bg-primary/90 text-text-inverse font-extrabold px-8 py-4 rounded-xl border-2 border-white/90 transition-all shadow-lg shadow-primary/40 hover:shadow-xl hover:shadow-primary/50 w-full sm:w-auto text-base sm:text-lg tracking-wide"
+                  className="flex items-center justify-center space-x-2 bg-primary hover:bg-primary/90 text-text-inverse font-extrabold px-8 py-4 rounded-xl border-2 border-transparent transition-all shadow-lg shadow-primary/40 hover:shadow-xl hover:shadow-primary/50 w-full sm:w-auto text-base sm:text-lg tracking-wide"
                 >
                   <FileText className="w-5 h-5" />
                   <span>Make your CV</span>
@@ -87,36 +127,6 @@ export default function CareerTools() {
             </div>
           </div>
 
-          {/* Visual/Image for ATS & CV */}
-          <div className="relative group lg:ml-auto w-full flex items-center justify-center h-[350px] sm:h-[400px] lg:h-[500px] py-6 lg:max-w-xl xl:max-w-2xl">
-            {/* Left Image */}
-            <div className="absolute left-0 sm:left-4 lg:left-0 top-1/2 -translate-y-1/2 w-[55%] sm:w-[50%] lg:w-[55%] rounded-md shadow-xl border border-white/10 opacity-80 transform -translate-x-4 scale-[0.85] transition duration-500 group-hover:-translate-x-16 group-hover:scale-[0.9] group-hover:opacity-100 z-0 hover:!z-30 cursor-pointer will-change-transform">
-              <img 
-                src="https://res.cloudinary.com/zihn8u4b/image/upload/v1789450743/cv2.png" 
-                alt="CV Stack Example" 
-                className="w-full h-auto object-cover rounded-md"
-              />
-            </div>
-            
-            {/* Right Image */}
-            <div className="absolute right-0 sm:right-4 lg:right-0 top-1/2 -translate-y-1/2 w-[55%] sm:w-[50%] lg:w-[55%] rounded-md shadow-xl border border-white/10 opacity-80 transform translate-x-4 scale-[0.85] transition duration-500 group-hover:translate-x-16 group-hover:scale-[0.9] group-hover:opacity-100 z-0 hover:!z-30 cursor-pointer will-change-transform">
-              <img 
-                src="https://res.cloudinary.com/zihn8u4b/image/upload/v1789450743/cv2.png" 
-                alt="Original CV Example" 
-                className="w-full h-auto object-cover rounded-md"
-              />
-            </div>
-            
-            {/* Center Image (Foreground) */}
-            <div className="relative z-10 hover:!z-40 w-[65%] sm:w-[60%] lg:w-[65%] rounded-md shadow-2xl border border-white/20 dark:border-primary/20 transform transition duration-500 group-hover:scale-105 group-hover:-translate-y-4 cursor-pointer will-change-transform">
-              <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none rounded-md"></div>
-              <img 
-                src="https://res.cloudinary.com/zihn8u4b/image/upload/v1789450374/cv.png" 
-                alt="CV Builder and ATS Checker Preview" 
-                className="w-full h-auto object-cover rounded-md transition-transform duration-700"
-              />
-            </div>
-          </div>
         </div>
       </motion.div>
     </section>

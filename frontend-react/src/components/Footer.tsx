@@ -45,7 +45,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-[#111111] dark:bg-background text-text-secondary py-16 px-6 border-t border-border relative overflow-hidden">
+    <footer className="w-full bg-[#111111] dark:bg-background text-text-secondary py-10 px-6 border-t border-border relative overflow-hidden">
       <div className="max-w-[90rem] mx-auto flex flex-col xl:flex-row gap-16 xl:gap-12 justify-between relative z-10">
 
         {/* Brand & Address Section */}

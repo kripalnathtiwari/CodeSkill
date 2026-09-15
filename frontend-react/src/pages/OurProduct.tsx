@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Code2, Zap, Layout, MonitorPlay, Sparkles, Brain, FileText, Users, Briefcase } from 'lucide-react';
 import WeeklyTestSection from '../components/home/WeeklyTestSection';
 
@@ -102,13 +103,13 @@ export default function OurProduct() {
           </div>
 
           {/* Image Section (Right Side) */}
-          <div className="lg:col-span-7 relative mx-auto w-full rounded-2xl glass-card p-2 md:p-4 hover-scale-premium duration-500 group hover:shadow-[0_0_40px_-15px_rgba(var(--primary),0.3)]">
-            <div className="absolute inset-0 bg-gradient-premium opacity-10 group-hover:opacity-20 transition-opacity duration-500 rounded-2xl" />
-            <div className="relative rounded-xl overflow-hidden z-10 shadow-2xl ring-1 ring-white/10">
+          <div className="lg:col-span-7 relative mx-auto w-full h-[400px] lg:h-[450px] rounded-2xl overflow-hidden glass-card hover-scale-premium duration-500 group hover:shadow-[0_0_40px_-15px_rgba(var(--primary),0.3)]">
+            <div className="absolute inset-0 bg-gradient-premium opacity-10 group-hover:opacity-20 transition-opacity duration-500" />
+            <div className="relative w-full h-full z-10">
               <img 
                 src="https://res.cloudinary.com/zihn8u4b/image/upload/v1789482217/placement.png" 
                 alt="Campus Placement Training" 
-                className="w-full h-auto object-cover transform transition-all duration-700 ease-out group-hover:scale-105 group-hover:rotate-1"
+                className="w-full h-full object-cover transform transition-all duration-700 ease-out group-hover:scale-105 group-hover:rotate-1"
                 loading="lazy"
               />
               {/* Subtle hover overlay for depth */}
@@ -184,18 +185,27 @@ export default function OurProduct() {
               </div>
             </div>
             
-            <div className="relative w-full rounded-b-xl overflow-hidden shadow-2xl border border-white/5 bg-slate-900/50 z-10">
+            <div className="relative w-full aspect-video rounded-b-xl overflow-hidden shadow-2xl border border-white/5 bg-slate-900/50 z-10">
               {sliderImages.map((img, idx) => (
                 <img 
                   key={img}
                   src={img} 
                   alt={`CodeSklii Interactive Environment ${idx + 1}`} 
-                  className={`w-full h-auto object-cover transition-opacity duration-1000 ease-in-out ${idx === currentImageIndex ? 'opacity-100 relative' : 'opacity-0 absolute top-0 left-0'}`}
+                  className={`w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${idx === currentImageIndex ? 'opacity-100 relative' : 'opacity-0 absolute top-0 left-0'}`}
                   loading="lazy"
                 />
               ))}
             </div>
           </div>
+        </div>
+
+        {/* Demo Button */}
+        <div className="mt-16 mb-20 flex justify-center w-full">
+          <Link to="/contact">
+            <button className="bg-primary hover:bg-primary/90 text-text-inverse font-bold text-lg px-8 py-4 rounded-xl transition-all duration-300 shadow-lg shadow-primary/40 hover:shadow-xl hover:shadow-primary/50 hover:-translate-y-1 flex items-center space-x-2">
+              <span>Ask for Demo LMS</span>
+            </button>
+          </Link>
         </div>
 
         {/* Features Grid below image */}

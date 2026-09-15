@@ -13,6 +13,7 @@ const TrainerReviews = lazy(() => import("../components/home/TrainerReviews"));
 const CareerTools = lazy(() => import("../components/home/CareerTools"));
 const CompilerSection = lazy(() => import("../components/home/CompilerSection"));
 const FeaturesGrid = lazy(() => import("../components/home/FeaturesGrid"));
+const WeeklyTestSection = lazy(() => import("../components/home/WeeklyTestSection"));
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -240,6 +241,7 @@ export default function Home() {
           <EngineSection />
           <TrainerReviews />
           <CareerTools />
+          <WeeklyTestSection />
           <CompilerSection />
           <FeaturesGrid />
         </Suspense>

@@ -34,13 +34,13 @@ export default function OurProduct() {
       <div className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* Campus Placement Training Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center max-w-7xl mx-auto mb-32">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center w-full mx-auto mb-32">
           {/* Left Text Content */}
           <div className="lg:col-span-5 space-y-6">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-text-primary dark:text-text-inverse tracking-tight">
+            <h2 className="text-4xl md:text-5xl lg:text-5xl font-bold text-text-primary dark:text-text-inverse tracking-tight">
               Crack Your Campus Placement with <span className="text-primary">CodeSkill</span>
             </h2>
-            <p className="text-lg text-text-secondary dark:text-text-muted leading-relaxed">
+            <p className="text-xl text-text-secondary dark:text-text-muted leading-relaxed">
               Prepare for your dream placement with structured training designed around real hiring requirements. Build the skills, confidence, and interview readiness you need to stand out.
             </p>
             <ul className="space-y-4 mt-8">

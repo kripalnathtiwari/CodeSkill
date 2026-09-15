@@ -31,7 +31,7 @@ export default function OurProduct() {
       <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] -z-10 animate-pulse" />
       <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-accent/20 rounded-full blur-[100px] -z-10" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* Campus Placement Training Section */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center max-w-7xl mx-auto mb-32">
@@ -131,13 +131,13 @@ export default function OurProduct() {
         </div>
 
         {/* Dashboard Split Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center w-full mx-auto">
           {/* Left Text Content */}
           <div className="lg:col-span-4 space-y-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-text-primary dark:text-text-inverse">
+            <h2 className="text-4xl md:text-5xl font-bold text-text-primary dark:text-text-inverse">
               Your Complete Coding Workspace
             </h2>
-            <p className="text-lg text-text-secondary dark:text-text-muted leading-relaxed">
+            <p className="text-xl text-text-secondary dark:text-text-muted leading-relaxed">
               Dive into our immersive coding interface designed for maximum productivity. Practice DSA, build projects, and prepare for product-based company interviews all in one place.
             </p>
             <ul className="space-y-6 mt-8">
@@ -148,8 +148,8 @@ export default function OurProduct() {
                   </div>
                 </div>
                 <div className="ml-4">
-                  <h4 className="text-lg font-semibold text-text-primary dark:text-text-inverse">Lightning Fast Compiler</h4>
-                  <p className="text-text-secondary dark:text-text-muted text-sm mt-1">Execute your code across multiple languages with near-zero latency.</p>
+                  <h4 className="text-xl font-semibold text-text-primary dark:text-text-inverse">Lightning Fast Compiler</h4>
+                  <p className="text-text-secondary dark:text-text-muted text-base mt-1">Execute your code across multiple languages with near-zero latency.</p>
                 </div>
               </li>
               <li className="flex items-start">
@@ -159,8 +159,8 @@ export default function OurProduct() {
                   </div>
                 </div>
                 <div className="ml-4">
-                  <h4 className="text-lg font-semibold text-text-primary dark:text-text-inverse">Intuitive Dashboard</h4>
-                  <p className="text-text-secondary dark:text-text-muted text-sm mt-1">Track your progress, manage courses, and monitor test performance effortlessly.</p>
+                  <h4 className="text-xl font-semibold text-text-primary dark:text-text-inverse">Intuitive Dashboard</h4>
+                  <p className="text-text-secondary dark:text-text-muted text-base mt-1">Track your progress, manage courses, and monitor test performance effortlessly.</p>
                 </div>
               </li>
             </ul>
@@ -185,13 +185,13 @@ export default function OurProduct() {
               </div>
             </div>
             
-            <div className="relative w-full aspect-video rounded-b-xl overflow-hidden shadow-2xl border border-white/5 bg-slate-900/50 z-10">
+            <div className="relative w-full rounded-b-xl overflow-hidden shadow-2xl border border-white/5 bg-slate-900/50 z-10">
               {sliderImages.map((img, idx) => (
                 <img 
                   key={img}
                   src={img} 
                   alt={`CodeSklii Interactive Environment ${idx + 1}`} 
-                  className={`w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${idx === currentImageIndex ? 'opacity-100 relative' : 'opacity-0 absolute top-0 left-0'}`}
+                  className={`w-full h-auto transition-opacity duration-1000 ease-in-out ${idx === currentImageIndex ? 'opacity-100 relative' : 'opacity-0 absolute top-0 left-0'}`}
                   loading="lazy"
                 />
               ))}

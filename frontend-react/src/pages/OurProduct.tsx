@@ -1,5 +1,6 @@
 import React from 'react';
 import { Code2, Zap, Layout, MonitorPlay, Sparkles } from 'lucide-react';
+import WeeklyTestSection from '../components/home/WeeklyTestSection';
 
 export default function OurProduct() {
   return (
@@ -90,6 +91,7 @@ export default function OurProduct() {
 
         </div>
       </div>
+      <WeeklyTestSection />
     </div>
   );
 }

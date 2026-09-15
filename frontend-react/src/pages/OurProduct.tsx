@@ -17,7 +17,7 @@ export default function OurProduct() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % sliderImages.length);
-    }, 2000);
+    }, 3000);
     return () => clearInterval(interval);
   }, []);
 
@@ -132,7 +132,7 @@ export default function OurProduct() {
         {/* Dashboard Split Section */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center max-w-7xl mx-auto">
           {/* Left Text Content */}
-          <div className="lg:col-span-5 space-y-6">
+          <div className="lg:col-span-4 space-y-6">
             <h2 className="text-3xl md:text-4xl font-bold text-text-primary dark:text-text-inverse">
               Your Complete Coding Workspace
             </h2>
@@ -166,7 +166,7 @@ export default function OurProduct() {
           </div>
 
           {/* Main Product Image Section (Right Side) */}
-          <div className="lg:col-span-7 relative mx-auto w-full rounded-2xl overflow-hidden glass-card p-2 md:p-4 hover-scale-premium duration-500 group">
+          <div className="lg:col-span-8 relative mx-auto w-full rounded-2xl overflow-hidden glass-card p-2 md:p-4 hover-scale-premium duration-500 group">
             <div className="absolute inset-0 bg-gradient-premium opacity-10 group-hover:opacity-20 transition-opacity duration-500" />
             
             {/* Top Bar for realistic editor look */}

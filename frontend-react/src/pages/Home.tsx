@@ -205,7 +205,7 @@ export default function Home() {
                 }}
               >
                 <img
-                  src="/assets/hero-illustration.png"
+                  src="https://res.cloudinary.com/zihn8u4b/image/upload/v1789446916/ChatGPT_Image_Sep_10_2026_11_55_38_AM.png"
                   alt="CodeSkill Platform Illustration"
                   className="w-full h-full object-cover rounded-2xl bg-surface dark:bg-slate-900"
                 />

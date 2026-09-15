@@ -3,9 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { FileText, ShieldCheck, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "../../context/AuthContext";
-import kripalCvImage from "../../assets/kripal-cv-image.png";
-import originalCvImage from "../../assets/cv-image.jpg";
-import cvStackImage from "../../assets/cv-stack-image.png";
 
 export default function CareerTools() {
   const { user } = useAuth();
@@ -95,7 +92,7 @@ export default function CareerTools() {
             {/* Left Image */}
             <div className="absolute left-0 sm:left-4 lg:left-0 top-1/2 -translate-y-1/2 w-[55%] sm:w-[50%] lg:w-[55%] rounded-md shadow-xl border border-white/10 opacity-80 transform -translate-x-4 scale-[0.85] transition duration-500 group-hover:-translate-x-16 group-hover:scale-[0.9] group-hover:opacity-100 z-0 hover:!z-30 cursor-pointer will-change-transform">
               <img 
-                src={originalCvImage} 
+                src="https://res.cloudinary.com/zihn8u4b/image/upload/v1789450743/cv2.png" 
                 alt="CV Stack Example" 
                 className="w-full h-auto object-cover rounded-md"
               />
@@ -104,7 +101,7 @@ export default function CareerTools() {
             {/* Right Image */}
             <div className="absolute right-0 sm:right-4 lg:right-0 top-1/2 -translate-y-1/2 w-[55%] sm:w-[50%] lg:w-[55%] rounded-md shadow-xl border border-white/10 opacity-80 transform translate-x-4 scale-[0.85] transition duration-500 group-hover:translate-x-16 group-hover:scale-[0.9] group-hover:opacity-100 z-0 hover:!z-30 cursor-pointer will-change-transform">
               <img 
-                src={originalCvImage} 
+                src="https://res.cloudinary.com/zihn8u4b/image/upload/v1789450743/cv2.png" 
                 alt="Original CV Example" 
                 className="w-full h-auto object-cover rounded-md"
               />
@@ -114,7 +111,7 @@ export default function CareerTools() {
             <div className="relative z-10 hover:!z-40 w-[65%] sm:w-[60%] lg:w-[65%] rounded-md shadow-2xl border border-white/20 dark:border-primary/20 transform transition duration-500 group-hover:scale-105 group-hover:-translate-y-4 cursor-pointer will-change-transform">
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none rounded-md"></div>
               <img 
-                src={kripalCvImage} 
+                src="https://res.cloudinary.com/zihn8u4b/image/upload/v1789450374/cv.png" 
                 alt="CV Builder and ATS Checker Preview" 
                 className="w-full h-auto object-cover rounded-md transition-transform duration-700"
               />

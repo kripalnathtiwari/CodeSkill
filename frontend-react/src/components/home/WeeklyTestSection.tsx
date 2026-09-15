@@ -21,7 +21,7 @@ const WeeklyTestSection = () => {
           >
             <div className="absolute inset-0 bg-gradient-premium opacity-5 group-hover:opacity-10 transition-opacity duration-500" />
             <img 
-              src="https://res.cloudinary.com/zihn8u4b/image/upload/v1789467306/Screenshot_2026-09-15_154436.png" 
+              src="https://res.cloudinary.com/zihn8u4b/image/upload/v1789479832/ChatGPT_Image_Sep_15_2026_07_11_48_PM.png" 
               alt="Weekly Test Report Interface" 
               className="w-full h-auto rounded-xl object-cover relative z-10 shadow-sm border border-white/10"
               loading="lazy"

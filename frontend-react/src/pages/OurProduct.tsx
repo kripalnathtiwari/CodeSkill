@@ -24,36 +24,70 @@ export default function OurProduct() {
             Master Coding with <br className="hidden sm:block" />
             <span className="text-gradient-premium">Real-Time Feedback</span>
           </h1>
-          <p className="text-lg text-text-secondary dark:text-text-muted leading-relaxed">
-            Dive into our immersive coding interface designed for maximum productivity. Practice DSA, build projects, and prepare for product-based company interviews all in one place.
-          </p>
         </div>
 
-        {/* Main Product Image Section */}
-        <div className="relative mx-auto rounded-2xl overflow-hidden glass-card p-2 md:p-4 hover-scale-premium duration-500 max-w-5xl group">
-          <div className="absolute inset-0 bg-gradient-premium opacity-10 group-hover:opacity-20 transition-opacity duration-500" />
-          
-          {/* Top Bar for realistic editor look */}
-          <div className="bg-slate-800/80 backdrop-blur-md rounded-t-xl px-4 py-3 flex items-center justify-between border-b border-white/10">
-            <div className="flex items-center space-x-2">
-              <div className="flex space-x-2 mr-4">
-                <div className="w-3 h-3 rounded-full bg-error" />
-                <div className="w-3 h-3 rounded-full bg-warning" />
-                <div className="w-3 h-3 rounded-full bg-success" />
-              </div>
-              <div className="flex items-center space-x-2 text-xs text-slate-300 font-medium">
-                <Code2 className="w-4 h-4" />
-                <span>codesklii-environment</span>
+        {/* Dashboard Split Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
+          {/* Left Text Content */}
+          <div className="space-y-6">
+            <h2 className="text-3xl md:text-4xl font-bold text-text-primary dark:text-text-inverse">
+              Your Complete Coding Workspace
+            </h2>
+            <p className="text-lg text-text-secondary dark:text-text-muted leading-relaxed">
+              Dive into our immersive coding interface designed for maximum productivity. Practice DSA, build projects, and prepare for product-based company interviews all in one place.
+            </p>
+            <ul className="space-y-6 mt-8">
+              <li className="flex items-start">
+                <div className="flex-shrink-0 mt-1">
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Zap className="w-5 h-5 text-primary" />
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <h4 className="text-lg font-semibold text-text-primary dark:text-text-inverse">Lightning Fast Compiler</h4>
+                  <p className="text-text-secondary dark:text-text-muted text-sm mt-1">Execute your code across multiple languages with near-zero latency.</p>
+                </div>
+              </li>
+              <li className="flex items-start">
+                <div className="flex-shrink-0 mt-1">
+                  <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
+                    <Layout className="w-5 h-5 text-accent" />
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <h4 className="text-lg font-semibold text-text-primary dark:text-text-inverse">Intuitive Dashboard</h4>
+                  <p className="text-text-secondary dark:text-text-muted text-sm mt-1">Track your progress, manage courses, and monitor test performance effortlessly.</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          {/* Main Product Image Section (Right Side) */}
+          <div className="relative mx-auto w-full rounded-2xl overflow-hidden glass-card p-2 md:p-4 hover-scale-premium duration-500 group">
+            <div className="absolute inset-0 bg-gradient-premium opacity-10 group-hover:opacity-20 transition-opacity duration-500" />
+            
+            {/* Top Bar for realistic editor look */}
+            <div className="bg-slate-800/80 backdrop-blur-md rounded-t-xl px-4 py-3 flex items-center justify-between border-b border-white/10">
+              <div className="flex items-center space-x-2">
+                <div className="flex space-x-2 mr-4">
+                  <div className="w-3 h-3 rounded-full bg-error" />
+                  <div className="w-3 h-3 rounded-full bg-warning" />
+                  <div className="w-3 h-3 rounded-full bg-success" />
+                </div>
+                <div className="flex items-center space-x-2 text-xs text-slate-300 font-medium">
+                  <Code2 className="w-4 h-4" />
+                  <span>codesklii-environment</span>
+                </div>
               </div>
             </div>
+            
+            <img 
+              src="https://res.cloudinary.com/zihn8u4b/image/upload/v1789467057/Screenshot_2026-09-15_153549.png" 
+              alt="CodeSklii Interactive Coding Environment" 
+              className="w-full h-auto rounded-b-xl object-cover shadow-2xl border border-white/5 relative z-10"
+              loading="lazy"
+            />
           </div>
-          
-          <img 
-            src="https://res.cloudinary.com/zihn8u4b/image/upload/v1789467057/Screenshot_2026-09-15_153549.png" 
-            alt="CodeSklii Interactive Coding Environment" 
-            className="w-full h-auto rounded-b-xl object-cover shadow-2xl border border-white/5 relative z-10"
-            loading="lazy"
-          />
         </div>
 
         {/* Features Grid below image */}

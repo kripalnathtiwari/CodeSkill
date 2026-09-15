@@ -300,14 +300,21 @@ export function sanitizeStoredCv(cv: UserCVEntry): UserCVEntry {
 
   const sanitized: any = {
     ...cv,
+    candidateName,
+    candidateEmail,
+    appliedRole: role,
+    company,
     phone: cleanPhone,
     resumeData: {
-      ...cv.resumeData,
+      ...(cv.resumeData || {}),
       name: candidateName,
       email: candidateEmail,
       phone: cleanPhone,
       summary: cleanSummary,
-      skills
+      skills,
+      experience: cv.resumeData?.experience || [],
+      education: cv.resumeData?.education || [],
+      projects: cv.resumeData?.projects || []
     }
   };
 

@@ -64,9 +64,9 @@ const CourseTicker = () => {
   const duplicatedCourses = [...courses, ...courses, ...courses, ...courses];
 
   return (
-    <div className="w-full overflow-hidden py-4 z-20 relative">
+    <div className="w-full overflow-hidden py-4 z-20 relative pointer-events-none">
       <motion.div
-        className="flex whitespace-nowrap gap-6 items-center w-max"
+        className="flex whitespace-nowrap gap-6 items-center w-max transform-gpu will-change-transform pointer-events-auto"
         animate={{ x: ["0%", "-50%"] }}
         transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
       >
@@ -104,12 +104,12 @@ export default function Home() {
       <motion.div
         animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.2, 0.1] }}
         transition={{ duration: 8, repeat: Infinity }}
-        className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/20 rounded-full blur-[120px]"
+        className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/20 rounded-full blur-[120px] pointer-events-none transform-gpu will-change-transform"
       />
       <motion.div
         animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.15, 0.1] }}
         transition={{ duration: 10, repeat: Infinity, delay: 1 }}
-        className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-sky-600/20 rounded-full blur-[120px]"
+        className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-sky-600/20 rounded-full blur-[120px] pointer-events-none transform-gpu will-change-transform"
       />
 
       {/* Course Ticker */}

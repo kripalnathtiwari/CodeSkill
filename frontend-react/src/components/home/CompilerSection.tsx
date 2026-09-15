@@ -85,7 +85,7 @@ export default function CompilerSection() {
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10"></div>
               
               <img
-                src={compilerImg}
+                src="https://res.cloudinary.com/zihn8u4b/image/upload/v1789451582/compiler.png"
                 alt="Our Compiler Interface"
                 className="w-full h-auto object-contain transform transition-transform duration-700 group-hover:scale-[1.02] will-change-transform block"
               />

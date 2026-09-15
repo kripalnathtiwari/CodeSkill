@@ -199,15 +199,15 @@ export default function CvManagement() {
         const parsed: UserCVEntry[] = JSON.parse(stored);
         const resolved = parsed.map(cv => {
           const realName = resolveCandidateName(cv.candidateName, cv.candidateEmail);
-          const pdfFileName = cv.resumeFileName.replace(/\.json$/i, '.pdf');
+          const pdfFileName = (cv.resumeFileName || '').replace(/\.json$/i, '.pdf');
           const baseCv = {
             ...cv,
-            candidateName: realName,
-            resumeFileName: pdfFileName.endsWith('.pdf') ? pdfFileName : `${pdfFileName}.pdf`,
+            candidateName: realName || 'Candidate',
+            resumeFileName: pdfFileName.endsWith('.pdf') ? pdfFileName : (pdfFileName ? `${pdfFileName}.pdf` : 'Candidate_Resume.pdf'),
             storageFormat: 'PDF' as const,
             resumeData: {
-              ...cv.resumeData,
-              name: realName
+              ...(cv.resumeData || {}),
+              name: realName || 'Candidate'
             }
           };
           return sanitizeStoredCv(baseCv);
@@ -835,12 +835,15 @@ export default function CvManagement() {
           {/* Candidates CV Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {userCvs
-              .filter(cv =>
-                cv.candidateName.toLowerCase().includes(userCvSearch.toLowerCase()) ||
-                cv.appliedRole.toLowerCase().includes(userCvSearch.toLowerCase()) ||
-                cv.company.toLowerCase().includes(userCvSearch.toLowerCase()) ||
-                cv.resumeData.skills.some(s => s.toLowerCase().includes(userCvSearch.toLowerCase()))
-              )
+              .filter(cv => {
+                const search = (userCvSearch || '').toLowerCase();
+                return (
+                  (cv.candidateName || '').toLowerCase().includes(search) ||
+                  (cv.appliedRole || '').toLowerCase().includes(search) ||
+                  (cv.company || '').toLowerCase().includes(search) ||
+                  (cv.resumeData?.skills || []).some(s => (s || '').toLowerCase().includes(search))
+                );
+              })
               .map((cv) => (
                 <div
                   key={cv.id}

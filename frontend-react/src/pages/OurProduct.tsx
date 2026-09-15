@@ -1,5 +1,5 @@
 import React from 'react';
-import { Code2, Zap, Layout, MonitorPlay, Sparkles } from 'lucide-react';
+import { Code2, Zap, Layout, MonitorPlay, Sparkles, Brain, FileText, Users, Briefcase } from 'lucide-react';
 import WeeklyTestSection from '../components/home/WeeklyTestSection';
 
 export default function OurProduct() {
@@ -13,7 +13,88 @@ export default function OurProduct() {
       <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-accent/20 rounded-full blur-[100px] -z-10" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
+
+        {/* Campus Placement Training Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-7xl mx-auto mb-32">
+          {/* Left Text Content */}
+          <div className="space-y-6">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-text-primary dark:text-text-inverse tracking-tight">
+              Crack Your Campus Placement with <span className="text-primary">CodeSkill</span>
+            </h2>
+            <p className="text-lg text-text-secondary dark:text-text-muted leading-relaxed">
+              Prepare for your dream placement with structured training designed around real hiring requirements. Build the skills, confidence, and interview readiness you need to stand out.
+            </p>
+            <ul className="space-y-4 mt-8">
+              <li className="flex items-start">
+                <div className="flex-shrink-0 mt-1">
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Brain className="w-4 h-4 text-primary" />
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <h4 className="text-base font-semibold text-text-primary dark:text-text-inverse">Aptitude & Reasoning</h4>
+                  <p className="text-text-secondary dark:text-text-muted text-sm mt-1">Master placement-focused aptitude questions.</p>
+                </div>
+              </li>
+              <li className="flex items-start">
+                <div className="flex-shrink-0 mt-1">
+                  <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
+                    <Code2 className="w-4 h-4 text-accent" />
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <h4 className="text-base font-semibold text-text-primary dark:text-text-inverse">Coding & DSA</h4>
+                  <p className="text-text-secondary dark:text-text-muted text-sm mt-1">Practice coding problems based on real interview patterns.</p>
+                </div>
+              </li>
+              <li className="flex items-start">
+                <div className="flex-shrink-0 mt-1">
+                  <div className="w-8 h-8 rounded-lg bg-info/10 flex items-center justify-center">
+                    <FileText className="w-4 h-4 text-info" />
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <h4 className="text-base font-semibold text-text-primary dark:text-text-inverse">Resume Building</h4>
+                  <p className="text-text-secondary dark:text-text-muted text-sm mt-1">Create a professional, job-ready resume.</p>
+                </div>
+              </li>
+              <li className="flex items-start">
+                <div className="flex-shrink-0 mt-1">
+                  <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
+                    <Users className="w-4 h-4 text-purple-500" />
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <h4 className="text-base font-semibold text-text-primary dark:text-text-inverse">Mock Interviews</h4>
+                  <p className="text-text-secondary dark:text-text-muted text-sm mt-1">Experience realistic technical and HR interviews.</p>
+                </div>
+              </li>
+              <li className="flex items-start">
+                <div className="flex-shrink-0 mt-1">
+                  <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                    <Briefcase className="w-4 h-4 text-emerald-500" />
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <h4 className="text-base font-semibold text-text-primary dark:text-text-inverse">Placement Preparation</h4>
+                  <p className="text-text-secondary dark:text-text-muted text-sm mt-1">Follow a structured path from learning to getting placed.</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          {/* Image Section (Right Side) */}
+          <div className="relative mx-auto w-full rounded-2xl overflow-hidden glass-card p-2 md:p-4 hover-scale-premium duration-500 group">
+            <div className="absolute inset-0 bg-gradient-premium opacity-10 group-hover:opacity-20 transition-opacity duration-500" />
+            <img 
+              src="https://res.cloudinary.com/zihn8u4b/image/upload/v1789482217/placement.png" 
+              alt="Campus Placement Training" 
+              className="w-full h-auto rounded-xl object-cover shadow-2xl relative z-10"
+              loading="lazy"
+            />
+          </div>
+        </div>
+
         {/* Header Section */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center space-x-2 bg-primary/10 dark:bg-primary/20 text-primary dark:text-accent-light px-4 py-2 rounded-full mb-6 font-medium text-sm">

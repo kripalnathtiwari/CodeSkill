@@ -1,7 +1,6 @@
 import React from "react";
 import { ClipboardCheck, LayoutGrid, BarChart2, Zap, Briefcase, Award } from "lucide-react";
 import { motion } from "framer-motion";
-import industryReadyImg from "../../assets/real-classroom-2.jpg";
 
 export default function EngineSection() {
   return (
@@ -59,7 +58,7 @@ export default function EngineSection() {
           <div className="absolute -inset-1 bg-gradient-to-r from-primary to-blue-500 rounded-[2rem] blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
           <div className="relative h-[300px] sm:h-[400px] lg:h-full rounded-[2rem] overflow-hidden border border-border shadow-2xl">
             <img 
-              src={industryReadyImg} 
+              src="https://res.cloudinary.com/zihn8u4b/image/upload/v1789449572/ChatGPT_Image_Sep_11_2026_11_26_25_AM.png" 
               alt="Industry Ready Engineers Classroom" 
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />

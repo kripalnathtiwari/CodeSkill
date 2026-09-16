@@ -4,7 +4,6 @@ import { Award, ArrowRight, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 import letsGoImg from "../assets/lets-go.png";
-import Footer from "../components/Footer";
 
 const FeaturedCourses = lazy(() => import("../components/home/FeaturedCourses"));
 const CampusDrives = lazy(() => import("../components/home/CampusDrives"));
@@ -261,8 +260,7 @@ export default function Home() {
         </motion.div>
       </Link>
 
-      {/* Footer */}
-      <Footer />
+      {/* Footer is now handled globally in App.tsx — do NOT add <Footer /> here */}
     </div>
   );
 }

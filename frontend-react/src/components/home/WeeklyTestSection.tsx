@@ -47,7 +47,7 @@ const WeeklyTestSection = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-8">
               <div className="flex items-start space-x-4 bg-surface dark:bg-slate-800/50 p-4 rounded-xl border border-border dark:border-border/50 hover:shadow-md transition-shadow">
                 <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0">
-                  <FileBarChart className="w-5 h-5 text-emerald-500" />
+                  <span className="text-emerald-500 font-bold text-lg">1</span>
                 </div>
                 <div>
                   <h4 className="font-semibold text-text-primary dark:text-text-inverse mb-1 text-base">Detailed Records</h4>
@@ -57,7 +57,7 @@ const WeeklyTestSection = () => {
               
               <div className="flex items-start space-x-4 bg-surface dark:bg-slate-800/50 p-4 rounded-xl border border-border dark:border-border/50 hover:shadow-md transition-shadow">
                 <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
-                  <Target className="w-5 h-5 text-amber-500" />
+                  <span className="text-amber-500 font-bold text-lg">2</span>
                 </div>
                 <div>
                   <h4 className="font-semibold text-text-primary dark:text-text-inverse mb-1 text-base">Identify Weaknesses</h4>
@@ -67,7 +67,7 @@ const WeeklyTestSection = () => {
               
               <div className="flex items-start space-x-4 bg-surface dark:bg-slate-800/50 p-4 rounded-xl border border-border dark:border-border/50 hover:shadow-md transition-shadow">
                 <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center shrink-0">
-                  <Users className="w-5 h-5 text-purple-500" />
+                  <span className="text-purple-500 font-bold text-lg">3</span>
                 </div>
                 <div>
                   <h4 className="font-semibold text-text-primary dark:text-text-inverse mb-1 text-base">Peer Benchmarking</h4>
@@ -77,7 +77,7 @@ const WeeklyTestSection = () => {
               
               <div className="flex items-start space-x-4 bg-surface dark:bg-slate-800/50 p-4 rounded-xl border border-border dark:border-border/50 hover:shadow-md transition-shadow">
                 <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center shrink-0">
-                  <Trophy className="w-5 h-5 text-orange-500" />
+                  <span className="text-orange-500 font-bold text-lg">4</span>
                 </div>
                 <div>
                   <h4 className="font-semibold text-text-primary dark:text-text-inverse mb-1 text-base">Global Ranking</h4>

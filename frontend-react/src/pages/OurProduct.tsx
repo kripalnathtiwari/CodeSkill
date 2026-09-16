@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Code2, Zap, Layout, MonitorPlay, Sparkles, Brain, FileText, Users, Briefcase } from 'lucide-react';
+import { Code2, Zap, Layout, MonitorPlay, Sparkles, Brain, FileText, Users, Briefcase, GraduationCap, BookOpen, BarChart2, Target, Rocket } from 'lucide-react';
 import WeeklyTestSection from '../components/home/WeeklyTestSection';
 import CodingFeaturesSection from '../components/home/CodingFeaturesSection';
 
@@ -24,7 +24,16 @@ export default function OurProduct() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background dark:bg-background relative pt-24 pb-20 overflow-hidden">
+    <div className="min-h-screen bg-background dark:bg-background relative pb-20 overflow-hidden">
+      {/* Top Banner Image */}
+      <div className="w-full relative mb-16 md:mb-24">
+        <img 
+          src="https://res.cloudinary.com/zihn8u4b/image/upload/v1789538527/back2.png" 
+          alt="Placement Journey Hero"
+          className="w-full h-auto object-cover"
+        />
+      </div>
+
       {/* Decorative Grid Background */}
       <div className="absolute inset-0 bg-grid-pattern opacity-50 pointer-events-none" />
 

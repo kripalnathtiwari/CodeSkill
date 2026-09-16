@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Code2, Zap, Layout, MonitorPlay, Sparkles, Brain, FileText, Users, Briefcase } from 'lucide-react';
 import WeeklyTestSection from '../components/home/WeeklyTestSection';
+import CodingFeaturesSection from '../components/home/CodingFeaturesSection';
 
 const sliderImages = [
   "https://res.cloudinary.com/zihn8u4b/image/upload/v1789487013/course.png",
@@ -244,6 +245,7 @@ export default function OurProduct() {
         </div>
       </div>
       <WeeklyTestSection />
+      <CodingFeaturesSection />
     </div>
   );
 }

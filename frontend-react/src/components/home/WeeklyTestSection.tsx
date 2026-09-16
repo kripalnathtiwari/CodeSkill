@@ -7,7 +7,7 @@ const WeeklyTestSection = () => {
     <section className="py-24 w-full relative">
       <div className="absolute inset-0 bg-primary/5 dark:bg-primary/5 rounded-3xl -z-10" />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Weekly Test (Image Left, Text Right) */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -35,11 +35,11 @@ const WeeklyTestSection = () => {
                 <CalendarClock className="w-4 h-4" />
                 <span>Weekly Assessment Engine</span>
               </div>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-text-primary dark:text-text-inverse leading-tight mb-4 tracking-tight">
+              <h2 className="text-4xl md:text-5xl lg:text-5xl font-bold text-text-primary dark:text-text-inverse leading-tight mb-4 tracking-tight">
                 Rigorous Weekly Tests & <br/>
                 <span className="text-primary">Student Records</span>
               </h2>
-              <p className="text-text-secondary dark:text-text-muted text-lg leading-relaxed font-medium">
+              <p className="text-text-secondary dark:text-text-muted text-xl leading-relaxed font-medium">
                 We conduct rigorous weekly tests replicating real interview environments. Every submission is carefully evaluated to generate an exhaustive student record, detailing your logic, execution time, and edge-case handling.
               </p>
             </div>
@@ -50,8 +50,8 @@ const WeeklyTestSection = () => {
                   <FileBarChart className="w-5 h-5 text-emerald-500" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-text-primary dark:text-text-inverse mb-1 text-sm">Detailed Records</h4>
-                  <p className="text-xs text-text-secondary dark:text-text-muted leading-relaxed">Comprehensive historical records of every test attempt and code submission.</p>
+                  <h4 className="font-semibold text-text-primary dark:text-text-inverse mb-1 text-base">Detailed Records</h4>
+                  <p className="text-sm text-text-secondary dark:text-text-muted leading-relaxed">Comprehensive historical records of every test attempt and code submission.</p>
                 </div>
               </div>
               
@@ -60,8 +60,8 @@ const WeeklyTestSection = () => {
                   <Target className="w-5 h-5 text-amber-500" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-text-primary dark:text-text-inverse mb-1 text-sm">Identify Weaknesses</h4>
-                  <p className="text-xs text-text-secondary dark:text-text-muted leading-relaxed">AI-driven analysis pinpoints exact topics where you need more practice.</p>
+                  <h4 className="font-semibold text-text-primary dark:text-text-inverse mb-1 text-base">Identify Weaknesses</h4>
+                  <p className="text-sm text-text-secondary dark:text-text-muted leading-relaxed">AI-driven analysis pinpoints exact topics where you need more practice.</p>
                 </div>
               </div>
               
@@ -70,8 +70,8 @@ const WeeklyTestSection = () => {
                   <Users className="w-5 h-5 text-purple-500" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-text-primary dark:text-text-inverse mb-1 text-sm">Peer Benchmarking</h4>
-                  <p className="text-xs text-text-secondary dark:text-text-muted leading-relaxed">Compare your test scores and logic efficiency with top-performing students.</p>
+                  <h4 className="font-semibold text-text-primary dark:text-text-inverse mb-1 text-base">Peer Benchmarking</h4>
+                  <p className="text-sm text-text-secondary dark:text-text-muted leading-relaxed">Compare your test scores and logic efficiency with top-performing students.</p>
                 </div>
               </div>
               
@@ -80,8 +80,8 @@ const WeeklyTestSection = () => {
                   <Trophy className="w-5 h-5 text-orange-500" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-text-primary dark:text-text-inverse mb-1 text-sm">Global Ranking</h4>
-                  <p className="text-xs text-text-secondary dark:text-text-muted leading-relaxed">Climb the leaderboard by consistently performing well in weekly assessments.</p>
+                  <h4 className="font-semibold text-text-primary dark:text-text-inverse mb-1 text-base">Global Ranking</h4>
+                  <p className="text-sm text-text-secondary dark:text-text-muted leading-relaxed">Climb the leaderboard by consistently performing well in weekly assessments.</p>
                 </div>
               </div>
             </div>

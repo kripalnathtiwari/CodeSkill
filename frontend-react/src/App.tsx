@@ -1,6 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import { AuthProvider } from './context/AuthContext';
 import GlobalLoader from './components/GlobalLoader';
 import NetworkStatus from './components/NetworkStatus';
@@ -57,6 +58,7 @@ function AppContent() {
   const isDashboard = isDashboardRoute();
   const isAuthPage = location.pathname === '/login' || location.pathname === '/forgot-password';
   const hideNavbar = isDashboard || isAuthPage;
+  const hideFooter = isDashboard || isAuthPage;
 
   return (
     <div className={`min-h-screen flex flex-col ${isDashboard ? 'bg-background' : 'bg-background dark:bg-background text-slate-950 dark:text-text-inverse'}`}>
@@ -126,6 +128,9 @@ function AppContent() {
           </Suspense>
         </ErrorBoundary>
       </main>
+
+      {/* ✅ Universal Footer — appears on every public page automatically */}
+      {!hideFooter && <Footer />}
     </div>
   );
 }

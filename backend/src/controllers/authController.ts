@@ -141,15 +141,21 @@ export class AuthController {
         { expiresIn: "7d" }
       );
 
-      // Store Refresh Token Session in Database
-      await prisma.deviceSession.create({
-        data: {
-          userId: user.id,
-          refreshToken,
-          userAgent: req.headers["user-agent"],
-          ipAddress: req.ip,
-        },
-      });
+      // Store Refresh Token Session in Database and update lastLoginAt
+      await prisma.$transaction([
+        prisma.deviceSession.create({
+          data: {
+            userId: user.id,
+            refreshToken,
+            userAgent: req.headers["user-agent"],
+            ipAddress: req.ip,
+          },
+        }),
+        prisma.user.update({
+          where: { id: user.id },
+          data: { lastLoginAt: new Date() }
+        })
+      ]);
 
       logger.info(`User authenticated: ${user.id}`);
       return res.status(200).json({
@@ -244,14 +250,20 @@ export class AuthController {
         { expiresIn: "7d" }
       );
 
-      await prisma.deviceSession.create({
-        data: {
-          userId: user.id,
-          refreshToken,
-          userAgent: req.headers["user-agent"],
-          ipAddress: req.ip,
-        },
-      });
+      await prisma.$transaction([
+        prisma.deviceSession.create({
+          data: {
+            userId: user.id,
+            refreshToken,
+            userAgent: req.headers["user-agent"],
+            ipAddress: req.ip,
+          },
+        }),
+        prisma.user.update({
+          where: { id: user.id },
+          data: { lastLoginAt: new Date() }
+        })
+      ]);
 
       logger.info(`User authenticated via Google: ${user.id}`);
       return res.status(200).json({
@@ -360,7 +372,8 @@ export class AuthController {
         role: user.role,
         status: "active",
         joined: user.createdAt.toISOString().split("T")[0],
-        section: collegeStudentEmails.has(user.email.toLowerCase()) ? "College Student" : "New User"
+        section: collegeStudentEmails.has(user.email.toLowerCase()) ? "College Student" : "New User",
+        lastLoginAt: user.lastLoginAt
       }));
 
       return res.status(200).json(formattedUsers);

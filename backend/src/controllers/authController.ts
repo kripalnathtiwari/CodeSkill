@@ -344,10 +344,14 @@ export class AuthController {
         orderBy: { createdAt: "desc" },
       });
 
-      const collegeStudents = await prisma.collegeStudent.findMany({
-        select: { email: true }
-      });
-      const collegeStudentEmails = new Set(collegeStudents.map(cs => cs.email.toLowerCase()));
+      const [collegeStudents, collegeCourseStudents] = await Promise.all([
+        prisma.collegeStudent.findMany({ select: { email: true } }),
+        prisma.collegeCourseStudent.findMany({ select: { email: true } })
+      ]);
+      const collegeStudentEmails = new Set([
+        ...collegeStudents.map(cs => cs.email.toLowerCase()),
+        ...collegeCourseStudents.map(ccs => ccs.email.toLowerCase())
+      ]);
 
       const formattedUsers = users.map(user => ({
         id: user.id,

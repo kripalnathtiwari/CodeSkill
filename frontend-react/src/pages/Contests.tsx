@@ -297,6 +297,23 @@ export default function Contests() {
       <div className="w-full space-y-12">
 
         {/* Header Section */}
+        <div className="text-center space-y-4 pt-4 pb-2">
+          <h1 className="text-3xl md:text-4xl font-black text-text-primary dark:text-text-primary">
+            Test Your Skills
+          </h1>
+          <p className="text-text-secondary dark:text-text-muted text-base md:text-lg max-w-2xl mx-auto">
+            Challenge yourself with weekly assessments designed to strengthen your knowledge and build confidence.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-2 md:gap-4 text-sm font-bold text-primary dark:text-primary pt-2">
+            <span>Take Tests</span>
+            <span className="text-text-muted dark:text-text-muted/50">•</span>
+            <span>Check Results</span>
+            <span className="text-text-muted dark:text-text-muted/50">•</span>
+            <span>Track Progress</span>
+            <span className="text-text-muted dark:text-text-muted/50">•</span>
+            <span>Improve Skills</span>
+          </div>
+        </div>
 
         {/* Institution Filters */}
         <div className="bg-surface dark:bg-[#111827] border border-border dark:border-border p-4 rounded-2xl shadow-sm flex flex-col md:flex-row gap-4 items-center z-20 relative">

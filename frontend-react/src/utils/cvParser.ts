@@ -258,33 +258,22 @@ function sanitizeBinaryString(str: string): string {
  * are repaired into real, clean, human-readable values.
  */
 export function sanitizeStoredCv(cv: UserCVEntry): UserCVEntry {
-  const isBinarySummary =
-    cv.resumeData?.summary?.includes("%PDF-") ||
-    cv.resumeData?.summary?.includes("obj <>") ||
-    !cv.resumeData?.summary;
-
-  const isBinaryRaw =
-    cv.rawUploadedContent?.includes("%PDF-") ||
-    cv.rawUploadedContent?.includes("obj <>") ||
-    cv.rawUploadedContent?.includes("stream");
-
-  const isBadPhone = !cv.phone || cv.phone === "0 0 612 7" || cv.phone.replace(/\D/g, "").length < 10;
-
-  if (!isBinarySummary && !isBinaryRaw && !isBadPhone) {
-    return cv;
-  }
-
   const candidateName = cv.candidateName || cv.resumeData?.name || "Candidate";
   const candidateEmail = cv.candidateEmail || cv.resumeData?.email || "candidate@devmail.org";
   const role = cv.appliedRole || "Software Developer";
   const company = cv.company || "CodeSkill";
 
-  let cleanPhone = cv.phone;
+  const isBadPhone = !cv.phone || cv.phone === "0 0 612 7" || (typeof cv.phone === 'string' && cv.phone.replace(/\D/g, "").length < 10);
+  let cleanPhone = cv.phone || "+91 98765 43210";
   if (isBadPhone) {
     cleanPhone = "+91 98765 43210";
   }
 
-  let cleanSummary = cv.resumeData?.summary;
+  const isBinarySummary =
+    typeof cv.resumeData?.summary === 'string' && (cv.resumeData.summary.includes("%PDF-") || cv.resumeData.summary.includes("obj <>")) ||
+    !cv.resumeData?.summary;
+
+  let cleanSummary = cv.resumeData?.summary || "";
   if (isBinarySummary) {
     const recovered = sanitizeBinaryString(cv.rawUploadedContent || cv.resumeData?.summary || "");
     if (recovered.length > 50 && !recovered.includes("%PDF-")) {
@@ -294,7 +283,7 @@ export function sanitizeStoredCv(cv: UserCVEntry): UserCVEntry {
     }
   }
 
-  const skills = cv.resumeData?.skills?.length
+  const skills = Array.isArray(cv.resumeData?.skills) && cv.resumeData.skills.length > 0
     ? cv.resumeData.skills
     : ["React", "TypeScript", "Node.js", "JavaScript", "SQL", "Git"];
 
@@ -312,9 +301,9 @@ export function sanitizeStoredCv(cv: UserCVEntry): UserCVEntry {
       phone: cleanPhone,
       summary: cleanSummary,
       skills,
-      experience: cv.resumeData?.experience || [],
-      education: cv.resumeData?.education || [],
-      projects: cv.resumeData?.projects || []
+      experience: Array.isArray(cv.resumeData?.experience) ? cv.resumeData.experience : [],
+      education: Array.isArray(cv.resumeData?.education) ? cv.resumeData.education : [],
+      projects: Array.isArray(cv.resumeData?.projects) ? cv.resumeData.projects : []
     }
   };
 

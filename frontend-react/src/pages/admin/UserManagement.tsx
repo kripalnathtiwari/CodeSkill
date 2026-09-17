@@ -392,6 +392,7 @@ export default function UserManagement() {
               <tr>
                 <th className="px-6 py-4">User Details</th>
                 <th className="px-6 py-4">Role</th>
+                <th className="px-6 py-4">Section</th>
                 <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4">Phone</th>
                 <th className="px-6 py-4">Last Login</th>
@@ -402,14 +403,14 @@ export default function UserManagement() {
             <tbody className="divide-y divide-slate-800">
               {isLoading ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-text-muted">
+                  <td colSpan={8} className="px-6 py-12 text-center text-text-muted">
                     <Loader className="w-6 h-6 animate-spin mx-auto mb-2 text-primary" />
                     Loading users...
                   </td>
                 </tr>
               ) : filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-text-muted">No users found matching your search.</td>
+                  <td colSpan={8} className="px-6 py-12 text-center text-text-muted">No users found matching your search.</td>
                 </tr>
               ) : filtered.map(user => (
                 <tr key={user.id} className="hover:bg-slate-200/30 dark:hover:bg-slate-800/30 transition-colors">
@@ -436,6 +437,11 @@ export default function UserManagement() {
                     >
                       {user.role}
                     </button>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="text-xs font-bold px-2 py-1 bg-slate-100 dark:bg-slate-800 text-text-secondary rounded-full whitespace-nowrap">
+                      {user.section || "New User"}
+                    </span>
                   </td>
                   <td className="px-6 py-4">
                     <span className={`flex items-center text-xs font-bold ${user.status === 'active' ? 'text-primary' : 'text-rose-500'}`}>

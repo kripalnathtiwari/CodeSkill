@@ -344,13 +344,19 @@ export class AuthController {
         orderBy: { createdAt: "desc" },
       });
 
+      const collegeStudents = await prisma.collegeStudent.findMany({
+        select: { email: true }
+      });
+      const collegeStudentEmails = new Set(collegeStudents.map(cs => cs.email.toLowerCase()));
+
       const formattedUsers = users.map(user => ({
         id: user.id,
         name: user.profile ? `${user.profile.firstName} ${user.profile.lastName}` : "Unknown User",
         email: user.email,
         role: user.role,
         status: "active",
-        joined: user.createdAt.toISOString().split("T")[0]
+        joined: user.createdAt.toISOString().split("T")[0],
+        section: collegeStudentEmails.has(user.email.toLowerCase()) ? "College Student" : "New User"
       }));
 
       return res.status(200).json(formattedUsers);

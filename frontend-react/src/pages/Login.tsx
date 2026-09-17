@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getApiUrl } from "../utils/apiConfig";
 import { ArrowRight, Eye, EyeOff } from "lucide-react";
@@ -32,6 +32,14 @@ export default function LoginPage() {
 
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    if (searchParams.get("mode") === "register") {
+      setIsRegister(true);
+    }
+  }, [location.search]);
 
   const switchMode = () => {
     setIsRegister(!isRegister);
@@ -141,10 +149,18 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      // Call your register endpoint when ready:
-      // await axios.post(getApiUrl("/api/v1/auth/register"), {
-      //   fullName, email, password, cfToken,
-      // });
+      const nameParts = fullName.trim().split(" ");
+      const firstName = nameParts[0];
+      const lastName = nameParts.slice(1).join(" ") || " ";
+
+      await axios.post(getApiUrl("/api/v1/auth/register"), {
+        email,
+        password,
+        firstName,
+        lastName,
+        role: "STUDENT",
+        cfToken,
+      });
 
       setSuccess("Account created successfully! Please log in to continue.");
       setIsRegister(false);

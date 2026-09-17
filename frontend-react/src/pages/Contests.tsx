@@ -297,8 +297,8 @@ export default function Contests() {
       <div className="w-full space-y-12">
 
         {/* Header Section */}
-        <div className="text-center space-y-4 pt-4 pb-2">
-          <h1 className="text-3xl md:text-4xl font-black text-text-primary dark:text-text-primary">
+        <div className="text-center space-y-3 -mt-4 pb-2">
+          <h1 className="text-4xl md:text-5xl font-black text-text-primary dark:text-text-primary">
             Test Your Skills
           </h1>
           <p className="text-text-secondary dark:text-text-muted text-base md:text-lg max-w-2xl mx-auto">

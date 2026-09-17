@@ -11,6 +11,7 @@ export default function UserManagement() {
   const [uploadRole, setUploadRole] = useState("STUDENT");
   const [filterRole, setFilterRole] = useState("ALL");
   const [filterStatus, setFilterStatus] = useState("ALL");
+  const [filterSection, setFilterSection] = useState("ALL");
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
   const roleDropdownRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -50,7 +51,8 @@ export default function UserManagement() {
     const matchesSearch = u.name?.toLowerCase().includes(search.toLowerCase()) || u.email?.toLowerCase().includes(search.toLowerCase());
     const matchesRole = filterRole === "ALL" || u.role === filterRole;
     const matchesStatus = filterStatus === "ALL" || u.status === filterStatus;
-    return matchesSearch && matchesRole && matchesStatus;
+    const matchesSection = filterSection === "ALL" || (u.section || "New User") === filterSection;
+    return matchesSearch && matchesRole && matchesStatus && matchesSection;
   });
 
   const toggleStatus = (id: string) => {
@@ -380,6 +382,16 @@ export default function UserManagement() {
                 <option value="ALL">All Statuses</option>
                 <option value="active">Active</option>
                 <option value="banned">Banned</option>
+              </select>
+
+              <select 
+                value={filterSection} 
+                onChange={(e) => setFilterSection(e.target.value)}
+                className="bg-white dark:bg-[#1a2333] border border-border text-text-secondary px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary w-full sm:w-auto cursor-pointer"
+              >
+                <option value="ALL">All Sections</option>
+                <option value="New User">New User</option>
+                <option value="College Student">College Student</option>
               </select>
             </div>
           </div>

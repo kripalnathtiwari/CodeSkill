@@ -57,8 +57,8 @@ function AppContent() {
   };
   const isDashboard = isDashboardRoute();
   const isAuthPage = location.pathname === '/login' || location.pathname === '/forgot-password';
-  const hideNavbar = isDashboard || isAuthPage;
-  const hideFooter = isDashboard || isAuthPage;
+  const hideNavbar = isDashboard || isAuthPage || location.pathname.startsWith('/admin');
+  const hideFooter = isDashboard || isAuthPage || location.pathname.startsWith('/admin');
 
   return (
     <div className={`min-h-screen flex flex-col ${isDashboard ? 'bg-background' : 'bg-background dark:bg-background text-slate-950 dark:text-text-inverse'}`}>

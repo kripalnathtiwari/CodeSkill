@@ -30,6 +30,7 @@ import atsRoutes from "./routes/atsRoutes";
 import cvAdminRoutes from "./routes/cvAdminRoutes";
 import jobRoutes from "./routes/jobRoutes";
 import cvRoutes from "./routes/cvRoutes";
+import projectIdeaRoutes from "./routes/projectIdeaRoutes";
 
 // Background Jobs
 // import "./jobs/submissionWorker";
@@ -109,6 +110,7 @@ app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/ats", atsRoutes);
 app.use("/api/v1/jobs", jobRoutes);
 app.use("/api/v1/cv", cvRoutes);
+app.use("/api/v1/projects", projectIdeaRoutes);
 
 // Root informational endpoint
 app.get("/", (req, res) => {

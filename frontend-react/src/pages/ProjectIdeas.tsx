@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Lightbulb, Code2, ArrowRight, Loader2, Server, Smartphone, Globe, BrainCircuit } from 'lucide-react';
+import { Lightbulb, Code2, ArrowRight, Loader2, Server, Smartphone, Globe, BrainCircuit, X } from 'lucide-react';
 import axios from 'axios';
 import { API_BASE_URL } from '../utils/apiConfig';
 
@@ -17,6 +17,7 @@ export default function ProjectIdeas() {
   const [loading, setLoading] = useState(true);
   const [selectedDomain, setSelectedDomain] = useState<string>('All');
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('All');
+  const [selectedProject, setSelectedProject] = useState<ProjectIdea | null>(null);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -56,7 +57,7 @@ export default function ProjectIdeas() {
   };
 
   return (
-    <div className="flex-1 p-6 md:p-8 w-full max-w-7xl mx-auto space-y-8">
+    <div className="flex-1 p-6 md:p-8 w-full max-w-7xl mx-auto space-y-8 relative">
       {/* Header */}
       <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-8 rounded-3xl border border-primary/20">
         <h1 className="text-3xl md:text-4xl font-extrabold text-text-primary tracking-tight flex items-center gap-3">
@@ -131,7 +132,11 @@ export default function ProjectIdeas() {
               </div>
             ) : (
               filteredProjects.map(project => (
-                <div key={project.id} className="group flex flex-col bg-surface dark:bg-slate-800 rounded-3xl border border-border dark:border-border overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                <div 
+                  key={project.id} 
+                  onClick={() => setSelectedProject(project)}
+                  className="group flex flex-col bg-surface dark:bg-slate-800 rounded-3xl border border-border dark:border-border overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+                >
                   <div className="p-6 flex-1 flex flex-col">
                     <div className="flex justify-between items-start gap-4 mb-4">
                       <div className="p-3 bg-primary/10 text-primary rounded-2xl group-hover:bg-primary group-hover:text-white transition-colors">
@@ -169,6 +174,90 @@ export default function ProjectIdeas() {
             )}
           </div>
         </>
+      )}
+
+      {/* Project Idea Detail Modal */}
+      {selectedProject && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+          <div 
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+            onClick={() => setSelectedProject(null)}
+          ></div>
+          
+          <div className="relative w-full max-w-3xl bg-surface dark:bg-slate-900 rounded-3xl shadow-2xl border border-border overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="flex items-start justify-between p-6 sm:p-8 border-b border-border bg-slate-50 dark:bg-slate-800/50">
+              <div className="flex items-center gap-4">
+                <div className="p-4 bg-primary/10 text-primary rounded-2xl hidden sm:block">
+                  {getDomainIcon(selectedProject.domain)}
+                </div>
+                <div>
+                  <div className="flex flex-wrap items-center gap-2 mb-2">
+                    <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-200 dark:bg-slate-700 text-text-secondary">
+                      {selectedProject.domain}
+                    </span>
+                    <span className={`px-2.5 py-1 text-xs font-bold rounded-full uppercase tracking-wider ${
+                      selectedProject.difficulty === 'Beginner' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
+                      selectedProject.difficulty === 'Intermediate' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' :
+                      'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                    }`}>
+                      {selectedProject.difficulty}
+                    </span>
+                  </div>
+                  <h2 className="text-2xl sm:text-3xl font-extrabold text-text-primary">
+                    {selectedProject.title}
+                  </h2>
+                </div>
+              </div>
+              <button 
+                onClick={() => setSelectedProject(null)}
+                className="p-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-full transition-colors shrink-0"
+              >
+                <X className="w-6 h-6 text-text-secondary" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 sm:p-8 overflow-y-auto">
+              <div className="space-y-8">
+                <div>
+                  <h4 className="text-sm font-bold text-text-secondary uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <Code2 className="w-4 h-4" />
+                    Tech Stack
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedProject.techStack.map((tech, idx) => (
+                      <span key={idx} className="px-3 py-1.5 bg-primary/5 border border-primary/20 text-primary font-medium text-sm rounded-xl">
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="text-sm font-bold text-text-secondary uppercase tracking-wider mb-4">
+                    Project Overview
+                  </h4>
+                  <div className="prose dark:prose-invert max-w-none">
+                    <p className="text-text-primary text-base sm:text-lg leading-relaxed whitespace-pre-wrap">
+                      {selectedProject.description}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Modal Footer */}
+            <div className="p-6 border-t border-border bg-slate-50 dark:bg-slate-800/30 flex justify-end">
+              <button 
+                onClick={() => setSelectedProject(null)}
+                className="px-6 py-2.5 bg-primary hover:bg-primary/90 text-white font-semibold rounded-xl transition-colors"
+              >
+                Got it
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Search, Shield, Ban, CheckCircle, UserX, UserCheck, Loader, Upload, FileText, Trash2, Plus, X, Save, ChevronDown } from "lucide-react";
+import { Search, Shield, Ban, CheckCircle, UserX, UserCheck, Loader, Upload, Download, FileText, Trash2, Plus, X, Save, ChevronDown } from "lucide-react";
 import axios from "axios";
 import { getApiUrl } from "../../utils/apiConfig";
 
@@ -12,7 +12,8 @@ export default function UserManagement() {
   const [filterRole, setFilterRole] = useState("ALL");
   const [filterStatus, setFilterStatus] = useState("ALL");
   const [filterSection, setFilterSection] = useState("ALL");
-  const [filterDate, setFilterDate] = useState("");
+  const [filterStartDate, setFilterStartDate] = useState("");
+  const [filterEndDate, setFilterEndDate] = useState("");
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
   const roleDropdownRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -53,7 +54,13 @@ export default function UserManagement() {
     const matchesRole = filterRole === "ALL" || u.role === filterRole;
     const matchesStatus = filterStatus === "ALL" || u.status === filterStatus;
     const matchesSection = filterSection === "ALL" || (u.section || "New User") === filterSection;
-    const matchesDate = !filterDate || u.joined === filterDate;
+    let matchesDate = true;
+    if (filterStartDate) {
+      matchesDate = matchesDate && (u.joined >= filterStartDate);
+    }
+    if (filterEndDate) {
+      matchesDate = matchesDate && (u.joined <= filterEndDate);
+    }
     return matchesSearch && matchesRole && matchesStatus && matchesSection && matchesDate;
   });
 
@@ -251,6 +258,39 @@ export default function UserManagement() {
     }
   };
 
+  const exportCSV = () => {
+    if (filtered.length === 0) {
+      alert("No users to export in the current filtered view.");
+      return;
+    }
+
+    const headers = ["ID", "Name", "Email", "Role", "Section", "Status", "Joined Date", "Last Login"];
+    const rows = filtered.map(u => [
+      u.id,
+      `"${(u.name || '').replace(/"/g, '""')}"`,
+      u.email,
+      u.role,
+      u.section || 'New User',
+      u.status,
+      u.joined,
+      u.lastLoginAt || 'Never'
+    ]);
+
+    const csvContent = [
+      headers.join(","),
+      ...rows.map(r => r.join(","))
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `users_export_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
@@ -293,6 +333,13 @@ export default function UserManagement() {
           >
             <Upload className="w-4 h-4" />
             <span>Import CSV</span>
+          </button>
+          <button
+            onClick={exportCSV}
+            className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-bold flex items-center space-x-2 transition-colors text-sm shadow-lg shadow-emerald-500/20"
+          >
+            <Download className="w-4 h-4" />
+            <span>Export CSV</span>
           </button>
           {!isCreatingUser && (
             <button
@@ -396,13 +443,23 @@ export default function UserManagement() {
                 <option value="College Student">College Student</option>
               </select>
               
-              <input
-                type="date"
-                value={filterDate}
-                onChange={(e) => setFilterDate(e.target.value)}
-                className="bg-white dark:bg-[#1a2333] border border-border text-text-secondary px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary w-full sm:w-auto"
-                title="Filter by joined date"
-              />
+              <div className="flex items-center space-x-2">
+                <input
+                  type="date"
+                  value={filterStartDate}
+                  onChange={(e) => setFilterStartDate(e.target.value)}
+                  className="bg-white dark:bg-[#1a2333] border border-border text-text-secondary px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary w-full sm:w-auto"
+                  title="Start Date"
+                />
+                <span className="text-text-muted text-sm">to</span>
+                <input
+                  type="date"
+                  value={filterEndDate}
+                  onChange={(e) => setFilterEndDate(e.target.value)}
+                  className="bg-white dark:bg-[#1a2333] border border-border text-text-secondary px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary w-full sm:w-auto"
+                  title="End Date"
+                />
+              </div>
             </div>
           </div>
           <span className="text-sm font-medium text-text-muted whitespace-nowrap">Total: {filtered.length} users</span>

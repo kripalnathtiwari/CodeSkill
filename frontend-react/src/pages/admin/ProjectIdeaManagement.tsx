@@ -35,7 +35,7 @@ export default function ProjectIdeaManagement() {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const res = await axios.get(`${API_BASE_URL}/projects`, {
+      const res = await axios.get(`${API_BASE_URL}/api/v1/projects`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProjects(res.data);
@@ -77,7 +77,7 @@ export default function ProjectIdeaManagement() {
     
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`${API_BASE_URL}/projects/${id}`, {
+      await axios.delete(`${API_BASE_URL}/api/v1/projects/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProjects(prev => prev.filter(p => p.id !== id));
@@ -105,12 +105,12 @@ export default function ProjectIdeaManagement() {
       };
 
       if (editingId) {
-        const res = await axios.put(`${API_BASE_URL}/projects/${editingId}`, payload, {
+        const res = await axios.put(`${API_BASE_URL}/api/v1/projects/${editingId}`, payload, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setProjects(prev => prev.map(p => p.id === editingId ? res.data : p));
       } else {
-        const res = await axios.post(`${API_BASE_URL}/projects`, payload, {
+        const res = await axios.post(`${API_BASE_URL}/api/v1/projects`, payload, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setProjects([res.data, ...projects]);

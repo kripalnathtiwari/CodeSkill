@@ -804,7 +804,7 @@ export default function CvManagement() {
                 <div className="text-right px-4 py-2 bg-surface dark:bg-slate-800 rounded-xl border border-border dark:border-border">
                   <div className="text-[11px] text-text-muted font-bold uppercase">Total Storage Size</div>
                   <div className="text-lg font-black text-indigo-600 dark:text-indigo-400">
-                    {(userCvs.reduce((acc, cv) => acc + (cv.storageSizeKB || 1.3), 0)).toFixed(2)} KB
+                    {(userCvs.reduce((acc, cv) => acc + Number(cv.storageSizeKB || 1.3), 0)).toFixed(2)} KB
                   </div>
                 </div>
               </div>

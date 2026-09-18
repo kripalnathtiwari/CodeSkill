@@ -506,7 +506,7 @@ export default function Jobs() {
         appliedDate: 'Just now',
         resumeFileName,
         storageFormat: 'PDF' as const,
-        storageSizeKB: uploadedCV ? Number((uploadedCV.content?.length || 1400) / 1024).toFixed(2) : 1.4,
+        storageSizeKB: uploadedCV ? Number(Number((uploadedCV.content?.length || 1400) / 1024).toFixed(2)) : 1.4,
         fileDataUrl: uploadedCV?.fileDataUrl,
         resumeData
       };

@@ -365,16 +365,18 @@ export class AuthController {
         ...collegeCourseStudents.map(ccs => ccs.email.toLowerCase().trim())
       ]);
 
-      const formattedUsers = users.map(user => ({
-        id: user.id,
-        name: user.profile ? `${user.profile.firstName} ${user.profile.lastName}` : "Unknown User",
-        email: user.email,
-        role: user.role,
-        status: user.status === "BANNED" ? "banned" : "active",
-        joined: user.createdAt.toISOString().split("T")[0],
-        section: collegeStudentEmails.has(user.email.toLowerCase().trim()) ? "College Student" : "New User",
-        lastLoginAt: user.lastLoginAt
-      }));
+      const formattedUsers = users
+        .filter(user => !collegeStudentEmails.has(user.email.toLowerCase().trim()))
+        .map(user => ({
+          id: user.id,
+          name: user.profile ? `${user.profile.firstName} ${user.profile.lastName}` : "Unknown User",
+          email: user.email,
+          role: user.role,
+          status: user.status === "BANNED" ? "banned" : "active",
+          joined: user.createdAt.toISOString().split("T")[0],
+          section: "New User",
+          lastLoginAt: user.lastLoginAt
+        }));
 
       return res.status(200).json(formattedUsers);
     } catch (err: any) {

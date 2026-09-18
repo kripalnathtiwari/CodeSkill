@@ -12,6 +12,7 @@ export default function UserManagement() {
   const [filterRole, setFilterRole] = useState("ALL");
   const [filterStatus, setFilterStatus] = useState("ALL");
   const [filterSection, setFilterSection] = useState("ALL");
+  const [filterDate, setFilterDate] = useState("");
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
   const roleDropdownRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -52,7 +53,8 @@ export default function UserManagement() {
     const matchesRole = filterRole === "ALL" || u.role === filterRole;
     const matchesStatus = filterStatus === "ALL" || u.status === filterStatus;
     const matchesSection = filterSection === "ALL" || (u.section || "New User") === filterSection;
-    return matchesSearch && matchesRole && matchesStatus && matchesSection;
+    const matchesDate = !filterDate || u.joined === filterDate;
+    return matchesSearch && matchesRole && matchesStatus && matchesSection && matchesDate;
   });
 
   const toggleStatus = (id: string) => {
@@ -393,6 +395,14 @@ export default function UserManagement() {
                 <option value="New User">New User</option>
                 <option value="College Student">College Student</option>
               </select>
+              
+              <input
+                type="date"
+                value={filterDate}
+                onChange={(e) => setFilterDate(e.target.value)}
+                className="bg-white dark:bg-[#1a2333] border border-border text-text-secondary px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary w-full sm:w-auto"
+                title="Filter by joined date"
+              />
             </div>
           </div>
           <span className="text-sm font-medium text-text-muted whitespace-nowrap">Total: {filtered.length} users</span>

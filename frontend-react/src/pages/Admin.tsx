@@ -111,9 +111,9 @@ export default function AdminDashboard() {
 
         <div className="p-4 border-t border-border">
            <button 
-              onClick={() => { logout(); navigate("/"); }}
+              onClick={() => { navigate("/dashboard"); }}
               className={`w-full flex items-center space-x-3 px-3 py-3 rounded-xl text-text-muted hover:bg-rose-500/10 hover:text-rose-500 transition-all ${!isSidebarOpen && "justify-center"}`}
-              title="Logout"
+              title="Exit Admin"
             >
               <LogOut className="w-5 h-5" />
               {isSidebarOpen && <span className="font-semibold">Exit Admin</span>}

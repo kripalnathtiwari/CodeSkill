@@ -361,8 +361,8 @@ export class AuthController {
         prisma.collegeCourseStudent.findMany({ select: { email: true } })
       ]);
       const collegeStudentEmails = new Set([
-        ...collegeStudents.map(cs => cs.email.toLowerCase()),
-        ...collegeCourseStudents.map(ccs => ccs.email.toLowerCase())
+        ...collegeStudents.map(cs => cs.email.toLowerCase().trim()),
+        ...collegeCourseStudents.map(ccs => ccs.email.toLowerCase().trim())
       ]);
 
       const formattedUsers = users.map(user => ({
@@ -370,9 +370,9 @@ export class AuthController {
         name: user.profile ? `${user.profile.firstName} ${user.profile.lastName}` : "Unknown User",
         email: user.email,
         role: user.role,
-        status: "active",
+        status: user.status === "BANNED" ? "banned" : "active",
         joined: user.createdAt.toISOString().split("T")[0],
-        section: collegeStudentEmails.has(user.email.toLowerCase()) ? "College Student" : "New User",
+        section: collegeStudentEmails.has(user.email.toLowerCase().trim()) ? "College Student" : "New User",
         lastLoginAt: user.lastLoginAt
       }));
 

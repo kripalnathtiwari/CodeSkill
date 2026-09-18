@@ -36,7 +36,7 @@ export default function UserManagement() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await axios.get(getApiUrl("/api/v1/auth/users"));
+        const res = await axios.get(getApiUrl(`/api/v1/auth/users?t=${Date.now()}`));
         setUsers(res.data);
       } catch (err) {
         console.error("Failed to fetch users:", err);

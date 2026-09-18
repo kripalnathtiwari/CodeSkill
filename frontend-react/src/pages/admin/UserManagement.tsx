@@ -56,10 +56,14 @@ export default function UserManagement() {
     const matchesSection = filterSection === "ALL" || (u.section || "New User") === filterSection;
     let matchesDate = true;
     if (filterStartDate) {
-      matchesDate = matchesDate && (u.joined >= filterStartDate);
+      const uDate = new Date(u.joined).getTime();
+      const sDate = new Date(filterStartDate).getTime();
+      matchesDate = matchesDate && (uDate >= sDate);
     }
     if (filterEndDate) {
-      matchesDate = matchesDate && (u.joined <= filterEndDate);
+      const uDate = new Date(u.joined).getTime();
+      const eDate = new Date(filterEndDate).getTime();
+      matchesDate = matchesDate && (uDate <= eDate);
     }
     return matchesSearch && matchesRole && matchesStatus && matchesSection && matchesDate;
   });

@@ -12,8 +12,7 @@ export default function UserManagement() {
   const [filterRole, setFilterRole] = useState("ALL");
   const [filterStatus, setFilterStatus] = useState("ALL");
   const [filterSection, setFilterSection] = useState("ALL");
-  const [filterStartDate, setFilterStartDate] = useState("");
-  const [filterEndDate, setFilterEndDate] = useState("");
+  const [filterDate, setFilterDate] = useState("");
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
   const roleDropdownRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -54,17 +53,7 @@ export default function UserManagement() {
     const matchesRole = filterRole === "ALL" || u.role === filterRole;
     const matchesStatus = filterStatus === "ALL" || u.status === filterStatus;
     const matchesSection = filterSection === "ALL" || (u.section || "New User") === filterSection;
-    let matchesDate = true;
-    if (filterStartDate) {
-      const uDate = new Date(u.joined).getTime();
-      const sDate = new Date(filterStartDate).getTime();
-      matchesDate = matchesDate && (uDate >= sDate);
-    }
-    if (filterEndDate) {
-      const uDate = new Date(u.joined).getTime();
-      const eDate = new Date(filterEndDate).getTime();
-      matchesDate = matchesDate && (uDate <= eDate);
-    }
+    const matchesDate = !filterDate || u.joined === filterDate;
     return matchesSearch && matchesRole && matchesStatus && matchesSection && matchesDate;
   });
 
@@ -447,23 +436,13 @@ export default function UserManagement() {
                 <option value="College Student">College Student</option>
               </select>
               
-              <div className="flex items-center space-x-2">
-                <input
-                  type="date"
-                  value={filterStartDate}
-                  onChange={(e) => setFilterStartDate(e.target.value)}
-                  className="bg-white dark:bg-[#1a2333] border border-border text-text-secondary px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary w-full sm:w-auto"
-                  title="Start Date"
-                />
-                <span className="text-text-muted text-sm">to</span>
-                <input
-                  type="date"
-                  value={filterEndDate}
-                  onChange={(e) => setFilterEndDate(e.target.value)}
-                  className="bg-white dark:bg-[#1a2333] border border-border text-text-secondary px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary w-full sm:w-auto"
-                  title="End Date"
-                />
-              </div>
+              <input
+                type="date"
+                value={filterDate}
+                onChange={(e) => setFilterDate(e.target.value)}
+                className="bg-white dark:bg-[#1a2333] border border-border text-text-secondary px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary w-full sm:w-auto"
+                title="Filter by Exact Joined Date"
+              />
             </div>
           </div>
           <span className="text-sm font-medium text-text-muted whitespace-nowrap">Total: {filtered.length} users</span>

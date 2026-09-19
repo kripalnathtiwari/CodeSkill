@@ -123,6 +123,10 @@ app.get("/", (req, res) => {
   `);
 });
 
+app.get("/api/v1/version", (req, res) => {
+  res.status(200).json({ version: "2026-09-19-latest" });
+});
+
 // Centralized error handler fallback
 app.use(errorHandler);
 

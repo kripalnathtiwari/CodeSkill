@@ -20,7 +20,8 @@ import {
   Briefcase,
   Megaphone,
   Target,
-  Lightbulb
+  Lightbulb,
+  StickyNote
 } from "lucide-react";
 
 import DashboardOverview from "./admin/DashboardOverview";
@@ -40,6 +41,7 @@ import UserActivityManagement from "./admin/UserActivityManagement";
 import JobPublishingManagement from "./admin/JobPublishingManagement";
 import OtherPracticeManagement from "./admin/OtherPracticeManagement";
 import ProjectIdeaManagement from "./admin/ProjectIdeaManagement";
+import NotesManagement from "./admin/NotesManagement";
 
 export default function AdminDashboard() {
   const { user, isLoading, logout } = useAuth();
@@ -52,6 +54,7 @@ export default function AdminDashboard() {
     { id: "dashboard", label: "Overview", icon: LayoutDashboard, roles: ["ADMIN"] },
     { id: "courses", label: "Courses", icon: BookOpen, roles: ["ADMIN"] },
     { id: "users", label: "Users", icon: Users, roles: ["ADMIN"] },
+    { id: "notes_management", label: "Notes Management", icon: StickyNote, roles: ["ADMIN", "INSTRUCTOR"] },
     { id: "problems", label: "Problems", icon: Code, roles: ["ADMIN"] },
     { id: "tests", label: "Tests & Contests", icon: ShieldAlert, roles: ["ADMIN", "INSTRUCTOR"] },
     { id: "sales", label: "Sales & Enrollments", icon: CreditCard, roles: ["ADMIN"] },
@@ -139,6 +142,7 @@ export default function AdminDashboard() {
         { activeTab === "database" && <DatabaseManagement />}
         { activeTab === "other_practice" && <OtherPracticeManagement />}
         { activeTab === "project_ideas" && <ProjectIdeaManagement />}
+        { activeTab === "notes_management" && <NotesManagement />}
       </main>
 
     </div>

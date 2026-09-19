@@ -1,55 +1,31 @@
 import React, { useState, useEffect } from "react";
-import { Search, StickyNote, Trash2, Loader, User } from "lucide-react";
+import { StickyNote, Trash2, Loader } from "lucide-react";
 import axios from "axios";
 import { getApiUrl } from "../../utils/apiConfig";
 
 export default function NotesManagement() {
-  const [users, setUsers] = useState<any[]>([]);
-  const [search, setSearch] = useState("");
-  const [isLoadingUsers, setIsLoadingUsers] = useState(true);
-
-  const [selectedUser, setSelectedUser] = useState<any>(null);
-  const [userNotes, setUserNotes] = useState<any[]>([]);
+  const [globalNotes, setGlobalNotes] = useState<any[]>([]);
   const [newNoteTitle, setNewNoteTitle] = useState("");
   const [newNoteContent, setNewNoteContent] = useState("");
-  const [isFetchingNotes, setIsFetchingNotes] = useState(false);
+  const [isFetchingNotes, setIsFetchingNotes] = useState(true);
   const [isSubmittingNote, setIsSubmittingNote] = useState(false);
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchGlobalNotes = async () => {
+      setIsFetchingNotes(true);
       try {
-        const res = await axios.get(getApiUrl(`/api/v1/auth/users?t=${Date.now()}`));
-        // Filter users if needed, or show all
-        setUsers(res.data);
+        const res = await axios.get(getApiUrl(`/api/v1/notes/admin/global-notes`), {
+          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+        });
+        setGlobalNotes(res.data);
       } catch (err) {
-        console.error("Failed to fetch users:", err);
+        console.error("Failed to fetch global notes:", err);
       } finally {
-        setIsLoadingUsers(false);
+        setIsFetchingNotes(false);
       }
     };
-    fetchUsers();
+    fetchGlobalNotes();
   }, []);
-
-  const filteredUsers = users.filter(u => 
-    u.name?.toLowerCase().includes(search.toLowerCase()) || 
-    u.email?.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const selectUser = async (user: any) => {
-    setSelectedUser(user);
-    setIsFetchingNotes(true);
-    try {
-      const res = await axios.get(getApiUrl(`/api/v1/notes/admin/users/${user.id}/notes`), {
-        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
-      });
-      setUserNotes(res.data);
-    } catch (err) {
-      console.error("Failed to fetch notes:", err);
-      setUserNotes([]);
-    } finally {
-      setIsFetchingNotes(false);
-    }
-  };
 
   const handleCreateNote = async () => {
     if (!newNoteTitle.trim() || !newNoteContent.trim()) {
@@ -57,17 +33,17 @@ export default function NotesManagement() {
     }
     setIsSubmittingNote(true);
     try {
-      const res = await axios.post(getApiUrl(`/api/v1/notes/admin/users/${selectedUser.id}/notes`), {
+      const res = await axios.post(getApiUrl(`/api/v1/notes/admin/global-notes`), {
         title: newNoteTitle,
         content: newNoteContent
       }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
-      setUserNotes([res.data, ...userNotes]);
+      setGlobalNotes([res.data, ...globalNotes]);
       setNewNoteTitle("");
       setNewNoteContent("");
     } catch (err) {
-      console.error("Failed to create note:", err);
+      console.error("Failed to create global note:", err);
       alert("Failed to create note");
     } finally {
       setIsSubmittingNote(false);
@@ -80,7 +56,7 @@ export default function NotesManagement() {
       await axios.delete(getApiUrl(`/api/v1/notes/admin/notes/${noteId}`), {
         headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
-      setUserNotes(userNotes.filter(n => n.id !== noteId));
+      setGlobalNotes(globalNotes.filter(n => n.id !== noteId));
     } catch (err) {
       console.error("Failed to delete note:", err);
       alert("Failed to delete note");
@@ -88,129 +64,82 @@ export default function NotesManagement() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-8rem)] gap-6 animate-in fade-in duration-500">
-      
-      {/* Users List Sidebar */}
-      <div className="w-1/3 bg-surface dark:bg-[#111827] border border-border rounded-2xl flex flex-col overflow-hidden shadow-xl">
-        <div className="p-4 border-b border-border bg-slate-50/50 dark:bg-slate-900/50">
-          <h2 className="text-xl font-bold text-text-primary mb-4">Select User</h2>
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search users..."
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text-primary focus:outline-none focus:border-primary"
-            />
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
-          </div>
+    <div className="flex flex-col h-[calc(100vh-8rem)] animate-in fade-in duration-500">
+      <div className="flex-1 bg-surface dark:bg-[#111827] border border-border rounded-2xl flex flex-col overflow-hidden shadow-xl max-w-4xl mx-auto w-full">
+        
+        <div className="p-6 border-b border-border bg-slate-50/50 dark:bg-slate-900/50 flex justify-between items-center">
+          <h2 className="text-2xl font-bold text-text-primary flex items-center">
+            <StickyNote className="w-6 h-6 mr-3 text-primary" />
+            Global Notes Management
+          </h2>
         </div>
         
-        <div className="flex-1 overflow-y-auto p-2 space-y-1">
-          {isLoadingUsers ? (
-            <div className="flex justify-center p-8"><Loader className="w-6 h-6 animate-spin text-primary" /></div>
-          ) : filteredUsers.length === 0 ? (
-            <div className="text-center p-8 text-text-muted text-sm">No users found.</div>
-          ) : (
-            filteredUsers.map(user => (
-              <button
-                key={user.id}
-                onClick={() => selectUser(user)}
-                className={`w-full text-left p-3 rounded-xl transition-all flex items-center space-x-3 ${selectedUser?.id === user.id ? 'bg-primary/10 border border-primary/20' : 'hover:bg-slate-100 dark:hover:bg-slate-800/50 border border-transparent'}`}
-              >
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold shrink-0 ${selectedUser?.id === user.id ? 'bg-primary text-white' : 'bg-slate-200 dark:bg-slate-700 text-text-primary'}`}>
-                  {user.name?.charAt(0) || <User className="w-5 h-5" />}
-                </div>
-                <div className="overflow-hidden">
-                  <div className={`font-semibold truncate ${selectedUser?.id === user.id ? 'text-primary' : 'text-text-primary'}`}>{user.name}</div>
-                  <div className="text-xs text-text-muted truncate">{user.email}</div>
-                </div>
-              </button>
-            ))
-          )}
+        <div className="flex-1 overflow-y-auto p-6 space-y-8">
+          {/* Add Note Form */}
+          <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-xl border border-border space-y-4">
+            <h4 className="font-semibold text-text-primary text-lg">Add New Global Note</h4>
+            <p className="text-sm text-text-muted mb-2">This note will be visible to all students on the platform.</p>
+            <input 
+              type="text" 
+              value={newNoteTitle}
+              onChange={e => setNewNoteTitle(e.target.value)}
+              placeholder="Note Title" 
+              className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-primary"
+            />
+            <textarea 
+              value={newNoteContent}
+              onChange={e => setNewNoteContent(e.target.value)}
+              placeholder="Note content..."
+              rows={5}
+              className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-primary resize-none"
+            />
+            <button 
+              onClick={handleCreateNote} 
+              disabled={isSubmittingNote}
+              className="bg-primary hover:bg-primary/90 text-text-inverse px-6 py-2.5 rounded-lg text-sm font-bold w-full md:w-auto transition-colors disabled:opacity-50 flex items-center justify-center"
+            >
+              {isSubmittingNote ? <Loader className="w-4 h-4 animate-spin mr-2" /> : <StickyNote className="w-4 h-4 mr-2" />}
+              {isSubmittingNote ? "Publishing..." : "Publish Global Note"}
+            </button>
+          </div>
+
+          {/* Previous Notes List */}
+          <div className="space-y-4">
+            <h4 className="font-semibold text-xl text-text-primary border-b border-border pb-3">All Global Notes</h4>
+            {isFetchingNotes ? (
+              <div className="flex justify-center p-12"><Loader className="w-8 h-8 animate-spin text-primary" /></div>
+            ) : globalNotes.length === 0 ? (
+              <div className="text-center py-16 bg-slate-50 dark:bg-slate-800/30 rounded-xl border border-dashed border-border">
+                <StickyNote className="w-16 h-16 text-text-muted/30 mx-auto mb-4" />
+                <h3 className="text-lg font-bold text-text-primary mb-2">No global notes found</h3>
+                <p className="text-sm text-text-muted font-medium">Create one above to share with students.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-6">
+                {globalNotes.map(note => (
+                  <div key={note.id} className="bg-white dark:bg-[#1a2333] border border-border rounded-xl p-6 hover:border-primary/30 transition-colors shadow-sm relative group">
+                    <div className="flex justify-between items-start mb-4">
+                      <h5 className="font-bold text-text-primary text-xl pr-10">{note.title}</h5>
+                      <button 
+                        onClick={() => handleDeleteNote(note.id)} 
+                        className="text-rose-500 hover:bg-rose-500/10 p-2 rounded-lg transition-colors absolute top-4 right-4 opacity-0 group-hover:opacity-100"
+                        title="Delete Note"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    </div>
+                    <p className="text-base text-text-secondary whitespace-pre-wrap leading-relaxed">{note.content}</p>
+                    <div className="mt-6 pt-4 border-t border-border/50 text-sm text-text-muted flex justify-between items-center">
+                      <span>Posted on {new Date(note.createdAt).toLocaleDateString()} at {new Date(note.createdAt).toLocaleTimeString()}</span>
+                      {note.admin && <span className="bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full text-xs font-semibold">By: {note.admin.name}</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-
-      {/* Notes Area */}
-      <div className="flex-1 bg-surface dark:bg-[#111827] border border-border rounded-2xl flex flex-col overflow-hidden shadow-xl">
-        {selectedUser ? (
-          <>
-            <div className="p-4 border-b border-border bg-slate-50/50 dark:bg-slate-900/50 flex justify-between items-center">
-              <h2 className="text-xl font-bold text-text-primary flex items-center">
-                <StickyNote className="w-5 h-5 mr-2 text-primary" />
-                Notes for {selectedUser.name}
-              </h2>
-            </div>
-            
-            <div className="flex-1 overflow-y-auto p-6 space-y-6">
-              {/* Add Note Form */}
-              <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-border space-y-3">
-                <h4 className="font-semibold text-sm text-text-primary">Add New Note</h4>
-                <input 
-                  type="text" 
-                  value={newNoteTitle}
-                  onChange={e => setNewNoteTitle(e.target.value)}
-                  placeholder="Note Title" 
-                  className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-primary"
-                />
-                <textarea 
-                  value={newNoteContent}
-                  onChange={e => setNewNoteContent(e.target.value)}
-                  placeholder="Note content..."
-                  rows={4}
-                  className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-primary resize-none"
-                />
-                <button 
-                  onClick={handleCreateNote} 
-                  disabled={isSubmittingNote}
-                  className="bg-primary hover:bg-primary/90 text-text-inverse px-4 py-2 rounded-lg text-sm font-bold w-full md:w-auto transition-colors disabled:opacity-50 flex items-center justify-center"
-                >
-                  {isSubmittingNote ? <Loader className="w-4 h-4 animate-spin mr-2" /> : <StickyNote className="w-4 h-4 mr-2" />}
-                  {isSubmittingNote ? "Adding..." : "Save Note"}
-                </button>
-              </div>
-
-              {/* Previous Notes List */}
-              <div className="space-y-4">
-                <h4 className="font-semibold text-lg text-text-primary border-b border-border pb-2">Previous Notes</h4>
-                {isFetchingNotes ? (
-                  <div className="flex justify-center p-8"><Loader className="w-6 h-6 animate-spin text-primary" /></div>
-                ) : userNotes.length === 0 ? (
-                  <div className="text-center py-12 bg-slate-50 dark:bg-slate-800/30 rounded-xl border border-dashed border-border">
-                    <StickyNote className="w-12 h-12 text-text-muted/30 mx-auto mb-3" />
-                    <p className="text-sm text-text-muted font-medium">No notes found for this user.</p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 gap-4">
-                    {userNotes.map(note => (
-                      <div key={note.id} className="bg-white dark:bg-[#1a2333] border border-border rounded-xl p-5 hover:border-primary/30 transition-colors shadow-sm">
-                        <div className="flex justify-between items-start mb-3">
-                          <h5 className="font-bold text-text-primary text-lg">{note.title}</h5>
-                          <button onClick={() => handleDeleteNote(note.id)} className="text-rose-500 hover:bg-rose-500/10 p-2 rounded-lg transition-colors">
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                        <p className="text-sm text-text-secondary whitespace-pre-wrap leading-relaxed">{note.content}</p>
-                        <div className="mt-4 pt-3 border-t border-border/50 text-xs text-text-muted flex justify-between">
-                          <span>Added on {new Date(note.createdAt).toLocaleDateString()}</span>
-                          {note.admin && <span>By: {note.admin.name}</span>}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          </>
-        ) : (
-          <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-text-muted">
-            <User className="w-16 h-16 text-slate-300 dark:text-slate-700 mb-4" />
-            <h3 className="text-xl font-bold text-text-primary mb-2">Select a User</h3>
-            <p className="max-w-md">Choose a user from the list on the left to view and manage their notes.</p>
-          </div>
-        )}
-      </div>
-
     </div>
   );
 }

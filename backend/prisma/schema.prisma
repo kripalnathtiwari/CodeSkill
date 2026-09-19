@@ -43,7 +43,6 @@ model User {
   resumes               Resume[]
   jobDescriptions       JobDescription[]
   atsAnalyses           AtsAnalysis[]
-  userNotes             Note[]               @relation("UserNotes")
   adminNotes            Note[]               @relation("AdminNotes")
 
   @@index([email])
@@ -836,14 +835,10 @@ model ProjectIdea {
 
 model Note {
   id        String   @id @default(uuid()) @db.Uuid
-  userId    String   @db.Uuid
   adminId   String?  @db.Uuid
   title     String
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user      User     @relation("UserNotes", fields: [userId], references: [id], onDelete: Cascade)
   admin     User?    @relation("AdminNotes", fields: [adminId], references: [id], onDelete: SetNull)
-
-  @@index([userId])
 }

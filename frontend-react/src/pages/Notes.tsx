@@ -66,9 +66,9 @@ export default function Notes() {
         <div>
           <h1 className="text-3xl font-extrabold text-text-primary tracking-tight flex items-center gap-3">
             <StickyNote className="w-8 h-8 text-primary" />
-            My Notes
+            Important Notes
           </h1>
-          <p className="text-text-muted mt-2 font-medium">Keep track of your learnings, snippets, and ideas.</p>
+          <p className="text-text-muted mt-2 font-medium">Important notes and announcements shared by the administrator.</p>
         </div>
         
         <div className="flex items-center gap-4">

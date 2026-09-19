@@ -3,12 +3,10 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// Get notes for the currently logged in student
+// Get all global notes (for students to view)
 export const getMyNotes = async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).user.id;
     const notes = await prisma.note.findMany({
-      where: { userId },
       orderBy: { createdAt: "desc" },
       include: {
         admin: {
@@ -18,17 +16,15 @@ export const getMyNotes = async (req: Request, res: Response) => {
     });
     res.json(notes);
   } catch (error) {
-    console.error("Error fetching my notes:", error);
+    console.error("Error fetching notes:", error);
     res.status(500).json({ error: "Failed to fetch notes" });
   }
 };
 
-// Admin: Get notes for a specific user
-export const getUserNotes = async (req: Request, res: Response) => {
+// Admin: Get all global notes
+export const getGlobalNotes = async (req: Request, res: Response) => {
   try {
-    const { userId } = req.params;
     const notes = await prisma.note.findMany({
-      where: { userId },
       orderBy: { createdAt: "desc" },
       include: {
         admin: {
@@ -38,15 +34,14 @@ export const getUserNotes = async (req: Request, res: Response) => {
     });
     res.json(notes);
   } catch (error) {
-    console.error("Error fetching user notes:", error);
+    console.error("Error fetching global notes:", error);
     res.status(500).json({ error: "Failed to fetch notes" });
   }
 };
 
-// Admin: Create a note for a specific user
-export const createUserNote = async (req: Request, res: Response) => {
+// Admin: Create a global note
+export const createGlobalNote = async (req: Request, res: Response) => {
   try {
-    const { userId } = req.params;
     const adminId = (req as any).user.id;
     const { title, content } = req.body;
 
@@ -56,7 +51,6 @@ export const createUserNote = async (req: Request, res: Response) => {
 
     const note = await prisma.note.create({
       data: {
-        userId,
         adminId,
         title,
         content,
@@ -65,7 +59,7 @@ export const createUserNote = async (req: Request, res: Response) => {
 
     res.status(201).json(note);
   } catch (error) {
-    console.error("Error creating user note:", error);
+    console.error("Error creating global note:", error);
     res.status(500).json({ error: "Failed to create note" });
   }
 };

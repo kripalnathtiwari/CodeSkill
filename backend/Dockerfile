@@ -35,4 +35,4 @@ COPY --from=builder /usr/src/app/dist ./dist
 
 EXPOSE 5000
 
-CMD ["sh", "-c", "npx prisma db push --accept-data-loss && node dist/src/app.js"]
+CMD ["sh", "-c", "npx prisma db push --accept-data-loss && node dist/app.js"]

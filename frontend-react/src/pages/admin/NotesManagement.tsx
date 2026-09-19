@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { StickyNote, Trash2, Loader } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { StickyNote, Trash2, Loader, Upload, FileText } from "lucide-react";
 import axios from "axios";
 import { getApiUrl } from "../../utils/apiConfig";
 
@@ -7,6 +7,10 @@ export default function NotesManagement() {
   const [globalNotes, setGlobalNotes] = useState<any[]>([]);
   const [newNoteTitle, setNewNoteTitle] = useState("");
   const [newNoteContent, setNewNoteContent] = useState("");
+  const [newCourseName, setNewCourseName] = useState("");
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [isFetchingNotes, setIsFetchingNotes] = useState(true);
   const [isSubmittingNote, setIsSubmittingNote] = useState(false);
 
@@ -28,20 +32,31 @@ export default function NotesManagement() {
   }, []);
 
   const handleCreateNote = async () => {
-    if (!newNoteTitle.trim() || !newNoteContent.trim()) {
-      return alert("Title and content are required");
+    if (!newNoteTitle.trim()) {
+      return alert("Title is required");
     }
     setIsSubmittingNote(true);
     try {
-      const res = await axios.post(getApiUrl(`/api/v1/notes/admin/global-notes`), {
-        title: newNoteTitle,
-        content: newNoteContent
-      }, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+      const formData = new FormData();
+      formData.append("title", newNoteTitle);
+      formData.append("content", newNoteContent);
+      formData.append("courseName", newCourseName);
+      if (pdfFile) {
+        formData.append("pdf", pdfFile);
+      }
+
+      const res = await axios.post(getApiUrl(`/api/v1/notes/admin/global-notes`), formData, {
+        headers: { 
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          "Content-Type": "multipart/form-data"
+        }
       });
       setGlobalNotes([res.data, ...globalNotes]);
       setNewNoteTitle("");
       setNewNoteContent("");
+      setNewCourseName("");
+      setPdfFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (err) {
       console.error("Failed to create global note:", err);
       alert("Failed to create note");
@@ -79,20 +94,57 @@ export default function NotesManagement() {
           <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-xl border border-border space-y-4">
             <h4 className="font-semibold text-text-primary text-lg">Add New Global Note</h4>
             <p className="text-sm text-text-muted mb-2">This note will be visible to all students on the platform.</p>
-            <input 
-              type="text" 
-              value={newNoteTitle}
-              onChange={e => setNewNoteTitle(e.target.value)}
-              placeholder="Note Title" 
-              className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-primary"
-            />
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input 
+                type="text" 
+                value={newNoteTitle}
+                onChange={e => setNewNoteTitle(e.target.value)}
+                placeholder="Note Title *" 
+                className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-primary"
+              />
+              <input 
+                type="text" 
+                value={newCourseName}
+                onChange={e => setNewCourseName(e.target.value)}
+                placeholder="Course Name (Optional)" 
+                className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-primary"
+              />
+            </div>
+            
             <textarea 
               value={newNoteContent}
               onChange={e => setNewNoteContent(e.target.value)}
-              placeholder="Note content..."
-              rows={5}
+              placeholder="Note content... (Optional if PDF is uploaded)"
+              rows={4}
               className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-primary resize-none"
             />
+            
+            <div className="flex items-center space-x-4 bg-white dark:bg-[#1a2333] border border-border rounded-lg p-3">
+              <input
+                type="file"
+                accept=".pdf"
+                className="hidden"
+                ref={fileInputRef}
+                onChange={(e) => {
+                  if (e.target.files && e.target.files.length > 0) {
+                    setPdfFile(e.target.files[0]);
+                  }
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="flex items-center text-sm font-medium text-text-secondary hover:text-primary transition-colors bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-lg"
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                Select PDF Document
+              </button>
+              <span className="text-sm text-text-muted truncate">
+                {pdfFile ? pdfFile.name : "No file selected (Optional)"}
+              </span>
+            </div>
+
             <button 
               onClick={handleCreateNote} 
               disabled={isSubmittingNote}
@@ -119,7 +171,14 @@ export default function NotesManagement() {
                 {globalNotes.map(note => (
                   <div key={note.id} className="bg-white dark:bg-[#1a2333] border border-border rounded-xl p-6 hover:border-primary/30 transition-colors shadow-sm relative group">
                     <div className="flex justify-between items-start mb-4">
-                      <h5 className="font-bold text-text-primary text-xl pr-10">{note.title}</h5>
+                      <div>
+                        <h5 className="font-bold text-text-primary text-xl">{note.title}</h5>
+                        {note.courseName && (
+                          <span className="inline-block mt-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-xs font-bold px-2 py-1 rounded">
+                            {note.courseName}
+                          </span>
+                        )}
+                      </div>
                       <button 
                         onClick={() => handleDeleteNote(note.id)} 
                         className="text-rose-500 hover:bg-rose-500/10 p-2 rounded-lg transition-colors absolute top-4 right-4 opacity-0 group-hover:opacity-100"
@@ -128,10 +187,27 @@ export default function NotesManagement() {
                         <Trash2 className="w-5 h-5" />
                       </button>
                     </div>
-                    <p className="text-base text-text-secondary whitespace-pre-wrap leading-relaxed">{note.content}</p>
+                    {note.content && (
+                      <p className="text-base text-text-secondary whitespace-pre-wrap leading-relaxed">{note.content}</p>
+                    )}
+                    
+                    {note.pdfUrl && (
+                      <div className="mt-4">
+                        <a 
+                          href={getApiUrl(note.pdfUrl)} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center text-sm font-semibold text-primary hover:text-primary-dark transition-colors bg-primary/10 px-4 py-2 rounded-lg"
+                        >
+                          <FileText className="w-4 h-4 mr-2" />
+                          View Attached PDF
+                        </a>
+                      </div>
+                    )}
+
                     <div className="mt-6 pt-4 border-t border-border/50 text-sm text-text-muted flex justify-between items-center">
                       <span>Posted on {new Date(note.createdAt).toLocaleDateString()} at {new Date(note.createdAt).toLocaleTimeString()}</span>
-                      {note.admin && <span className="bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full text-xs font-semibold">By: {note.admin.name}</span>}
+                      {note.admin && <span className="bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full text-xs font-semibold">By: {note.admin.profile?.firstName} {note.admin.profile?.lastName}</span>}
                     </div>
                   </div>
                 ))}

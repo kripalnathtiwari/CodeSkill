@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Search, Shield, Ban, CheckCircle, UserX, UserCheck, Loader, Upload, Download, FileText, Trash2, Plus, X, Save, ChevronDown } from "lucide-react";
+import { Search, Shield, Ban, CheckCircle, UserX, UserCheck, Loader, Upload, Download, FileText, Trash2, Plus, X, Save, ChevronDown, StickyNote, MessageSquare } from "lucide-react";
 import axios from "axios";
 import { getApiUrl } from "../../utils/apiConfig";
 
@@ -33,6 +33,69 @@ export default function UserManagement() {
   const [newEmail, setNewEmail] = useState("");
   const [newRole, setNewRole] = useState("STUDENT");
   const [newPhone, setNewPhone] = useState("");
+
+  // Notes State
+  const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
+  const [selectedUserForNotes, setSelectedUserForNotes] = useState<any>(null);
+  const [userNotes, setUserNotes] = useState<any[]>([]);
+  const [newNoteTitle, setNewNoteTitle] = useState("");
+  const [newNoteContent, setNewNoteContent] = useState("");
+  const [isFetchingNotes, setIsFetchingNotes] = useState(false);
+  const [isSubmittingNote, setIsSubmittingNote] = useState(false);
+
+  const openNotesModal = async (user: any) => {
+    setSelectedUserForNotes(user);
+    setIsNotesModalOpen(true);
+    setIsFetchingNotes(true);
+    try {
+      const res = await axios.get(getApiUrl(`/api/v1/notes/admin/users/${user.id}/notes`), {
+        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+      });
+      setUserNotes(res.data);
+    } catch (err) {
+      console.error("Failed to fetch notes:", err);
+      // fallback to empty array if error
+      setUserNotes([]);
+    } finally {
+      setIsFetchingNotes(false);
+    }
+  };
+
+  const handleCreateNote = async () => {
+    if (!newNoteTitle.trim() || !newNoteContent.trim()) {
+      return alert("Title and content are required");
+    }
+    setIsSubmittingNote(true);
+    try {
+      const res = await axios.post(getApiUrl(`/api/v1/notes/admin/users/${selectedUserForNotes.id}/notes`), {
+        title: newNoteTitle,
+        content: newNoteContent
+      }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+      });
+      setUserNotes([res.data, ...userNotes]);
+      setNewNoteTitle("");
+      setNewNoteContent("");
+    } catch (err) {
+      console.error("Failed to create note:", err);
+      alert("Failed to create note");
+    } finally {
+      setIsSubmittingNote(false);
+    }
+  };
+
+  const handleDeleteNote = async (noteId: string) => {
+    if (!window.confirm("Are you sure you want to delete this note?")) return;
+    try {
+      await axios.delete(getApiUrl(`/api/v1/notes/admin/notes/${noteId}`), {
+        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+      });
+      setUserNotes(userNotes.filter(n => n.id !== noteId));
+    } catch (err) {
+      console.error("Failed to delete note:", err);
+      alert("Failed to delete note");
+    }
+  };
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -516,6 +579,13 @@ export default function UserManagement() {
                   <td className="px-6 py-4 font-mono text-text-muted">{user.joined}</td>
                   <td className="px-6 py-4 text-right space-x-2 whitespace-nowrap">
                     <button
+                      onClick={() => openNotesModal(user)}
+                      className="p-2 rounded-lg transition-colors text-emerald-500 hover:bg-emerald-500/10 inline-block"
+                      title="User Notes"
+                    >
+                      <StickyNote className="w-4 h-4" />
+                    </button>
+                    <button
                       onClick={() => toggleStatus(user.id)}
                       className={`p-2 rounded-lg transition-colors inline-block ${user.status === 'active' ? 'text-rose-500 hover:bg-rose-500/10' : 'text-primary hover:bg-primary/10'}`}
                       title={user.status === 'active' ? 'Ban User' : 'Unban User'}
@@ -536,6 +606,74 @@ export default function UserManagement() {
           </table>
         </div>
       </div>
+
+      {/* Notes Modal */}
+      {isNotesModalOpen && selectedUserForNotes && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-surface dark:bg-[#111827] w-full max-w-2xl rounded-2xl shadow-2xl border border-border overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="p-4 border-b border-border flex justify-between items-center">
+              <h3 className="text-xl font-bold text-text-primary flex items-center">
+                <StickyNote className="w-5 h-5 mr-2 text-primary" />
+                Notes for {selectedUserForNotes.name}
+              </h3>
+              <button onClick={() => setIsNotesModalOpen(false)} className="p-1 text-text-muted hover:text-text-primary transition-colors">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-border space-y-3">
+                <h4 className="font-semibold text-sm text-text-primary">Add New Note</h4>
+                <input 
+                  type="text" 
+                  value={newNoteTitle}
+                  onChange={e => setNewNoteTitle(e.target.value)}
+                  placeholder="Note Title" 
+                  className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-primary"
+                />
+                <textarea 
+                  value={newNoteContent}
+                  onChange={e => setNewNoteContent(e.target.value)}
+                  placeholder="Note content..."
+                  rows={3}
+                  className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-primary resize-none"
+                />
+                <button 
+                  onClick={handleCreateNote} 
+                  disabled={isSubmittingNote}
+                  className="bg-primary hover:bg-primary/90 text-text-inverse px-4 py-2 rounded-lg text-sm font-bold w-full transition-colors disabled:opacity-50"
+                >
+                  {isSubmittingNote ? "Adding..." : "Add Note"}
+                </button>
+              </div>
+
+              <div className="space-y-3 mt-4">
+                <h4 className="font-semibold text-sm text-text-primary">Previous Notes</h4>
+                {isFetchingNotes ? (
+                  <div className="text-center py-8"><Loader className="w-6 h-6 animate-spin mx-auto text-primary" /></div>
+                ) : userNotes.length === 0 ? (
+                  <p className="text-sm text-text-muted text-center py-4">No notes found for this user.</p>
+                ) : (
+                  userNotes.map(note => (
+                    <div key={note.id} className="bg-white dark:bg-[#1a2333] border border-border rounded-xl p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <h5 className="font-bold text-text-primary">{note.title}</h5>
+                        <button onClick={() => handleDeleteNote(note.id)} className="text-rose-500 hover:bg-rose-500/10 p-1.5 rounded transition-colors">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                      <p className="text-sm text-text-secondary whitespace-pre-wrap">{note.content}</p>
+                      <div className="mt-2 text-xs text-text-muted">
+                        Added on {new Date(note.createdAt).toLocaleDateString()}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

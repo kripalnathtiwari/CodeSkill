@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Download, Clock, StickyNote, FileText } from 'lucide-react';
+import { Search, Download, Clock, StickyNote, FileText, Loader } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
+import { getApiUrl } from '../utils/apiConfig';
 
 interface Note {
   id: string;
@@ -15,18 +17,24 @@ export default function Notes() {
   const { user } = useAuth();
   const [notes, setNotes] = useState<Note[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      const savedNotes = localStorage.getItem(`codeSklii_notes_${user.email}`);
-      if (savedNotes) {
-        try {
-          setNotes(JSON.parse(savedNotes));
-        } catch (e) {
-          console.error("Failed to parse notes", e);
-        }
+    const fetchNotes = async () => {
+      if (!user) return;
+      setIsLoading(true);
+      try {
+        const res = await axios.get(getApiUrl('/api/v1/notes/my-notes'), {
+          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+        });
+        setNotes(res.data);
+      } catch (err) {
+        console.error("Failed to fetch notes:", err);
+      } finally {
+        setIsLoading(false);
       }
-    }
+    };
+    fetchNotes();
   }, [user]);
 
   const handleDownload = (note: Note, e: React.MouseEvent) => {
@@ -80,7 +88,11 @@ export default function Notes() {
 
 
       {/* Notes Grid */}
-      {notes.length === 0 ? (
+      {isLoading ? (
+        <div className="flex justify-center items-center py-20 text-primary">
+          <Loader className="w-8 h-8 animate-spin" />
+        </div>
+      ) : notes.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center bg-surface-secondary/50 dark:bg-slate-800/20 rounded-3xl border border-dashed border-border/60">
           <FileText className="w-16 h-16 text-text-muted/30 mb-4" />
           <h3 className="text-xl font-bold text-text-primary mb-2">No notes available</h3>

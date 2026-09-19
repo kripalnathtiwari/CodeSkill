@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Search, StickyNote, Trash2, Loader, User } from "lucide-react";
 import axios from "axios";
-import { getApiUrl } from "../../../utils/apiConfig";
+import { getApiUrl } from "../../utils/apiConfig";
 
 export default function NotesManagement() {
   const [users, setUsers] = useState<any[]>([]);

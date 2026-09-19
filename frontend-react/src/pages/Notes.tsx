@@ -42,7 +42,7 @@ export default function Notes() {
   const handleDownload = (note: Note, e: React.MouseEvent) => {
     e.stopPropagation();
     const element = document.createElement("a");
-    const file = new Blob([note.content], { type: 'text/plain' });
+    const file = new Blob([note.content || ""], { type: 'text/plain' });
     element.href = URL.createObjectURL(file);
     element.download = `${note.title.replace(/\s+/g, '_')}.txt`;
     document.body.appendChild(element);

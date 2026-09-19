@@ -8,7 +8,7 @@ COPY package*.json ./
 COPY backend/package*.json ./backend/
 COPY backend/tsconfig.json ./backend/
 COPY backend/prisma ./backend/prisma
-RUN npm install
+RUN npm install --include=dev
 
 COPY . .
 RUN npm run prisma:generate

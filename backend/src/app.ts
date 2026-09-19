@@ -132,18 +132,10 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-// Initialize Cron Jobs and Server only when not running on Vercel Serverless
-// (Railway sets RAILWAY_ENVIRONMENT_NAME or RAILWAY_STATIC_URL, so we bypass VERCEL check on Railway)
-const isRailway = !!process.env.RAILWAY_ENVIRONMENT_NAME || !!process.env.RAILWAY_PROJECT_ID;
-const isVercelServerless = process.env.VERCEL && !isRailway;
-
-if (!isVercelServerless) {
-  initBackupCronJob();
-  server.listen(PORT, () => {
-    logger.info(`Server running on port ${PORT} in ${process.env.NODE_ENV || "development"} mode (Railway: ${isRailway}).`);
-  });
-} else {
-  logger.info("Vercel Serverless environment detected. Skipping server.listen().");
-}
+// Unconditionally start the server. This is a Node.js process, it MUST listen to a port.
+initBackupCronJob();
+server.listen(PORT, "0.0.0.0", () => {
+  logger.info(`Server running on port ${PORT} in ${process.env.NODE_ENV || "development"} mode.`);
+});
 
 export default app;

@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import path from "path";
+import fs from "fs";
 
 const prisma = new PrismaClient();
 
@@ -10,7 +12,12 @@ export const getMyNotes = async (req: Request, res: Response) => {
       orderBy: { createdAt: "desc" },
       include: {
         admin: {
-          select: { name: true, email: true },
+          select: { 
+            email: true,
+            profile: {
+              select: { firstName: true, lastName: true }
+            }
+          },
         },
       },
     });
@@ -28,7 +35,12 @@ export const getGlobalNotes = async (req: Request, res: Response) => {
       orderBy: { createdAt: "desc" },
       include: {
         admin: {
-          select: { name: true, email: true },
+          select: { 
+            email: true,
+            profile: {
+              select: { firstName: true, lastName: true }
+            }
+          },
         },
       },
     });
@@ -43,17 +55,24 @@ export const getGlobalNotes = async (req: Request, res: Response) => {
 export const createGlobalNote = async (req: Request, res: Response) => {
   try {
     const adminId = (req as any).user.id;
-    const { title, content } = req.body;
+    const { title, content, courseName } = req.body;
 
-    if (!title || !content) {
-      return res.status(400).json({ error: "Title and content are required" });
+    if (!title) {
+      return res.status(400).json({ error: "Title is required" });
+    }
+
+    let pdfUrl = null;
+    if (req.file) {
+      pdfUrl = `/public/uploads/notes/${req.file.filename}`;
     }
 
     const note = await prisma.note.create({
       data: {
         adminId,
         title,
-        content,
+        content: content || null,
+        pdfUrl,
+        courseName: courseName || null,
       },
     });
 
@@ -68,6 +87,19 @@ export const createGlobalNote = async (req: Request, res: Response) => {
 export const deleteNote = async (req: Request, res: Response) => {
   try {
     const { noteId } = req.params;
+    
+    const note = await prisma.note.findUnique({ where: { id: noteId } });
+    if (!note) {
+      return res.status(404).json({ error: "Note not found" });
+    }
+
+    if (note.pdfUrl) {
+      const filePath = path.join(__dirname, "../../", note.pdfUrl);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
+
     await prisma.note.delete({
       where: { id: noteId },
     });

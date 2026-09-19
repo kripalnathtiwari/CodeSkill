@@ -834,11 +834,13 @@ model ProjectIdea {
 }
 
 model Note {
-  id        String   @id @default(uuid()) @db.Uuid
-  adminId   String?  @db.Uuid
-  title     String
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  admin     User?    @relation("AdminNotes", fields: [adminId], references: [id], onDelete: SetNull)
+  id         String   @id @default(uuid()) @db.Uuid
+  adminId    String?  @db.Uuid
+  title      String
+  content    String?
+  pdfUrl     String?
+  courseName String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  admin      User?    @relation("AdminNotes", fields: [adminId], references: [id], onDelete: SetNull)
 }

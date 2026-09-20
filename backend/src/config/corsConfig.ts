@@ -13,9 +13,6 @@ const allowedOrigins = [
   ...getFrontendUrls(),
   "http://localhost:5173",
   "http://localhost:3000",
-  "https://codeskill.vercel.app",
-  "https://frontend-react-4npwrt5dk-saurabh15.vercel.app",
-  // Main intended production URL
 ].filter(Boolean) as string[];
 
 export const corsOptions: CorsOptions = {
@@ -30,17 +27,7 @@ export const corsOptions: CorsOptions = {
       return callback(null, true);
     }
 
-    // 3. Relaxed validation for Vercel preview URLs to allow any vercel deployment for this project
-    // Examples:
-    // https://frontend-react-i8vluda9w-saurabh15.vercel.app
-    // https://frontend-react-ecru-six.vercel.app
-    const isAllowedVercelPreview = origin.endsWith(".vercel.app") || origin.endsWith(".railway.app");
-
-    if (isAllowedVercelPreview) {
-      return callback(null, true);
-    }
-
-    // 4. Reject all other origins
+    // 3. Reject all other origins
     logger.warn(`CORS rejected origin: ${origin}`);
     return callback(new Error(`CORS origin not allowed: ${origin}`));
   },

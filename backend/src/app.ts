@@ -130,7 +130,7 @@ app.get("/api/v1/version", (req, res) => {
 // Centralized error handler fallback
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
 
 // Unconditionally start the server. This is a Node.js process, it MUST listen to a port.
 initBackupCronJob();

@@ -56,7 +56,7 @@ export default function Notes() {
       const response = await axios.get(getApiUrl(pdfUrl), {
         responseType: 'blob'
       });
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', `${title.replace(/\s+/g, '_')}.pdf`);

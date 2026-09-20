@@ -5,6 +5,10 @@
       "destination": "https://codesklii-backend-production.up.railway.app/api/:match*"
     },
     {
+      "source": "/public/:match*",
+      "destination": "https://codesklii-backend-production.up.railway.app/public/:match*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

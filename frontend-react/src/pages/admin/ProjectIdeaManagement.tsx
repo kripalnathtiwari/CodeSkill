@@ -34,7 +34,7 @@ export default function ProjectIdeaManagement() {
   const fetchProjects = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('accessToken');
       const res = await axios.get(`${API_BASE_URL}/api/v1/projects`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -76,7 +76,7 @@ export default function ProjectIdeaManagement() {
     if (!window.confirm('Are you sure you want to delete this project idea?')) return;
     
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('accessToken');
       await axios.delete(`${API_BASE_URL}/api/v1/projects/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -93,7 +93,7 @@ export default function ProjectIdeaManagement() {
 
     setSubmitting(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('accessToken');
       const techStackArray = techStackInput.split(',').map(s => s.trim()).filter(s => s.length > 0);
       
       const payload = {

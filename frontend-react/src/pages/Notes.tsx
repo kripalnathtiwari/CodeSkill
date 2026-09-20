@@ -50,6 +50,24 @@ export default function Notes() {
     document.body.removeChild(element);
   };
 
+  const handlePdfDownload = async (pdfUrl: string, title: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      const response = await axios.get(getApiUrl(pdfUrl), {
+        responseType: 'blob'
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${title.replace(/\s+/g, '_')}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+    } catch (error) {
+      console.error("Failed to download PDF", error);
+    }
+  };
+
   const filteredNotes = notes.filter(n => 
     n.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
     (n.content && n.content.toLowerCase().includes(searchQuery.toLowerCase())) ||
@@ -143,16 +161,23 @@ export default function Notes() {
               )}
 
               {note.pdfUrl && (
-                <div className="mt-3 flex-shrink-0">
+                <div className="mt-3 flex-shrink-0 flex gap-2">
                   <a 
                     href={getApiUrl(note.pdfUrl)} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center w-full text-xs font-semibold text-primary hover:text-primary-dark transition-colors bg-primary/10 hover:bg-primary/20 px-3 py-2 rounded-lg"
+                    className="flex-1 inline-flex items-center justify-center text-xs font-semibold text-primary hover:text-primary-dark transition-colors bg-primary/10 hover:bg-primary/20 px-3 py-2 rounded-lg"
                   >
                     <FileText className="w-3.5 h-3.5 mr-1.5" />
                     View PDF
                   </a>
+                  <button
+                    onClick={(e) => handlePdfDownload(note.pdfUrl!, note.title, e)}
+                    className="inline-flex items-center justify-center text-xs font-semibold text-text-muted hover:text-primary transition-colors bg-surface-secondary hover:bg-primary/10 px-3 py-2 rounded-lg border border-border"
+                    title="Download PDF"
+                  >
+                    <Download className="w-4 h-4" />
+                  </button>
                 </div>
               )}
               <div className="mt-4 pt-4 border-t border-border/50 flex items-center text-xs font-medium text-text-muted gap-1.5">

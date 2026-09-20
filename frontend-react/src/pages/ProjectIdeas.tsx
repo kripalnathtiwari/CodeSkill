@@ -24,7 +24,7 @@ export default function ProjectIdeas() {
       try {
         setLoading(true);
         // Assuming public or authenticated access (use token if required)
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('accessToken');
         const res = await axios.get(`${API_BASE_URL}/api/v1/projects`, {
           headers: token ? { Authorization: `Bearer ${token}` } : undefined
         });

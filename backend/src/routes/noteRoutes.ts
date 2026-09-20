@@ -1,5 +1,5 @@
 import express from "express";
-import { getMyNotes, getGlobalNotes, createGlobalNote, deleteNote } from "../controllers/noteController";
+import { getMyNotes, getGlobalNotes, createGlobalNote, deleteNote, updateNote } from "../controllers/noteController";
 import { authenticateJWT, requireRole } from "../middlewares/authMiddleware";
 import multer from "multer";
 import path from "path";
@@ -38,5 +38,6 @@ router.get("/my-notes", getMyNotes);
 router.get("/admin/global-notes", requireRole(["ADMIN", "COLLEGE_ADMIN", "INSTRUCTOR"]), getGlobalNotes);
 router.post("/admin/global-notes", requireRole(["ADMIN", "COLLEGE_ADMIN", "INSTRUCTOR"]), upload.single('pdf'), createGlobalNote);
 router.delete("/admin/notes/:noteId", requireRole(["ADMIN", "COLLEGE_ADMIN", "INSTRUCTOR"]), deleteNote);
+router.put("/admin/notes/:noteId", requireRole(["ADMIN", "COLLEGE_ADMIN", "INSTRUCTOR"]), updateNote);
 
 export default router;

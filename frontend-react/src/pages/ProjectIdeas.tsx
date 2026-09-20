@@ -10,6 +10,7 @@ interface ProjectIdea {
   domain: string;
   difficulty: string;
   techStack: string[];
+  imageUrl?: string | null;
 }
 
 export default function ProjectIdeas() {
@@ -137,6 +138,11 @@ export default function ProjectIdeas() {
                   onClick={() => setSelectedProject(project)}
                   className="group flex flex-col bg-surface dark:bg-slate-800 rounded-3xl border border-border dark:border-border overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer"
                 >
+                  {project.imageUrl && (
+                    <div className="w-full h-48 overflow-hidden">
+                      <img src={project.imageUrl} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    </div>
+                  )}
                   <div className="p-6 flex-1 flex flex-col">
                     <div className="flex justify-between items-start gap-4 mb-4">
                       <div className="p-3 bg-primary/10 text-primary rounded-2xl group-hover:bg-primary group-hover:text-white transition-colors">
@@ -220,6 +226,11 @@ export default function ProjectIdeas() {
             {/* Modal Body */}
             <div className="p-6 sm:p-8 overflow-y-auto">
               <div className="space-y-8">
+                {selectedProject.imageUrl && (
+                  <div className="w-full max-h-80 overflow-hidden rounded-2xl">
+                    <img src={selectedProject.imageUrl} alt={selectedProject.title} className="w-full h-full object-cover" />
+                  </div>
+                )}
                 <div>
                   <h4 className="text-sm font-bold text-text-secondary uppercase tracking-wider mb-4 flex items-center gap-2">
                     <Code2 className="w-4 h-4" />

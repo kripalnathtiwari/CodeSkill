@@ -12,6 +12,7 @@ interface ProjectIdea {
   domain: string;
   difficulty: string;
   techStack: string[];
+  imageUrl?: string | null;
 }
 
 export default function ProjectIdeaManagement() {
@@ -27,6 +28,7 @@ export default function ProjectIdeaManagement() {
   const [description, setDescription] = useState('');
   const [domain, setDomain] = useState('');
   const [difficulty, setDifficulty] = useState('Beginner');
+  const [imageUrl, setImageUrl] = useState('');
   const [techStackInput, setTechStackInput] = useState('');
   
   const [submitting, setSubmitting] = useState(false);
@@ -57,6 +59,7 @@ export default function ProjectIdeaManagement() {
     setDescription('');
     setDomain('');
     setDifficulty('Beginner');
+    setImageUrl('');
     setTechStackInput('');
     setEditingId(null);
     setIsModalOpen(false);
@@ -67,6 +70,7 @@ export default function ProjectIdeaManagement() {
     setDescription(project.description);
     setDomain(project.domain);
     setDifficulty(project.difficulty);
+    setImageUrl(project.imageUrl || '');
     setTechStackInput(project.techStack.join(', '));
     setEditingId(project.id);
     setIsModalOpen(true);
@@ -101,6 +105,7 @@ export default function ProjectIdeaManagement() {
         description,
         domain,
         difficulty,
+        imageUrl: imageUrl || null,
         techStack: techStackArray
       };
 
@@ -279,6 +284,17 @@ export default function ProjectIdeaManagement() {
                   value={techStackInput}
                   onChange={(e) => setTechStackInput(e.target.value)}
                   placeholder="e.g., React, Node.js, MongoDB"
+                  className="w-full px-4 py-3 bg-background border border-border dark:border-slate-700 rounded-xl text-text-primary focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-text-secondary mb-2">Cover Image URL (Optional)</label>
+                <input
+                  type="url"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  placeholder="e.g., https://example.com/image.jpg"
                   className="w-full px-4 py-3 bg-background border border-border dark:border-slate-700 rounded-xl text-text-primary focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors outline-none"
                 />
               </div>

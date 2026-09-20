@@ -61,6 +61,8 @@ export const createGlobalNote = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Title is required" });
     }
 
+    const imageUrl = req.body.imageUrl || null;
+
     let pdfUrl = null;
     if (req.file) {
       pdfUrl = `/public/uploads/notes/${req.file.filename}`;
@@ -72,6 +74,7 @@ export const createGlobalNote = async (req: Request, res: Response) => {
         title,
         content: content || null,
         pdfUrl,
+        imageUrl,
         courseName: courseName || null,
       },
     });
@@ -107,5 +110,33 @@ export const deleteNote = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error deleting note:", error);
     res.status(500).json({ error: "Failed to delete note" });
+  }
+};
+
+// Admin: Update a specific note
+export const updateNote = async (req: Request, res: Response) => {
+  try {
+    const { noteId } = req.params;
+    const { title, content, courseName, imageUrl } = req.body;
+
+    const existingNote = await prisma.note.findUnique({ where: { id: noteId } });
+    if (!existingNote) {
+      return res.status(404).json({ error: "Note not found" });
+    }
+
+    const note = await prisma.note.update({
+      where: { id: noteId },
+      data: {
+        title: title || existingNote.title,
+        content: content !== undefined ? content : existingNote.content,
+        courseName: courseName !== undefined ? courseName : existingNote.courseName,
+        imageUrl: imageUrl !== undefined ? imageUrl : existingNote.imageUrl,
+      },
+    });
+
+    res.json(note);
+  } catch (error) {
+    console.error("Error updating note:", error);
+    res.status(500).json({ error: "Failed to update note" });
   }
 };

@@ -17,7 +17,7 @@ export const getAllProjectIdeas = async (req: Request, res: Response) => {
 
 export const createProjectIdea = async (req: Request, res: Response) => {
   try {
-    const { title, description, domain, difficulty, techStack } = req.body;
+    const { title, description, domain, difficulty, techStack, imageUrl } = req.body;
     
     const project = await prisma.projectIdea.create({
       data: {
@@ -25,6 +25,7 @@ export const createProjectIdea = async (req: Request, res: Response) => {
         description,
         domain,
         difficulty,
+        imageUrl: imageUrl || null,
         techStack: techStack || []
       }
     });
@@ -39,7 +40,7 @@ export const createProjectIdea = async (req: Request, res: Response) => {
 export const updateProjectIdea = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { title, description, domain, difficulty, techStack } = req.body;
+    const { title, description, domain, difficulty, techStack, imageUrl } = req.body;
     
     const project = await prisma.projectIdea.update({
       where: { id },
@@ -48,6 +49,7 @@ export const updateProjectIdea = async (req: Request, res: Response) => {
         description,
         domain,
         difficulty,
+        imageUrl: imageUrl || null,
         techStack
       }
     });

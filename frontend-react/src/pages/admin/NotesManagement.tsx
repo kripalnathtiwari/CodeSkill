@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { StickyNote, Trash2, Loader, Upload, FileText } from "lucide-react";
+import { StickyNote, Trash2, Loader, Upload, FileText, Pencil, X } from "lucide-react";
 import axios from "axios";
 import { getApiUrl } from "../../utils/apiConfig";
 
@@ -8,7 +8,9 @@ export default function NotesManagement() {
   const [newNoteTitle, setNewNoteTitle] = useState("");
   const [newNoteContent, setNewNoteContent] = useState("");
   const [newCourseName, setNewCourseName] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [isFetchingNotes, setIsFetchingNotes] = useState(true);
@@ -31,38 +33,71 @@ export default function NotesManagement() {
     fetchGlobalNotes();
   }, []);
 
-  const handleCreateNote = async () => {
+  const handleSubmitNote = async () => {
     if (!newNoteTitle.trim()) {
       return alert("Title is required");
     }
     setIsSubmittingNote(true);
     try {
-      const formData = new FormData();
-      formData.append("title", newNoteTitle);
-      formData.append("content", newNoteContent);
-      formData.append("courseName", newCourseName);
-      if (pdfFile) {
-        formData.append("pdf", pdfFile);
-      }
-
-      const res = await axios.post(getApiUrl(`/api/v1/notes/admin/global-notes`), formData, {
-        headers: { 
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-          "Content-Type": "multipart/form-data"
+      if (editingNoteId) {
+        const payload = {
+          title: newNoteTitle,
+          content: newNoteContent,
+          courseName: newCourseName,
+          imageUrl: imageUrl
+        };
+        const res = await axios.put(getApiUrl(`/api/v1/notes/admin/notes/${editingNoteId}`), payload, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+        });
+        setGlobalNotes(globalNotes.map(n => n.id === editingNoteId ? res.data : n));
+      } else {
+        const formData = new FormData();
+        formData.append("title", newNoteTitle);
+        formData.append("content", newNoteContent);
+        formData.append("courseName", newCourseName);
+        if (imageUrl) formData.append("imageUrl", imageUrl);
+        if (pdfFile) {
+          formData.append("pdf", pdfFile);
         }
-      });
-      setGlobalNotes([res.data, ...globalNotes]);
-      setNewNoteTitle("");
-      setNewNoteContent("");
-      setNewCourseName("");
-      setPdfFile(null);
-      if (fileInputRef.current) fileInputRef.current.value = "";
+
+        const res = await axios.post(getApiUrl(`/api/v1/notes/admin/global-notes`), formData, {
+          headers: { 
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+            "Content-Type": "multipart/form-data"
+          }
+        });
+        setGlobalNotes([res.data, ...globalNotes]);
+      }
+      resetForm();
     } catch (err) {
-      console.error("Failed to create global note:", err);
-      alert("Failed to create note");
+      console.error("Failed to save global note:", err);
+      alert("Failed to save note");
     } finally {
       setIsSubmittingNote(false);
     }
+  };
+
+  const resetForm = () => {
+    setNewNoteTitle("");
+    setNewNoteContent("");
+    setNewCourseName("");
+    setImageUrl("");
+    setPdfFile(null);
+    setEditingNoteId(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleEditNote = (note: any) => {
+    setNewNoteTitle(note.title);
+    setNewNoteContent(note.content || "");
+    setNewCourseName(note.courseName || "");
+    setImageUrl(note.imageUrl || "");
+    setEditingNoteId(note.id);
+    setPdfFile(null); // Updating PDF is not supported currently
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleDeleteNote = async (noteId: string) => {
@@ -91,9 +126,22 @@ export default function NotesManagement() {
         
         <div className="flex-1 overflow-y-auto p-6 space-y-8">
           {/* Add Note Form */}
-          <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-xl border border-border space-y-4">
-            <h4 className="font-semibold text-text-primary text-lg">Add New Global Note</h4>
-            <p className="text-sm text-text-muted mb-2">This note will be visible to all students on the platform.</p>
+          <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-xl border border-border space-y-4 relative">
+            {editingNoteId && (
+              <button 
+                onClick={resetForm}
+                className="absolute top-4 right-4 p-2 text-text-muted hover:text-text-primary hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                title="Cancel Edit"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
+            <h4 className="font-semibold text-text-primary text-lg">
+              {editingNoteId ? "Edit Global Note" : "Add New Global Note"}
+            </h4>
+            <p className="text-sm text-text-muted mb-2">
+              {editingNoteId ? "Update the details for this note." : "This note will be visible to all students on the platform."}
+            </p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input 
@@ -109,6 +157,13 @@ export default function NotesManagement() {
                 onChange={e => setNewCourseName(e.target.value)}
                 placeholder="Course Name (Optional)" 
                 className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-primary"
+              />
+              <input 
+                type="url" 
+                value={imageUrl}
+                onChange={e => setImageUrl(e.target.value)}
+                placeholder="Cover Image URL (Optional)" 
+                className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-primary md:col-span-2"
               />
             </div>
             
@@ -141,17 +196,17 @@ export default function NotesManagement() {
                 Select PDF Document
               </button>
               <span className="text-sm text-text-muted truncate">
-                {pdfFile ? pdfFile.name : "No file selected (Optional)"}
+                {pdfFile ? pdfFile.name : (editingNoteId ? "Cannot update PDF currently (Optional)" : "No file selected (Optional)")}
               </span>
             </div>
 
             <button 
-              onClick={handleCreateNote} 
+              onClick={handleSubmitNote} 
               disabled={isSubmittingNote}
               className="bg-primary hover:bg-primary/90 text-text-inverse px-6 py-2.5 rounded-lg text-sm font-bold w-full md:w-auto transition-colors disabled:opacity-50 flex items-center justify-center"
             >
-              {isSubmittingNote ? <Loader className="w-4 h-4 animate-spin mr-2" /> : <StickyNote className="w-4 h-4 mr-2" />}
-              {isSubmittingNote ? "Publishing..." : "Publish Global Note"}
+              {isSubmittingNote ? <Loader className="w-4 h-4 animate-spin mr-2" /> : (editingNoteId ? <Pencil className="w-4 h-4 mr-2" /> : <StickyNote className="w-4 h-4 mr-2" />)}
+              {isSubmittingNote ? (editingNoteId ? "Saving..." : "Publishing...") : (editingNoteId ? "Save Changes" : "Publish Global Note")}
             </button>
           </div>
 
@@ -179,14 +234,28 @@ export default function NotesManagement() {
                           </span>
                         )}
                       </div>
-                      <button 
-                        onClick={() => handleDeleteNote(note.id)} 
-                        className="text-rose-500 hover:bg-rose-500/10 p-2 rounded-lg transition-colors absolute top-4 right-4 opacity-0 group-hover:opacity-100"
-                        title="Delete Note"
-                      >
-                        <Trash2 className="w-5 h-5" />
-                      </button>
+                      <div className="flex gap-2 absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button 
+                          onClick={() => handleEditNote(note)} 
+                          className="text-text-muted hover:text-primary hover:bg-primary/10 p-2 rounded-lg transition-colors"
+                          title="Edit Note"
+                        >
+                          <Pencil className="w-5 h-5" />
+                        </button>
+                        <button 
+                          onClick={() => handleDeleteNote(note.id)} 
+                          className="text-rose-500 hover:bg-rose-500/10 p-2 rounded-lg transition-colors"
+                          title="Delete Note"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                      </div>
                     </div>
+                    {note.imageUrl && (
+                      <div className="w-full h-40 mb-4 rounded-xl overflow-hidden">
+                        <img src={note.imageUrl} alt={note.title} className="w-full h-full object-cover" />
+                      </div>
+                    )}
                     {note.content && (
                       <p className="text-base text-text-secondary whitespace-pre-wrap leading-relaxed">{note.content}</p>
                     )}

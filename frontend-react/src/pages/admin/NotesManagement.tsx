@@ -62,8 +62,7 @@ export default function NotesManagement() {
 
         const res = await axios.post(getApiUrl(`/api/v1/notes/admin/global-notes`), formData, {
           headers: { 
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-            "Content-Type": "multipart/form-data"
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
           }
         });
         setGlobalNotes([res.data, ...globalNotes]);

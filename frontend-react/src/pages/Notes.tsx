@@ -153,7 +153,7 @@ export default function Notes() {
                 </div>
 
                 {note.imageUrl ? (
-                  <div className="flex-1 w-full rounded-xl overflow-hidden my-2 relative min-h-[120px] bg-surface-secondary/50 flex items-center justify-center group-hover:shadow-md transition-shadow">
+                  <div className="flex-1 w-full rounded-xl overflow-hidden my-2 relative min-h-[200px] bg-surface-secondary/50 flex items-center justify-center group-hover:shadow-md transition-shadow">
                     <img src={note.imageUrl} alt={note.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 absolute inset-0" />
                   </div>
                 ) : note.content ? (

@@ -184,8 +184,6 @@ export default function ProjectIdeas() {
           </div>
         </>
       )}
-
-      )}
     </div>
   );
 }

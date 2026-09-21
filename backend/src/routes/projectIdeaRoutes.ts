@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { authenticateJWT } from '../middlewares/authMiddleware';
 import { 
   getAllProjectIdeas, 
+  getProjectIdeaById,
   createProjectIdea, 
   updateProjectIdea, 
   deleteProjectIdea 
@@ -11,7 +12,9 @@ const router = Router();
 
 // Publicly accessible for all logged-in users (or we can make it totally public)
 // We'll require authentication to view project ideas
+// We'll require authentication to view project ideas
 router.get('/', authenticateJWT, getAllProjectIdeas);
+router.get('/:id', authenticateJWT, getProjectIdeaById);
 
 // Admin only routes
 // In this project, `authenticateJWT` middleware attaches req.user. 

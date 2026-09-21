@@ -25,12 +25,17 @@ export default function ProjectIdeaManagement() {
 
   // Form State
   const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
   const [domain, setDomain] = useState('');
   const [difficulty, setDifficulty] = useState('Beginner');
   const [imageUrl, setImageUrl] = useState('');
   const [techStackInput, setTechStackInput] = useState('');
   
+  interface Section {
+    heading: string;
+    content: string;
+  }
+  const [sections, setSections] = useState<Section[]>([{ heading: 'Project Overview', content: '' }]);
+
   const [submitting, setSubmitting] = useState(false);
 
   const fetchProjects = async () => {
@@ -56,7 +61,7 @@ export default function ProjectIdeaManagement() {
 
   const resetForm = () => {
     setTitle('');
-    setDescription('');
+    setSections([{ heading: 'Project Overview', content: '' }]);
     setDomain('');
     setDifficulty('Beginner');
     setImageUrl('');
@@ -65,9 +70,39 @@ export default function ProjectIdeaManagement() {
     setIsModalOpen(false);
   };
 
+  const parseDescription = (desc: string): Section[] => {
+    if (!desc) return [{ heading: 'Project Overview', content: '' }];
+    
+    // Split by Markdown heading h3 (### )
+    const parts = desc.split(/(?:^|\n)(?=### )/g).filter(p => p.trim());
+    
+    if (parts.length === 0) {
+      return [{ heading: 'Project Overview', content: desc.trim() }];
+    }
+    
+    // If the first part doesn't have a heading, treat it as general
+    if (!parts[0].trim().startsWith('### ')) {
+      return [{ heading: 'Project Overview', content: desc.trim() }];
+    }
+
+    return parts.map(part => {
+      const lines = part.trim().split('\n');
+      if (lines[0].startsWith('### ')) {
+        return {
+          heading: lines[0].replace('### ', '').trim(),
+          content: lines.slice(1).join('\n').trim()
+        };
+      }
+      return {
+        heading: 'Section',
+        content: part.trim()
+      };
+    });
+  };
+
   const handleEdit = (project: ProjectIdea) => {
     setTitle(project.title);
-    setDescription(project.description);
+    setSections(parseDescription(project.description));
     setDomain(project.domain);
     setDifficulty(project.difficulty);
     setImageUrl(project.imageUrl || '');
@@ -93,16 +128,21 @@ export default function ProjectIdeaManagement() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || !description || !domain) return;
+    if (!title || sections.length === 0 || !domain) return;
 
     setSubmitting(true);
     try {
       const token = localStorage.getItem('accessToken');
       const techStackArray = techStackInput.split(',').map(s => s.trim()).filter(s => s.length > 0);
       
+      const compiledDescription = sections
+        .filter(s => s.heading.trim() && s.content.trim())
+        .map(s => `### ${s.heading.trim()}\n\n${s.content.trim()}`)
+        .join('\n\n');
+
       const payload = {
         title,
-        description,
+        description: compiledDescription,
         domain,
         difficulty,
         imageUrl: imageUrl || null,
@@ -299,16 +339,59 @@ export default function ProjectIdeaManagement() {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-text-secondary mb-2">Description</label>
-                <textarea
-                  required
-                  rows={5}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Describe the project goals, features, and learning outcomes..."
-                  className="w-full px-4 py-3 bg-background border border-border dark:border-slate-700 rounded-xl text-text-primary focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors outline-none resize-none"
-                />
+              <div className="space-y-4">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-sm font-semibold text-text-secondary">Project Content Sections</label>
+                  <button
+                    type="button"
+                    onClick={() => setSections([...sections, { heading: '', content: '' }])}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add Section
+                  </button>
+                </div>
+
+                {sections.map((section, index) => (
+                  <div key={index} className="p-4 bg-slate-50 dark:bg-slate-800/50 border border-border dark:border-slate-700 rounded-xl space-y-4 relative group">
+                    <button
+                      type="button"
+                      onClick={() => setSections(sections.filter((_, i) => i !== index))}
+                      className="absolute top-4 right-4 p-1.5 text-text-muted hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                      title="Remove Section"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                    <div>
+                      <input
+                        type="text"
+                        required
+                        value={section.heading}
+                        onChange={(e) => {
+                          const newSections = [...sections];
+                          newSections[index].heading = e.target.value;
+                          setSections(newSections);
+                        }}
+                        placeholder="Section Heading (e.g., Features, System Architecture)"
+                        className="w-full pr-10 px-4 py-2 bg-background border border-border dark:border-slate-700 rounded-lg text-text-primary text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors outline-none font-bold"
+                      />
+                    </div>
+                    <div>
+                      <textarea
+                        required
+                        rows={4}
+                        value={section.content}
+                        onChange={(e) => {
+                          const newSections = [...sections];
+                          newSections[index].content = e.target.value;
+                          setSections(newSections);
+                        }}
+                        placeholder="Content for this section..."
+                        className="w-full px-4 py-3 bg-background border border-border dark:border-slate-700 rounded-lg text-text-primary text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors outline-none resize-none"
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
             </form>
             

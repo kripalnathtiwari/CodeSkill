@@ -15,6 +15,24 @@ export const getAllProjectIdeas = async (req: Request, res: Response) => {
   }
 };
 
+export const getProjectIdeaById = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const project = await prisma.projectIdea.findUnique({
+      where: { id }
+    });
+    
+    if (!project) {
+      return res.status(404).json({ message: 'Project idea not found' });
+    }
+    
+    res.json(project);
+  } catch (error) {
+    console.error('Error fetching project idea:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 export const createProjectIdea = async (req: Request, res: Response) => {
   try {
     const { title, description, domain, difficulty, techStack, imageUrl } = req.body;

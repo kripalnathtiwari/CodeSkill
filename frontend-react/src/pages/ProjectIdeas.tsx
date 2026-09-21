@@ -62,17 +62,35 @@ export default function ProjectIdeas() {
 
   return (
     <div className="flex-1 p-6 md:p-8 w-full max-w-7xl mx-auto space-y-8 relative">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-8 rounded-3xl border border-primary/20">
-        <h1 className="text-3xl md:text-4xl font-extrabold text-text-primary tracking-tight flex items-center gap-3">
-          <div className="p-3 bg-primary/20 rounded-2xl">
-            <Lightbulb className="w-8 h-8 text-primary" />
+      {/* Premium Header */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-background to-indigo-500/5 p-8 md:p-12 rounded-[2rem] border border-primary/20 shadow-sm">
+        {/* Decorative background elements */}
+        <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/3 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
+          <div className="max-w-3xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-bold tracking-wide uppercase mb-6">
+              <Lightbulb className="w-4 h-4" />
+              <span>Inspiration Hub</span>
+            </div>
+            
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-text-primary tracking-tight leading-tight mb-6">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-indigo-500">CodeSkill</span> Project Ideas
+            </h1>
+            
+            <p className="text-text-secondary text-lg md:text-xl leading-relaxed max-w-2xl">
+              Explore and get inspired by hand-picked project ideas for your portfolio. Build these real-world applications to master your skills and stand out to top recruiters.
+            </p>
           </div>
-          Project Ideas
-        </h1>
-        <p className="text-text-muted mt-4 max-w-2xl text-lg">
-          Explore and get inspired by curated project ideas for your portfolio. Build these projects to showcase your skills and stand out to recruiters.
-        </p>
+
+          <div className="hidden lg:flex items-center justify-center relative w-56 h-56 shrink-0">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-indigo-500/20 rounded-[2rem] transform rotate-6 animate-pulse"></div>
+            <div className="absolute inset-0 bg-surface dark:bg-slate-800 rounded-[2rem] border border-border shadow-xl transform -rotate-3 flex items-center justify-center p-6 transition-transform hover:rotate-0 duration-500">
+              <Code2 className="w-20 h-20 text-primary/80" />
+            </div>
+          </div>
+        </div>
       </div>
 
       {loading ? (
@@ -88,17 +106,17 @@ export default function ProjectIdeas() {
       ) : (
         <>
           {/* Filters */}
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-surface dark:bg-slate-800 p-4 rounded-2xl border border-border shadow-sm">
+          <div className="flex flex-col md:flex-row gap-6 items-center justify-between bg-surface dark:bg-slate-800 p-5 md:px-8 rounded-2xl border border-border shadow-sm">
             <div className="flex items-center gap-4 w-full md:w-auto overflow-x-auto hide-scrollbar">
-              <span className="text-sm font-semibold text-text-secondary whitespace-nowrap">Domain:</span>
+              <span className="text-sm font-bold text-text-secondary uppercase tracking-wider whitespace-nowrap">Domain</span>
               <div className="flex gap-2">
                 {domains.map(d => (
                   <button
                     key={d}
                     onClick={() => setSelectedDomain(d)}
-                    className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                    className={`px-4 py-1.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all duration-200 ${
                       selectedDomain === d 
-                        ? 'bg-primary text-white shadow-md' 
+                        ? 'bg-primary text-white shadow-md shadow-primary/20 -translate-y-0.5' 
                         : 'bg-slate-100 dark:bg-slate-700/50 text-text-secondary hover:bg-slate-200 dark:hover:bg-slate-700'
                     }`}
                   >
@@ -108,16 +126,18 @@ export default function ProjectIdeas() {
               </div>
             </div>
 
-            <div className="flex items-center gap-4 w-full md:w-auto overflow-x-auto hide-scrollbar mt-4 md:mt-0">
-              <span className="text-sm font-semibold text-text-secondary whitespace-nowrap">Difficulty:</span>
+            <div className="w-full md:w-px h-px md:h-8 bg-border dark:bg-border/50 shrink-0"></div>
+
+            <div className="flex items-center gap-4 w-full md:w-auto overflow-x-auto hide-scrollbar">
+              <span className="text-sm font-bold text-text-secondary uppercase tracking-wider whitespace-nowrap">Difficulty</span>
               <div className="flex gap-2">
                 {difficulties.map(d => (
                   <button
                     key={d}
                     onClick={() => setSelectedDifficulty(d)}
-                    className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                    className={`px-4 py-1.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all duration-200 ${
                       selectedDifficulty === d 
-                        ? 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900 shadow-md' 
+                        ? 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900 shadow-md -translate-y-0.5' 
                         : 'bg-slate-100 dark:bg-slate-700/50 text-text-secondary hover:bg-slate-200 dark:hover:bg-slate-700'
                     }`}
                   >

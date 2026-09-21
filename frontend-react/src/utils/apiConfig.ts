@@ -9,6 +9,9 @@ export const API_BASE_URL = rawUrl.replace(/\/+$/, "");
  * @param path relative path starting with /api/...
  */
 export const getApiUrl = (path: string): string => {
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path;
+  }
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
   return `${API_BASE_URL}${normalizedPath}`;
 };

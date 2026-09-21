@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Lightbulb, Code2, ArrowRight, Loader2, Server, Smartphone, Globe, BrainCircuit, X } from 'lucide-react';
 import axios from 'axios';
 import { API_BASE_URL } from '../utils/apiConfig';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface ProjectIdea {
   id: string;
@@ -249,10 +251,10 @@ export default function ProjectIdeas() {
                   <h4 className="text-sm font-bold text-text-secondary uppercase tracking-wider mb-4">
                     Project Overview
                   </h4>
-                  <div className="prose dark:prose-invert max-w-none">
-                    <p className="text-text-primary text-base sm:text-lg leading-relaxed whitespace-pre-wrap">
+                  <div className="prose prose-slate dark:prose-invert max-w-none prose-headings:font-bold prose-a:text-primary">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
                       {selectedProject.description}
-                    </p>
+                    </ReactMarkdown>
                   </div>
                 </div>
               </div>

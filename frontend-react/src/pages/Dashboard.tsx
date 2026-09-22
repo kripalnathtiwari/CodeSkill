@@ -29,32 +29,38 @@ export default function Dashboard() {
     enabled: !!user?.email
   });
 
-  const { data: enrollmentsCount = 0 } = useQuery({
-    queryKey: ['enrollmentsCount', user?.email],
+  const { data: enrollmentsData = [] } = useQuery({
+    queryKey: ['enrollmentsData', user?.email],
     queryFn: async () => {
-      if (!user?.email) return 0;
+      if (!user?.email) return [];
       const existingStr = localStorage.getItem("enrolledCourses");
-      if (!existingStr) return 0;
+      if (!existingStr) return [];
       const parsed = JSON.parse(existingStr);
-      let count = 0;
-      for (const e of parsed) {
-        if (e.email?.toLowerCase().trim() === user.email?.toLowerCase().trim() || 
-            e.accountEmail?.toLowerCase().trim() === user.email?.toLowerCase().trim()) {
-          count++;
-        }
-      }
-      return count;
+      return parsed.filter((e: any) => 
+        e.email?.toLowerCase().trim() === user.email?.toLowerCase().trim() || 
+        e.accountEmail?.toLowerCase().trim() === user.email?.toLowerCase().trim()
+      ).sort((a: any, b: any) => new Date(b.dateRegistered || 0).getTime() - new Date(a.dateRegistered || 0).getTime());
     },
     enabled: !!user?.email
   });
 
-  const { data: testStats = { attempted: 0 } } = useQuery({
+  const { data: testStats = { attempted: 0, scores: [] } } = useQuery({
     queryKey: ['testStats', user?.email],
     queryFn: async () => {
-      if (!user?.email) return { attempted: 0 };
+      if (!user?.email) return { attempted: 0, scores: [] };
       const allScores = JSON.parse(localStorage.getItem("all_student_scores") || "[]");
       const myScores = allScores.filter((s: { studentEmail?: string }) => s.studentEmail === user.email);
-      return { attempted: myScores.length };
+      return { attempted: myScores.length, scores: myScores.reverse() };
+    },
+    enabled: !!user?.email
+  });
+
+  const { data: weeklyProgress = [] } = useQuery({
+    queryKey: ['weeklyProgress', user?.email],
+    queryFn: async () => {
+      if (!user?.email) return [];
+      const { getWeeklyProgress } = await import('../utils/progressTracker');
+      return getWeeklyProgress(user.email);
     },
     enabled: !!user?.email
   });
@@ -92,10 +98,10 @@ export default function Dashboard() {
 
         {/* 5 Stat Cards */}
         <StatCards 
-          enrolledCount={enrollmentsCount}
+          enrolledCount={enrollmentsData.length}
           testsAttempted={testStats.attempted}
           problemsSolved={dsaStats.total}
-          learningTimeHrs={42} // Mocked for UI parity with image
+          learningTimeHrs={Math.round((dsaStats.total * 15 + testStats.attempted * 30) / 60) || 1}
           globalRank={userRank}
         />
 
@@ -104,12 +110,12 @@ export default function Dashboard() {
           
           {/* Row 1 */}
           <div className="lg:col-span-1">
-            <MyProgress />
+            <MyProgress enrollments={enrollmentsData} />
           </div>
           
           <div className="lg:col-span-1 space-y-6 flex flex-col">
             <div className="flex-1">
-              <LearningStreak />
+              <LearningStreak weeklyProgress={weeklyProgress} />
             </div>
             <div className="flex-1">
               <QuickActions />
@@ -117,21 +123,25 @@ export default function Dashboard() {
           </div>
           
           <div className="lg:col-span-1">
-            <DashboardCalendar />
+            <DashboardCalendar userEmail={user?.email || ''} />
           </div>
 
           {/* Row 2 */}
           <div className="lg:col-span-1">
-            <RecentActivity />
+            <RecentActivity enrollments={enrollmentsData} testScores={testStats.scores} />
           </div>
           
           <div className="lg:col-span-1">
             <Recommendations />
           </div>
           
-          
           <div className="lg:col-span-1">
-            <Achievements />
+            <Achievements 
+              dsaTotal={dsaStats.total} 
+              enrollmentTotal={enrollmentsData.length}
+              testTotal={testStats.attempted}
+              weeklyProgress={weeklyProgress} 
+            />
           </div>
           
         </div>

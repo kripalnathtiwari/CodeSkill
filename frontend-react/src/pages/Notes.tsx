@@ -66,6 +66,7 @@ export default function Notes() {
       link.parentNode?.removeChild(link);
     } catch (error) {
       console.error("Failed to download PDF", error);
+      alert("Failed to download PDF. The file may have been deleted or is missing from the server.");
     }
   };
 

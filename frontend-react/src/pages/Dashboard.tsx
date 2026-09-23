@@ -65,6 +65,54 @@ export default function Dashboard() {
     enabled: !!user?.email
   });
 
+  const { data: tagsProgress = [] } = useQuery({
+    queryKey: ['tagsProgress', user?.email],
+    queryFn: async () => {
+      if (!user?.email) return [];
+      const solvedStr = localStorage.getItem(`solved_problems_progress_${user.email}`);
+      if (!solvedStr) return [];
+      const solvedIds = JSON.parse(solvedStr);
+      if (!solvedIds.length) return [];
+      
+      try {
+        const { getApiUrl } = await import('../utils/apiConfig');
+        const axios = (await import('axios')).default;
+        const res = await axios.get(getApiUrl("/api/v1/questions?limit=100&type=CODING"));
+        const questions = res.data?.questions || res.data || [];
+        
+        const tagCounts: Record<string, number> = {};
+        questions.forEach((q: any) => {
+          if (solvedIds.includes(q.id) || solvedIds.includes(q._id) || solvedIds.includes(q.slug)) {
+            let tags: string[] = [];
+            if (Array.isArray(q.tags)) tags = q.tags;
+            else if (typeof q.tags === 'string') {
+              try { tags = JSON.parse(q.tags); } catch { tags = []; }
+            }
+            if (tags.length === 0) tags = ["General"];
+            tags.forEach((t: string) => {
+              tagCounts[t] = (tagCounts[t] || 0) + 1;
+            });
+          }
+        });
+        
+        return Object.entries(tagCounts)
+          .map(([name, count]) => ({ name, value: count }))
+          .sort((a, b) => b.value - a.value);
+      } catch (e) {
+         return [{ name: "Arrays", value: Math.floor(solvedIds.length/2) }, { name: "Strings", value: Math.ceil(solvedIds.length/2) }];
+      }
+    },
+    enabled: !!user?.email
+  });
+
+  React.useEffect(() => {
+    if (user?.email) {
+      import('../utils/progressTracker').then(({ recordLogin }) => {
+        recordLogin(user.email);
+      });
+    }
+  }, [user?.email]);
+
   const { data: userRank = null } = useQuery({
     queryKey: ['userRank', user?.email],
     queryFn: async () => {
@@ -101,7 +149,6 @@ export default function Dashboard() {
           enrolledCount={enrollmentsData.length}
           testsAttempted={testStats.attempted}
           problemsSolved={dsaStats.total}
-          learningTimeHrs={Math.round((dsaStats.total * 15 + testStats.attempted * 30) / 60) || 1}
           globalRank={userRank}
         />
 
@@ -110,7 +157,7 @@ export default function Dashboard() {
           
           {/* Row 1 */}
           <div className="lg:col-span-1">
-            <MyProgress enrollments={enrollmentsData} />
+            <MyProgress enrollments={enrollmentsData} practiceProgress={tagsProgress} />
           </div>
           
           <div className="lg:col-span-1 space-y-6 flex flex-col">

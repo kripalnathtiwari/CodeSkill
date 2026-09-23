@@ -5,7 +5,7 @@ export default function LearningStreak({ weeklyProgress = [] }: { weeklyProgress
   // calculate days and streak
   let currentStreak = 0;
   const days = weeklyProgress.map((day) => {
-    const isActive = day.questionsSolved > 0 || day.pointsEarned > 0;
+    const isActive = day.questionsSolved > 0 || day.pointsEarned > 0 || day.loggedIn;
     return {
       label: day.name,
       active: isActive

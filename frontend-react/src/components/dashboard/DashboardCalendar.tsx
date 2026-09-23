@@ -33,23 +33,27 @@ export default function DashboardCalendar({ userEmail }: { userEmail: string }) 
   const prevMonthDays = new Date(year, month, 0).getDate();
   const calendarDays = [];
 
+  const today = new Date();
+  const isCurrentMonthYear = today.getFullYear() === year && today.getMonth() === month;
+
   // Previous month days
   for (let i = firstDayOfMonth - 1; i >= 0; i--) {
-    calendarDays.push({ day: prevMonthDays - i, current: false, active: false });
+    calendarDays.push({ day: prevMonthDays - i, current: false, active: false, isToday: false });
   }
 
   // Current month days
   for (let i = 1; i <= daysInMonth; i++) {
     const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
     const isActive = activeDates.includes(dateStr);
-    calendarDays.push({ day: i, current: true, active: isActive });
+    const isToday = isCurrentMonthYear && i === today.getDate();
+    calendarDays.push({ day: i, current: true, active: isActive, isToday });
   }
 
   // Next month days to fill grid (up to 35 or 42 cells)
   const totalCells = calendarDays.length > 35 ? 42 : 35;
   let nextMonthDay = 1;
   while (calendarDays.length < totalCells) {
-    calendarDays.push({ day: nextMonthDay++, current: false, active: false });
+    calendarDays.push({ day: nextMonthDay++, current: false, active: false, isToday: false });
   }
 
   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -89,7 +93,8 @@ export default function DashboardCalendar({ userEmail }: { userEmail: string }) 
             <span className={`
               w-7 h-7 flex items-center justify-center text-xs font-semibold rounded-full
               ${d.active ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30' : ''}
-              ${!d.active && d.current ? 'text-text-primary hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer' : ''}
+              ${d.isToday && !d.active ? 'bg-primary text-white shadow-md shadow-primary/30' : ''}
+              ${!d.active && !d.isToday && d.current ? 'text-text-primary hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer' : ''}
               ${!d.current ? 'text-text-muted/50' : ''}
             `}>
               {d.day}

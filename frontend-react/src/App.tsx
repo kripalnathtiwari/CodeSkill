@@ -47,6 +47,7 @@ const TestSeries = lazy(() => import('./pages/TestSeries'));
 const OurProduct = lazy(() => import('./pages/OurProduct'));
 const ProjectIdeas = lazy(() => import('./pages/ProjectIdeas'));
 const ProjectIdeaDetail = lazy(() => import('./pages/ProjectIdeaDetail'));
+const Leaderboard = lazy(() => import('./pages/Leaderboard'));
 
 import ErrorBoundary from './components/ErrorBoundary';
 
@@ -90,6 +91,7 @@ function AppContent() {
               <Route path="/dashboard/career/resume-analysis" element={<ProtectedRoute><DashboardLayout><ATSChecker /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/projects" element={<ProtectedRoute><DashboardLayout><ProjectIdeas /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/projects/:id" element={<ProtectedRoute><DashboardLayout><ProjectIdeaDetail /></DashboardLayout></ProtectedRoute>} />
+              <Route path="/dashboard/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
               <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
               <Route path="/my-courses" element={<ProtectedRoute><MyCourses /></ProtectedRoute>} />
               <Route path="/dashboard/my-courses" element={<ProtectedRoute><DashboardLayout><MyCourses /></DashboardLayout></ProtectedRoute>} />

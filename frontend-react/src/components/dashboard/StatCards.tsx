@@ -6,11 +6,10 @@ interface StatCardsProps {
   enrolledCount: number;
   testsAttempted: number;
   problemsSolved: number;
-  learningTimeHrs: number;
   globalRank: number | null;
 }
 
-export default function StatCards({ enrolledCount, testsAttempted, problemsSolved, learningTimeHrs, globalRank }: StatCardsProps) {
+export default function StatCards({ enrolledCount, testsAttempted, problemsSolved, globalRank }: StatCardsProps) {
   const navigate = useNavigate();
 
   const cards = [
@@ -20,7 +19,7 @@ export default function StatCards({ enrolledCount, testsAttempted, problemsSolve
       icon: <Book className="w-6 h-6 text-emerald-500" />,
       iconBg: "bg-emerald-100 dark:bg-emerald-500/20",
       action: "View Courses",
-      onClick: () => navigate('/courses')
+      onClick: () => navigate('/dashboard/courses')
     },
     {
       title: "Tests Attempted",
@@ -28,7 +27,7 @@ export default function StatCards({ enrolledCount, testsAttempted, problemsSolve
       icon: <Target className="w-6 h-6 text-purple-500" />,
       iconBg: "bg-purple-100 dark:bg-purple-500/20",
       action: "View Results",
-      onClick: () => navigate('/tests')
+      onClick: () => navigate('/dashboard/tests')
     },
     {
       title: "Problems Solved",
@@ -36,15 +35,7 @@ export default function StatCards({ enrolledCount, testsAttempted, problemsSolve
       icon: <Code className="w-6 h-6 text-orange-500" />,
       iconBg: "bg-orange-100 dark:bg-orange-500/20",
       action: "Start Practicing",
-      onClick: () => navigate('/problems')
-    },
-    {
-      title: "Learning Time",
-      value: `${learningTimeHrs} hrs`,
-      icon: <Clock className="w-6 h-6 text-blue-500" />,
-      iconBg: "bg-blue-100 dark:bg-blue-500/20",
-      action: "View Insights",
-      onClick: () => {}
+      onClick: () => navigate('/dashboard/practice')
     },
     {
       title: "Global Rank",
@@ -52,12 +43,12 @@ export default function StatCards({ enrolledCount, testsAttempted, problemsSolve
       icon: <Trophy className="w-6 h-6 text-emerald-500" />,
       iconBg: "bg-emerald-100 dark:bg-emerald-500/20",
       action: "View Leaderboard",
-      onClick: () => navigate('/problems')
+      onClick: () => navigate('/dashboard/leaderboard')
     }
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
       {cards.map((card, idx) => (
         <div key={idx} className="bg-surface dark:bg-[#111827] border border-border rounded-2xl p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
           <div className="flex items-center space-x-3 mb-4">

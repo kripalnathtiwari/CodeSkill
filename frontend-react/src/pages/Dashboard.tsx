@@ -157,8 +157,8 @@ export default function Dashboard() {
         {/* Grid Layout for Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
-          {/* Row 1 */}
-          <div className="lg:col-span-1">
+          {/* Top Row: Focus on Progress and Daily Engagement */}
+          <div className="lg:col-span-2 flex">
             <MyProgress enrollments={enrollmentsData} practiceProgress={tagsProgress} />
           </div>
           
@@ -171,20 +171,21 @@ export default function Dashboard() {
             </div>
           </div>
           
-          <div className="lg:col-span-1">
+          {/* Middle Row: Tracking and Discovery */}
+          <div className="lg:col-span-1 flex">
             <DashboardCalendar userEmail={user?.email || ''} />
           </div>
-
-          {/* Row 2 */}
-          <div className="lg:col-span-1">
+          
+          <div className="lg:col-span-1 flex">
             <RecentActivity enrollments={enrollmentsData} testScores={testStats.scores} />
           </div>
           
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 flex">
             <Recommendations />
           </div>
           
-          <div className="lg:col-span-1">
+          {/* Bottom Row: Gamification */}
+          <div className="lg:col-span-3">
             <Achievements 
               dsaTotal={dsaStats.total} 
               enrollmentTotal={enrollmentsData.length}

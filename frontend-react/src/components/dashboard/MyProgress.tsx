@@ -45,18 +45,18 @@ export default function MyProgress({ enrollments = [], practiceProgress = [] }: 
   }) || [];
 
   return (
-    <div className="bg-surface dark:bg-[#111827] border border-border rounded-2xl p-6 shadow-sm flex flex-col h-full">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-bold text-text-primary">My Progress</h2>
-        <div className="flex space-x-4">
+    <div className="bg-white/80 dark:bg-[#111827]/80 backdrop-blur-md border border-border/50 dark:border-border/30 rounded-3xl p-8 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col w-full h-full">
+      <div className="flex items-center justify-between mb-8">
+        <h2 className="text-xl font-extrabold text-text-primary tracking-tight">My Progress</h2>
+        <div className="flex space-x-2 bg-surface-secondary dark:bg-slate-800/50 p-1 rounded-xl">
           {['Courses', 'Practice'].map(tab => (
             <button 
               key={tab}
               onClick={() => setActiveTab(tab as any)}
-              className={`text-sm font-semibold transition-colors pb-1 ${
+              className={`text-sm font-bold transition-all px-4 py-1.5 rounded-lg ${
                 activeTab === tab 
-                  ? 'text-primary border-b-2 border-primary' 
-                  : 'text-text-muted hover:text-text-secondary'
+                  ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' 
+                  : 'text-text-muted hover:text-text-primary'
               }`}
             >
               {tab}
@@ -65,12 +65,12 @@ export default function MyProgress({ enrollments = [], practiceProgress = [] }: 
         </div>
       </div>
 
-      <div className="space-y-6 flex-1">
+      <div className="space-y-6 flex-1 w-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 content-start">
         {activeTab === 'Courses' ? (
           progressData.length > 0 ? (
             progressData.map((item, idx) => (
-              <div key={idx} className="flex items-center space-x-4">
-                <div className={`p-2.5 rounded-xl shrink-0 ${item.bg}`}>
+              <div key={idx} className="flex items-center space-x-4 group p-3 rounded-2xl hover:bg-surface-secondary dark:hover:bg-slate-800/40 transition-colors">
+                <div className={`p-3 rounded-2xl shrink-0 ${item.bg} group-hover:scale-110 transition-transform duration-300`}>
                   {item.icon}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -78,9 +78,9 @@ export default function MyProgress({ enrollments = [], practiceProgress = [] }: 
                     <span className="text-sm font-bold text-text-primary truncate">{item.name}</span>
                     <span className="text-xs font-bold text-text-muted">{item.value}%</span>
                   </div>
-                  <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2">
+                  <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2.5 overflow-hidden">
                     <div 
-                      className={`h-2 rounded-full ${item.color}`}
+                      className={`h-full rounded-full ${item.color} shadow-sm transition-all duration-1000 ease-out`}
                       style={{ width: `${item.value}%` }}
                     ></div>
                   </div>
@@ -88,32 +88,32 @@ export default function MyProgress({ enrollments = [], practiceProgress = [] }: 
               </div>
             ))
           ) : (
-            <div className="flex flex-col items-center justify-center h-full text-center space-y-3 opacity-70">
-               <BookOpen className="w-10 h-10 text-text-muted" />
-               <p className="text-sm font-bold text-text-primary">No courses yet</p>
-               <p className="text-xs text-text-muted">Enroll in a course to see progress.</p>
+            <div className="col-span-1 md:col-span-2 flex flex-col items-center justify-center h-full text-center space-y-3 opacity-70 py-8">
+               <BookOpen className="w-12 h-12 text-text-muted" />
+               <p className="text-base font-bold text-text-primary">No courses yet</p>
+               <p className="text-sm text-text-muted">Enroll in a course to see progress.</p>
             </div>
           )
         ) : (
           dsaProgressData.length > 0 ? (
             dsaProgressData.map((item, idx) => (
-              <div key={idx} className="flex items-center space-x-4">
-                <div className={`p-2.5 rounded-xl shrink-0 ${item.bg}`}>
+              <div key={idx} className="flex items-center space-x-4 group p-3 rounded-2xl hover:bg-surface-secondary dark:hover:bg-slate-800/40 transition-colors">
+                <div className={`p-3 rounded-2xl shrink-0 ${item.bg} group-hover:scale-110 transition-transform duration-300 shadow-sm`}>
                   {item.icon}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-center mb-2">
+                  <div className="flex justify-between items-center">
                     <span className="text-sm font-bold text-text-primary truncate">{item.name}</span>
-                    <span className="text-xs font-bold text-text-muted bg-primary/10 text-primary px-2 py-0.5 rounded-full">{item.value} solved</span>
+                    <span className="text-xs font-bold bg-primary/10 text-primary px-3 py-1 rounded-full">{item.value} solved</span>
                   </div>
                 </div>
               </div>
             ))
           ) : (
-            <div className="flex flex-col items-center justify-center h-full text-center space-y-3 opacity-70">
-               <Code className="w-10 h-10 text-text-muted" />
-               <p className="text-sm font-bold text-text-primary">No practice data</p>
-               <p className="text-xs text-text-muted">Solve problems to see progress.</p>
+            <div className="col-span-1 md:col-span-2 flex flex-col items-center justify-center h-full text-center space-y-3 opacity-70 py-8">
+               <Code className="w-12 h-12 text-text-muted" />
+               <p className="text-base font-bold text-text-primary">No practice data</p>
+               <p className="text-sm text-text-muted">Solve problems to see progress.</p>
             </div>
           )
         )}

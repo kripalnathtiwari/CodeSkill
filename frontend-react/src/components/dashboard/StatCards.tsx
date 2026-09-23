@@ -48,24 +48,30 @@ export default function StatCards({ enrolledCount, testsAttempted, problemsSolve
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
       {cards.map((card, idx) => (
-        <div key={idx} className="bg-surface dark:bg-[#111827] border border-border rounded-2xl p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
-          <div className="flex items-center space-x-3 mb-4">
-            <div className={`p-3 rounded-xl ${card.iconBg}`}>
+        <div 
+          key={idx} 
+          className="bg-white/80 dark:bg-[#111827]/80 backdrop-blur-md border border-border/50 dark:border-border/30 rounded-3xl p-6 flex flex-col justify-between shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group cursor-pointer"
+          onClick={card.onClick}
+        >
+          {/* Subtle gradient background on hover */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+          <div className="flex items-center space-x-4 mb-5 relative z-10">
+            <div className={`p-4 rounded-2xl ${card.iconBg} shadow-sm group-hover:scale-110 transition-transform duration-300`}>
               {card.icon}
             </div>
             <div>
-              <h3 className="text-2xl font-extrabold text-text-primary leading-tight">{card.value}</h3>
-              <p className="text-xs font-semibold text-text-muted">{card.title}</p>
+              <h3 className="text-3xl font-extrabold text-text-primary leading-none group-hover:text-primary transition-colors">{card.value}</h3>
+              <p className="text-[11px] font-bold text-text-muted mt-1 uppercase tracking-wider">{card.title}</p>
             </div>
           </div>
           <button 
-            onClick={card.onClick}
-            className="flex items-center space-x-1 text-[11px] font-bold text-primary hover:text-primary-hover group"
+            className="flex items-center space-x-1 text-xs font-bold text-primary group-hover:text-primary-hover relative z-10"
           >
             <span>{card.action}</span>
-            <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
       ))}

@@ -1,6 +1,6 @@
 import React from "react";
 import { useAuth } from "../context/AuthContext";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { BookOpen, Award, Lock } from "lucide-react";
 
 import DashboardLayout from "../components/dashboard/DashboardLayout";
@@ -16,6 +16,7 @@ import Achievements from "../components/dashboard/Achievements";
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   
   // Reuse existing logic to fetch stats for the new UI
   const { data: dsaStats = { total: 0 } } = useQuery({
@@ -109,9 +110,10 @@ export default function Dashboard() {
     if (user?.email) {
       import('../utils/progressTracker').then(({ recordLogin }) => {
         recordLogin(user.email);
+        queryClient.invalidateQueries({ queryKey: ['weeklyProgress', user.email] });
       });
     }
-  }, [user?.email]);
+  }, [user?.email, queryClient]);
 
   const { data: userRank = null } = useQuery({
     queryKey: ['userRank', user?.email],

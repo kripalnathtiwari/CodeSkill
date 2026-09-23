@@ -10,25 +10,25 @@ export default function QuickActions() {
       label: "Explore Courses",
       icon: <BookOpen className="w-6 h-6 text-emerald-600" />,
       bg: "bg-emerald-100 dark:bg-emerald-500/20",
-      path: "/courses"
+      path: "/dashboard/courses"
     },
     {
       label: "Take a Test",
       icon: <FileSignature className="w-6 h-6 text-purple-600" />,
       bg: "bg-purple-100 dark:bg-purple-500/20",
-      path: "/tests"
+      path: "/dashboard/tests"
     },
     {
       label: "Practice Problems",
       icon: <Code className="w-6 h-6 text-orange-600" />,
       bg: "bg-orange-100 dark:bg-orange-500/20",
-      path: "/problems"
+      path: "/dashboard/practice"
     },
     {
       label: "Read Notes",
       icon: <FileText className="w-6 h-6 text-blue-600" />,
       bg: "bg-blue-100 dark:bg-blue-500/20",
-      path: "/notes"
+      path: "/dashboard/notes"
     }
   ];
 

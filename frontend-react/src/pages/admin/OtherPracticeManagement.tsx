@@ -8,6 +8,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjsLib.vers
 
 type Question = {
   id: number;
+  type?: 'mcq' | 'coding';
   text: string;
   options: string[];
   answer: string;
@@ -25,7 +26,7 @@ export default function OtherPracticeManagement() {
   const [subject, setSubject] = useState("");
   const [duration, setDuration] = useState("30 Mins");
   const [questions, setQuestions] = useState<Question[]>([
-    { id: Date.now() + Math.random(), text: "", options: ["", "", "", ""], answer: "" }
+    { id: Date.now() + Math.random(), type: 'mcq', text: "", options: ["", "", "", ""], answer: "" }
   ]);
   const [isParsingPdf, setIsParsingPdf] = useState(false);
 
@@ -99,8 +100,10 @@ export default function OtherPracticeManagement() {
     for (let i = 0; i < questions.length; i++) {
       const q = questions[i];
       if (!q.text) return alert(`Question ${i + 1} is missing text!`);
-      if (q.options.some(o => !o)) return alert(`Question ${i + 1} has empty options!`);
-      if (!q.answer || !q.options.includes(q.answer)) return alert(`Question ${i + 1} needs a correct answer selected!`);
+      if (q.type !== 'coding') {
+        if (q.options.some(o => !o)) return alert(`Question ${i + 1} has empty options!`);
+        if (!q.answer || !q.options.includes(q.answer)) return alert(`Question ${i + 1} needs a correct answer selected!`);
+      }
     }
 
     const newTest = {
@@ -130,11 +133,11 @@ export default function OtherPracticeManagement() {
     setTitle("");
     setSubject("");
     setDuration("30 Mins");
-    setQuestions([{ id: Date.now() + Math.random(), text: "", options: ["", "", "", ""], answer: "" }]);
+    setQuestions([{ id: Date.now() + Math.random(), type: 'mcq', text: "", options: ["", "", "", ""], answer: "" }]);
   };
 
   const handleAddQuestion = () =>
-    setQuestions(prev => [...prev, { id: Date.now() + Math.random(), text: "", options: ["", "", "", ""], answer: "" }]);
+    setQuestions(prev => [...prev, { id: Date.now() + Math.random(), type: 'mcq', text: "", options: ["", "", "", ""], answer: "" }]);
 
   const handleRemoveQuestion = (id: number) => {
     if (questions.length === 1) return;
@@ -492,36 +495,60 @@ export default function OtherPracticeManagement() {
                   )}
                   
                   <div className="space-y-4">
+                    <div className="flex items-center justify-end mb-2">
+                      <select 
+                        value={q.type || 'mcq'}
+                        onChange={e => updateQuestion(q.id, 'type', e.target.value as 'mcq' | 'coding')}
+                        className="bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-3 py-1.5 text-sm text-text-primary focus:outline-none focus:border-rose-500 font-bold"
+                      >
+                        <option value="mcq">Multiple Choice (MCQ)</option>
+                        <option value="coding">Coding Problem</option>
+                      </select>
+                    </div>
                     <div>
-                      <label className="block text-sm font-bold text-text-muted mb-2">Question Text</label>
+                      <label className="block text-sm font-bold text-text-muted mb-2">
+                        {q.type === 'coding' ? 'Problem Statement' : 'Question Text'}
+                      </label>
                       <textarea
                         value={q.text}
                         onChange={e => updateQuestion(q.id, "text", e.target.value)}
                         className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary min-h-[80px] focus:outline-none focus:border-rose-500"
-                        placeholder="Enter the question..."
+                        placeholder={q.type === 'coding' ? "Enter the coding problem description..." : "Enter the question..."}
                       />
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {q.options.map((opt, oIndex) => (
-                        <div key={oIndex} className="flex items-center space-x-3">
-                          <input 
-                            type="radio" 
-                            name={`answer-${q.id}`}
-                            checked={q.answer === opt && opt !== ""}
-                            onChange={() => opt !== "" && updateQuestion(q.id, "answer", opt)}
-                            className="w-5 h-5 text-rose-500 focus:ring-rose-500 cursor-pointer"
-                          />
-                          <input 
-                            type="text"
-                            value={opt}
-                            onChange={e => updateOption(q.id, oIndex, e.target.value)}
-                            className="flex-1 bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-2 text-text-primary focus:outline-none focus:border-rose-500"
-                            placeholder={`Option ${oIndex + 1}`}
-                          />
-                        </div>
-                      ))}
-                    </div>
+                    {(!q.type || q.type === 'mcq') ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {q.options.map((opt, oIndex) => (
+                          <div key={oIndex} className="flex items-center space-x-3">
+                            <input 
+                              type="radio" 
+                              name={`answer-${q.id}`}
+                              checked={q.answer === opt && opt !== ""}
+                              onChange={() => opt !== "" && updateQuestion(q.id, "answer", opt)}
+                              className="w-5 h-5 text-rose-500 focus:ring-rose-500 cursor-pointer"
+                            />
+                            <input 
+                              type="text"
+                              value={opt}
+                              onChange={e => updateOption(q.id, oIndex, e.target.value)}
+                              className="flex-1 bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-2 text-text-primary focus:outline-none focus:border-rose-500"
+                              placeholder={`Option ${oIndex + 1}`}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div>
+                        <label className="block text-sm font-bold text-text-muted mb-2">Reference Solution / Notes (Optional)</label>
+                        <textarea
+                          value={q.answer}
+                          onChange={e => updateQuestion(q.id, "answer", e.target.value)}
+                          className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary min-h-[120px] focus:outline-none focus:border-rose-500 font-mono text-sm"
+                          placeholder="Provide a reference solution, grading notes, or test cases here..."
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}

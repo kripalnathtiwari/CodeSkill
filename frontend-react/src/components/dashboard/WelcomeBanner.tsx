@@ -31,11 +31,10 @@ export default function WelcomeBanner({ solvedCount }: { solvedCount: number }) 
         </button>
       </div>
 
-      <div className="z-10 hidden lg:flex flex-col items-center justify-center relative">
-        <div className="absolute right-32 top-0 opacity-80 max-w-[200px] italic text-sm text-white/90 font-medium">
+      <div className="z-10 hidden lg:flex items-center justify-end relative pl-4">
+        <div className="opacity-90 italic text-lg text-white font-medium text-right max-w-[280px] mr-4">
           "The expert in anything was once a beginner."
-          <br/>
-          <span className="text-xs opacity-75 mt-1 block text-right">— Helen Hayes</span>
+          <span className="text-sm opacity-75 mt-2 block">— Helen Hayes</span>
         </div>
         <img 
           src="/images/training1.png" 

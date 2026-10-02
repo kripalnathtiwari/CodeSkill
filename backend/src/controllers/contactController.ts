@@ -47,8 +47,16 @@ export const submitContactForm = async (req: Request, res: Response) => {
     );
 
     res.status(200).json({ message: "Your message has been sent successfully!" });
-  } catch (error: any) {
-    logger.error("Error sending contact email:", error.response?.data || error.message);
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as import("axios").AxiosError;
+      const errorMessage = (axiosError.response?.data as any)?.message || axiosError.message;
+      const statusCode = axiosError.response?.status || 'Unknown Status';
+      logger.error(`Brevo API Error (${statusCode}) when sending contact email: ${errorMessage}`);
+    } else {
+      const err = error as Error;
+      logger.error(`Unexpected error sending contact email: ${err.message}`);
+    }
     res.status(500).json({ error: "Failed to send email. Please try again later." });
   }
 };

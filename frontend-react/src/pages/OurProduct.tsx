@@ -145,32 +145,32 @@ export default function OurProduct() {
           {/* Left Text Content */}
           <div className="lg:col-span-4 space-y-6">
             <h2 className="text-4xl md:text-5xl font-bold text-text-primary dark:text-text-inverse">
-              Your Complete Coding Workspace
+              Comprehensive Subject Practice
             </h2>
             <p className="text-xl text-text-secondary dark:text-text-muted leading-relaxed">
-              Dive into our immersive coding interface designed for maximum productivity. Practice DSA, build projects, and prepare for product-based company interviews all in one place.
+              Master core computer science subjects with our structured practice modules. Dive deep into DBMS, DSA, and other essential topics to build a solid foundation for your technical interviews.
             </p>
             <ul className="space-y-6 mt-8">
               <li className="flex items-start">
                 <div className="flex-shrink-0 mt-1">
                   <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Zap className="w-5 h-5 text-primary" />
+                    <Target className="w-5 h-5 text-primary" />
                   </div>
                 </div>
                 <div className="ml-4">
-                  <h4 className="text-xl font-semibold text-text-primary dark:text-text-inverse">Lightning Fast Compiler</h4>
-                  <p className="text-text-secondary dark:text-text-muted text-base mt-1">Execute your code across multiple languages with near-zero latency.</p>
+                  <h4 className="text-xl font-semibold text-text-primary dark:text-text-inverse">Targeted Preparation</h4>
+                  <p className="text-text-secondary dark:text-text-muted text-base mt-1">Focus your learning with topic-wise questions designed to strengthen specific concepts and improve retention.</p>
                 </div>
               </li>
               <li className="flex items-start">
                 <div className="flex-shrink-0 mt-1">
                   <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
-                    <Layout className="w-5 h-5 text-accent" />
+                    <BookOpen className="w-5 h-5 text-accent" />
                   </div>
                 </div>
                 <div className="ml-4">
-                  <h4 className="text-xl font-semibold text-text-primary dark:text-text-inverse">Intuitive Dashboard</h4>
-                  <p className="text-text-secondary dark:text-text-muted text-base mt-1">Track your progress, manage courses, and monitor test performance effortlessly.</p>
+                  <h4 className="text-xl font-semibold text-text-primary dark:text-text-inverse">Custom Question Banks</h4>
+                  <p className="text-text-secondary dark:text-text-muted text-base mt-1">Practice with hand-picked, industry-relevant problems that simulate real product-based company interviews.</p>
                 </div>
               </li>
             </ul>

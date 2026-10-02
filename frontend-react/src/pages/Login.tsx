@@ -244,6 +244,7 @@ export default function LoginPage() {
                   onChange={(e) => setFullName(e.target.value)}
                   className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-slate-400 text-sm font-medium"
                   placeholder="John Doe"
+                  autoComplete="name"
                 />
               </div>
             )}
@@ -260,6 +261,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-slate-400 text-sm font-medium"
                 placeholder="developer@example.com"
+                autoComplete="username"
               />
             </div>
 
@@ -276,6 +278,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-2.5 pr-12 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-slate-400 text-sm font-medium"
                   placeholder="••••••••"
+                  autoComplete={isRegister ? "new-password" : "current-password"}
                 />
                 <button
                   type="button"
@@ -301,6 +304,7 @@ export default function LoginPage() {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-2.5 pr-12 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-slate-400 text-sm font-medium"
                     placeholder="••••••••"
+                    autoComplete="new-password"
                   />
                 </div>
               </div>

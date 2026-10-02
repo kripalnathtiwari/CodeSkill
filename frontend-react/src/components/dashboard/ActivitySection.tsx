@@ -10,7 +10,7 @@ export default function ActivitySection({ enrollments, onGenerateCert, onViewCer
         <BookOpen className="w-12 h-12 text-text-muted mx-auto mb-4" />
         <h3 className="text-xl font-bold text-text-primary mb-2">No Recent Activity</h3>
         <p className="text-text-secondary mb-6">You haven't enrolled in any courses yet.</p>
-        <Link to="/dashboard/courses" className="bg-primary hover:bg-primary-hover text-text-inverse px-6 py-2.5 rounded-xl font-bold transition-colors">
+        <Link to="/dashboard/courses" className="inline-block bg-primary text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors hover:bg-primary-hover shadow-sm">
           Explore Courses
         </Link>
       </div>
@@ -54,19 +54,19 @@ export default function ActivitySection({ enrollments, onGenerateCert, onViewCer
                {isCompleted ? (
                  <>
                    <Link to={`/dashboard/course/${course.courseId}`}>
-                     <button className="px-4 py-2 bg-primary-light text-primary hover:bg-primary hover:text-text-inverse rounded-lg font-semibold text-sm transition-colors">Review</button>
+                     <button className="bg-primary-light text-primary hover:bg-primary hover:text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors shadow-sm">Review</button>
                    </Link>
                    {course.certificateName ? (
                      <button 
                        onClick={() => onViewCert({ name: course.certificateName, course: course.courseName, id: course.certificateId })}
-                       className="px-4 py-2 bg-success text-text-inverse rounded-lg font-semibold text-sm transition-colors hover:opacity-90"
+                       className="bg-success text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors hover:opacity-90 shadow-sm"
                      >
                        View Certificate
                      </button>
                    ) : (
                      <button 
                        onClick={() => onGenerateCert(idx, course.fullName)}
-                       className="px-4 py-2 bg-success-bg text-success hover:bg-success hover:text-text-inverse rounded-lg font-semibold text-sm transition-colors"
+                       className="bg-success text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors hover:opacity-90 shadow-sm"
                      >
                        Get Certificate
                      </button>
@@ -74,13 +74,13 @@ export default function ActivitySection({ enrollments, onGenerateCert, onViewCer
                  </>
                ) : course.status === 'UNPAID' ? (
                  <Link to={`/payment/${course.courseId}`} state={{ newEnrollment: course }}>
-                   <button className="px-4 py-2 bg-warning hover:bg-warning/90 text-text-inverse rounded-lg font-semibold text-sm transition-colors">
+                   <button className="bg-warning text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors hover:opacity-90 shadow-sm">
                      Pay Now
                    </button>
                  </Link>
                ) : (
                  <Link to={`/dashboard/course/${course.courseId}`}>
-                   <button className="px-4 py-2 bg-primary hover:bg-primary-hover text-text-inverse rounded-lg font-semibold text-sm transition-colors shadow-sm">
+                   <button className="bg-primary text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors hover:bg-primary-hover shadow-sm">
                      Continue Learning
                    </button>
                  </Link>

@@ -62,25 +62,25 @@ export default function DashboardCalendar({ userEmail }: { userEmail: string }) 
     <div className="bg-surface dark:bg-[#111827] border border-border rounded-2xl p-6 shadow-sm flex flex-col h-full">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-lg font-bold text-text-primary">Calendar</h2>
-        <button className="flex items-center space-x-1 text-xs font-bold text-primary hover:text-primary-hover group">
+        <button className="flex items-center space-x-1 text-sm font-bold text-primary hover:text-primary-hover transition-colors group">
           <span>View All</span>
-          <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
         </button>
       </div>
 
       <div className="flex items-center justify-between mb-6">
         <button 
           onClick={() => setCurrentDate(new Date(year, month - 1, 1))}
-          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
+          className="p-2 rounded-lg text-text-secondary hover:bg-background transition-colors"
         >
-          <ChevronLeft className="w-5 h-5 text-text-muted" />
+          <ChevronLeft className="w-5 h-5" />
         </button>
         <span className="font-bold text-text-primary text-sm">{monthNames[month]} {year}</span>
         <button 
           onClick={() => setCurrentDate(new Date(year, month + 1, 1))}
-          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
+          className="p-2 rounded-lg text-text-secondary hover:bg-background transition-colors"
         >
-          <ChevronRight className="w-5 h-5 text-text-muted" />
+          <ChevronRight className="w-5 h-5" />
         </button>
       </div>
 

@@ -19,10 +19,10 @@ export default function CalendarWidget() {
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-bold text-text-primary">August 2026</h3>
         <div className="flex space-x-2">
-          <button className="p-1 rounded-md text-text-muted hover:bg-background transition-colors">
+          <button className="p-2 rounded-lg text-text-secondary hover:bg-background transition-colors">
             <ChevronLeft className="w-4 h-4" />
           </button>
-          <button className="p-1 rounded-md text-text-muted hover:bg-background transition-colors">
+          <button className="p-2 rounded-lg text-text-secondary hover:bg-background transition-colors">
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>

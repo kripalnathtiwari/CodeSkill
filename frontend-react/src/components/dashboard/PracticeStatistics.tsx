@@ -21,7 +21,7 @@ export default function PracticeStatistics() {
           </div>
           <h3 className="text-lg font-bold text-text-primary">Practice Statistics</h3>
         </div>
-        <button className="flex items-center space-x-2 text-sm font-semibold text-text-secondary bg-background px-3 py-1.5 rounded-lg border border-border hover:bg-slate-100 transition-colors">
+        <button className="border border-border text-text-secondary hover:bg-slate-100 dark:hover:bg-slate-800 bg-background px-4 py-2 rounded-lg font-semibold text-sm transition-colors flex items-center space-x-2">
           <Calendar className="w-4 h-4" />
           <span>Weekly Report</span>
         </button>

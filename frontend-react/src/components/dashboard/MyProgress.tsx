@@ -65,7 +65,7 @@ export default function MyProgress({ enrollments = [], practiceProgress = [] }: 
         </div>
       </div>
 
-      <div className="space-y-6 flex-1 w-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 content-start">
+      <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 content-start min-w-0">
         {activeTab === 'Courses' ? (
           progressData.length > 0 ? (
             progressData.map((item, idx) => (

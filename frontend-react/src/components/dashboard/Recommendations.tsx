@@ -15,10 +15,10 @@ export default function Recommendations() {
         <h2 className="text-lg font-bold text-text-primary">Our Courses</h2>
         <button 
           onClick={() => navigate('/dashboard/courses')}
-          className="flex items-center space-x-1 text-xs font-bold text-primary hover:text-primary-hover group"
+          className="flex items-center space-x-1 text-sm font-bold text-primary hover:text-primary-hover transition-colors group"
         >
           <span>View All</span>
-          <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
         </button>
       </div>
 
@@ -42,7 +42,7 @@ export default function Recommendations() {
 
             <button 
               onClick={() => navigate(`/dashboard/course/${rec.id}`)}
-              className="w-full bg-primary hover:bg-primary-hover text-white text-xs font-bold py-2 rounded-lg transition-colors"
+              className="w-full bg-primary text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors hover:bg-primary-hover shadow-sm"
             >
               Start Learning
             </button>

@@ -62,9 +62,9 @@ export default function Achievements({ dsaTotal = 0, enrollmentTotal = 0, testTo
     <div className="bg-surface dark:bg-[#111827] border border-border rounded-2xl p-6 shadow-sm flex flex-col h-full">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-lg font-bold text-text-primary">Achievements</h2>
-        <button className="flex items-center space-x-1 text-xs font-bold text-primary hover:text-primary-hover group">
+        <button className="flex items-center space-x-1 text-sm font-bold text-primary hover:text-primary-hover transition-colors group">
           <span>View All</span>
-          <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
         </button>
       </div>
 

@@ -28,9 +28,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="min-h-screen bg-background text-text-primary flex font-sans">
-      {/* Desktop Sidebar */}
-      <Sidebar />
-
       {/* Mobile Sidebar Overlay */}
       {isMobileSidebarOpen && (
         <div
@@ -39,16 +36,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         />
       )}
 
-      {/* Mobile Sidebar */}
-      <div className={`fixed inset-y-0 left-0 transform ${isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:hidden w-64 bg-surface z-50 transition-transform duration-300 ease-in-out`}>
-        <div className="absolute top-4 right-4">
-          <button onClick={() => setIsMobileSidebarOpen(false)} className="p-2 text-text-secondary bg-background rounded-lg">
+      {/* Unified Sidebar */}
+      <div className={`fixed inset-y-0 left-0 transform ${isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:relative lg:translate-x-0 z-50 transition-transform duration-300 ease-in-out`}>
+        <div className="absolute top-4 right-4 lg:hidden z-[60]">
+          <button onClick={() => setIsMobileSidebarOpen(false)} className="p-2 text-text-secondary bg-background rounded-lg border border-border shadow-sm">
             <X className="h-5 w-5" />
           </button>
         </div>
-        <div className="pt-4 h-full">
-          <Sidebar />
-        </div>
+        <Sidebar />
       </div>
 
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">

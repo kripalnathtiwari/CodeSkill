@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Code2,
@@ -59,13 +59,24 @@ export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        setIsCollapsed(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const toggleMenu = (label: string, e: React.MouseEvent) => {
     e.preventDefault();
     setOpenMenus(prev => ({ ...prev, [label]: !prev[label] }));
   };
 
   return (
-    <aside className={`bg-surface border-r border-border h-screen sticky top-0 flex flex-col hidden lg:flex shrink-0 transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-64'}`}>
+    <aside className={`bg-surface border-r border-border h-screen sticky top-0 flex flex-col shrink-0 transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-64'}`}>
       {/* Logo */}
       <div className="h-16 flex items-center justify-between px-4 border-b border-border">
         <div className={`flex items-center space-x-2 text-2xl font-black tracking-tight ${isCollapsed ? 'hidden' : 'block'}`}>
@@ -74,7 +85,7 @@ export default function Sidebar() {
             <span className="text-primary">Skill</span>
           </span>
         </div>
-        <button onClick={() => setIsCollapsed(!isCollapsed)} className="p-2 rounded-lg hover:bg-background text-text-secondary flex-shrink-0 mx-auto">
+        <button onClick={() => setIsCollapsed(!isCollapsed)} className="p-2 rounded-lg hover:bg-background text-text-secondary flex-shrink-0 mx-auto hidden lg:block">
           <Menu className="h-5 w-5" />
         </button>
       </div>

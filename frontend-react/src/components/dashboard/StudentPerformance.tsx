@@ -76,7 +76,7 @@ export default function StudentPerformance() {
         ))}
       </div>
       
-      <button className="w-full mt-4 py-2 text-sm font-bold text-primary hover:bg-primary-light rounded-xl transition-colors">
+      <button className="w-full mt-4 bg-primary-light text-primary hover:bg-primary hover:text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors shadow-sm">
         View Leaderboard
       </button>
     </div>

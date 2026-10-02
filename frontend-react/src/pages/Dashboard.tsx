@@ -158,11 +158,11 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
           {/* Top Row: Focus on Progress and Daily Engagement */}
-          <div className="lg:col-span-2 flex">
+          <div className="lg:col-span-2 flex flex-col min-w-0">
             <MyProgress enrollments={enrollmentsData} practiceProgress={tagsProgress} />
           </div>
           
-          <div className="lg:col-span-1 space-y-6 flex flex-col">
+          <div className="lg:col-span-1 space-y-6 flex flex-col min-w-0">
             <div className="flex-1">
               <LearningStreak weeklyProgress={weeklyProgress} />
             </div>

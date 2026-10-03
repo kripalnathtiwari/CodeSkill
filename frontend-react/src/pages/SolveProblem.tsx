@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Editor from "@monaco-editor/react";
-import { Play, Check, ChevronLeft, ChevronRight, Terminal, AlertTriangle, Code2, Clock, Cpu, Zap, CheckCircle2, XCircle } from "lucide-react";
+import { Play, Check, ChevronLeft, ChevronRight, Terminal, AlertTriangle, Code2, Clock, Cpu, Zap, CheckCircle2, XCircle, Maximize, Minimize } from "lucide-react";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { recordContribution } from "../utils/contributions";
@@ -72,6 +72,16 @@ export default function SolveProblem() {
   const [isExecuting, setIsExecuting] = useState(false);
   const [testStatus, setTestStatus] = useState<"idle" | "running" | "passed" | "failed">("idle");
   const [problemList, setProblemList] = useState<any[]>(Object.values(MOCK_QUESTIONS));
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => document.documentElement.classList.contains('dark'));
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setIsDarkMode(document.documentElement.classList.contains('dark'));
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const applyProblemAndCode = (norm: any) => {
@@ -385,26 +395,26 @@ if (Array.isArray(result)) console.log(result.join(' '));
   };
 
 
-  if (!problem) return <div className="p-10 text-text-inverse">Loading...</div>;
+  if (!problem) return <div className="p-10 text-text-primary dark:text-text-primary dark:text-text-inverse">Loading...</div>;
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-[calc(100vh-64px)] lg:h-[calc(100vh-64px)] bg-[#0B0F19] text-text-inverse font-sans w-full overflow-y-auto lg:overflow-hidden">
+    <div className={`flex flex-col lg:flex-row min-h-[calc(100vh-64px)] lg:h-[calc(100vh-64px)] bg-background dark:bg-[#0B0F19] text-text-primary dark:text-text-primary dark:text-text-inverse font-sans w-full overflow-y-auto lg:overflow-hidden ${isFullscreen ? '!fixed !inset-0 !z-50 !h-screen !min-h-screen' : ''}`}>
       
       {/* Left Pane: Description */}
-      <div className="w-full lg:w-[45%] flex flex-col border-b lg:border-r lg:border-b-0 border-border bg-[#0f172a] h-auto lg:h-full overflow-y-visible lg:overflow-y-auto shrink-0">
-        <div className="p-4 border-b border-border flex items-center justify-between bg-slate-900/50 sticky top-0 z-10">
+      <div className="w-full lg:w-[45%] flex flex-col border-b lg:border-r lg:border-b-0 border-border bg-surface dark:bg-[#0f172a] h-auto lg:h-full overflow-y-visible lg:overflow-y-auto shrink-0">
+        <div className="p-4 border-b border-border flex items-center justify-between bg-slate-100/50 dark:bg-slate-900/50 sticky top-0 z-10">
           <div className="flex items-center space-x-3">
-            <button onClick={() => navigate(-1)} className="p-2 bg-slate-800 rounded-lg hover:bg-slate-700 text-text-muted hover:text-text-inverse transition-colors" title="Back">
+            <button onClick={() => navigate(-1)} className="p-2 bg-slate-800 rounded-lg hover:bg-slate-700 text-text-muted hover:text-text-primary dark:text-text-inverse transition-colors" title="Back">
               <ChevronLeft className="w-5 h-5" />
             </button>
             <Code2 className="w-6 h-6 text-primary" />
-            <h2 className="text-lg font-bold text-text-inverse tracking-wide">Problem Description</h2>
+            <h2 className="text-lg font-bold text-text-primary dark:text-text-inverse tracking-wide">Problem Description</h2>
           </div>
           <div className="flex items-center space-x-2">
             <button
               onClick={() => handleNavigateProblem(prevProblem)}
               disabled={!prevProblem}
-              className="flex items-center space-x-1 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-text-secondary hover:text-text-inverse rounded-lg text-xs font-bold transition-all"
+              className="flex items-center space-x-1 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-text-secondary hover:text-text-primary dark:text-text-inverse rounded-lg text-xs font-bold transition-all"
               title="Previous Problem"
             >
               <ChevronLeft className="w-3.5 h-3.5" />
@@ -413,7 +423,7 @@ if (Array.isArray(result)) console.log(result.join(' '));
             <button
               onClick={() => handleNavigateProblem(nextProblem)}
               disabled={!nextProblem}
-              className="flex items-center space-x-1 px-3 py-1.5 bg-primary hover:bg-primary disabled:opacity-40 disabled:cursor-not-allowed text-text-inverse rounded-lg text-xs font-bold transition-all shadow-sm"
+              className="flex items-center space-x-1 px-3 py-1.5 bg-primary hover:bg-primary disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-lg text-xs font-bold transition-all shadow-sm"
               title="Next Problem"
             >
               <span>Next</span>
@@ -424,7 +434,7 @@ if (Array.isArray(result)) console.log(result.join(' '));
         
         <div className="p-8 space-y-8">
           <div>
-            <h1 className="text-3xl font-black text-text-inverse mb-4">{problem.title}</h1>
+            <h1 className="text-3xl font-black text-text-primary dark:text-text-inverse mb-4">{problem.title}</h1>
             <span className={`px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-widest ${
               problem.difficulty === "Easy" ? "bg-primary/20 text-primary border border-primary/30" :
               problem.difficulty === "Medium" ? "bg-amber-500/20 text-amber-400 border border-amber-500/30" :
@@ -434,7 +444,7 @@ if (Array.isArray(result)) console.log(result.join(' '));
             </span>
           </div>
 
-          <div className="prose prose-invert prose-blue max-w-none">
+          <div className="prose dark:prose-invert prose-blue max-w-none">
             <div className="whitespace-pre-wrap font-sans text-text-secondary leading-relaxed bg-transparent p-0 text-base">
               {/* Fallback for simple description/content */}
               {(problem.description || problem.content) && (
@@ -448,7 +458,7 @@ if (Array.isArray(result)) console.log(result.join(' '));
 
               {problem.inputFormat && problem.inputFormat.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-bold text-text-inverse mb-2">Input Format</h3>
+                  <h3 className="text-lg font-bold text-text-primary dark:text-text-inverse mb-2">Input Format</h3>
                   <ul className="list-disc pl-5 space-y-1">
                     {problem.inputFormat.map((item: string, i: number) => <li key={i}>{item}</li>)}
                   </ul>
@@ -457,7 +467,7 @@ if (Array.isArray(result)) console.log(result.join(' '));
 
               {problem.outputFormat && problem.outputFormat.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-bold text-text-inverse mb-2">Output Format</h3>
+                  <h3 className="text-lg font-bold text-text-primary dark:text-text-inverse mb-2">Output Format</h3>
                   <ul className="list-disc pl-5 space-y-1">
                     {problem.outputFormat.map((item: string, i: number) => <li key={i}>{item}</li>)}
                   </ul>
@@ -466,7 +476,7 @@ if (Array.isArray(result)) console.log(result.join(' '));
 
               {problem.constraints && problem.constraints.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-bold text-text-inverse mb-2">Constraints</h3>
+                  <h3 className="text-lg font-bold text-text-primary dark:text-text-inverse mb-2">Constraints</h3>
                   <ul className="list-disc pl-5 space-y-1">
                     {problem.constraints.map((item: string, i: number) => <li key={i}><code>{item}</code></li>)}
                   </ul>
@@ -476,8 +486,8 @@ if (Array.isArray(result)) console.log(result.join(' '));
               {((problem.examples && problem.examples.length > 0) || (problem.testCases && problem.testCases.filter((t: any) => !t.isHidden && !t.hidden).length > 0)) && (
                 <div className="space-y-4">
                   {(problem.examples && problem.examples.length > 0 ? problem.examples : problem.testCases.filter((t: any) => !t.isHidden && !t.hidden)).map((ex: any, i: number) => (
-                    <div key={i} className="bg-slate-800/50 rounded-lg p-4 border border-border/50">
-                      <p className="font-bold text-text-inverse mb-2">Example {i + 1}:</p>
+                    <div key={i} className="bg-slate-100/50 dark:bg-slate-800/50 rounded-lg p-4 border border-border/50">
+                      <p className="font-bold text-text-primary dark:text-text-inverse mb-2">Example {i + 1}:</p>
                       <div className="font-mono text-sm space-y-2">
                         <div><span className="text-primary font-bold">Input:</span><br/><pre className="whitespace-pre-wrap m-0 bg-transparent p-0 font-mono text-text-secondary">{formatInputContent(ex.input)}</pre></div>
                         <div><span className="text-primary font-bold">Output:</span><br/>{ex.output}</div>
@@ -493,14 +503,14 @@ if (Array.isArray(result)) console.log(result.join(' '));
       </div>
 
       {/* Right Pane: Editor & Output */}
-      <div className="w-full lg:w-[55%] flex flex-col h-[700px] lg:h-full bg-[#1e1e1e] shrink-0">
+      <div className="w-full lg:w-[55%] flex flex-col h-[700px] lg:h-full bg-white dark:bg-[#1e1e1e] shrink-0">
         {/* Editor Toolbar */}
-        <div className="flex justify-between items-center px-4 py-3 border-b border-border bg-[#252526]">
+        <div className="flex justify-between items-center px-4 py-3 border-b border-border bg-slate-50 dark:bg-[#252526]">
           <div className="flex items-center space-x-3">
             <select 
               value={language.id}
               onChange={handleLanguageChange}
-              className="bg-[#3c3c3c] border-none text-text-secondary text-sm rounded-md focus:ring-1 focus:ring-blue-500 px-3 py-1.5 outline-none font-medium cursor-pointer"
+              className="bg-white dark:bg-[#3c3c3c] border border-border dark:border-none text-text-primary dark:text-text-secondary text-sm rounded-md focus:ring-1 focus:ring-blue-500 px-3 py-1.5 outline-none font-medium cursor-pointer"
             >
               {LANGUAGES.map((lang) => (
                 <option key={lang.id} value={lang.id}>{lang.name}</option>
@@ -511,9 +521,16 @@ if (Array.isArray(result)) console.log(result.join(' '));
           
           <div className="flex space-x-3">
             <button
+              onClick={() => setIsFullscreen(!isFullscreen)}
+              className="flex items-center space-x-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-text-primary dark:text-text-inverse px-3 py-2 rounded-md text-sm font-bold transition-colors"
+              title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+            >
+              {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
+            </button>
+            <button
               onClick={handleRun}
               disabled={isExecuting}
-              className="flex items-center space-x-2 bg-slate-700 hover:bg-slate-600 text-text-inverse px-5 py-2 rounded-md text-sm font-bold transition-colors disabled:opacity-50"
+              className="flex items-center space-x-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-text-primary dark:text-text-inverse px-5 py-2 rounded-md text-sm font-bold transition-colors disabled:opacity-50"
             >
               {isExecuting ? <Terminal className="w-4 h-4 animate-bounce" /> : <Play className="w-4 h-4" />}
               <span>Compile & Run</span>
@@ -521,7 +538,7 @@ if (Array.isArray(result)) console.log(result.join(' '));
             <button
               onClick={handleRun}
               disabled={isExecuting}
-              className="flex items-center space-x-2 bg-primary hover:bg-primary text-text-inverse px-6 py-2 rounded-md text-sm font-bold transition-colors disabled:opacity-50 shadow-[0_0_15px_rgba(16,185,129,0.2)]"
+              className="flex items-center space-x-2 bg-primary hover:bg-primary text-text-primary dark:text-text-inverse px-6 py-2 rounded-md text-sm font-bold transition-colors disabled:opacity-50 shadow-[0_0_15px_rgba(16,185,129,0.2)]"
             >
               <Check className="w-4 h-4" />
               <span>Submit</span>
@@ -533,7 +550,7 @@ if (Array.isArray(result)) console.log(result.join(' '));
         <div className="flex-1 relative border-b border-border">
           <Editor
             height="100%"
-            theme="vs-dark"
+            theme={isDarkMode ? "vs-dark" : "light"}
             language={language.id === "cpp" ? "cpp" : language.id}
             value={code}
             onChange={(val) => {
@@ -559,8 +576,8 @@ if (Array.isArray(result)) console.log(result.join(' '));
         </div>
 
         {/* Test Cases Panel - Professional Console */}
-        <div className="h-80 bg-[#141824] flex flex-col flex-shrink-0 border-t border-border/80 shadow-2xl">
-          <div className="px-4 py-2.5 border-b border-border/80 bg-[#1a2032] flex items-center justify-between">
+        <div className="h-80 bg-white dark:bg-[#141824] flex flex-col flex-shrink-0 border-t border-border/80 shadow-2xl">
+          <div className="px-4 py-2.5 border-b border-border/80 bg-slate-50 dark:bg-[#1a2032] flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="flex items-center space-x-2">
                 <Terminal className="w-4 h-4 text-primary" />
@@ -587,7 +604,7 @@ if (Array.isArray(result)) console.log(result.join(' '));
 
             <div className="flex items-center space-x-3">
               {testResults.length > 0 && (
-                <span className="text-xs font-mono bg-slate-800/80 text-text-secondary px-2.5 py-1 rounded-md border border-border/60">
+                <span className="text-xs font-mono bg-slate-100 dark:bg-slate-800/80 text-text-secondary px-2.5 py-1 rounded-md border border-border/60">
                   {testResults.filter(r => r.passed).length} / {testResults.length} Passed
                 </span>
               )}
@@ -597,7 +614,7 @@ if (Array.isArray(result)) console.log(result.join(' '));
                   <button
                     onClick={() => setActiveTestTab(prev => Math.max(0, prev - 1))}
                     disabled={activeTestTab === 0}
-                    className="p-1 rounded bg-slate-800/80 hover:bg-slate-700 text-text-secondary disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                    className="p-1 rounded bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-700 text-text-secondary disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                     title="Previous Test Case"
                   >
                     <ChevronLeft className="w-3.5 h-3.5" />
@@ -608,7 +625,7 @@ if (Array.isArray(result)) console.log(result.join(' '));
                   <button
                     onClick={() => setActiveTestTab(prev => Math.min((testResults.length > 0 ? testResults.length : (problem?.examples?.length || 1)) - 1, prev + 1))}
                     disabled={activeTestTab === (testResults.length > 0 ? testResults.length : (problem?.examples?.length || 1)) - 1}
-                    className="p-1 rounded bg-slate-800/80 hover:bg-slate-700 text-text-secondary disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                    className="p-1 rounded bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-700 text-text-secondary disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                     title="Next Test Case"
                   >
                     <ChevronRight className="w-3.5 h-3.5" />
@@ -619,17 +636,17 @@ if (Array.isArray(result)) console.log(result.join(' '));
           </div>
 
           {testResults.length > 0 ? (
-            <div className="flex flex-col flex-1 overflow-hidden bg-[#121622]">
+            <div className="flex flex-col flex-1 overflow-hidden bg-surface dark:bg-[#121622]">
               {/* Modern Tab Bar */}
-              <div className="flex overflow-x-auto border-b border-border/80 bg-[#161b29] px-3 pt-2 space-x-2 scrollbar-hide">
+              <div className="flex overflow-x-auto border-b border-border/80 bg-slate-100 dark:bg-[#161b29] px-3 pt-2 space-x-2 scrollbar-hide">
                 {testResults.map((r, i) => !r.hidden && (
                   <button
                     key={i}
                     onClick={() => setActiveTestTab(i)}
                     className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-t-lg text-xs font-semibold whitespace-nowrap transition-all ${
                       activeTestTab === i
-                        ? 'bg-[#121622] text-text-inverse border-t-2 border-primary shadow-sm'
-                        : 'text-text-muted hover:text-text-secondary hover:bg-[#1a2032]'
+                        ? 'bg-surface dark:bg-[#121622] text-text-primary dark:text-text-inverse border-t-2 border-primary shadow-sm'
+                        : 'text-text-muted hover:text-text-secondary hover:bg-slate-50 dark:bg-[#1a2032]'
                     }`}
                   >
                     <span className={`w-2 h-2 rounded-full ${r.passed ? 'bg-primary' : 'bg-rose-500'}`} />
@@ -663,27 +680,27 @@ if (Array.isArray(result)) console.log(result.join(' '));
 
                   {!testResults[activeTestTab].hidden && (
                     <div className="grid grid-cols-1 gap-3">
-                      <div className="bg-[#1a2032] border border-border/80 rounded-xl p-3 shadow-inner">
+                      <div className="bg-slate-50 dark:bg-[#1a2032] border border-border/80 rounded-xl p-3 shadow-inner">
                         <div className="text-text-muted text-[11px] font-bold uppercase tracking-wider mb-1.5 flex items-center">
                           <Zap className="w-3 h-3 mr-1 text-amber-400" /> Input Parameters
                         </div>
-                        <pre className="text-text-secondary text-xs whitespace-pre-wrap font-mono bg-slate-900/60 p-2.5 rounded-lg border border-border">{formatInputContent(testResults[activeTestTab].input)}</pre>
+                        <pre className="text-text-secondary text-xs whitespace-pre-wrap font-mono bg-slate-100 dark:bg-slate-900/60 p-2.5 rounded-lg border border-border">{formatInputContent(testResults[activeTestTab].input)}</pre>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div className="bg-[#1a2032] border border-primary/20 rounded-xl p-3 shadow-inner">
+                        <div className="bg-slate-50 dark:bg-[#1a2032] border border-primary/20 rounded-xl p-3 shadow-inner">
                           <div className="text-primary text-[11px] font-bold uppercase tracking-wider mb-1.5">Expected Output</div>
-                          <pre className="text-blue-300 text-xs font-mono bg-slate-900/60 p-2.5 rounded-lg border border-primary/20">{testResults[activeTestTab].expected || '(empty)'}</pre>
+                          <pre className="text-blue-300 text-xs font-mono bg-slate-100 dark:bg-slate-900/60 p-2.5 rounded-lg border border-primary/20">{testResults[activeTestTab].expected || '(empty)'}</pre>
                         </div>
-                        <div className={`bg-[#1a2032] border rounded-xl p-3 shadow-inner ${testResults[activeTestTab].passed ? 'border-primary/20' : 'border-rose-500/30'}`}>
+                        <div className={`bg-slate-50 dark:bg-[#1a2032] border rounded-xl p-3 shadow-inner ${testResults[activeTestTab].passed ? 'border-primary/20' : 'border-rose-500/30'}`}>
                           <div className={`text-[11px] font-bold uppercase tracking-wider mb-1.5 ${testResults[activeTestTab].passed ? 'text-primary' : 'text-rose-400'}`}>Your Actual Output</div>
-                          <pre className={`text-xs font-mono bg-slate-900/60 p-2.5 rounded-lg border ${testResults[activeTestTab].passed ? 'text-blue-300 border-primary/20' : 'text-rose-300 border-rose-500/20'}`}>{testResults[activeTestTab].actual || '(no output)'}</pre>
+                          <pre className={`text-xs font-mono bg-slate-100 dark:bg-slate-900/60 p-2.5 rounded-lg border ${testResults[activeTestTab].passed ? 'text-blue-300 border-primary/20' : 'text-rose-300 border-rose-500/20'}`}>{testResults[activeTestTab].actual || '(no output)'}</pre>
                         </div>
                       </div>
                     </div>
                   )}
 
                   {testResults[activeTestTab].hidden && (
-                    <div className="bg-[#1a2032] border border-border/80 rounded-xl p-6 text-center">
+                    <div className="bg-slate-50 dark:bg-[#1a2032] border border-border/80 rounded-xl p-6 text-center">
                       <p className="text-text-muted text-xs font-sans">
                         ðŸ”’ <span className="font-bold text-text-secondary">Secret Evaluation Test Case</span> â€” Inputs and expected outputs are hidden for fair assessment.
                       </p>
@@ -693,16 +710,16 @@ if (Array.isArray(result)) console.log(result.join(' '));
               )}
             </div>
           ) : problem?.examples?.length > 0 ? (
-            <div className="flex flex-col flex-1 overflow-hidden bg-[#121622]">
-              <div className="flex overflow-x-auto border-b border-border/80 bg-[#161b29] px-3 pt-2 space-x-2 scrollbar-hide">
+            <div className="flex flex-col flex-1 overflow-hidden bg-surface dark:bg-[#121622]">
+              <div className="flex overflow-x-auto border-b border-border/80 bg-slate-100 dark:bg-[#161b29] px-3 pt-2 space-x-2 scrollbar-hide">
                 {problem.examples.map((_: any, i: number) => (
                   <button
                     key={i}
                     onClick={() => setActiveTestTab(i)}
                     className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-t-lg text-xs font-semibold whitespace-nowrap transition-all ${
                       activeTestTab === i
-                        ? 'bg-[#121622] text-text-inverse border-t-2 border-purple-500 shadow-sm'
-                        : 'text-text-muted hover:text-text-secondary hover:bg-[#1a2032]'
+                        ? 'bg-surface dark:bg-[#121622] text-text-primary dark:text-text-inverse border-t-2 border-purple-500 shadow-sm'
+                        : 'text-text-muted hover:text-text-secondary hover:bg-slate-50 dark:bg-[#1a2032]'
                     }`}
                   >
                     <span>Example {i + 1}</span>
@@ -714,20 +731,20 @@ if (Array.isArray(result)) console.log(result.join(' '));
                   <>
                     <div>
                       <div className="text-[11px] font-bold text-text-muted uppercase tracking-wider mb-1.5">Input</div>
-                      <pre className="text-text-secondary text-xs whitespace-pre-wrap font-mono bg-slate-900/60 p-3 rounded-lg border border-border">
+                      <pre className="text-text-secondary text-xs whitespace-pre-wrap font-mono bg-slate-100 dark:bg-slate-900/60 p-3 rounded-lg border border-border">
                         {problem.examples[activeTestTab].input}
                       </pre>
                     </div>
                     <div>
                       <div className="text-[11px] font-bold text-text-muted uppercase tracking-wider mb-1.5">Expected Output</div>
-                      <pre className="text-blue-300 text-xs font-mono bg-slate-900/60 p-3 rounded-lg border border-primary/20">
+                      <pre className="text-blue-300 text-xs font-mono bg-slate-100 dark:bg-slate-900/60 p-3 rounded-lg border border-primary/20">
                         {problem.examples[activeTestTab].output}
                       </pre>
                     </div>
                     {problem.examples[activeTestTab].explanation && (
                       <div>
                         <div className="text-[11px] font-bold text-text-muted uppercase tracking-wider mb-1.5">Explanation</div>
-                        <div className="text-text-secondary text-xs bg-slate-900/40 p-3 rounded-lg border border-border/60">
+                        <div className="text-text-secondary text-xs bg-slate-50 dark:bg-slate-900/40 p-3 rounded-lg border border-border/60">
                           {problem.examples[activeTestTab].explanation}
                         </div>
                       </div>
@@ -737,7 +754,7 @@ if (Array.isArray(result)) console.log(result.join(' '));
               </div>
             </div>
           ) : (
-            <div className="flex-1 flex flex-col items-center justify-center space-y-2 text-text-muted bg-[#121622]">
+            <div className="flex-1 flex flex-col items-center justify-center space-y-2 text-text-muted bg-surface dark:bg-[#121622]">
               <Terminal className="w-8 h-8 opacity-20" />
               <span className="text-sm">Click "Compile & Run" to test your code against all test cases.</span>
             </div>

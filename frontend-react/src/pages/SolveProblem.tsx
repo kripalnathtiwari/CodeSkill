@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Editor from "@monaco-editor/react";
-import { Play, Check, ChevronLeft, ChevronRight, Terminal, AlertTriangle, Code2, Clock, Cpu, Zap, CheckCircle2, XCircle, Maximize, Minimize } from "lucide-react";
+import { Play, Check, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Terminal, AlertTriangle, Code2, Clock, Cpu, Zap, CheckCircle2, XCircle, Maximize, Minimize } from "lucide-react";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { recordContribution } from "../utils/contributions";
@@ -73,6 +73,24 @@ export default function SolveProblem() {
   const [testStatus, setTestStatus] = useState<"idle" | "running" | "passed" | "failed">("idle");
   const [problemList, setProblemList] = useState<any[]>(Object.values(MOCK_QUESTIONS));
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isConsoleOpen, setIsConsoleOpen] = useState(true);
+  const [consoleHeight, setConsoleHeight] = useState(320);
+
+  const startResize = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const startY = e.clientY;
+    const startHeight = consoleHeight;
+    const onMouseMove = (moveEvent: MouseEvent) => {
+      const delta = startY - moveEvent.clientY;
+      setConsoleHeight(Math.max(100, Math.min(800, startHeight + delta)));
+    };
+    const onMouseUp = () => {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  };
   const [isDarkMode, setIsDarkMode] = useState(() => document.documentElement.classList.contains('dark'));
 
   useEffect(() => {
@@ -404,7 +422,7 @@ if (Array.isArray(result)) console.log(result.join(' '));
       <div className="w-full lg:w-[45%] flex flex-col border-b lg:border-r lg:border-b-0 border-border bg-surface dark:bg-[#0f172a] h-auto lg:h-full overflow-y-visible lg:overflow-y-auto shrink-0">
         <div className="p-4 border-b border-border flex items-center justify-between bg-slate-100/50 dark:bg-slate-900/50 sticky top-0 z-10">
           <div className="flex items-center space-x-3">
-            <button onClick={() => navigate(-1)} className="p-2 bg-slate-800 rounded-lg hover:bg-slate-700 text-text-muted hover:text-text-primary dark:text-text-inverse transition-colors" title="Back">
+            <button onClick={() => navigate(-1)} className="p-2 bg-slate-200 dark:bg-slate-800 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-text-muted hover:text-slate-900 dark:hover:text-text-inverse transition-colors" title="Back">
               <ChevronLeft className="w-5 h-5" />
             </button>
             <Code2 className="w-6 h-6 text-primary" />
@@ -414,7 +432,7 @@ if (Array.isArray(result)) console.log(result.join(' '));
             <button
               onClick={() => handleNavigateProblem(prevProblem)}
               disabled={!prevProblem}
-              className="flex items-center space-x-1 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-text-secondary hover:text-text-primary dark:text-text-inverse rounded-lg text-xs font-bold transition-all"
+              className="flex items-center space-x-1 px-3 py-1.5 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed text-slate-700 dark:text-text-secondary hover:text-slate-900 dark:hover:text-text-inverse rounded-lg text-xs font-bold transition-all"
               title="Previous Problem"
             >
               <ChevronLeft className="w-3.5 h-3.5" />
@@ -445,7 +463,7 @@ if (Array.isArray(result)) console.log(result.join(' '));
           </div>
 
           <div className="prose dark:prose-invert prose-blue max-w-none">
-            <div className="whitespace-pre-wrap font-sans text-text-secondary leading-relaxed bg-transparent p-0 text-base">
+            <div className="whitespace-pre-wrap font-sans text-text-secondary leading-relaxed bg-transparent p-0 text-[15px] font-semibold">
               {/* Fallback for simple description/content */}
               {(problem.description || problem.content) && (
                 <div className="mb-6">{problem.description || problem.content}</div>
@@ -530,7 +548,7 @@ if (Array.isArray(result)) console.log(result.join(' '));
             <button
               onClick={handleRun}
               disabled={isExecuting}
-              className="flex items-center space-x-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-text-primary dark:text-text-inverse px-5 py-2 rounded-md text-sm font-bold transition-colors disabled:opacity-50"
+              className="flex items-center space-x-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-text-inverse px-5 py-2 rounded-md text-sm font-bold transition-colors disabled:opacity-50"
             >
               {isExecuting ? <Terminal className="w-4 h-4 animate-bounce" /> : <Play className="w-4 h-4" />}
               <span>Compile & Run</span>
@@ -576,9 +594,27 @@ if (Array.isArray(result)) console.log(result.join(' '));
         </div>
 
         {/* Test Cases Panel - Professional Console */}
-        <div className="h-80 bg-white dark:bg-[#141824] flex flex-col flex-shrink-0 border-t border-border/80 shadow-2xl">
+        <div 
+          className="bg-white dark:bg-[#141824] flex flex-col flex-shrink-0 border-t border-border/80 shadow-2xl"
+          style={{ height: isConsoleOpen ? `${consoleHeight}px` : '48px' }}
+        >
+        {isConsoleOpen && (
+          <div 
+            className="h-1.5 w-full cursor-row-resize bg-slate-200 dark:bg-slate-700 hover:bg-primary transition-colors flex items-center justify-center group"
+            onMouseDown={startResize}
+          >
+            <div className="w-10 h-0.5 bg-slate-400 group-hover:bg-white rounded-full transition-colors"></div>
+          </div>
+        )}
           <div className="px-4 py-2.5 border-b border-border/80 bg-slate-50 dark:bg-[#1a2032] flex items-center justify-between">
             <div className="flex items-center space-x-3">
+              <button 
+                onClick={() => setIsConsoleOpen(!isConsoleOpen)} 
+                className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded transition-colors"
+                title={isConsoleOpen ? "Collapse Console" : "Expand Console"}
+              >
+                {isConsoleOpen ? <ChevronDown className="w-4 h-4 text-text-secondary" /> : <ChevronUp className="w-4 h-4 text-text-secondary" />}
+              </button>
               <div className="flex items-center space-x-2">
                 <Terminal className="w-4 h-4 text-primary" />
                 <span className="text-sm font-bold text-text-secondary tracking-wide">Test Suite Console</span>
@@ -635,7 +671,7 @@ if (Array.isArray(result)) console.log(result.join(' '));
             </div>
           </div>
 
-          {testResults.length > 0 ? (
+          {isConsoleOpen && (testResults.length > 0 ? (
             <div className="flex flex-col flex-1 overflow-hidden bg-surface dark:bg-[#121622]">
               {/* Modern Tab Bar */}
               <div className="flex overflow-x-auto border-b border-border/80 bg-slate-100 dark:bg-[#161b29] px-3 pt-2 space-x-2 scrollbar-hide">
@@ -758,7 +794,7 @@ if (Array.isArray(result)) console.log(result.join(' '));
               <Terminal className="w-8 h-8 opacity-20" />
               <span className="text-sm">Click "Compile & Run" to test your code against all test cases.</span>
             </div>
-          )}
+          ))}
         </div>
       </div>
     </div>

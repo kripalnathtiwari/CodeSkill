@@ -124,6 +124,18 @@ export const updateNote = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "Note not found" });
     }
 
+    let pdfUrl = existingNote.pdfUrl;
+    if (req.file) {
+      // If a new PDF is uploaded, delete the old one if it exists
+      if (existingNote.pdfUrl) {
+        const oldPath = path.join(__dirname, "../../", existingNote.pdfUrl);
+        if (fs.existsSync(oldPath)) {
+          fs.unlinkSync(oldPath);
+        }
+      }
+      pdfUrl = `/public/uploads/notes/${req.file.filename}`;
+    }
+
     const note = await prisma.note.update({
       where: { id: noteId },
       data: {
@@ -131,6 +143,7 @@ export const updateNote = async (req: Request, res: Response) => {
         content: content !== undefined ? content : existingNote.content,
         courseName: courseName !== undefined ? courseName : existingNote.courseName,
         imageUrl: imageUrl !== undefined ? imageUrl : existingNote.imageUrl,
+        pdfUrl: pdfUrl,
       },
     });
 

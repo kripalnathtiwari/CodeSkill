@@ -40,14 +40,20 @@ export default function NotesManagement() {
     setIsSubmittingNote(true);
     try {
       if (editingNoteId) {
-        const payload = {
-          title: newNoteTitle,
-          content: newNoteContent,
-          courseName: newCourseName,
-          imageUrl: imageUrl
-        };
-        const res = await axios.put(getApiUrl(`/api/v1/notes/admin/notes/${editingNoteId}`), payload, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+        const formData = new FormData();
+        formData.append("title", newNoteTitle);
+        formData.append("content", newNoteContent);
+        formData.append("courseName", newCourseName);
+        if (imageUrl) formData.append("imageUrl", imageUrl);
+        if (pdfFile) {
+          formData.append("pdf", pdfFile);
+        }
+
+        const res = await axios.put(getApiUrl(`/api/v1/notes/admin/notes/${editingNoteId}`), formData, {
+          headers: { 
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+            "Content-Type": "multipart/form-data"
+          }
         });
         setGlobalNotes(globalNotes.map(n => n.id === editingNoteId ? res.data : n));
       } else {
@@ -93,7 +99,7 @@ export default function NotesManagement() {
     setNewCourseName(note.courseName || "");
     setImageUrl(note.imageUrl || "");
     setEditingNoteId(note.id);
-    setPdfFile(null); // Updating PDF is not supported currently
+    setPdfFile(null); // Clear selected file when starting edit
     if (fileInputRef.current) fileInputRef.current.value = "";
     
     // Scroll to top
@@ -196,7 +202,7 @@ export default function NotesManagement() {
                 Select PDF Document
               </button>
               <span className="text-sm text-text-muted truncate">
-                {pdfFile ? pdfFile.name : (editingNoteId ? "Cannot update PDF currently (Optional)" : "No file selected (Optional)")}
+                {pdfFile ? pdfFile.name : (editingNoteId ? "Select new PDF to replace existing (Optional)" : "No file selected (Optional)")}
               </span>
             </div>
 

@@ -38,6 +38,6 @@ router.get("/my-notes", getMyNotes);
 router.get("/admin/global-notes", requireRole(["ADMIN", "COLLEGE_ADMIN", "INSTRUCTOR"]), getGlobalNotes);
 router.post("/admin/global-notes", requireRole(["ADMIN", "COLLEGE_ADMIN", "INSTRUCTOR"]), upload.single('pdf'), createGlobalNote);
 router.delete("/admin/notes/:noteId", requireRole(["ADMIN", "COLLEGE_ADMIN", "INSTRUCTOR"]), deleteNote);
-router.put("/admin/notes/:noteId", requireRole(["ADMIN", "COLLEGE_ADMIN", "INSTRUCTOR"]), updateNote);
+router.put("/admin/notes/:noteId", requireRole(["ADMIN", "COLLEGE_ADMIN", "INSTRUCTOR"]), upload.single('pdf'), updateNote);
 
 export default router;

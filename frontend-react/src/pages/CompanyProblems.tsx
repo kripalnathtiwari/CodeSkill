@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
   Building2,
@@ -217,6 +217,30 @@ export default function CompanyProblems() {
   const [testSeriesList, setTestSeriesList] = useState<any[]>([]);
   const [companiesList, setCompaniesList] = useState<CompanyCardData[]>(DEFAULT_COMPANIES);
   const [isLoading, setIsLoading] = useState(true);
+  const [visibleCount, setVisibleCount] = useState(9);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setVisibleCount((prev) => prev + 9);
+        }
+      },
+      { threshold: 0.1 }
+    );
+    
+    const currentRef = loadMoreRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+    
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, [isLoading, selectedCategory, searchQuery]);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const activeView = searchParams.get("view") === "problems" ? "problems" : "directory";
@@ -484,9 +508,10 @@ export default function CompanyProblems() {
                 No companies found matching your filter.
               </div>
             ) : (
-              filteredCompanies.map((company) => (
-                <div
-                  key={company.name}
+              <>
+                {filteredCompanies.slice(0, visibleCount).map((company) => (
+                  <div
+                    key={company.name}
                   className="bg-surface dark:bg-background rounded-2xl border border-border dark:border-border/80 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between overflow-hidden"
                 >
                   {/* Card Body */}
@@ -550,8 +575,13 @@ export default function CompanyProblems() {
                       <ArrowUpRight className="h-4 w-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                     </button>
                   </div>
-                </div>
-              ))
+                ))}
+                {visibleCount < filteredCompanies.length && (
+                  <div ref={loadMoreRef} className="col-span-full py-8 flex justify-center text-text-muted text-sm font-medium animate-pulse">
+                    Loading more...
+                  </div>
+                )}
+              </>
             )}
           </div>
         </>

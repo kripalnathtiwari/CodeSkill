@@ -83,43 +83,44 @@ export default function Notes() {
 
   return (
     <div className="flex-1 p-6 md:p-8 w-full max-w-7xl mx-auto space-y-8">
-
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2">
         <div>
-          <h1 className="text-3xl font-extrabold text-text-primary tracking-tight flex items-center gap-3">
-            <StickyNote className="w-8 h-8 text-primary" />
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
+            <StickyNote className="w-7 h-7 text-blue-600 dark:text-blue-500" />
             Important Notes
           </h1>
-          <p className="text-text-muted mt-2 font-medium">Important notes and announcements shared by the administrator.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1.5 text-sm font-medium">
+            Important notes and announcements shared by the administrator.
+          </p>
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="relative w-full md:w-64">
+          <div className="relative w-full md:w-72">
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search notes..."
-              className="w-full bg-surface dark:bg-[#111827] border border-border rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-primary transition-colors"
+              className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg pl-10 pr-4 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
             />
-            <Search className="w-4 h-4 text-text-muted absolute left-3.5 top-3" />
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
           </div>
         </div>
       </div>
 
-
-
       {/* Notes Grid */}
       {isLoading ? (
-        <div className="flex justify-center items-center py-20 text-primary">
+        <div className="flex justify-center items-center py-20 text-blue-600">
           <Loader className="w-8 h-8 animate-spin" />
         </div>
       ) : notes.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-center bg-surface-secondary/50 dark:bg-slate-800/20 rounded-3xl border border-dashed border-border/60">
-          <FileText className="w-16 h-16 text-text-muted/30 mb-4" />
-          <h3 className="text-xl font-bold text-text-primary mb-2">No notes available</h3>
-          <p className="text-text-muted max-w-md mb-6">Notes added by the administrator will appear here for you to read and download.</p>
+        <div className="flex flex-col items-center justify-center py-24 text-center bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700">
+          <FileText className="w-12 h-12 text-slate-300 dark:text-slate-600 mb-4" />
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">No notes available</h3>
+          <p className="text-slate-500 dark:text-slate-400 max-w-sm text-sm">
+            Notes added by the administrator will appear here for you to read and download.
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -129,23 +130,37 @@ export default function Notes() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               key={note.id}
-              className="bg-surface dark:bg-[#111827] border border-border hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5 rounded-2xl flex flex-col h-full min-h-[16rem] overflow-hidden transition-all group"
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-lg rounded-xl flex flex-col h-full overflow-hidden transition-all group"
             >
+              {/* TOP: Edge-to-edge Image */}
+              {note.imageUrl ? (
+                <div className="w-full h-48 relative bg-slate-100 dark:bg-slate-800 shrink-0 border-b border-slate-100 dark:border-slate-800 overflow-hidden">
+                  <img src={note.imageUrl} alt={note.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  {note.courseName && (
+                    <div className="absolute top-3 right-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm text-slate-700 dark:text-slate-300 text-[11px] font-semibold px-2.5 py-1 rounded-md shadow-sm border border-slate-200/50 dark:border-slate-700/50">
+                      {note.courseName}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="w-full h-48 relative bg-slate-50 dark:bg-slate-800 shrink-0 flex items-center justify-center border-b border-slate-100 dark:border-slate-800">
+                  <FileText className="w-12 h-12 text-slate-300 dark:text-slate-600" />
+                  {note.courseName && (
+                    <div className="absolute top-3 right-3 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-[11px] font-medium px-2.5 py-1 rounded shadow-sm border border-slate-200 dark:border-slate-700">
+                      {note.courseName}
+                    </div>
+                  )}
+                </div>
+              )}
 
-              <div className="p-6 flex-1 flex flex-col">
-                <div className="flex justify-between items-start mb-3">
-                  <div className="flex-1 pr-2">
-                    <h3 className="font-bold text-text-primary text-lg line-clamp-1 group-hover:text-primary transition-colors">{note.title}</h3>
-                    {note.courseName && (
-                      <span className="inline-block mt-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded">
-                        {note.courseName}
-                      </span>
-                    )}
-                  </div>
+              {/* BOTTOM: Content Padding */}
+              <div className="p-5 flex-1 flex flex-col">
+                <div className="flex justify-between items-start mb-2 gap-2">
+                  <h3 className="font-bold text-slate-900 dark:text-white text-lg line-clamp-1">{note.title}</h3>
                   {note.content && !note.pdfUrl && (
                     <button
                       onClick={(e) => handleDownload(note, e)}
-                      className="text-text-muted hover:text-primary hover:bg-primary/10 p-1.5 rounded-lg transition-colors opacity-0 group-hover:opacity-100 shrink-0"
+                      className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors shrink-0"
                       title="Download Note Text"
                     >
                       <Download className="w-4 h-4" />
@@ -153,43 +168,37 @@ export default function Notes() {
                   )}
                 </div>
 
-                {note.imageUrl ? (
-                  <div className="flex-1 w-full rounded-xl overflow-hidden my-2 relative min-h-[200px] bg-surface-secondary/50 flex items-center justify-center group-hover:shadow-md transition-shadow">
-                    <img src={note.imageUrl} alt={note.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 absolute inset-0" />
-                  </div>
-                ) : note.content ? (
-                  <p className="text-text-secondary text-sm leading-relaxed flex-1 line-clamp-5 whitespace-pre-wrap">
+                {note.content && !note.imageUrl && !note.pdfUrl ? (
+                  <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed flex-1 line-clamp-4 mt-1">
                     {note.content}
                   </p>
                 ) : (
-                  <div className="flex-1 flex flex-col items-center justify-center text-text-muted/50 py-4 bg-surface-secondary/20 rounded-xl my-2 border border-dashed border-border/50">
-                    <FileText className="w-8 h-8 mb-2 group-hover:text-primary/50 transition-colors" />
-                    <span className="text-xs font-medium">PDF Document</span>
-                  </div>
+                  <div className="flex-1"></div>
                 )}
 
                 {note.pdfUrl && (
-                  <div className="mt-3 flex-shrink-0 flex gap-2">
+                  <div className="mt-5 flex gap-2 w-full">
                     <a
                       href={getApiUrl(note.pdfUrl)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 inline-flex items-center justify-center text-xs font-semibold text-primary hover:text-primary-dark transition-colors bg-primary/10 hover:bg-primary/20 px-3 py-2 rounded-lg"
+                      className="flex-1 inline-flex items-center justify-center text-sm font-medium text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors px-4 py-2 rounded-lg shadow-sm"
                     >
-                      <FileText className="w-3.5 h-3.5 mr-1.5" />
+                      <FileText className="w-4 h-4 mr-2 text-slate-400" />
                       View PDF
                     </a>
                     <button
                       onClick={(e) => handlePdfDownload(note.pdfUrl!, note.title, e)}
-                      className="inline-flex items-center justify-center text-xs font-semibold text-text-muted hover:text-primary transition-colors bg-surface-secondary hover:bg-primary/10 px-3 py-2 rounded-lg border border-border"
+                      className="inline-flex items-center justify-center text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 px-3 py-2 rounded-lg shadow-sm shrink-0"
                       title="Download PDF"
                     >
                       <Download className="w-4 h-4" />
                     </button>
                   </div>
                 )}
-                <div className="mt-4 pt-4 border-t border-border/50 flex items-center text-xs font-medium text-text-muted gap-1.5">
-                  <Clock className="w-3.5 h-3.5" />
+
+                <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center text-[13px] text-slate-500 dark:text-slate-400 font-medium">
+                  <Clock className="w-3.5 h-3.5 mr-1.5 opacity-70" />
                   {formatDate(note.updatedAt)}
                 </div>
               </div>
@@ -197,13 +206,12 @@ export default function Notes() {
           ))}
 
           {filteredNotes.length === 0 && searchQuery && (
-            <div className="col-span-full py-12 text-center text-text-muted">
+            <div className="col-span-full py-16 text-center text-slate-500 dark:text-slate-400">
               No notes found matching "{searchQuery}".
             </div>
           )}
         </div>
       )}
-
     </div>
   );
 }

@@ -220,6 +220,18 @@ export default function CompanyProblems() {
   const [visibleCount, setVisibleCount] = useState(9);
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeView = searchParams.get("view") === "problems" ? "problems" : "directory";
+  const selectedCompany = searchParams.get("company") || "";
+  const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [problemSearchQuery, setProblemSearchQuery] = useState("");
+  const [selectedSection, setSelectedSection] = useState("MCQ");
+
+  useEffect(() => {
+    setVisibleCount(9);
+  }, [selectedCategory, searchQuery]);
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -241,14 +253,6 @@ export default function CompanyProblems() {
       }
     };
   }, [isLoading, selectedCategory, searchQuery]);
-
-  const [searchParams, setSearchParams] = useSearchParams();
-  const activeView = searchParams.get("view") === "problems" ? "problems" : "directory";
-  const selectedCompany = searchParams.get("company") || "";
-  const [selectedCategory, setSelectedCategory] = useState<string>("All");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [problemSearchQuery, setProblemSearchQuery] = useState("");
-  const [selectedSection, setSelectedSection] = useState("MCQ");
 
   // New UI states
   const [selectedTestSeries, setSelectedTestSeries] = useState<string | null>(null);

@@ -575,6 +575,7 @@ export default function CompanyProblems() {
                       <ArrowUpRight className="h-4 w-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                     </button>
                   </div>
+                </div>
                 ))}
                 {visibleCount < filteredCompanies.length && (
                   <div ref={loadMoreRef} className="col-span-full py-8 flex justify-center text-text-muted text-sm font-medium animate-pulse">

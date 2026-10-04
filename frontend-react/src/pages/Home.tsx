@@ -13,6 +13,7 @@ const CareerTools = lazy(() => import("../components/home/CareerTools"));
 const CompilerSection = lazy(() => import("../components/home/CompilerSection"));
 const FeaturesGrid = lazy(() => import("../components/home/FeaturesGrid"));
 const WeeklyTestSection = lazy(() => import("../components/home/WeeklyTestSection"));
+const PlatformIllustration = lazy(() => import("../components/home/PlatformIllustration"));
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -204,11 +205,7 @@ export default function Home() {
                   zIndex: isFlipped ? 0 : 10,
                 }}
               >
-                <img
-                  src="https://res.cloudinary.com/zihn8u4b/image/upload/v1789446916/ChatGPT_Image_Sep_10_2026_11_55_38_AM.png"
-                  alt="CodeSkill Platform Illustration"
-                  className="w-full h-full object-cover rounded-2xl bg-surface dark:bg-slate-900"
-                />
+                <PlatformIllustration />
               </div>
 
               {/* Back side */}

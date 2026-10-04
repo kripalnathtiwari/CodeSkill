@@ -1058,17 +1058,63 @@ export default function TestSeriesManagement() {
                 />
               </div>
 
-              {/* Starter code */}
-              <div>
-                <label className="block text-xs font-semibold uppercase text-text-muted mb-1.5">
-                  JavaScript Starter Code
-                </label>
-                <textarea
-                  rows={3}
-                  value={starterCodes.javascript || ""}
-                  onChange={(e) => setStarterCodes({ ...starterCodes, javascript: e.target.value })}
-                  className="w-full bg-white dark:bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary font-mono"
-                />
+              {/* Starter codes */}
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold uppercase text-text-muted mb-1.5">
+                    JavaScript Starter Code
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={starterCodes.javascript || ""}
+                    onChange={(e) => setStarterCodes({ ...starterCodes, javascript: e.target.value })}
+                    className="w-full bg-white dark:bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold uppercase text-text-muted mb-1.5">
+                    Java Starter Code
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={starterCodes.java || ""}
+                    onChange={(e) => setStarterCodes({ ...starterCodes, java: e.target.value })}
+                    className="w-full bg-white dark:bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold uppercase text-text-muted mb-1.5">
+                    C Starter Code
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={starterCodes.c || ""}
+                    onChange={(e) => setStarterCodes({ ...starterCodes, c: e.target.value })}
+                    className="w-full bg-white dark:bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold uppercase text-text-muted mb-1.5">
+                    C++ Starter Code
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={starterCodes.cpp || ""}
+                    onChange={(e) => setStarterCodes({ ...starterCodes, cpp: e.target.value })}
+                    className="w-full bg-white dark:bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold uppercase text-text-muted mb-1.5">
+                    Python Starter Code
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={starterCodes.python || ""}
+                    onChange={(e) => setStarterCodes({ ...starterCodes, python: e.target.value })}
+                    className="w-full bg-white dark:bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary font-mono"
+                  />
+                </div>
               </div>
 
               {/* Test Cases */}

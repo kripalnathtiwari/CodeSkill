@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { StickyNote, Trash2, Loader, Upload, FileText, Pencil, X } from "lucide-react";
+import { StickyNote, Trash2, Loader, Upload, FileText, Pencil, X, Search } from "lucide-react";
 import axios from "axios";
 import { getApiUrl } from "../../utils/apiConfig";
 
@@ -13,6 +13,7 @@ export default function NotesManagement() {
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const [searchQuery, setSearchQuery] = useState("");
   const [isFetchingNotes, setIsFetchingNotes] = useState(true);
   const [isSubmittingNote, setIsSubmittingNote] = useState(false);
 
@@ -105,6 +106,11 @@ export default function NotesManagement() {
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const filteredNotes = globalNotes.filter(note => 
+    note.title?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    note.courseName?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleDeleteNote = async (noteId: string) => {
     if (!window.confirm("Are you sure you want to delete this note?")) return;
@@ -218,71 +224,87 @@ export default function NotesManagement() {
 
           {/* Previous Notes List */}
           <div className="space-y-4">
-            <h4 className="font-semibold text-xl text-text-primary border-b border-border pb-3">All Global Notes</h4>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-border pb-3 gap-4">
+              <h4 className="font-semibold text-xl text-text-primary">All Global Notes</h4>
+              <div className="relative w-full sm:w-64">
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
+                <input
+                  type="text"
+                  placeholder="Search notes..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-white dark:bg-slate-900 border border-border rounded-lg pl-9 pr-4 py-2 text-sm text-text-primary focus:outline-none focus:border-primary"
+                />
+              </div>
+            </div>
             {isFetchingNotes ? (
               <div className="flex justify-center p-12"><Loader className="w-8 h-8 animate-spin text-primary" /></div>
-            ) : globalNotes.length === 0 ? (
+            ) : filteredNotes.length === 0 ? (
               <div className="text-center py-16 bg-slate-50 dark:bg-slate-800/30 rounded-xl border border-dashed border-border">
                 <StickyNote className="w-16 h-16 text-text-muted/30 mx-auto mb-4" />
                 <h3 className="text-lg font-bold text-text-primary mb-2">No global notes found</h3>
-                <p className="text-sm text-text-muted font-medium">Create one above to share with students.</p>
+                <p className="text-sm text-text-muted font-medium">Create one above or adjust your search.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-6">
-                {globalNotes.map(note => (
-                  <div key={note.id} className="bg-white dark:bg-[#1a2333] border border-border rounded-xl p-6 hover:border-primary/30 transition-colors shadow-sm relative group">
-                    <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <h5 className="font-bold text-text-primary text-xl">{note.title}</h5>
-                        {note.courseName && (
-                          <span className="inline-block mt-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-xs font-bold px-2 py-1 rounded">
-                            {note.courseName}
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex gap-2 absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button 
-                          onClick={() => handleEditNote(note)} 
-                          className="text-text-muted hover:text-primary hover:bg-primary/10 p-2 rounded-lg transition-colors"
-                          title="Edit Note"
-                        >
-                          <Pencil className="w-5 h-5" />
-                        </button>
-                        <button 
-                          onClick={() => handleDeleteNote(note.id)} 
-                          className="text-rose-500 hover:bg-rose-500/10 p-2 rounded-lg transition-colors"
-                          title="Delete Note"
-                        >
-                          <Trash2 className="w-5 h-5" />
-                        </button>
-                      </div>
-                    </div>
+                {filteredNotes.map(note => (
+                  <div key={note.id} className="bg-white dark:bg-[#1a2333] border border-border rounded-xl p-6 hover:border-primary/30 transition-colors shadow-sm relative group flex flex-col sm:flex-row gap-6 items-start">
                     {note.imageUrl && (
-                      <div className="w-full h-40 mb-4 rounded-xl overflow-hidden">
+                      <div className="w-full sm:w-48 h-32 shrink-0 rounded-xl overflow-hidden self-start border border-border">
                         <img src={note.imageUrl} alt={note.title} className="w-full h-full object-cover" />
                       </div>
                     )}
-                    {note.content && (
-                      <p className="text-base text-text-secondary whitespace-pre-wrap leading-relaxed">{note.content}</p>
-                    )}
-                    
-                    {note.pdfUrl && (
-                      <div className="mt-4">
-                        <a 
-                          href={getApiUrl(note.pdfUrl)} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center text-sm font-semibold text-primary hover:text-primary-dark transition-colors bg-primary/10 px-4 py-2 rounded-lg"
-                        >
-                          <FileText className="w-4 h-4 mr-2" />
-                          View Attached PDF
-                        </a>
+                    <div className="flex-1 min-w-0 w-full">
+                      <div className="flex justify-between items-start mb-4 pr-16">
+                        <div>
+                          <h5 className="font-bold text-text-primary text-xl truncate" title={note.title}>{note.title}</h5>
+                          {note.courseName && (
+                            <span className="inline-block mt-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-xs font-bold px-2 py-1 rounded">
+                              {note.courseName}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    )}
+                      
+                      <div className="flex gap-2 absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button 
+                          onClick={() => handleEditNote(note)} 
+                          className="text-text-muted hover:text-primary hover:bg-primary/10 p-2 rounded-lg transition-colors bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm"
+                          title="Edit Note"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                        <button 
+                          onClick={() => handleDeleteNote(note.id)} 
+                          className="text-rose-500 hover:bg-rose-500/10 p-2 rounded-lg transition-colors bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm"
+                          title="Delete Note"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
 
-                    <div className="mt-6 pt-4 border-t border-border/50 text-sm text-text-muted flex justify-between items-center">
-                      <span>Posted on {new Date(note.createdAt).toLocaleDateString()} at {new Date(note.createdAt).toLocaleTimeString()}</span>
-                      {note.admin && <span className="bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full text-xs font-semibold">By: {note.admin.profile?.firstName} {note.admin.profile?.lastName}</span>}
+                      {note.content && (
+                        <p className="text-base text-text-secondary whitespace-pre-wrap leading-relaxed line-clamp-3">{note.content}</p>
+                      )}
+                      
+                      {note.pdfUrl && (
+                        <div className="mt-4">
+                          <a 
+                            href={getApiUrl(note.pdfUrl)} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center text-sm font-semibold text-primary hover:text-primary-dark transition-colors bg-primary/10 px-4 py-2 rounded-lg"
+                          >
+                            <FileText className="w-4 h-4 mr-2" />
+                            View Attached PDF
+                          </a>
+                        </div>
+                      )}
+
+                      <div className="mt-6 pt-4 border-t border-border/50 text-sm text-text-muted flex justify-between items-center flex-wrap gap-2">
+                        <span>Posted on {new Date(note.createdAt).toLocaleDateString()}</span>
+                        {note.admin && <span className="bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full text-xs font-semibold truncate">By: {note.admin.profile?.firstName} {note.admin.profile?.lastName}</span>}
+                      </div>
                     </div>
                   </div>
                 ))}

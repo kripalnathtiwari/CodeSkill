@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_BASE_URL as API_URL } from '../../utils/apiConfig';
 import { Archive, Search, RefreshCw, Eye, Trash2, ArrowLeft, AlertTriangle, Undo } from 'lucide-react';
@@ -93,10 +93,13 @@ export default function DatabaseManagement() {
     return matchesSearch && matchesTab && matchesMain;
   }) : [];
 
-  const tabs = ['ALL', 'COLLEGE_INSTITUTION', 'COLLEGE_TUTOR', 'APTITUDE_PROBLEM', 'USER'];
+  const tabs = ['ALL', 'TEST', 'QUESTION', 'COURSE', 'COLLEGE_INSTITUTION', 'COLLEGE_TUTOR', 'APTITUDE_PROBLEM', 'USER'];
 
   const formatTabName = (tab: string) => {
     if (tab === 'ALL') return 'All Records';
+    if (tab === 'TEST') return 'Tests';
+    if (tab === 'QUESTION') return 'Questions';
+    if (tab === 'COURSE') return 'Courses';
     if (tab === 'COLLEGE_INSTITUTION') return 'Colleges';
     if (tab === 'COLLEGE_TUTOR') return 'Instructors';
     if (tab === 'APTITUDE_PROBLEM') return 'Aptitude Problems';

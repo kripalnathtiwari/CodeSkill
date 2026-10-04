@@ -117,6 +117,7 @@ export default function InterviewManagement() {
   // Search filter states
   const [searchCompanyQuery, setSearchCompanyQuery] = useState("");
   const [searchQuestionQuery, setSearchQuestionQuery] = useState("");
+  const [questionTypeFilter, setQuestionTypeFilter] = useState("All");
 
   // Modals state
   const [showAddCompanyModal, setShowAddCompanyModal] = useState(false);
@@ -294,7 +295,15 @@ export default function InterviewManagement() {
     );
   }, [problems, selectedTestSeries]);
 
-  const companyQuestions = selectedTestSeries ? level3Items : level2Items;
+  let companyQuestions = selectedTestSeries ? level3Items : level2Items;
+  if (questionTypeFilter !== "All") {
+    companyQuestions = companyQuestions.filter(q => {
+      if (questionTypeFilter === "Test Series") return q.isTestSeries;
+      if (questionTypeFilter === "Coding") return (q.questionType === "CODING" || q.type === "CODING") && !q.isTestSeries;
+      if (questionTypeFilter === "MCQ") return (q.questionType === "MCQ" || q.type === "MCQ") && !q.isTestSeries;
+      return true;
+    });
+  }
 
   // We skip detailed counts in directory view for performance.
   const getCompanyStats = (companyName: string) => {
@@ -797,16 +806,34 @@ export default function InterviewManagement() {
             </div>
           </div>
 
-          {/* Search bar inside company */}
-          <div className="relative max-w-md">
-            <Search className="absolute left-3.5 top-3 h-4 w-4 text-text-muted" />
-            <input
-              type="text"
-              placeholder={`Search questions inside ${selectedCompany}...`}
-              value={searchQuestionQuery}
-              onChange={(e) => setSearchQuestionQuery(e.target.value)}
-              className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl pl-10 pr-4 py-2.5 text-sm text-text-primary placeholder-slate-500 focus:outline-none focus:border-rose-500 transition-all"
-            />
+          {/* Search bar inside company and filter */}
+          <div className="flex flex-col md:flex-row items-center gap-4 w-full">
+            <div className="relative w-full max-w-md">
+              <Search className="absolute left-3.5 top-3 h-4 w-4 text-text-muted" />
+              <input
+                type="text"
+                placeholder={`Search questions inside ${selectedCompany}...`}
+                value={searchQuestionQuery}
+                onChange={(e) => setSearchQuestionQuery(e.target.value)}
+                className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl pl-10 pr-4 py-2.5 text-sm text-text-primary placeholder-slate-500 focus:outline-none focus:border-rose-500 transition-all"
+              />
+            </div>
+            
+            <div className="flex p-1 bg-slate-100 dark:bg-slate-800/50 rounded-xl shrink-0 self-start md:self-auto overflow-x-auto max-w-full">
+              {["All", "Test Series", "Coding", "MCQ"].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setQuestionTypeFilter(tab)}
+                  className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
+                    questionTypeFilter === tab
+                      ? "bg-white dark:bg-slate-700 text-rose-600 dark:text-rose-400 shadow-sm"
+                      : "text-text-muted hover:text-text-primary"
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Company Questions Table */}
@@ -1256,17 +1283,63 @@ export default function InterviewManagement() {
                 />
               </div>
 
-              {/* Starter code */}
-              <div>
-                <label className="block text-xs font-semibold uppercase text-text-muted mb-1.5">
-                  JavaScript Starter Code
-                </label>
-                <textarea
-                  rows={3}
-                  value={starterCodes.javascript || ""}
-                  onChange={(e) => setStarterCodes({ ...starterCodes, javascript: e.target.value })}
-                  className="w-full bg-white dark:bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary font-mono"
-                />
+              {/* Starter codes */}
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold uppercase text-text-muted mb-1.5">
+                    JavaScript Starter Code
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={starterCodes.javascript || ""}
+                    onChange={(e) => setStarterCodes({ ...starterCodes, javascript: e.target.value })}
+                    className="w-full bg-white dark:bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold uppercase text-text-muted mb-1.5">
+                    Java Starter Code
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={starterCodes.java || ""}
+                    onChange={(e) => setStarterCodes({ ...starterCodes, java: e.target.value })}
+                    className="w-full bg-white dark:bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold uppercase text-text-muted mb-1.5">
+                    C Starter Code
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={starterCodes.c || ""}
+                    onChange={(e) => setStarterCodes({ ...starterCodes, c: e.target.value })}
+                    className="w-full bg-white dark:bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold uppercase text-text-muted mb-1.5">
+                    C++ Starter Code
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={starterCodes.cpp || ""}
+                    onChange={(e) => setStarterCodes({ ...starterCodes, cpp: e.target.value })}
+                    className="w-full bg-white dark:bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold uppercase text-text-muted mb-1.5">
+                    Python Starter Code
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={starterCodes.python || ""}
+                    onChange={(e) => setStarterCodes({ ...starterCodes, python: e.target.value })}
+                    className="w-full bg-white dark:bg-slate-950 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary font-mono"
+                  />
+                </div>
               </div>
 
               {/* Test Cases */}

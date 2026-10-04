@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import fs from 'fs';
 import path from 'path';
 import prisma from '../config/db';
+import { uploadMedia, deleteMedia } from '../services/cloudinaryService';
 
 // ==========================================
 // Sample CV Templates
@@ -20,7 +21,11 @@ export const uploadSampleCv = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Title is required' });
     }
 
-    const fileUrl = file ? `/uploads/cv_samples/${file.filename}` : providedUrl;
+    let fileUrl = providedUrl;
+    if (file) {
+      const result = await uploadMedia(file.buffer, "lms/pdfs/cv_samples", "raw", file.originalname);
+      fileUrl = result.secure_url;
+    }
     const imageUrl = providedUrl || fileUrl;
 
     const sampleCv = await prisma.sampleCvTemplate.create({
@@ -68,10 +73,16 @@ export const deleteSampleCv = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Template not found' });
     }
 
-    // Delete the file from the filesystem if it exists
-    const filePath = path.join(__dirname, '../../public', template.fileUrl);
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
+    // Delete the file from Cloudinary or local filesystem
+    if (template.fileUrl) {
+      if (template.fileUrl.includes("cloudinary.com")) {
+        await deleteMedia(template.fileUrl, "raw");
+      } else {
+        const filePath = path.join(__dirname, '../../public', template.fileUrl);
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+        }
+      }
     }
 
     await prisma.sampleCvTemplate.delete({ where: { id } });

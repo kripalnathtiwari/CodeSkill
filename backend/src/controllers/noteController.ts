@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import path from "path";
 import fs from "fs";
+import { uploadMedia, deleteMedia } from "../services/cloudinaryService";
 
 const prisma = new PrismaClient();
 
@@ -65,7 +66,9 @@ export const createGlobalNote = async (req: Request, res: Response) => {
 
     let pdfUrl = null;
     if (req.file) {
-      pdfUrl = `/public/uploads/notes/${req.file.filename}`;
+      const originalName = req.file.originalname;
+      const result = await uploadMedia(req.file.buffer, "lms/pdfs/notes", "raw", originalName);
+      pdfUrl = result.secure_url;
     }
 
     const note = await prisma.note.create({
@@ -97,9 +100,13 @@ export const deleteNote = async (req: Request, res: Response) => {
     }
 
     if (note.pdfUrl) {
-      const filePath = path.join(__dirname, "../../", note.pdfUrl);
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
+      if (note.pdfUrl.includes("cloudinary.com")) {
+        await deleteMedia(note.pdfUrl, "raw");
+      } else {
+        const filePath = path.join(__dirname, "../../", note.pdfUrl);
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+        }
       }
     }
 
@@ -126,14 +133,13 @@ export const updateNote = async (req: Request, res: Response) => {
 
     let pdfUrl = existingNote.pdfUrl;
     if (req.file) {
-      // If a new PDF is uploaded, delete the old one if it exists
+      // If a new PDF is uploaded, delete the old one from Cloudinary if it exists
       if (existingNote.pdfUrl) {
-        const oldPath = path.join(__dirname, "../../", existingNote.pdfUrl);
-        if (fs.existsSync(oldPath)) {
-          fs.unlinkSync(oldPath);
-        }
+        await deleteMedia(existingNote.pdfUrl, "raw");
       }
-      pdfUrl = `/public/uploads/notes/${req.file.filename}`;
+      const originalName = req.file.originalname;
+      const result = await uploadMedia(req.file.buffer, "lms/pdfs/notes", "raw", originalName);
+      pdfUrl = result.secure_url;
     }
 
     const note = await prisma.note.update({

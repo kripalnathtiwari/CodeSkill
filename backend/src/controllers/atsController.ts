@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import prisma from '../config/db';
 import { atsQueue } from '../jobs/queues/atsQueue';
 import { PdfParserService } from '../services/ats/PdfParserService';
+import { uploadMedia } from '../services/cloudinaryService';
 
 export const uploadResume = async (req: Request, res: Response) => {
   try {
@@ -25,12 +26,19 @@ export const uploadResume = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Unsupported file format' });
     }
 
+    // Upload to Cloudinary
+    let fileUrl = null;
+    if (req.file) {
+      const result = await uploadMedia(req.file.buffer, "lms/pdfs/resumes", "raw", req.file.originalname);
+      fileUrl = result.secure_url;
+    }
+
     const resume = await prisma.resume.create({
       data: {
         userId,
         fileName: req.file.originalname,
         extractedText,
-        // If we implement supabase storage upload, we put fileUrl here
+        fileUrl,
       }
     });
 

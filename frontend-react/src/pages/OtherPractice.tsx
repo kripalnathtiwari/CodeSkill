@@ -249,11 +249,7 @@ export default function OtherPractice() {
                 <div className="flex gap-3 w-full sm:w-auto">
                   <button 
                     onClick={() => {
-                      const pdfWindow = window.open("");
-                      if (pdfWindow) {
-                        pdfWindow.document.write(`<iframe width='100%' height='100%' src='${subjectNotes[selectedSubject]}'></iframe>`);
-                        pdfWindow.document.body.style.margin = "0";
-                      }
+                      window.open(subjectNotes[selectedSubject], "_blank");
                     }} 
                     className="flex-1 sm:flex-none px-6 py-2.5 bg-slate-800 text-white rounded-xl font-bold text-sm hover:bg-slate-700 transition-colors shadow-sm"
                   >

@@ -178,15 +178,24 @@ export default function Notes() {
 
                 {note.pdfUrl && (
                   <div className="mt-5 flex gap-2 w-full">
-                    <a
-                      href={getApiUrl(note.pdfUrl)}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        try {
+                          const response = await axios.get(getApiUrl(note.pdfUrl!), { responseType: 'blob' });
+                          const file = new Blob([response.data], { type: 'application/pdf' });
+                          const fileURL = URL.createObjectURL(file);
+                          window.open(fileURL, '_blank');
+                        } catch (error) {
+                          console.error("Failed to view PDF", error);
+                          alert("Failed to view PDF. The file may have been deleted or blocked.");
+                        }
+                      }}
                       className="flex-1 inline-flex items-center justify-center text-sm font-medium text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors px-4 py-2 rounded-lg shadow-sm"
                     >
                       <FileText className="w-4 h-4 mr-2 text-slate-400" />
                       View PDF
-                    </a>
+                    </button>
                     <button
                       onClick={(e) => handlePdfDownload(note.pdfUrl!, note.title, e)}
                       className="inline-flex items-center justify-center text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 px-3 py-2 rounded-lg shadow-sm shrink-0"

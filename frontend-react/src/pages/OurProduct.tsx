@@ -267,38 +267,38 @@ export default function OurProduct() {
           {/* Left Column */}
           <div className="space-y-12">
             {/* Item 1 */}
-            <div className="flex flex-row-reverse lg:flex-row items-center justify-start lg:justify-end text-left lg:text-right space-x-4 space-x-reverse lg:space-x-4 lg:space-x-reverse-0">
-              <div className="flex-1 lg:flex-none">
-                <h3 className="text-xl font-bold text-text-primary dark:text-text-inverse mb-2">Industry-Aligned Curriculum</h3>
-                <p className="text-text-secondary dark:text-text-muted text-sm">
+            <div className="flex items-center text-left lg:text-right justify-start lg:justify-end gap-5">
+              <div className="order-2 lg:order-1 flex-1 lg:flex-none lg:max-w-xs xl:max-w-sm">
+                <h3 className="text-xl font-bold text-text-primary dark:text-text-inverse mb-1">Industry-Aligned Curriculum</h3>
+                <p className="text-text-secondary dark:text-text-muted text-sm leading-relaxed">
                   Our parallel syllabus integrates seamlessly with your academic schedule, covering DSA, Full Stack, AI/ML, and Cloud.
                 </p>
               </div>
-              <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center shadow-md">
+              <div className="order-1 lg:order-2 flex-shrink-0 w-14 h-14 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center shadow-md">
                 <Code className="w-6 h-6 text-blue-600" />
               </div>
             </div>
             {/* Item 2 */}
-            <div className="flex flex-row-reverse lg:flex-row items-center justify-start lg:justify-end text-left lg:text-right space-x-4 space-x-reverse lg:space-x-4 lg:space-x-reverse-0">
-              <div className="flex-1 lg:flex-none">
-                <h3 className="text-xl font-bold text-text-primary dark:text-text-inverse mb-2">Expert Industry Mentors</h3>
-                <p className="text-text-secondary dark:text-text-muted text-sm">
+            <div className="flex items-center text-left lg:text-right justify-start lg:justify-end gap-5">
+              <div className="order-2 lg:order-1 flex-1 lg:flex-none lg:max-w-xs xl:max-w-sm">
+                <h3 className="text-xl font-bold text-text-primary dark:text-text-inverse mb-1">Expert Industry Mentors</h3>
+                <p className="text-text-secondary dark:text-text-muted text-sm leading-relaxed">
                   Live sessions and mock interviews conducted by professionals from Google, Microsoft, Amazon, and top startups.
                 </p>
               </div>
-              <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center shadow-md">
+              <div className="order-1 lg:order-2 flex-shrink-0 w-14 h-14 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center shadow-md">
                 <Users className="w-6 h-6 text-blue-600" />
               </div>
             </div>
             {/* Item 3 */}
-            <div className="flex flex-row-reverse lg:flex-row items-center justify-start lg:justify-end text-left lg:text-right space-x-4 space-x-reverse lg:space-x-4 lg:space-x-reverse-0">
-              <div className="flex-1 lg:flex-none">
-                <h3 className="text-xl font-bold text-text-primary dark:text-text-inverse mb-2">Zero Infrastructure Cost</h3>
-                <p className="text-text-secondary dark:text-text-muted text-sm">
+            <div className="flex items-center text-left lg:text-right justify-start lg:justify-end gap-5">
+              <div className="order-2 lg:order-1 flex-1 lg:flex-none lg:max-w-xs xl:max-w-sm">
+                <h3 className="text-xl font-bold text-text-primary dark:text-text-inverse mb-1">Zero Infrastructure Cost</h3>
+                <p className="text-text-secondary dark:text-text-muted text-sm leading-relaxed">
                   We run the entire program inside your existing labs and classrooms — no new hardware or facility investment required.
                 </p>
               </div>
-              <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center shadow-md">
+              <div className="order-1 lg:order-2 flex-shrink-0 w-14 h-14 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center shadow-md">
                 <Monitor className="w-6 h-6 text-blue-600" />
               </div>
             </div>
@@ -306,20 +306,14 @@ export default function OurProduct() {
 
           {/* Center Column (Video) */}
           <div className="relative flex justify-center items-center py-10 lg:py-0">
-            {/* Decorative circles */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-[300px] h-[300px] rounded-full border border-blue-100 dark:border-slate-800 absolute animate-ping opacity-20"></div>
-              <div className="w-[400px] h-[400px] rounded-full border border-blue-50 dark:border-slate-800/50 absolute"></div>
-            </div>
-            
-            <div className="relative z-10 w-64 h-64 md:w-72 md:h-72 rounded-full overflow-hidden shadow-2xl border-4 border-white dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-center">
+            <div className="relative z-10 w-full max-w-[400px] lg:max-w-[500px] xl:max-w-[600px] aspect-square flex items-center justify-center mix-blend-multiply dark:mix-blend-normal">
               <video 
                 src="https://res.cloudinary.com/zihn8u4b/video/upload/v1791087571/new_vedio_1.mp4" 
                 autoPlay 
                 loop 
                 muted 
                 playsInline
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
               />
             </div>
           </div>
@@ -327,37 +321,37 @@ export default function OurProduct() {
           {/* Right Column */}
           <div className="space-y-12">
             {/* Item 1 */}
-            <div className="flex items-center text-left space-x-4">
+            <div className="flex items-center text-left justify-start gap-5">
               <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center shadow-md">
                 <Award className="w-6 h-6 text-blue-600" />
               </div>
-              <div>
-                <h3 className="text-xl font-bold text-text-primary dark:text-text-inverse mb-2">Global Certifications</h3>
-                <p className="text-text-secondary dark:text-text-muted text-sm">
+              <div className="flex-1 lg:flex-none lg:max-w-xs xl:max-w-sm">
+                <h3 className="text-xl font-bold text-text-primary dark:text-text-inverse mb-1">Global Certifications</h3>
+                <p className="text-text-secondary dark:text-text-muted text-sm leading-relaxed">
                   Students earn industry-recognized certifications in AI, Cloud, and System Design, validated by our hiring partners.
                 </p>
               </div>
             </div>
             {/* Item 2 */}
-            <div className="flex items-center text-left space-x-4">
+            <div className="flex items-center text-left justify-start gap-5">
               <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center shadow-md">
                 <Zap className="w-6 h-6 text-blue-600" />
               </div>
-              <div>
-                <h3 className="text-xl font-bold text-text-primary dark:text-text-inverse mb-2">Guaranteed Placement Support</h3>
-                <p className="text-text-secondary dark:text-text-muted text-sm">
+              <div className="flex-1 lg:flex-none lg:max-w-xs xl:max-w-sm">
+                <h3 className="text-xl font-bold text-text-primary dark:text-text-inverse mb-1">Guaranteed Placement Support</h3>
+                <p className="text-text-secondary dark:text-text-muted text-sm leading-relaxed">
                   Dedicated placement cells, mock hiring drives, and direct referrals to our 100+ active hiring partners.
                 </p>
               </div>
             </div>
             {/* Item 3 */}
-            <div className="flex items-center text-left space-x-4">
+            <div className="flex items-center text-left justify-start gap-5">
               <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center shadow-md">
                 <CheckCircle2 className="w-6 h-6 text-blue-600" />
               </div>
-              <div>
-                <h3 className="text-xl font-bold text-text-primary dark:text-text-inverse mb-2">100% placement record for our Batch Students</h3>
-                <p className="text-text-secondary dark:text-text-muted text-sm">
+              <div className="flex-1 lg:flex-none lg:max-w-xs xl:max-w-sm">
+                <h3 className="text-xl font-bold text-text-primary dark:text-text-inverse mb-1">100% placement record</h3>
+                <p className="text-text-secondary dark:text-text-muted text-sm leading-relaxed">
                   Proven track record of successful placements for all enrolled cohorts.
                 </p>
               </div>

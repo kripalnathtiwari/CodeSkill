@@ -1,6 +1,10 @@
 import { v2 as cloudinary, UploadApiOptions, UploadApiResponse } from "cloudinary";
 import { Readable } from "stream";
 
+if (!process.env.CLOUDINARY_CLOUD_NAME) {
+  console.error("⚠️ CLOUDINARY_CLOUD_NAME is missing in environment variables!");
+}
+
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,

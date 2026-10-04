@@ -39,6 +39,7 @@ const SolveOtherPractice = lazy(() => import('./pages/SolveOtherPractice'));
 const VerifyCertificate = lazy(() => import('./pages/VerifyCertificate'));
 const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
+const CollegeRequestSession = lazy(() => import('./pages/CollegeRequestSession'));
 const CVBuilder = lazy(() => import('./pages/CVBuilder'));
 const CVTemplates = lazy(() => import('./pages/CVTemplates'));
 const ATSChecker = lazy(() => import('./pages/ATSChecker'));
@@ -72,6 +73,7 @@ function AppContent() {
               <Route path="/" element={<GuestRoute><Home /></GuestRoute>} />
               <Route path="/about" element={<GuestRoute><About /></GuestRoute>} />
               <Route path="/contact" element={<GuestRoute><Contact /></GuestRoute>} />
+              <Route path="/college-request-session" element={<GuestRoute><CollegeRequestSession /></GuestRoute>} />
               <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
               <Route path="/forgot-password" element={<GuestRoute><ForgotPassword /></GuestRoute>} />
               <Route path="/change-password" element={<GuestRoute><ChangePassword /></GuestRoute>} />

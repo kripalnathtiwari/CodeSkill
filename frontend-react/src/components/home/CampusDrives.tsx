@@ -40,7 +40,7 @@ export default function CampusDrives() {
             ))}
           </ul>
 
-          <Link to="/contact">
+          <Link to="/college-request-session">
             <button className="bg-primary hover:bg-primary text-text-inverse font-bold py-3 px-8 rounded-xl transition-all shadow-[0_0_15px_rgba(16,185,129,0.4)] hover:shadow-[0_0_25px_rgba(16,185,129,0.6)]">
               Request Session Now
             </button>

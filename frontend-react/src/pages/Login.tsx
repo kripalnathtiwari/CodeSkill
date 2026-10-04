@@ -343,6 +343,7 @@ export default function LoginPage() {
                 <div style={{ position: "absolute", top: 0, transform: "scale(0.85)" }}>
                   <Turnstile
                     siteKey="1x00000000000000000000AA"
+                    injectScript={false}
                     onSuccess={(token) => setCfToken(token)}
                   />
                 </div>

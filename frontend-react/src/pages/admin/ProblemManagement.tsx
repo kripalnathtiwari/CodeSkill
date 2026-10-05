@@ -14,6 +14,8 @@ export default function ProblemManagement() {
   const [problems, setProblems] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("All");
+  const [tagFilter, setTagFilter] = useState("All");
+  const [difficultyFilter, setDifficultyFilter] = useState("All");
   const [loading, setLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
   const [editingProblem, setEditingProblem] = useState<any | null>(null);
@@ -292,8 +294,12 @@ export default function ProblemManagement() {
   const filtered = problems.filter(p => {
     const matchesSearch = p.title?.toLowerCase().includes(search.toLowerCase());
     const matchesType = typeFilter === "All" ? true : (isCustomProblem(p._id || p.id) ? "Custom" : "Platform") === typeFilter;
-    return matchesSearch && matchesType;
+    const matchesDifficulty = difficultyFilter === "All" ? true : p.difficulty === difficultyFilter;
+    const matchesTag = tagFilter === "All" ? true : (p.topicTags || []).some((t: any) => (t.name || t).toLowerCase() === tagFilter.toLowerCase());
+    return matchesSearch && matchesType && matchesDifficulty && matchesTag;
   });
+
+  const uniqueTags = Array.from(new Set(problems.flatMap(p => (p.topicTags || []).map((t: any) => typeof t === 'string' ? t : t.name)))).filter(Boolean).sort();
 
   const confirmDelete = () => {
     if (!deleteConfirmId) return;
@@ -678,8 +684,8 @@ export default function ProblemManagement() {
       </div>
 
       <div className="bg-surface dark:bg-[#111827] border border-border rounded-2xl overflow-hidden shadow-xl">
-        <div className="p-4 border-b border-border flex flex-col md:flex-row gap-4 justify-between items-start md:items-center bg-slate-50/50 dark:bg-slate-900/50">
-          <div className="flex flex-col sm:flex-row gap-4 items-center w-full max-w-2xl">
+        <div className="p-4 border-b border-border flex flex-col gap-4 bg-slate-50/50 dark:bg-slate-900/50">
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-between w-full">
             <div className="relative w-full md:w-80">
               <input
                 type="text" placeholder="Search problems..."
@@ -689,24 +695,50 @@ export default function ProblemManagement() {
               <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
             </div>
             
-            <div className="flex p-1 bg-slate-100 dark:bg-slate-800/50 rounded-xl shrink-0 overflow-x-auto max-w-full">
-              {["All", "Platform", "Custom"].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setTypeFilter(tab)}
-                  className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
-                    typeFilter === tab
-                      ? "bg-white dark:bg-slate-700 text-primary dark:text-blue-400 shadow-sm"
-                      : "text-text-muted hover:text-text-primary"
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
+            <div className="flex flex-col sm:flex-row gap-3 items-center shrink-0 w-full md:w-auto">
+              <select
+                value={difficultyFilter}
+                onChange={e => setDifficultyFilter(e.target.value)}
+                className="w-full sm:w-auto bg-white dark:bg-slate-800 border border-border rounded-lg px-3 py-2 text-sm text-text-secondary focus:outline-none focus:border-primary"
+              >
+                <option value="All">All Difficulties</option>
+                <option value="Easy">Easy</option>
+                <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
+              </select>
+
+              <select
+                value={tagFilter}
+                onChange={e => setTagFilter(e.target.value)}
+                className="w-full sm:w-auto bg-white dark:bg-slate-800 border border-border rounded-lg px-3 py-2 text-sm text-text-secondary focus:outline-none focus:border-primary"
+              >
+                <option value="All">All Tags</option>
+                {uniqueTags.map(tag => (
+                  <option key={String(tag)} value={String(tag)}>{tag}</option>
+                ))}
+              </select>
+
+              <div className="flex p-1 bg-slate-100 dark:bg-slate-800/50 rounded-xl shrink-0">
+                {["All", "Platform", "Custom"].map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setTypeFilter(tab)}
+                    className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
+                      typeFilter === tab
+                        ? "bg-white dark:bg-slate-700 text-primary dark:text-blue-400 shadow-sm"
+                        : "text-text-muted hover:text-text-primary"
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
           
-          <span className="text-sm font-medium text-text-muted shrink-0">Total: {filtered.length} problems</span>
+          <div className="flex justify-end w-full">
+            <span className="text-sm font-medium text-text-muted">Total: {filtered.length} problems</span>
+          </div>
         </div>
 
         <div className="overflow-x-auto">

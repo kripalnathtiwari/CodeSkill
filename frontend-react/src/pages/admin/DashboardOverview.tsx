@@ -29,7 +29,9 @@ const itemVariants = {
 };
 
 export default function DashboardOverview({ setActiveTab }: { setActiveTab?: (tab: string) => void }) {
-  const [stats, setStats] = useState({ revenue: 0, users: 0, enrollments: 0, active: 0, colleges: 0, instructors: 0 });
+  const [stats, setStats] = useState<{
+    revenue: number; users: number; enrollments: number; active: number; colleges: number; instructors: number; recentActivities?: any[];
+  }>({ revenue: 0, users: 0, enrollments: 0, active: 0, colleges: 0, instructors: 0, recentActivities: [] });
   const [chartData, setChartData] = useState(defaultChartData);
 
   useEffect(() => {
@@ -45,7 +47,8 @@ export default function DashboardOverview({ setActiveTab }: { setActiveTab?: (ta
             enrollments: res.data.data.enrollments || 0,
             active: res.data.data.active || 0,
             colleges: res.data.data.colleges || 0,
-            instructors: res.data.data.instructors || 0
+            instructors: res.data.data.instructors || 0,
+            recentActivities: res.data.data.recentActivities || []
           });
           if (res.data.data.chartData && res.data.data.chartData.length > 0) {
             setChartData(res.data.data.chartData);
@@ -202,24 +205,33 @@ export default function DashboardOverview({ setActiveTab }: { setActiveTab?: (ta
              </div>
            </h4>
            <div className="space-y-4 overflow-y-auto pr-2 custom-scrollbar flex-1">
-             {[1, 2, 3, 4, 5].map((i) => (
-               <motion.div 
-                 key={i} 
-                 whileHover={{ x: 5, backgroundColor: 'rgba(31, 41, 55, 0.5)' }}
-                 className="flex items-center justify-between text-sm p-3 rounded-xl transition-all cursor-pointer border border-transparent hover:border-border"
-               >
-                 <div className="flex items-center space-x-4">
-                   <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
-                     <Users className="w-4 h-4" />
+             {stats.recentActivities && stats.recentActivities.length > 0 ? stats.recentActivities.map((act, i) => {
+               const diffMs = Date.now() - new Date(act.timestamp).getTime();
+               const diffMins = Math.floor(diffMs / 60000);
+               const timeStr = diffMins < 60 ? `${diffMins}m` : (diffMins < 1440 ? `${Math.floor(diffMins / 60)}h` : `${Math.floor(diffMins / 1440)}d`);
+               const Icon = act.type === 'ENROLLMENT' ? BookOpen : Users;
+               
+               return (
+                 <motion.div 
+                   key={i} 
+                   whileHover={{ x: 5, backgroundColor: 'rgba(31, 41, 55, 0.5)' }}
+                   className="flex items-center justify-between text-sm p-3 rounded-xl transition-all cursor-pointer border border-transparent hover:border-border"
+                 >
+                   <div className="flex items-center space-x-4">
+                     <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                       <Icon className="w-4 h-4" />
+                     </div>
+                     <div className="flex flex-col">
+                       <span className="text-text-secondary font-medium">{act.title}</span>
+                       <span className="text-text-muted text-xs mt-0.5">{act.description}</span>
+                     </div>
                    </div>
-                   <div className="flex flex-col">
-                     <span className="text-text-secondary font-medium">New Enrollment</span>
-                     <span className="text-text-muted text-xs mt-0.5">User {Math.floor(Math.random() * 9000) + 1000} enrolled in "System Design Masterclass"</span>
-                   </div>
-                 </div>
-                 <span className="text-text-muted text-xs font-mono bg-slate-100/50 dark:bg-slate-800/50 px-2 py-1 rounded-md">{i * 12}m</span>
-               </motion.div>
-             ))}
+                   <span className="text-text-muted text-xs font-mono bg-slate-100/50 dark:bg-slate-800/50 px-2 py-1 rounded-md">{timeStr}</span>
+                 </motion.div>
+               );
+             }) : (
+               <div className="text-center text-text-muted text-sm py-4">No recent activity</div>
+             )}
            </div>
         </motion.div>
       </div>

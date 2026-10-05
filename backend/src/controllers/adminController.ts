@@ -58,6 +58,40 @@ export const getDashboardStats = async (req: Request, res: Response): Promise<an
       revenue: monthlyRevenue[i]
     }));
 
+    // 8. Recent System Activity
+    const recentEnrollments = await prisma.enrollment.findMany({
+      take: 5,
+      orderBy: { createdAt: "desc" },
+      include: {
+        student: { select: { email: true, profile: { select: { firstName: true, lastName: true } } } },
+        course: { select: { title: true } }
+      }
+    });
+    
+    const recentUsers = await prisma.user.findMany({
+      take: 5,
+      orderBy: { createdAt: "desc" },
+      select: { email: true, profile: { select: { firstName: true, lastName: true } }, createdAt: true }
+    });
+
+    const activities = [
+      ...recentEnrollments.map(e => ({
+        type: 'ENROLLMENT',
+        title: 'New Enrollment',
+        description: `${e.student?.profile?.firstName || e.student.email.split('@')[0]} enrolled in "${e.course?.title || 'a course'}"`,
+        timestamp: e.createdAt
+      })),
+      ...recentUsers.map(u => ({
+        type: 'USER',
+        title: 'New User Registration',
+        description: `${u.profile?.firstName || u.email.split('@')[0]} registered on the platform`,
+        timestamp: u.createdAt
+      }))
+    ];
+
+    activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    const recentActivities = activities.slice(0, 10);
+
     return res.status(200).json({
       success: true,
       data: {
@@ -67,7 +101,8 @@ export const getDashboardStats = async (req: Request, res: Response): Promise<an
         active,
         colleges,
         instructors,
-        chartData
+        chartData,
+        recentActivities
       }
     });
   } catch (error: any) {

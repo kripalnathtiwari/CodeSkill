@@ -38,15 +38,32 @@ export default function CareerTools() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="relative order-2 lg:order-1 glass-card p-2 md:p-3 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden group hover:-translate-y-1 transition-transform w-full"
+            className="relative order-2 lg:order-1 w-full flex items-center justify-center"
           >
-            <div className="absolute inset-0 bg-gradient-premium opacity-5 group-hover:opacity-10 transition-opacity duration-500" />
-            <img 
-              src="https://res.cloudinary.com/zihn8u4b/image/upload/v1789468294/career.png" 
-              alt="CodeSklii Career Tools & ATS Analysis" 
-              className="w-full h-auto rounded-xl object-cover relative z-10 shadow-sm border border-white/10"
-              loading="lazy"
-            />
+            <div className="relative w-full max-w-lg glass-card p-2 md:p-3 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl group hover:-translate-y-1 transition-transform z-10">
+              <div className="absolute inset-0 bg-gradient-premium opacity-5 group-hover:opacity-10 transition-opacity duration-500 rounded-2xl" />
+              <img 
+                src="https://res.cloudinary.com/zihn8u4b/image/upload/v1789450374/cv.png" 
+                alt="CodeSklii Career Tools & ATS Analysis" 
+                className="w-full h-auto rounded-xl object-cover relative z-10 shadow-sm border border-white/10"
+                loading="lazy"
+              />
+            </div>
+
+            <motion.div
+               initial={{ opacity: 0, y: 30, scale: 0.9 }}
+               whileInView={{ opacity: 1, y: 0, scale: 1 }}
+               viewport={{ once: true }}
+               transition={{ duration: 0.8, delay: 0.3 }}
+               className="absolute -bottom-10 -right-6 md:-bottom-16 md:-right-12 w-2/3 md:w-3/5 z-20 hover:-translate-y-2 transition-transform duration-500 drop-shadow-2xl"
+            >
+              <img 
+                src="https://res.cloudinary.com/zihn8u4b/image/upload/v1789450743/cv2.png" 
+                alt="Resume Templates" 
+                className="w-full h-auto object-contain rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.3)]"
+                loading="lazy"
+              />
+            </motion.div>
           </motion.div>
 
           {/* Content (Right Side) */}

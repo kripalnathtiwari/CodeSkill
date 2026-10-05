@@ -1,20 +1,19 @@
 import React, { useState } from "react";
 import Editor from "@monaco-editor/react";
-import { Play, Terminal, Loader2, AlertTriangle, CheckCircle, Clock, Cpu, Maximize2, Minimize2, Sun, Moon, Code2 } from "lucide-react";
+import { Play, Loader2, RefreshCw, Share2, Save, Download, Maximize, Circle } from "lucide-react";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { getApiUrl } from "../utils/apiConfig";
-import PracticeTimer from "../components/PracticeTimer";
 
 const LANGUAGES = [
-  { id: "python", name: "Python", defaultCode: "print('Hello, CodeSkill!')" },
-  { id: "javascript", name: "JavaScript", defaultCode: "console.log('Hello, CodeSkill!');" },
-  { id: "typescript", name: "TypeScript", defaultCode: "const msg: string = 'Hello, CodeSkill!';\nconsole.log(msg);" },
-  { id: "java", name: "Java", defaultCode: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, CodeSkill!");\n    }\n}' },
-  { id: "cpp", name: "C++", defaultCode: '#include <iostream>\n\nint main() {\n    std::cout << "Hello, CodeSkill!" << std::endl;\n    return 0;\n}' },
-  { id: "c", name: "C", defaultCode: '#include <stdio.h>\n\nint main() {\n    printf("Hello, CodeSkill!\\n");\n    return 0;\n}' },
-  { id: "go", name: "Go", defaultCode: 'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hello, CodeSkill!")\n}' },
-  { id: "rust", name: "Rust", defaultCode: 'fn main() {\n    println!("Hello, CodeSkill!");\n}' },
+  { id: "c", name: "C", ext: "c", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg", defaultCode: '#include <stdio.h>\n\nint main() {\n    // Online Free C compiler to run C program online\n    printf("Welcome to CodeSkill Compiler");\n    return 0;\n}' },
+  { id: "cpp", name: "C++", ext: "cpp", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg", defaultCode: '#include <iostream>\n\nint main() {\n    std::cout << "Welcome to CodeSkill Compiler" << std::endl;\n    return 0;\n}' },
+  { id: "java", name: "Java", ext: "java", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg", defaultCode: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Welcome to CodeSkill Compiler");\n    }\n}' },
+  { id: "python", name: "Python", ext: "py", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg", defaultCode: 'print("Welcome to CodeSkill Compiler")' },
+  { id: "javascript", name: "JavaScript", ext: "js", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg", defaultCode: 'console.log("Welcome to CodeSkill Compiler");' },
+  { id: "typescript", name: "TypeScript", ext: "ts", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg", defaultCode: 'const msg: string = "Welcome to CodeSkill Compiler";\nconsole.log(msg);' },
+  { id: "go", name: "Go", ext: "go", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original.svg", defaultCode: 'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Welcome to CodeSkill Compiler")\n}' },
+  { id: "rust", name: "Rust", ext: "rs", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/rust/rust-plain.svg", defaultCode: 'fn main() {\n    println!("Welcome to CodeSkill Compiler");\n}' },
 ];
 
 export default function SandboxPage() {
@@ -22,33 +21,19 @@ export default function SandboxPage() {
   
   const [language, setLanguage] = useState(LANGUAGES[0]);
   const [code, setCode] = useState(language.defaultCode);
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
+  const [input, setInput] = useState("1");
+  const [output, setOutput] = useState("Welcome to CodeSkill Compiler\nHappy Coding! 🎉");
   const [isExecuting, setIsExecuting] = useState(false);
-  const [executionResult, setExecutionResult] = useState<{
-    status?: string;
-    runtime?: number;
-    memory?: number;
-    error?: string;
-  } | null>(null);
 
-  const [isEditorDark, setIsEditorDark] = useState(true);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [ioTab, setIoTab] = useState<"input" | "output">("input");
-
-  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selected = LANGUAGES.find((l) => l.id === e.target.value);
-    if (selected) {
-      setLanguage(selected);
-      setCode(selected.defaultCode);
-    }
+  const handleLanguageChange = (lang: any) => {
+    setLanguage(lang);
+    setCode(lang.defaultCode);
+    setOutput("");
   };
 
   const handleRunCode = async () => {
     setIsExecuting(true);
-    setOutput("");
-    setExecutionResult(null);
-    setIoTab("output"); // Switch to output tab when running code
+    setOutput("Compiling...");
 
     try {
       const headers = user ? { Authorization: `Bearer ${localStorage.getItem("accessToken")}` } : {};
@@ -59,9 +44,7 @@ export default function SandboxPage() {
         input,
       }, { headers });
 
-      const { status, output: stdout, error, runtime, memory } = res.data;
-      
-      setExecutionResult({ status, runtime, memory, error });
+      const { status, output: stdout, error } = res.data;
       
       if (status === "ACCEPTED") {
         setOutput(stdout || "Execution completed with no output.");
@@ -69,7 +52,6 @@ export default function SandboxPage() {
         setOutput(error || stdout || "Execution failed.");
       }
     } catch (err: any) {
-      setExecutionResult({ status: "RUNTIME_ERROR", error: "Internal Server Error or network issue." });
       setOutput(err.response?.data?.error || err.message || "Failed to execute code.");
     } finally {
       setIsExecuting(false);
@@ -77,188 +59,139 @@ export default function SandboxPage() {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-[calc(100vh-64px)] w-full bg-slate-50 dark:bg-[#0f111a] overflow-hidden font-sans">
-      {/* Slim Header Toolbar */}
-      <div className="flex items-center justify-between px-4 py-2.5 bg-white dark:bg-[#1a1d27] border-b border-slate-200 dark:border-[#2d313f] shadow-sm z-10">
-        <div className="flex items-center gap-3">
-          <div className="p-1.5 bg-primary/10 rounded-md">
-            <Terminal className="w-4 h-4 text-primary" />
+    <div className="flex flex-col h-[calc(100vh-64px)] w-full bg-[#f8f9fa] overflow-hidden font-sans">
+      {/* Top Navbar */}
+      <div className="flex items-center px-4 py-3 bg-white border-b border-gray-200">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-slate-800 rounded-full flex items-center justify-center">
+            <span className="text-orange-500 font-bold text-lg">C</span>
           </div>
-          <div>
-            <h1 className="text-sm font-bold text-slate-900 dark:text-slate-100 leading-tight">
-              CodeSkill Compiler
-            </h1>
-            <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Interactive Workspace</p>
-          </div>
-        </div>
-        
-        <div className="flex items-center space-x-3">
-          <div className="flex items-center bg-slate-100 dark:bg-[#0f111a] rounded-md border border-slate-200 dark:border-[#2d313f] overflow-hidden">
-            <select 
-              value={language.id}
-              onChange={handleLanguageChange}
-              className="bg-transparent text-slate-700 dark:text-slate-200 text-xs font-semibold focus:ring-0 focus:outline-none block w-32 px-3 py-1.5 cursor-pointer appearance-none"
-              style={{ backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.5rem center', backgroundSize: '1em' }}
-            >
-              {LANGUAGES.map((lang) => (
-                <option key={lang.id} value={lang.id} className="bg-white dark:bg-slate-800">{lang.name}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="hidden sm:block">
-            <PracticeTimer storageKey="sandbox_general" defaultMode="stopwatch" />
-          </div>
-
-          <button
-            onClick={handleRunCode}
-            disabled={isExecuting}
-            className="flex items-center space-x-1.5 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-1.5 rounded-md text-sm font-semibold transition-colors shadow-sm"
-          >
-            {isExecuting ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            ) : (
-              <Play className="h-3.5 w-3.5 fill-current" />
-            )}
-            <span>{isExecuting ? "Running..." : "Run Code"}</span>
-          </button>
+          <span className="font-bold text-lg text-slate-800 ml-1">CodeSkill</span>
+          <span className="text-gray-500 text-sm ml-2 mt-1">{language.name} Compiler</span>
         </div>
       </div>
 
-      {/* Main Container: Editor vs I/O */}
-      <div className={
-        isFullscreen
-          ? "fixed inset-0 z-50 bg-slate-50 dark:bg-[#0f111a] flex flex-col lg:flex-row w-full h-full overflow-hidden"
-          : "flex-1 flex flex-col lg:flex-row w-full overflow-hidden"
-      }>
-        
-        {/* Editor Pane */}
-        <div className="flex-[3] flex flex-col border-r border-slate-200 dark:border-[#2d313f] bg-white dark:bg-[#1e2230] relative min-h-[50vh] lg:min-h-0">
-          <div className="flex justify-between items-center px-4 py-2 bg-slate-50 dark:bg-[#1a1d27] border-b border-slate-200 dark:border-[#2d313f] text-xs font-mono">
+      <div className="flex flex-1 overflow-hidden">
+        {/* Left Sidebar for Languages */}
+        <div className="w-16 flex flex-col items-center py-4 space-y-4 bg-[#f8f9fa] border-r border-gray-200 shrink-0 overflow-y-auto">
+          {LANGUAGES.map((lang) => (
+            <button
+              key={lang.id}
+              onClick={() => handleLanguageChange(lang)}
+              className={`w-12 h-12 rounded-lg flex items-center justify-center transition-all ${
+                language.id === lang.id
+                  ? "bg-[#FFE4CC] border-2 border-orange-200"
+                  : "bg-white border border-gray-200 hover:bg-gray-50"
+              }`}
+              title={lang.name}
+            >
+              <img src={lang.icon} alt={lang.name} className="w-7 h-7" />
+            </button>
+          ))}
+        </div>
+
+        {/* Main Editor Area */}
+        <div className="flex-1 flex flex-col bg-white">
+          {/* Editor Header Toolbar */}
+          <div className="flex items-center justify-between px-3 py-2 border-b border-gray-200 bg-white">
             <div className="flex items-center">
-              <div className="flex items-center space-x-2 bg-white dark:bg-[#1e2230] px-3 py-1.5 rounded-t-md border-t border-l border-r border-slate-200 dark:border-[#2d313f] text-slate-800 dark:text-slate-200 shadow-sm translate-y-[1px] z-10">
-                <Code2 className="w-3.5 h-3.5 text-primary" />
-                <span>main.{language.id === "javascript" ? "js" : language.id === "typescript" ? "ts" : language.id}</span>
+              <div className="flex items-center space-x-2 px-3 py-1.5 border-b-2 border-orange-500 text-sm font-medium text-slate-700 bg-white translate-y-[1px]">
+                <span>main.{language.ext}</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
               </div>
-            </div>
-            <div className="flex items-center space-x-3 text-slate-500 dark:text-slate-400">
-              <button 
-                onClick={() => setIsEditorDark(!isEditorDark)}
-                className="hover:text-primary transition-colors flex items-center space-x-1"
-                title="Toggle Editor Theme"
-              >
-                {isEditorDark ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
+              <button className="ml-2 w-7 h-7 flex items-center justify-center bg-white border border-gray-200 rounded text-gray-500 hover:bg-gray-50">
+                +
               </button>
-              <button 
-                onClick={() => setIsFullscreen(!isFullscreen)}
-                className="hover:text-primary transition-colors flex items-center space-x-1"
-                title="Toggle Fullscreen"
+            </div>
+            
+            <div className="flex items-center space-x-3">
+              <button className="px-3 py-1.5 text-sm font-medium text-slate-700 bg-white border border-gray-200 rounded hover:bg-gray-50">
+                Files
+              </button>
+              
+              <div className="flex items-center space-x-2 text-gray-500">
+                <button className="p-1.5 hover:bg-gray-100 rounded transition-colors"><RefreshCw className="w-4 h-4" /></button>
+                <button className="p-1.5 hover:bg-gray-100 rounded transition-colors"><Share2 className="w-4 h-4" /></button>
+                <button className="p-1.5 hover:bg-gray-100 rounded transition-colors"><Save className="w-4 h-4" /></button>
+                <button className="p-1.5 hover:bg-gray-100 rounded transition-colors"><Download className="w-4 h-4" /></button>
+                <button className="p-1.5 hover:bg-gray-100 rounded transition-colors"><Maximize className="w-4 h-4" /></button>
+              </div>
+
+              <button
+                onClick={handleRunCode}
+                disabled={isExecuting}
+                className="ml-2 flex items-center space-x-1.5 bg-[#F97316] hover:bg-[#EA580C] disabled:opacity-70 text-white px-5 py-2 rounded font-semibold text-sm transition-colors shadow-sm"
               >
-                {isFullscreen ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
+                {isExecuting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Play className="h-4 w-4 fill-current" />
+                )}
+                <span>Compile</span>
               </button>
             </div>
           </div>
           
-          <div className="flex-1 w-full relative">
+          {/* Monaco Editor Container */}
+          <div className="flex-1 w-full bg-[#FFFdf0]">
             <Editor
               height="100%"
               language={language.id === "c" || language.id === "cpp" ? "cpp" : language.id}
               value={code}
               onChange={(val) => setCode(val || "")}
-              theme={isEditorDark ? "vs-dark" : "light"}
+              theme="light"
               options={{
                 minimap: { enabled: false },
-                fontSize: 15,
-                fontWeight: "500",
-                fontFamily: "'Fira Code', 'JetBrains Mono', monospace",
-                lineHeight: 26,
-                padding: { top: 16 },
+                fontSize: 14,
+                fontFamily: "'Consolas', 'Courier New', monospace",
+                lineHeight: 22,
                 scrollBeyondLastLine: false,
-                smoothScrolling: true,
-                cursorBlinking: "smooth",
-                cursorSmoothCaretAnimation: "on",
-                formatOnPaste: true,
-                roundedSelection: false,
-                renderLineHighlight: "all",
+                renderLineHighlight: "none",
+                overviewRulerBorder: false,
+                hideCursorInOverviewRuler: true,
+                scrollbar: {
+                  useShadows: false,
+                  verticalHasArrows: false,
+                  horizontalHasArrows: false,
+                  vertical: "visible",
+                  horizontal: "visible"
+                }
               }}
-              loading={<div className="flex items-center justify-center h-full text-sm text-slate-500"><Loader2 className="w-5 h-5 animate-spin mr-2"/> Loading Editor...</div>}
             />
           </div>
         </div>
 
-        {/* Input/Output Pane (Tabbed) */}
-        <div className="flex-[2] flex flex-col bg-white dark:bg-[#1e2230] min-h-[40vh] lg:min-h-0">
-          <div className="flex justify-between items-end px-4 pt-2 bg-slate-50 dark:bg-[#1a1d27] border-b border-slate-200 dark:border-[#2d313f] text-xs font-mono">
-            <div className="flex space-x-4">
-              <button 
-                onClick={() => setIoTab("input")}
-                className={`pb-2 px-2 border-b-2 transition-all ${ioTab === "input" ? "border-primary text-slate-900 dark:text-slate-100 font-bold" : "border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}
-              >
-                STDIN
-              </button>
-              <button 
-                onClick={() => setIoTab("output")}
-                className={`pb-2 px-2 border-b-2 transition-all flex items-center ${ioTab === "output" ? "border-primary text-slate-900 dark:text-slate-100 font-bold" : "border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}
-              >
-                STDOUT
-                {executionResult && <span className={`ml-1.5 w-1.5 h-1.5 rounded-full ${executionResult.status === "ACCEPTED" ? "bg-primary" : "bg-rose-500"}`}></span>}
-              </button>
+        {/* Right I/O Split Pane */}
+        <div className="w-[300px] lg:w-[400px] flex flex-col bg-[#f8f9fa] border-l border-gray-200 shrink-0">
+          
+          {/* Input Section */}
+          <div className="flex-1 flex flex-col min-h-0 border-b border-gray-200">
+            <div className="px-4 py-2.5 bg-white border-b border-gray-200 flex items-center rounded-tl-md">
+              <span className="text-[15px] text-slate-800">Input</span>
+              <span className="text-gray-400 text-xs ml-2">[Please input, b...</span>
             </div>
-            
-            {ioTab === "output" && executionResult && (
-              <div className="flex space-x-3 text-slate-500 pb-2">
-                {executionResult.runtime !== undefined && (
-                  <span className="flex items-center" title="Execution Time">
-                    <Clock className="h-3 w-3 mr-1" /> {executionResult.runtime}ms
-                  </span>
-                )}
-                {executionResult.memory !== undefined && (
-                  <span className="flex items-center" title="Memory Used">
-                    <Cpu className="h-3 w-3 mr-1" /> {executionResult.memory}KB
-                  </span>
-                )}
-              </div>
-            )}
-          </div>
-
-          <div className="flex-1 overflow-hidden flex flex-col bg-slate-50/50 dark:bg-black/10">
-            {ioTab === "input" ? (
+            <div className="flex-1 bg-white p-2 overflow-hidden">
               <textarea 
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                className="flex-1 w-full bg-transparent border-none resize-none p-4 text-sm font-mono text-slate-800 dark:text-slate-300 focus:ring-0 outline-none placeholder-slate-400 dark:placeholder-slate-600"
-                placeholder="Enter standard input here..."
+                className="w-full h-full bg-[#FCFAEF] border-none resize-none p-3 text-sm font-mono text-[#000080] focus:ring-0 outline-none"
                 spellCheck="false"
               />
-            ) : (
-              <div className="flex-1 p-4 overflow-y-auto font-mono text-sm">
-                {!output && !executionResult && (
-                  <div className="text-slate-400 dark:text-slate-600 h-full flex flex-col items-center justify-center space-y-2">
-                    <Terminal className="w-8 h-8 opacity-20" />
-                    <span className="italic">Run your code to see the output</span>
-                  </div>
-                )}
-                
-                {executionResult?.status && executionResult.status !== "ACCEPTED" && (
-                  <div className="mb-4 inline-flex items-center px-2.5 py-1.5 rounded bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-bold tracking-wide uppercase">
-                    <AlertTriangle className="h-3.5 w-3.5 mr-1.5" />
-                    {executionResult.status.replace(/_/g, ' ')}
-                  </div>
-                )}
-
-                {executionResult?.status === "ACCEPTED" && (
-                  <div className="mb-4 inline-flex items-center px-2.5 py-1.5 rounded bg-emerald-50 dark:bg-primary/10 border border-emerald-200 dark:border-primary/20 text-emerald-600 dark:text-primary text-xs font-bold tracking-wide uppercase">
-                    <CheckCircle className="h-3.5 w-3.5 mr-1.5" />
-                    SUCCESS
-                  </div>
-                )}
-
-                <pre className={`whitespace-pre-wrap break-words ${executionResult?.status === "ACCEPTED" ? "text-slate-800 dark:text-slate-300" : "text-rose-600 dark:text-rose-400"}`}>
-                  {output}
-                </pre>
-              </div>
-            )}
+            </div>
           </div>
+
+          {/* Output Section */}
+          <div className="flex-1 flex flex-col min-h-0">
+            <div className="px-4 py-2.5 bg-white border-b border-gray-200 border-t-8 border-[#f8f9fa]">
+              <span className="text-[15px] text-slate-800">Output</span>
+            </div>
+            <div className="flex-1 bg-white p-4 overflow-y-auto">
+              <pre className="font-mono text-sm whitespace-pre-wrap break-words text-slate-700">
+                {output}
+              </pre>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

@@ -334,11 +334,11 @@ export default function CollegeDataManagement() {
                   <div className="bg-background dark:bg-[#0B0F19] p-4 rounded-xl border border-border flex flex-col space-y-4">
                     {!isDomainConfirmed ? (
                       <div className="space-y-2">
-                        <label className="text-xs font-bold text-text-muted uppercase tracking-wider">Step 1: Enter Expected Domain</label>
+                        <label className="text-xs font-bold text-text-muted uppercase tracking-wider">Step 1: Add New Domain</label>
                         <div className="flex space-x-2">
                           <input 
                             type="text" 
-                            placeholder="e.g. gmail.com" 
+                            placeholder="e.g. lpu.co.in" 
                             value={csvDomainInput} 
                             onChange={e => setCsvDomainInput(e.target.value)}
                             className="flex-1 bg-surface dark:bg-[#111827] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none" 
@@ -357,10 +357,10 @@ export default function CollegeDataManagement() {
                     ) : (
                       <div className="space-y-3">
                         <div className="flex justify-between items-center bg-surface dark:bg-[#111827] px-3 py-2 rounded-lg border border-border">
-                          <span className="text-sm font-medium text-text-muted">Target Domain:</span>
+                          <span className="text-sm font-medium text-text-muted">Domain Added:</span>
                           <span className="text-sm font-bold text-primary">@{csvDomainInput}</span>
                         </div>
-                        <label className="text-xs font-bold text-text-muted uppercase tracking-wider block">Step 2: Upload Students</label>
+                        <label className="text-xs font-bold text-text-muted uppercase tracking-wider block">Step 2: Upload CSV for this domain</label>
                         <button 
                           onClick={() => triggerUpload(college.id)}
                           className="w-full bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2.5 rounded-lg font-bold text-sm transition-colors flex justify-center items-center space-x-2"
@@ -372,7 +372,7 @@ export default function CollegeDataManagement() {
                     )}
                     
                     <button onClick={() => { setUploadPromptId(null); setCsvDomainInput(""); setIsDomainConfirmed(false); }} className="text-xs font-semibold text-text-muted hover:text-text-primary text-center mt-2">
-                      Cancel Upload
+                      Cancel
                     </button>
                   </div>
                 ) : (
@@ -381,8 +381,8 @@ export default function CollegeDataManagement() {
                       onClick={() => setUploadPromptId(college.id)}
                       className="flex-1 flex items-center justify-center space-x-2 py-2 bg-indigo-500/10 text-indigo-500 hover:bg-indigo-500/20 rounded-xl font-bold transition-colors text-sm"
                     >
-                      <Upload className="w-4 h-4" />
-                      <span>Upload CSV</span>
+                      <Plus className="w-4 h-4" />
+                      <span>Add Domain</span>
                     </button>
                     <button 
                       onClick={() => setExpandedId(expandedId === college.id ? null : college.id)}

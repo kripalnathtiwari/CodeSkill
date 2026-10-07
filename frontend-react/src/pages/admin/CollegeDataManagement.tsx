@@ -23,6 +23,11 @@ export default function CollegeDataManagement() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadTargetId, setUploadTargetId] = useState<string | null>(null);
 
+  // Student View & Manual Add
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [addingStudentTo, setAddingStudentTo] = useState<string | null>(null);
+  const [newStudent, setNewStudent] = useState({ name: "", email: "", regNum: "", phone: "" });
+
   useEffect(() => {
     const saved = localStorage.getItem("admin_college_data");
     if (saved) {
@@ -132,6 +137,46 @@ export default function CollegeDataManagement() {
       setUploadTargetId(null);
     };
     reader.readAsText(file);
+  };
+
+  const handleAddManualStudent = (collegeId: string, domain: string) => {
+    if (!newStudent.name || !newStudent.email) return alert("Name and Email are required");
+    
+    const studentDomain = newStudent.email.split('@')[1];
+    if (!studentDomain || studentDomain.toLowerCase() !== domain.toLowerCase()) {
+      return alert(`Student email must end with @${domain}`);
+    }
+
+    const updated = collegeDataList.map(c => {
+      if (c.id === collegeId) {
+        // Check duplicate
+        if (c.students.some(s => s.email.toLowerCase() === newStudent.email.toLowerCase())) {
+          alert("Student with this email already exists");
+          return c;
+        }
+        return {
+          ...c,
+          students: [...c.students, { ...newStudent }]
+        };
+      }
+      return c;
+    });
+    
+    saveToStorage(updated);
+    setNewStudent({ name: "", email: "", regNum: "", phone: "" });
+    setAddingStudentTo(null);
+  };
+
+  const handleDeleteStudent = (collegeId: string, email: string) => {
+    if (window.confirm("Remove this student?")) {
+      const updated = collegeDataList.map(c => {
+        if (c.id === collegeId) {
+          return { ...c, students: c.students.filter(s => s.email !== email) };
+        }
+        return c;
+      });
+      saveToStorage(updated);
+    }
   };
 
   let userColleges = collegeDataList;
@@ -250,12 +295,60 @@ export default function CollegeDataManagement() {
               <div className="mt-auto pt-4 border-t border-border flex space-x-3">
                 <button 
                   onClick={() => triggerUpload(college.id)}
-                  className="flex-1 flex items-center justify-center space-x-2 py-2.5 bg-indigo-500/10 text-indigo-500 hover:bg-indigo-500/20 rounded-xl font-bold transition-colors"
+                  className="flex-1 flex items-center justify-center space-x-2 py-2 bg-indigo-500/10 text-indigo-500 hover:bg-indigo-500/20 rounded-xl font-bold transition-colors text-sm"
                 >
                   <Upload className="w-4 h-4" />
                   <span>Upload CSV</span>
                 </button>
+                <button 
+                  onClick={() => setExpandedId(expandedId === college.id ? null : college.id)}
+                  className="flex-1 flex items-center justify-center space-x-2 py-2 bg-slate-800 text-text-primary hover:bg-slate-700 rounded-xl font-bold transition-colors text-sm"
+                >
+                  <Users className="w-4 h-4" />
+                  <span>{expandedId === college.id ? "Hide Students" : "View Students"}</span>
+                </button>
               </div>
+
+              {expandedId === college.id && (
+                <div className="mt-4 pt-4 border-t border-border">
+                  <div className="max-h-60 overflow-y-auto pr-2 mb-4 space-y-2">
+                    {college.students.length === 0 ? (
+                       <p className="text-sm text-text-muted text-center py-4">No students added yet.</p>
+                    ) : (
+                       college.students.map((student, idx) => (
+                         <div key={idx} className="bg-background dark:bg-[#0B0F19] p-3 rounded-lg flex justify-between items-center border border-border">
+                           <div>
+                             <p className="text-sm font-bold text-text-primary">{student.name}</p>
+                             <p className="text-xs text-text-muted">{student.email}</p>
+                           </div>
+                           <button onClick={() => handleDeleteStudent(college.id, student.email)} className="text-rose-500 hover:bg-rose-500/10 p-1.5 rounded-md">
+                             <Trash2 className="w-4 h-4" />
+                           </button>
+                         </div>
+                       ))
+                    )}
+                  </div>
+                  
+                  {addingStudentTo === college.id ? (
+                    <div className="bg-background dark:bg-[#0B0F19] p-3 rounded-xl border border-border space-y-3">
+                      <input type="text" placeholder="Student Name *" value={newStudent.name} onChange={e => setNewStudent({...newStudent, name: e.target.value})} className="w-full bg-surface dark:bg-[#111827] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none" />
+                      <input type="email" placeholder={`Student Email (@${college.domain}) *`} value={newStudent.email} onChange={e => setNewStudent({...newStudent, email: e.target.value})} className="w-full bg-surface dark:bg-[#111827] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none" />
+                      <div className="grid grid-cols-2 gap-2">
+                        <input type="text" placeholder="Reg Num" value={newStudent.regNum} onChange={e => setNewStudent({...newStudent, regNum: e.target.value})} className="w-full bg-surface dark:bg-[#111827] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none" />
+                        <input type="text" placeholder="Phone" value={newStudent.phone} onChange={e => setNewStudent({...newStudent, phone: e.target.value})} className="w-full bg-surface dark:bg-[#111827] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none" />
+                      </div>
+                      <div className="flex space-x-2 pt-1">
+                        <button onClick={() => setAddingStudentTo(null)} className="flex-1 py-1.5 text-xs font-bold text-text-muted hover:text-text-primary border border-border rounded-lg">Cancel</button>
+                        <button onClick={() => handleAddManualStudent(college.id, college.domain)} className="flex-1 py-1.5 text-xs font-bold bg-primary hover:bg-primary text-white rounded-lg">Save</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button onClick={() => setAddingStudentTo(college.id)} className="w-full py-2 border border-dashed border-primary text-primary hover:bg-primary/5 rounded-xl text-sm font-bold transition-colors">
+                      + Add Student Manually
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           ))}
         </div>

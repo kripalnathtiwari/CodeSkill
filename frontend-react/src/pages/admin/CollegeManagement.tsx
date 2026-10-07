@@ -66,8 +66,17 @@ export default function CollegeManagement() {
       console.warn('Backend API fetch failed, loading from local storage:', error);
     }
 
-    const localColleges: College[] = JSON.parse(localStorage.getItem("admin_colleges_v2") || "[]");
-    const collections = JSON.parse(localStorage.getItem("admin_college_collections") || "[]");
+    let localColleges: College[] = JSON.parse(localStorage.getItem("admin_colleges_v2") || "[]");
+    let collections = JSON.parse(localStorage.getItem("admin_college_collections") || "[]");
+
+    // --- TEMPORARY CLEANUP REQUESTED BY USER ---
+    // Keep only LPU in local storage
+    localColleges = localColleges.filter(c => c.name.toLowerCase() === "lpu");
+    collections = collections.filter((c: any) => c.collegeName?.toLowerCase() === "lpu");
+    
+    localStorage.setItem("admin_colleges_v2", JSON.stringify(localColleges));
+    localStorage.setItem("admin_college_collections", JSON.stringify(collections));
+    // -------------------------------------------
 
     const mergedMap = new Map<string, College>();
 
@@ -78,7 +87,7 @@ export default function CollegeManagement() {
 
     // 2. Override/enrich with API colleges
     apiColleges.forEach(c => {
-      if (c && c.id) {
+      if (c && c.id && c.name?.toLowerCase() === "lpu") { // only include LPU from API as well
         const existing = mergedMap.get(String(c.id));
         mergedMap.set(String(c.id), {
           ...existing,

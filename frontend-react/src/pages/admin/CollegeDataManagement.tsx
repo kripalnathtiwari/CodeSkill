@@ -26,12 +26,16 @@ export default function CollegeDataManagement() {
   // Student View & Manual Add
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [addingStudentTo, setAddingStudentTo] = useState<string | null>(null);
-  const [newStudent, setNewStudent] = useState({ name: "", email: "", regNum: "", phone: "" });
+  const [newStudent, setNewStudent] = useState({ name: "", emailPrefix: "", emailDomain: "", regNum: "", phone: "" });
 
   useEffect(() => {
     const saved = localStorage.getItem("admin_college_data");
     if (saved) {
-      setCollegeDataList(JSON.parse(saved));
+      let parsed = JSON.parse(saved);
+      // Clean up everything except LPU
+      parsed = parsed.filter((c: any) => c.name.toLowerCase() === "lpu");
+      setCollegeDataList(parsed);
+      localStorage.setItem("admin_college_data", JSON.stringify(parsed));
     }
   }, []);
 
@@ -140,30 +144,38 @@ export default function CollegeDataManagement() {
   };
 
   const handleAddManualStudent = (collegeId: string, domain: string) => {
-    if (!newStudent.name || !newStudent.email) return alert("Name and Email are required");
-    
-    const studentDomain = newStudent.email.split('@')[1];
-    if (!studentDomain || studentDomain.toLowerCase() !== domain.toLowerCase()) {
-      return alert(`Student email must end with @${domain}`);
+    if (!newStudent.name || !newStudent.emailPrefix || !newStudent.emailDomain) {
+      return alert("Name, Email Prefix, and Domain are required");
     }
+    
+    if (newStudent.emailDomain.toLowerCase() !== domain.toLowerCase()) {
+      return alert(`Student domain must match the college domain (${domain}). You entered: ${newStudent.emailDomain}`);
+    }
+
+    const fullEmail = `${newStudent.emailPrefix}@${newStudent.emailDomain}`.toLowerCase();
 
     const updated = collegeDataList.map(c => {
       if (c.id === collegeId) {
         // Check duplicate
-        if (c.students.some(s => s.email.toLowerCase() === newStudent.email.toLowerCase())) {
+        if (c.students.some(s => s.email.toLowerCase() === fullEmail)) {
           alert("Student with this email already exists");
           return c;
         }
         return {
           ...c,
-          students: [...c.students, { ...newStudent }]
+          students: [...c.students, { 
+            name: newStudent.name, 
+            email: fullEmail, 
+            regNum: newStudent.regNum, 
+            phone: newStudent.phone 
+          }]
         };
       }
       return c;
     });
     
     saveToStorage(updated);
-    setNewStudent({ name: "", email: "", regNum: "", phone: "" });
+    setNewStudent({ name: "", emailPrefix: "", emailDomain: "", regNum: "", phone: "" });
     setAddingStudentTo(null);
   };
 
@@ -332,7 +344,13 @@ export default function CollegeDataManagement() {
                   {addingStudentTo === college.id ? (
                     <div className="bg-background dark:bg-[#0B0F19] p-3 rounded-xl border border-border space-y-3">
                       <input type="text" placeholder="Student Name *" value={newStudent.name} onChange={e => setNewStudent({...newStudent, name: e.target.value})} className="w-full bg-surface dark:bg-[#111827] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none" />
-                      <input type="email" placeholder={`Student Email (@${college.domain}) *`} value={newStudent.email} onChange={e => setNewStudent({...newStudent, email: e.target.value})} className="w-full bg-surface dark:bg-[#111827] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none" />
+                      
+                      <div className="flex items-center space-x-2">
+                        <input type="text" placeholder="Email Prefix *" value={newStudent.emailPrefix} onChange={e => setNewStudent({...newStudent, emailPrefix: e.target.value})} className="flex-1 bg-surface dark:bg-[#111827] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none" />
+                        <span className="text-text-muted font-bold">@</span>
+                        <input type="text" placeholder={`Domain (${college.domain}) *`} value={newStudent.emailDomain} onChange={e => setNewStudent({...newStudent, emailDomain: e.target.value})} className="flex-1 bg-surface dark:bg-[#111827] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none" />
+                      </div>
+
                       <div className="grid grid-cols-2 gap-2">
                         <input type="text" placeholder="Reg Num" value={newStudent.regNum} onChange={e => setNewStudent({...newStudent, regNum: e.target.value})} className="w-full bg-surface dark:bg-[#111827] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none" />
                         <input type="text" placeholder="Phone" value={newStudent.phone} onChange={e => setNewStudent({...newStudent, phone: e.target.value})} className="w-full bg-surface dark:bg-[#111827] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none" />

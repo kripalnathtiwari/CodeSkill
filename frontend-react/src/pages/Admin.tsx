@@ -21,7 +21,9 @@ import {
   Megaphone,
   Target,
   Lightbulb,
-  StickyNote
+  StickyNote,
+  Sun,
+  Moon
 } from "lucide-react";
 
 import DashboardOverview from "./admin/DashboardOverview";
@@ -42,12 +44,33 @@ import JobPublishingManagement from "./admin/JobPublishingManagement";
 import OtherPracticeManagement from "./admin/OtherPracticeManagement";
 import ProjectIdeaManagement from "./admin/ProjectIdeaManagement";
 import NotesManagement from "./admin/NotesManagement";
+import CollegeDataManagement from "./admin/CollegeDataManagement";
 
 export default function AdminDashboard() {
   const { user, isLoading, logout } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(user?.role === "INSTRUCTOR" ? "tests" : (user?.role === "COLLEGE_ADMIN" ? "college_collection" : "dashboard"));
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof window !== "undefined") {
+      return document.documentElement.classList.contains("dark") ||
+        localStorage.getItem("theme") === "dark";
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDark]);
+
+  const toggleTheme = () => setIsDark(!isDark);
 
   // Filter Nav Items based on Role
   let NAV_ITEMS = [
@@ -68,6 +91,7 @@ export default function AdminDashboard() {
     { id: "user_activity", label: "User Activity", icon: TrendingUp, roles: ["ADMIN"] },
     { id: "activity", label: "Activity Logs", icon: Activity, roles: ["ADMIN"] },
     { id: "database", label: "Database", icon: Database, roles: ["ADMIN"] },
+    { id: "college_data", label: "College Data", icon: Database, roles: ["ADMIN", "COLLEGE_ADMIN"] },
   ];
 
   NAV_ITEMS = NAV_ITEMS.filter(item => item.roles.includes(user?.role || "ADMIN"));
@@ -112,7 +136,15 @@ export default function AdminDashboard() {
           ))}
         </nav>
 
-        <div className="p-4 border-t border-border">
+        <div className="p-4 border-t border-border space-y-2">
+           <button 
+              onClick={toggleTheme}
+              className={`w-full flex items-center space-x-3 px-3 py-3 rounded-xl text-text-muted hover:bg-slate-200/50 dark:hover:bg-slate-800/50 hover:text-text-primary transition-all ${!isSidebarOpen && "justify-center"}`}
+              title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            >
+              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              {isSidebarOpen && <span className="font-semibold">{isDark ? "Light Mode" : "Dark Mode"}</span>}
+            </button>
            <button 
               onClick={() => { navigate("/dashboard"); }}
               className={`w-full flex items-center space-x-3 px-3 py-3 rounded-xl text-text-muted hover:bg-rose-500/10 hover:text-rose-500 transition-all ${!isSidebarOpen && "justify-center"}`}
@@ -143,6 +175,7 @@ export default function AdminDashboard() {
         { activeTab === "other_practice" && <OtherPracticeManagement />}
         { activeTab === "project_ideas" && <ProjectIdeaManagement />}
         { activeTab === "notes_management" && <NotesManagement />}
+        { activeTab === "college_data" && <CollegeDataManagement />}
       </main>
 
     </div>

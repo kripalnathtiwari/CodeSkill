@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import { getApiUrl } from "../../utils/apiConfig";
@@ -505,6 +505,12 @@ export default function TestManagement() {
       if (!q.text) return alert(`Question ${i + 1} is missing text!`);
       if (q.options.some(o => !o)) return alert(`Question ${i + 1} has empty options!`);
       if (!q.answer || !q.options.includes(q.answer)) return alert(`Question ${i + 1} needs a correct answer selected!`);
+    }
+
+    if (user?.role === "INSTRUCTOR") {
+      if (!instructorCollege || !instructorCollege.section) {
+        return alert("You can only schedule tests for your assigned section. You do not have a section assigned.");
+      }
     }
 
     const scheduledAt = buildScheduledAt();

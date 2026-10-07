@@ -359,6 +359,15 @@ export default function CourseCategorySection({
       return;
     }
 
+    if (collegeEmail) {
+      const collegeDomain = collegeEmail.split('@')[1];
+      const studentDomain = newStudent.email.split('@')[1];
+      if (collegeDomain && studentDomain && collegeDomain.toLowerCase() !== studentDomain.toLowerCase()) {
+        alert(`Only students with the college domain (@${collegeDomain}) can be added.`);
+        return;
+      }
+    }
+
     try {
       const token = localStorage.getItem("accessToken");
       await axios.post(
@@ -458,6 +467,24 @@ export default function CourseCategorySection({
       if (parsedStudents.length === 0) {
         alert("No valid student rows found. Expected format: Name,Email,RegNum,Phone");
         return;
+      }
+
+      if (collegeEmail) {
+        const collegeDomain = collegeEmail.split('@')[1];
+        if (collegeDomain) {
+          const invalidCount = parsedStudents.filter(s => {
+            const studentDomain = s.email.split('@')[1];
+            return !studentDomain || studentDomain.toLowerCase() !== collegeDomain.toLowerCase();
+          }).length;
+          
+          if (invalidCount > 0) {
+            alert(`Error: ${invalidCount} students have invalid email domains. You can only upload students with the college domain (@${collegeDomain}).`);
+            if (csvInputRef.current) csvInputRef.current.value = "";
+            setCsvTargetCourseId(null);
+            setTargetClassId(null);
+            return;
+          }
+        }
       }
 
       try {
@@ -591,13 +618,13 @@ export default function CourseCategorySection({
             <BookOpen className="w-6 h-6 text-primary" />
           </div>
           <div>
-            <h3 className="text-xl font-black text-text-primary flex items-center">
+            <h3 className="text-xl font-black text-white flex items-center">
               Course Categories & Batches
               <span className="ml-3 text-xs bg-primary/20 text-primary px-3 py-1 rounded-full font-bold">
                 {courses.length} Active
               </span>
             </h3>
-            <p className="text-xs text-text-muted">
+            <p className="text-xs text-slate-300">
               Create courses, assign instructors, and manage enrolled students for {collegeName}
             </p>
           </div>
@@ -611,7 +638,7 @@ export default function CourseCategorySection({
               setCourseNameInput("");
               setDescriptionInput("");
             }}
-            className="bg-gradient-to-r from-primary to-sky-500 hover:from-primary hover:to-sky-400 text-text-primary px-6 py-3 rounded-2xl font-bold flex items-center justify-center space-x-2 shadow-lg hover:shadow-blue-500/20 transition-all transform hover:-translate-y-0.5"
+            className="bg-gradient-to-r from-primary to-sky-500 hover:from-primary hover:to-sky-400 text-white px-6 py-3 rounded-2xl font-bold flex items-center justify-center space-x-2 shadow-lg hover:shadow-blue-500/20 transition-all transform hover:-translate-y-0.5"
           >
             <Plus className="w-5 h-5" />
             <span>New Course Category</span>

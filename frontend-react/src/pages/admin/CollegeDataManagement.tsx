@@ -1,0 +1,243 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { Building2, Upload, Search, Trash2, Plus, Users, Download, Eye } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+
+type CollegeData = {
+  id: string;
+  collegeName: string;
+  domain: string; // e.g. "lpu.in"
+  students: { name: string; email: string; regNum?: string; phone?: string }[];
+};
+
+export default function CollegeDataManagement() {
+  const { user } = useAuth();
+  const [collegeDataList, setCollegeDataList] = useState<CollegeData[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  
+  // Create mode
+  const [isCreating, setIsCreating] = useState(false);
+  const [newCollegeName, setNewCollegeName] = useState("");
+  const [newDomain, setNewDomain] = useState("");
+  
+  // CSV Upload
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadTargetId, setUploadTargetId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("admin_college_data");
+    if (saved) {
+      setCollegeDataList(JSON.parse(saved));
+    }
+  }, []);
+
+  const saveToStorage = (data: CollegeData[]) => {
+    setCollegeDataList(data);
+    localStorage.setItem("admin_college_data", JSON.stringify(data));
+  };
+
+  const handleCreateCollege = () => {
+    if (!newCollegeName || !newDomain) return alert("College name and domain are required");
+    const domainClean = newDomain.trim().toLowerCase().replace(/^@/, "");
+    
+    const newEntry: CollegeData = {
+      id: "cd_" + Date.now(),
+      collegeName: newCollegeName,
+      domain: domainClean,
+      students: []
+    };
+    
+    saveToStorage([...collegeDataList, newEntry]);
+    setIsCreating(false);
+    setNewCollegeName("");
+    setNewDomain("");
+  };
+
+  const handleDeleteCollege = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this college and all its student data?")) {
+      saveToStorage(collegeDataList.filter(c => c.id !== id));
+    }
+  };
+
+  const triggerUpload = (id: string) => {
+    setUploadTargetId(id);
+    fileInputRef.current?.click();
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !uploadTargetId) return;
+
+    const targetCollege = collegeDataList.find(c => c.id === uploadTargetId);
+    if (!targetCollege) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const text = event.target?.result as string;
+      if (!text) return;
+      
+      const lines = text.split(/\r\n|\n/).filter(l => l.trim().length > 0);
+      if (lines.length <= 1) {
+        alert("File is empty or missing data rows. Ensure it has Name,Email,RegNum,Phone");
+        if (fileInputRef.current) fileInputRef.current.value = "";
+        setUploadTargetId(null);
+        return;
+      }
+
+      const parsed: {name: string; email: string; regNum?: string; phone?: string}[] = [];
+      let invalidCount = 0;
+
+      for (let i = 1; i < lines.length; i++) {
+        const cols = lines[i].split(",").map(c => c.trim().replace(/^"|"$/g, ""));
+        if (cols.length >= 2 && cols[1]) {
+          const email = cols[1];
+          const studentDomain = email.split('@')[1];
+          if (studentDomain && studentDomain.toLowerCase() === targetCollege.domain.toLowerCase()) {
+            parsed.push({
+              name: cols[0] || "Unknown",
+              email: email,
+              regNum: cols[2],
+              phone: cols[3]
+            });
+          } else {
+            invalidCount++;
+          }
+        }
+      }
+
+      if (invalidCount > 0) {
+        alert(`Found ${invalidCount} students with an invalid email domain. They were skipped. Only @${targetCollege.domain} is allowed.`);
+      }
+
+      if (parsed.length > 0) {
+        const updated = collegeDataList.map(c => {
+          if (c.id === uploadTargetId) {
+            // Check for duplicates by email
+            const existingEmails = new Set(c.students.map(s => s.email.toLowerCase()));
+            const newStudents = parsed.filter(p => !existingEmails.has(p.email.toLowerCase()));
+            return { ...c, students: [...c.students, ...newStudents] };
+          }
+          return c;
+        });
+        saveToStorage(updated);
+        alert(`Successfully added ${parsed.length} new students.`);
+      } else if (invalidCount === 0) {
+        alert("No valid student data found in the CSV.");
+      }
+
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      setUploadTargetId(null);
+    };
+    reader.readAsText(file);
+  };
+
+  const filteredData = collegeDataList.filter(c => 
+    c.collegeName.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    c.domain.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  return (
+    <div className="space-y-6 animate-fadeIn">
+      <input type="file" accept=".csv" ref={fileInputRef} onChange={handleFileUpload} className="hidden" />
+
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-2xl font-bold text-text-primary">College Data</h2>
+          <p className="text-text-muted">Upload and manage student data securely by college domain.</p>
+        </div>
+        {!isCreating && (
+          <button 
+            onClick={() => setIsCreating(true)}
+            className="bg-primary hover:bg-primary text-white px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 shadow-lg transition-colors"
+          >
+            <Plus className="w-5 h-5" />
+            <span>Add College</span>
+          </button>
+        )}
+      </div>
+
+      {isCreating && (
+        <div className="bg-surface dark:bg-[#111827] p-6 rounded-2xl border border-border shadow-lg">
+          <h3 className="text-lg font-bold mb-4 text-text-primary">Add New College Data Entry</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block text-sm font-bold text-text-muted mb-2">College Name *</label>
+              <input 
+                type="text" 
+                value={newCollegeName} 
+                onChange={e => setNewCollegeName(e.target.value)}
+                placeholder="e.g. Lovely Professional University"
+                className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-2.5 text-text-primary focus:outline-none focus:border-primary"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-text-muted mb-2">Email Domain *</label>
+              <input 
+                type="text" 
+                value={newDomain} 
+                onChange={e => setNewDomain(e.target.value)}
+                placeholder="e.g. lpu.in"
+                className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-2.5 text-text-primary focus:outline-none focus:border-primary"
+              />
+            </div>
+          </div>
+          <div className="flex space-x-3 justify-end">
+            <button onClick={() => setIsCreating(false)} className="px-4 py-2 text-text-muted hover:text-text-primary font-semibold">Cancel</button>
+            <button onClick={handleCreateCollege} className="bg-primary hover:bg-primary text-white px-4 py-2 rounded-xl font-bold">Save College</button>
+          </div>
+        </div>
+      )}
+
+      {/* Search */}
+      <div className="relative w-full max-w-md">
+        <Search className="w-5 h-5 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
+        <input 
+          type="text" 
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+          placeholder="Search by college name or domain..."
+          className="w-full bg-surface dark:bg-[#111827] border border-border rounded-xl pl-10 pr-4 py-2.5 text-text-primary focus:outline-none focus:border-primary"
+        />
+      </div>
+
+      {filteredData.length === 0 ? (
+        <div className="bg-surface dark:bg-[#111827] p-12 text-center rounded-2xl border border-border">
+          <Building2 className="w-12 h-12 text-text-muted mx-auto mb-4 opacity-30" />
+          <p className="text-text-muted font-medium">No college data entries found.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredData.map(college => (
+            <div key={college.id} className="bg-surface dark:bg-[#111827] rounded-2xl border border-border p-6 shadow-sm flex flex-col">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h3 className="font-bold text-lg text-text-primary">{college.collegeName}</h3>
+                  <span className="inline-block mt-1 px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full border border-primary/20">
+                    @{college.domain}
+                  </span>
+                </div>
+                <button onClick={() => handleDeleteCollege(college.id)} className="p-2 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors">
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+              
+              <div className="flex items-center space-x-2 text-text-muted mb-6">
+                <Users className="w-4 h-4" />
+                <span className="text-sm font-semibold">{college.students.length} Students Uploaded</span>
+              </div>
+
+              <div className="mt-auto pt-4 border-t border-border flex space-x-3">
+                <button 
+                  onClick={() => triggerUpload(college.id)}
+                  className="flex-1 flex items-center justify-center space-x-2 py-2.5 bg-indigo-500/10 text-indigo-500 hover:bg-indigo-500/20 rounded-xl font-bold transition-colors"
+                >
+                  <Upload className="w-4 h-4" />
+                  <span>Upload CSV</span>
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

@@ -24,6 +24,7 @@ export default function CollegeDataManagement() {
   const [uploadTargetId, setUploadTargetId] = useState<string | null>(null);
   const [uploadPromptId, setUploadPromptId] = useState<string | null>(null);
   const [csvDomainInput, setCsvDomainInput] = useState("");
+  const [isDomainConfirmed, setIsDomainConfirmed] = useState(false);
 
   // Student View & Manual Add
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -142,6 +143,7 @@ export default function CollegeDataManagement() {
       setUploadTargetId(null);
       setUploadPromptId(null);
       setCsvDomainInput("");
+      setIsDomainConfirmed(false);
     };
     reader.readAsText(file);
   };
@@ -188,6 +190,19 @@ export default function CollegeDataManagement() {
       });
       saveToStorage(updated);
     }
+  };
+
+  const handleDownloadCSV = (college: CollegeData) => {
+    if (college.students.length === 0) return;
+    const header = "Name,Email,RegNum,Phone\n";
+    const rows = college.students.map(s => `"${s.name}","${s.email}","${s.regNum || ''}","${s.phone || ''}"`).join("\n");
+    const blob = new Blob([header + rows], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${college.collegeName}_students.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   let userColleges = collegeDataList;
@@ -298,31 +313,67 @@ export default function CollegeDataManagement() {
                 )}
               </div>
               
-              <div className="flex items-center space-x-2 text-text-muted mb-6">
-                <Users className="w-4 h-4" />
-                <span className="text-sm font-semibold">{college.students.length} Students Uploaded</span>
+              <div className="flex items-center justify-between text-text-muted mb-6">
+                <div className="flex items-center space-x-2">
+                  <Users className="w-4 h-4" />
+                  <span className="text-sm font-semibold">{college.students.length} Students Uploaded</span>
+                </div>
+                {college.students.length > 0 && (
+                  <button 
+                    onClick={() => handleDownloadCSV(college)}
+                    className="text-primary hover:text-indigo-400 flex items-center space-x-1 text-sm font-bold bg-primary/10 hover:bg-primary/20 px-3 py-1 rounded-lg transition-colors"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Export CSV</span>
+                  </button>
+                )}
               </div>
 
               <div className="mt-auto pt-4 border-t border-border flex flex-col space-y-3">
                 {uploadPromptId === college.id ? (
-                  <div className="bg-background dark:bg-[#0B0F19] p-3 rounded-xl border border-border flex flex-col space-y-2">
-                    <label className="text-xs font-bold text-text-muted">Expected Domain for CSV Students *</label>
-                    <div className="flex space-x-2">
-                      <input 
-                        type="text" 
-                        placeholder="e.g. gmail.com" 
-                        value={csvDomainInput} 
-                        onChange={e => setCsvDomainInput(e.target.value)}
-                        className="flex-1 bg-surface dark:bg-[#111827] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none" 
-                      />
-                      <button 
-                        onClick={() => triggerUpload(college.id)}
-                        className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors"
-                      >
-                        Browse
-                      </button>
-                    </div>
-                    <button onClick={() => { setUploadPromptId(null); setCsvDomainInput(""); }} className="text-xs text-text-muted hover:text-text-primary text-left mt-1">Cancel</button>
+                  <div className="bg-background dark:bg-[#0B0F19] p-4 rounded-xl border border-border flex flex-col space-y-4">
+                    {!isDomainConfirmed ? (
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold text-text-muted uppercase tracking-wider">Step 1: Enter Expected Domain</label>
+                        <div className="flex space-x-2">
+                          <input 
+                            type="text" 
+                            placeholder="e.g. gmail.com" 
+                            value={csvDomainInput} 
+                            onChange={e => setCsvDomainInput(e.target.value)}
+                            className="flex-1 bg-surface dark:bg-[#111827] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none" 
+                          />
+                          <button 
+                            onClick={() => {
+                              if (!csvDomainInput.trim()) return alert("Please enter a domain first.");
+                              setIsDomainConfirmed(true);
+                            }}
+                            className="bg-primary hover:bg-primary text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors"
+                          >
+                            Confirm
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center bg-surface dark:bg-[#111827] px-3 py-2 rounded-lg border border-border">
+                          <span className="text-sm font-medium text-text-muted">Target Domain:</span>
+                          <span className="text-sm font-bold text-primary">@{csvDomainInput}</span>
+                        </div>
+                        <label className="text-xs font-bold text-text-muted uppercase tracking-wider block">Step 2: Upload Students</label>
+                        <button 
+                          onClick={() => triggerUpload(college.id)}
+                          className="w-full bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2.5 rounded-lg font-bold text-sm transition-colors flex justify-center items-center space-x-2"
+                        >
+                          <Upload className="w-4 h-4" />
+                          <span>Select CSV File</span>
+                        </button>
+                      </div>
+                    )}
+                    
+                    <button onClick={() => { setUploadPromptId(null); setCsvDomainInput(""); setIsDomainConfirmed(false); }} className="text-xs font-semibold text-text-muted hover:text-text-primary text-center mt-2">
+                      Cancel Upload
+                    </button>
                   </div>
                 ) : (
                   <div className="flex space-x-3 w-full">
@@ -351,12 +402,18 @@ export default function CollegeDataManagement() {
                        <p className="text-sm text-text-muted text-center py-4">No students added yet.</p>
                     ) : (
                        college.students.map((student, idx) => (
-                         <div key={idx} className="bg-background dark:bg-[#0B0F19] p-3 rounded-lg flex justify-between items-center border border-border">
-                           <div>
+                         <div key={idx} className="bg-background dark:bg-[#0B0F19] p-3 rounded-lg flex justify-between items-start border border-border">
+                           <div className="space-y-1">
                              <p className="text-sm font-bold text-text-primary">{student.name}</p>
                              <p className="text-xs text-text-muted">{student.email}</p>
+                             {(student.regNum || student.phone) && (
+                               <div className="flex space-x-2 text-xs font-medium text-text-muted mt-1.5 pt-1">
+                                 {student.regNum && <span className="bg-surface dark:bg-[#111827] px-2 py-0.5 rounded text-indigo-400 border border-border shadow-sm">Reg: {student.regNum}</span>}
+                                 {student.phone && <span className="bg-surface dark:bg-[#111827] px-2 py-0.5 rounded text-teal-400 border border-border shadow-sm">Ph: {student.phone}</span>}
+                               </div>
+                             )}
                            </div>
-                           <button onClick={() => handleDeleteStudent(college.id, student.email)} className="text-rose-500 hover:bg-rose-500/10 p-1.5 rounded-md">
+                           <button onClick={() => handleDeleteStudent(college.id, student.email)} className="text-rose-500 hover:bg-rose-500/10 p-1.5 rounded-md shrink-0 ml-2">
                              <Trash2 className="w-4 h-4" />
                            </button>
                          </div>

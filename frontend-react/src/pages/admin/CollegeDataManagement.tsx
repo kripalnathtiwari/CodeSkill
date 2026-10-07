@@ -103,22 +103,13 @@ export default function CollegeDataManagement() {
         const cols = lines[i].split(",").map(c => c.trim().replace(/^"|"$/g, ""));
         if (cols.length >= 2 && cols[1]) {
           const email = cols[1];
-          const studentDomain = email.split('@')[1];
-          if (studentDomain && studentDomain.toLowerCase() === targetCollege.domain.toLowerCase()) {
-            parsed.push({
-              name: cols[0] || "Unknown",
-              email: email,
-              regNum: cols[2],
-              phone: cols[3]
-            });
-          } else {
-            invalidCount++;
-          }
+          parsed.push({
+            name: cols[0] || "Unknown",
+            email: email,
+            regNum: cols[2],
+            phone: cols[3]
+          });
         }
-      }
-
-      if (invalidCount > 0) {
-        alert(`Found ${invalidCount} students with an invalid email domain. They were skipped. Only @${targetCollege.domain} is allowed.`);
       }
 
       if (parsed.length > 0) {
@@ -146,10 +137,6 @@ export default function CollegeDataManagement() {
   const handleAddManualStudent = (collegeId: string, domain: string) => {
     if (!newStudent.name || !newStudent.emailPrefix || !newStudent.emailDomain) {
       return alert("Name, Email Prefix, and Domain are required");
-    }
-    
-    if (newStudent.emailDomain.toLowerCase() !== domain.toLowerCase()) {
-      return alert(`Student domain must match the college domain (${domain}). You entered: ${newStudent.emailDomain}`);
     }
 
     const fullEmail = `${newStudent.emailPrefix}@${newStudent.emailDomain}`.toLowerCase();
@@ -348,7 +335,7 @@ export default function CollegeDataManagement() {
                       <div className="flex items-center space-x-2">
                         <input type="text" placeholder="Email Prefix *" value={newStudent.emailPrefix} onChange={e => setNewStudent({...newStudent, emailPrefix: e.target.value})} className="flex-1 bg-surface dark:bg-[#111827] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none" />
                         <span className="text-text-muted font-bold">@</span>
-                        <input type="text" placeholder={`Domain (${college.domain}) *`} value={newStudent.emailDomain} onChange={e => setNewStudent({...newStudent, emailDomain: e.target.value})} className="flex-1 bg-surface dark:bg-[#111827] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none" />
+                        <input type="text" placeholder={`Domain (e.g. gmail.com) *`} value={newStudent.emailDomain} onChange={e => setNewStudent({...newStudent, emailDomain: e.target.value})} className="flex-1 bg-surface dark:bg-[#111827] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none" />
                       </div>
 
                       <div className="grid grid-cols-2 gap-2">

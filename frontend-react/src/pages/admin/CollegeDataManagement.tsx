@@ -6,6 +6,7 @@ type CollegeData = {
   id: string;
   collegeName: string;
   domain: string; // e.g. "lpu.in"
+  additionalDomains?: string[];
   students: { name: string; email: string; regNum?: string; phone?: string }[];
 };
 
@@ -302,9 +303,17 @@ export default function CollegeDataManagement() {
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h3 className="font-bold text-lg text-text-primary">{college.collegeName}</h3>
-                  <span className="inline-block mt-1 px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full border border-primary/20">
-                    @{college.domain}
-                  </span>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {Array.from(new Set([
+                      college.domain.toLowerCase(),
+                      ...(college.additionalDomains || []),
+                      ...college.students.map(s => s.email.split('@')[1]?.toLowerCase()).filter(Boolean)
+                    ])).map(d => (
+                      <span key={d} className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full border border-primary/20">
+                        @{d}
+                      </span>
+                    ))}
+                  </div>
                 </div>
                 {user?.role === "ADMIN" && (
                   <button onClick={() => handleDeleteCollege(college.id)} className="p-2 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors">
@@ -346,6 +355,19 @@ export default function CollegeDataManagement() {
                           <button 
                             onClick={() => {
                               if (!csvDomainInput.trim()) return alert("Please enter a domain first.");
+                              
+                              const cleanDomain = csvDomainInput.trim().toLowerCase().replace(/^@/, "");
+                              const updated = collegeDataList.map(c => {
+                                if (c.id === college.id) {
+                                  const existing = c.additionalDomains || [];
+                                  if (!existing.includes(cleanDomain) && c.domain.toLowerCase() !== cleanDomain) {
+                                    return { ...c, additionalDomains: [...existing, cleanDomain] };
+                                  }
+                                }
+                                return c;
+                              });
+                              saveToStorage(updated);
+                              
                               setIsDomainConfirmed(true);
                             }}
                             className="bg-primary hover:bg-primary text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors"

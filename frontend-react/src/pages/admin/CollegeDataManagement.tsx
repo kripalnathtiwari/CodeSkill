@@ -130,7 +130,13 @@ export default function CollegeDataManagement() {
     reader.readAsText(file);
   };
 
-  const filteredData = collegeDataList.filter(c => 
+  let userColleges = collegeDataList;
+  if (user?.role === "COLLEGE_ADMIN" && user.email) {
+    const userDomain = user.email.split('@')[1]?.toLowerCase();
+    userColleges = collegeDataList.filter(c => c.domain === userDomain);
+  }
+
+  const filteredData = userColleges.filter(c => 
     c.collegeName.toLowerCase().includes(searchQuery.toLowerCase()) || 
     c.domain.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -144,7 +150,7 @@ export default function CollegeDataManagement() {
           <h2 className="text-2xl font-bold text-text-primary">College Data</h2>
           <p className="text-text-muted">Upload and manage student data securely by college domain.</p>
         </div>
-        {!isCreating && (
+        {!isCreating && user?.role === "ADMIN" && (
           <button 
             onClick={() => setIsCreating(true)}
             className="bg-primary hover:bg-primary text-white px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 shadow-lg transition-colors"
@@ -215,9 +221,11 @@ export default function CollegeDataManagement() {
                     @{college.domain}
                   </span>
                 </div>
-                <button onClick={() => handleDeleteCollege(college.id)} className="p-2 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors">
-                  <Trash2 className="w-4 h-4" />
-                </button>
+                {user?.role === "ADMIN" && (
+                  <button onClick={() => handleDeleteCollege(college.id)} className="p-2 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
               </div>
               
               <div className="flex items-center space-x-2 text-text-muted mb-6">

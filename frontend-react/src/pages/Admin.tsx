@@ -35,7 +35,6 @@ import CourseWiseSell from "./admin/CourseWiseSell";
 import TestManagement from "./admin/TestManagement";
 import ActivityLogs from "./admin/ActivityLogs";
 import CollegeManagement from "./admin/CollegeManagement";
-import CollegeCollection from "./admin/CollegeCollection";
 import AptitudeManagement from "./admin/AptitudeManagement";
 import DatabaseManagement from "./admin/DatabaseManagement";
 import CvManagement from "./admin/CvManagement";
@@ -49,7 +48,7 @@ import CollegeDataManagement from "./admin/CollegeDataManagement";
 export default function AdminDashboard() {
   const { user, isLoading, logout } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState(user?.role === "INSTRUCTOR" ? "tests" : (user?.role === "COLLEGE_ADMIN" ? "college_collection" : "dashboard"));
+  const [activeTab, setActiveTab] = useState(user?.role === "INSTRUCTOR" ? "tests" : (user?.role === "COLLEGE_ADMIN" ? "college_data" : "dashboard"));
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const [isDark, setIsDark] = useState(() => {
@@ -83,7 +82,6 @@ export default function AdminDashboard() {
     { id: "sales", label: "Sales & Enrollments", icon: CreditCard, roles: ["ADMIN"] },
     { id: "course_wise_sell", label: "Course Wise Sell", icon: TrendingUp, roles: ["ADMIN"] },
     { id: "colleges", label: "Colleges", icon: Building2, roles: ["ADMIN"] },
-    { id: "college_collection", label: "College Collection", icon: Users, roles: ["COLLEGE_ADMIN"] },
     { id: "cv_management", label: "CV Management", icon: FileText, roles: ["ADMIN"] },
     { id: "publish_job", label: "Publish Jobs", icon: Megaphone, roles: ["ADMIN"] },
     { id: "project_ideas", label: "Project Ideas", icon: Lightbulb, roles: ["ADMIN"] },
@@ -166,7 +164,6 @@ export default function AdminDashboard() {
         { activeTab === "sales" && <SalesManagement /> }
         { activeTab === "course_wise_sell" && <CourseWiseSell /> }
         { activeTab === "colleges" && <CollegeManagement /> }
-        { activeTab === "college_collection" && <CollegeCollection /> }
         { activeTab === "cv_management" && <CvManagement /> }
         { activeTab === "publish_job" && <JobPublishingManagement /> }
         { activeTab === "user_activity" && <UserActivityManagement /> }

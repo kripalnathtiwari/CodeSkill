@@ -1,6 +1,5 @@
-﻿import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Building2, Plus, Trash2, Edit2, Save, X, Phone, Mail, Calendar, User, BookOpen, ArrowLeft, ChevronRight, ChevronDown, ChevronUp, Search, Upload, Award, Download, Layers, ListFilter, FileText, CheckCircle2, XCircle, BarChart2 } from "lucide-react";
-import CollegeCollection from "./CollegeCollection";
 import CourseCategorySection from "./CourseCategorySection";
 import axios from "axios";
 import { API_BASE_URL as API_URL } from "../../utils/apiConfig";
@@ -26,7 +25,7 @@ type College = {
 export default function CollegeManagement() {
   const [colleges, setColleges] = useState<College[]>([]);
   const [selectedCollegeId, setSelectedCollegeId] = useState<string | null>(null);
-  const [collegeTab, setCollegeTab] = useState<"tutors" | "results" | "collections" | "courseCategories">("tutors");
+  const [collegeTab, setCollegeTab] = useState<"tutors" | "results" | "courseCategories">("tutors");
 
   // College Form
   const [isCreatingCollege, setIsCreatingCollege] = useState(false);
@@ -413,12 +412,6 @@ export default function CollegeManagement() {
                     Test Results
                   </button>
                   <button
-                    onClick={() => setCollegeTab("collections")}
-                    className={`text-sm font-bold uppercase tracking-widest pb-1 border-b-2 transition-colors ${collegeTab === "collections" ? "border-primary text-primary" : "border-transparent text-text-muted hover:text-text-secondary"}`}
-                  >
-                    Student Collections
-                  </button>
-                  <button
                     onClick={() => setCollegeTab("courseCategories")}
                     className={`text-sm font-bold uppercase tracking-widest pb-1 border-b-2 transition-colors ${collegeTab === "courseCategories" ? "border-primary text-primary" : "border-transparent text-text-muted hover:text-text-secondary"}`}
                   >
@@ -456,12 +449,6 @@ export default function CollegeManagement() {
 
           {collegeTab === "results" && (
             <CollegeResultsTab collegeName={selectedCollege.name} />
-          )}
-
-          {collegeTab === "collections" && (
-            <div className="bg-surface dark:bg-[#111827] rounded-3xl p-6 border border-border shadow-xl">
-              <CollegeCollection targetCollegeName={selectedCollege.name} targetCollegeEmail={selectedCollege.adminEmail} />
-            </div>
           )}
 
           {collegeTab === "courseCategories" && (

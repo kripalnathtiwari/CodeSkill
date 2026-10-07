@@ -22,6 +22,8 @@ export default function CollegeDataManagement() {
   // CSV Upload
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadTargetId, setUploadTargetId] = useState<string | null>(null);
+  const [uploadPromptId, setUploadPromptId] = useState<string | null>(null);
+  const [csvDomainInput, setCsvDomainInput] = useState("");
 
   // Student View & Manual Add
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -31,11 +33,7 @@ export default function CollegeDataManagement() {
   useEffect(() => {
     const saved = localStorage.getItem("admin_college_data");
     if (saved) {
-      let parsed = JSON.parse(saved);
-      // Clean up everything except LPU
-      parsed = parsed.filter((c: any) => (c.collegeName || c.name || "").toLowerCase() === "lpu");
-      setCollegeDataList(parsed);
-      localStorage.setItem("admin_college_data", JSON.stringify(parsed));
+      setCollegeDataList(JSON.parse(saved));
     }
   }, []);
 
@@ -72,6 +70,9 @@ export default function CollegeDataManagement() {
   };
 
   const triggerUpload = (id: string) => {
+    if (!csvDomainInput.trim()) {
+      return alert("Please enter the expected domain for the students in this CSV first.");
+    }
     setUploadTargetId(id);
     fileInputRef.current?.click();
   };
@@ -103,13 +104,22 @@ export default function CollegeDataManagement() {
         const cols = lines[i].split(",").map(c => c.trim().replace(/^"|"$/g, ""));
         if (cols.length >= 2 && cols[1]) {
           const email = cols[1];
-          parsed.push({
-            name: cols[0] || "Unknown",
-            email: email,
-            regNum: cols[2],
-            phone: cols[3]
-          });
+          const studentDomain = email.split('@')[1];
+          if (studentDomain && studentDomain.toLowerCase() === csvDomainInput.toLowerCase()) {
+            parsed.push({
+              name: cols[0] || "Unknown",
+              email: email,
+              regNum: cols[2],
+              phone: cols[3]
+            });
+          } else {
+            invalidCount++;
+          }
         }
+      }
+
+      if (invalidCount > 0) {
+        alert(`Found ${invalidCount} students with an invalid email domain. They were skipped. Only @${csvDomainInput} is allowed as you specified.`);
       }
 
       if (parsed.length > 0) {
@@ -130,6 +140,8 @@ export default function CollegeDataManagement() {
 
       if (fileInputRef.current) fileInputRef.current.value = "";
       setUploadTargetId(null);
+      setUploadPromptId(null);
+      setCsvDomainInput("");
     };
     reader.readAsText(file);
   };
@@ -291,21 +303,45 @@ export default function CollegeDataManagement() {
                 <span className="text-sm font-semibold">{college.students.length} Students Uploaded</span>
               </div>
 
-              <div className="mt-auto pt-4 border-t border-border flex space-x-3">
-                <button 
-                  onClick={() => triggerUpload(college.id)}
-                  className="flex-1 flex items-center justify-center space-x-2 py-2 bg-indigo-500/10 text-indigo-500 hover:bg-indigo-500/20 rounded-xl font-bold transition-colors text-sm"
-                >
-                  <Upload className="w-4 h-4" />
-                  <span>Upload CSV</span>
-                </button>
-                <button 
-                  onClick={() => setExpandedId(expandedId === college.id ? null : college.id)}
-                  className="flex-1 flex items-center justify-center space-x-2 py-2 bg-slate-800 text-text-primary hover:bg-slate-700 rounded-xl font-bold transition-colors text-sm"
-                >
-                  <Users className="w-4 h-4" />
-                  <span>{expandedId === college.id ? "Hide Students" : "View Students"}</span>
-                </button>
+              <div className="mt-auto pt-4 border-t border-border flex flex-col space-y-3">
+                {uploadPromptId === college.id ? (
+                  <div className="bg-background dark:bg-[#0B0F19] p-3 rounded-xl border border-border flex flex-col space-y-2">
+                    <label className="text-xs font-bold text-text-muted">Expected Domain for CSV Students *</label>
+                    <div className="flex space-x-2">
+                      <input 
+                        type="text" 
+                        placeholder="e.g. gmail.com" 
+                        value={csvDomainInput} 
+                        onChange={e => setCsvDomainInput(e.target.value)}
+                        className="flex-1 bg-surface dark:bg-[#111827] border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none" 
+                      />
+                      <button 
+                        onClick={() => triggerUpload(college.id)}
+                        className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors"
+                      >
+                        Browse
+                      </button>
+                    </div>
+                    <button onClick={() => { setUploadPromptId(null); setCsvDomainInput(""); }} className="text-xs text-text-muted hover:text-text-primary text-left mt-1">Cancel</button>
+                  </div>
+                ) : (
+                  <div className="flex space-x-3 w-full">
+                    <button 
+                      onClick={() => setUploadPromptId(college.id)}
+                      className="flex-1 flex items-center justify-center space-x-2 py-2 bg-indigo-500/10 text-indigo-500 hover:bg-indigo-500/20 rounded-xl font-bold transition-colors text-sm"
+                    >
+                      <Upload className="w-4 h-4" />
+                      <span>Upload CSV</span>
+                    </button>
+                    <button 
+                      onClick={() => setExpandedId(expandedId === college.id ? null : college.id)}
+                      className="flex-1 flex items-center justify-center space-x-2 py-2 bg-slate-800 text-text-primary hover:bg-slate-700 rounded-xl font-bold transition-colors text-sm"
+                    >
+                      <Users className="w-4 h-4" />
+                      <span>{expandedId === college.id ? "Hide Students" : "View Students"}</span>
+                    </button>
+                  </div>
+                )}
               </div>
 
               {expandedId === college.id && (

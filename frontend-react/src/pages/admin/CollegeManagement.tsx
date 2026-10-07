@@ -66,17 +66,8 @@ export default function CollegeManagement() {
       console.warn('Backend API fetch failed, loading from local storage:', error);
     }
 
-    let localColleges: College[] = JSON.parse(localStorage.getItem("admin_colleges_v2") || "[]");
-    let collections = JSON.parse(localStorage.getItem("admin_college_collections") || "[]");
-
-    // --- TEMPORARY CLEANUP REQUESTED BY USER ---
-    // Keep only LPU in local storage
-    localColleges = localColleges.filter(c => c.name.toLowerCase() === "lpu");
-    collections = collections.filter((c: any) => c.collegeName?.toLowerCase() === "lpu");
-    
-    localStorage.setItem("admin_colleges_v2", JSON.stringify(localColleges));
-    localStorage.setItem("admin_college_collections", JSON.stringify(collections));
-    // -------------------------------------------
+    const localColleges: College[] = JSON.parse(localStorage.getItem("admin_colleges_v2") || "[]");
+    const collections = JSON.parse(localStorage.getItem("admin_college_collections") || "[]");
 
     const mergedMap = new Map<string, College>();
 

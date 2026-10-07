@@ -33,7 +33,7 @@ export default function CollegeDataManagement() {
     if (saved) {
       let parsed = JSON.parse(saved);
       // Clean up everything except LPU
-      parsed = parsed.filter((c: any) => c.name.toLowerCase() === "lpu");
+      parsed = parsed.filter((c: any) => (c.collegeName || c.name || "").toLowerCase() === "lpu");
       setCollegeDataList(parsed);
       localStorage.setItem("admin_college_data", JSON.stringify(parsed));
     }
@@ -185,8 +185,8 @@ export default function CollegeDataManagement() {
   }
 
   const filteredData = userColleges.filter(c => 
-    c.collegeName.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    c.domain.toLowerCase().includes(searchQuery.toLowerCase())
+    (c.collegeName || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
+    (c.domain || "").toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (

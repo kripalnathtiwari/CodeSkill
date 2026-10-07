@@ -76,7 +76,7 @@ export default function AdminDashboard() {
     { id: "dashboard", label: "Overview", icon: LayoutDashboard, roles: ["ADMIN"] },
     { id: "courses", label: "Courses", icon: BookOpen, roles: ["ADMIN"] },
     { id: "users", label: "Users", icon: Users, roles: ["ADMIN"] },
-    { id: "notes_management", label: "Notes Management", icon: StickyNote, roles: ["ADMIN", "INSTRUCTOR"] },
+    { id: "notes_management", label: "Notes Management", icon: StickyNote, roles: ["ADMIN"] },
     { id: "problems", label: "Problems", icon: Code, roles: ["ADMIN"] },
     { id: "tests", label: "Tests & Contests", icon: ShieldAlert, roles: ["ADMIN", "INSTRUCTOR"] },
     { id: "sales", label: "Sales & Enrollments", icon: CreditCard, roles: ["ADMIN"] },

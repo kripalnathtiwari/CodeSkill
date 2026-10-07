@@ -36,8 +36,12 @@ export default function CollegeDataManagement() {
   };
 
   const handleCreateCollege = () => {
-    if (!newCollegeName || !newDomain) return alert("College name and domain are required");
-    const domainClean = newDomain.trim().toLowerCase().replace(/^@/, "");
+    const finalDomain = user?.role === "COLLEGE_ADMIN" && user?.email 
+      ? user.email.split('@')[1] 
+      : newDomain;
+
+    if (!newCollegeName || !finalDomain) return alert("College name and domain are required");
+    const domainClean = finalDomain.trim().toLowerCase().replace(/^@/, "");
     
     const newEntry: CollegeData = {
       id: "cd_" + Date.now(),
@@ -150,13 +154,13 @@ export default function CollegeDataManagement() {
           <h2 className="text-2xl font-bold text-text-primary">College Data</h2>
           <p className="text-text-muted">Upload and manage student data securely by college domain.</p>
         </div>
-        {!isCreating && user?.role === "ADMIN" && (
+        {!isCreating && (user?.role === "ADMIN" || (user?.role === "COLLEGE_ADMIN" && filteredData.length === 0)) && (
           <button 
             onClick={() => setIsCreating(true)}
             className="bg-primary hover:bg-primary text-white px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 shadow-lg transition-colors"
           >
             <Plus className="w-5 h-5" />
-            <span>Add College</span>
+            <span>{user?.role === "COLLEGE_ADMIN" ? "Initialize My College" : "Add College"}</span>
           </button>
         )}
       </div>
@@ -179,10 +183,11 @@ export default function CollegeDataManagement() {
               <label className="block text-sm font-bold text-text-muted mb-2">Email Domain *</label>
               <input 
                 type="text" 
-                value={newDomain} 
+                value={user?.role === "COLLEGE_ADMIN" && user?.email ? user.email.split('@')[1] : newDomain} 
                 onChange={e => setNewDomain(e.target.value)}
+                disabled={user?.role === "COLLEGE_ADMIN"}
                 placeholder="e.g. lpu.in"
-                className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-2.5 text-text-primary focus:outline-none focus:border-primary"
+                className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-2.5 text-text-primary focus:outline-none focus:border-primary disabled:opacity-50"
               />
             </div>
           </div>
@@ -205,10 +210,19 @@ export default function CollegeDataManagement() {
         />
       </div>
 
-      {filteredData.length === 0 ? (
+      {filteredData.length === 0 && !isCreating ? (
         <div className="bg-surface dark:bg-[#111827] p-12 text-center rounded-2xl border border-border">
           <Building2 className="w-12 h-12 text-text-muted mx-auto mb-4 opacity-30" />
-          <p className="text-text-muted font-medium">No college data entries found.</p>
+          <p className="text-text-muted font-medium mb-4">No college data entries found.</p>
+          {user?.role === "COLLEGE_ADMIN" && (
+             <button 
+               onClick={() => setIsCreating(true)}
+               className="bg-primary hover:bg-primary text-white px-5 py-2.5 rounded-xl font-bold inline-flex items-center space-x-2 transition-colors"
+             >
+               <Plus className="w-5 h-5" />
+               <span>Initialize My College</span>
+             </button>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

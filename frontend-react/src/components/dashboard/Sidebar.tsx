@@ -16,26 +16,28 @@ import {
   StickyNote,
   Lightbulb,
   GraduationCap,
-  ShieldAlert
+  ShieldAlert,
+  Terminal,
+  Building,
+  BrainCircuit,
+  LayoutGrid
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const getNavItems = (userRole?: string) => {
-  const items = [
+  const items: any[] = [
+    { isHeader: true, label: 'Menu' },
     { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/dashboard/courses', label: 'Courses', icon: BookOpen },
     { path: '/dashboard/my-courses', label: 'Enrolled Courses', icon: GraduationCap },
-    { 
-      path: '/dashboard/practice', 
-      label: 'Practice', 
-      icon: Target,
-      subItems: [
-        { path: '/dashboard/practice', label: 'DSA Problem' },
-        { path: '/dashboard/practice/company-problems', label: 'Company Interview Prep' },
-        { path: '/dashboard/practice/aptitude', label: 'Aptitude Question' },
-        { path: '/dashboard/practice/other', label: 'More Practice' },
-      ]
-    },
+    
+    { isHeader: true, label: 'Practice' },
+    { path: '/dashboard/practice', label: 'DSA Problem', icon: Terminal },
+    { path: '/dashboard/practice/company-problems', label: 'Company Interview Prep', icon: Building },
+    { path: '/dashboard/practice/aptitude', label: 'Aptitude Question', icon: BrainCircuit },
+    { path: '/dashboard/practice/other', label: 'More Practice', icon: LayoutGrid },
+    
+    { isHeader: true, label: 'More' },
     { path: '/dashboard/tests', label: 'Tests', icon: Trophy },
     { path: '/dashboard/compiler', label: 'Compiler', icon: Code2 },
     { path: '/dashboard/notes', label: 'Notes', icon: StickyNote },
@@ -46,6 +48,7 @@ const getNavItems = (userRole?: string) => {
   ];
 
   if (['ADMIN', 'INSTRUCTOR', 'COLLEGE_ADMIN'].includes(userRole || '')) {
+    items.push({ isHeader: true, label: 'Admin' });
     items.push({ path: '/admin', label: 'Admin Dashboard', icon: ShieldAlert });
   }
 
@@ -92,9 +95,16 @@ export default function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
-        <div className={`text-xs font-bold text-text-muted uppercase tracking-wider mb-4 px-2 ${isCollapsed ? 'hidden' : 'block'}`}>Menu</div>
-        {navItems.map((item) => {
-          const isActive = pathname === item.path || (item.subItems && item.subItems.some(sub => pathname === sub.path));
+        {navItems.map((item, index) => {
+          if (item.isHeader) {
+            return (
+              <div key={`header-${index}`} className={`text-xs font-bold text-text-muted uppercase tracking-wider mt-6 mb-2 px-2 ${isCollapsed ? 'hidden' : 'block'}`}>
+                {item.label}
+              </div>
+            );
+          }
+
+          const isActive = pathname === item.path || (item.subItems && item.subItems.some((sub: any) => pathname === sub.path));
           const hasSubItems = !!item.subItems;
           const isExpanded = openMenus[item.label] || (hasSubItems && isActive && openMenus[item.label] !== false);
 
@@ -121,7 +131,7 @@ export default function Sidebar() {
               {/* Sub Items */}
               {!isCollapsed && hasSubItems && isExpanded && (
                 <div className="flex flex-col mt-1 ml-9 space-y-1 animate-in slide-in-from-top-2 duration-200">
-                  {item.subItems.map(subItem => {
+                  {item.subItems.map((subItem: any) => {
                     const isSubActive = pathname === subItem.path;
                     return (
                       <Link

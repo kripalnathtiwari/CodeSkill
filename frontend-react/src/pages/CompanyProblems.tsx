@@ -216,7 +216,7 @@ export default function CompanyProblems() {
   const [questions, setQuestions] = useState<any[]>([]);
   const [testSeriesList, setTestSeriesList] = useState<any[]>([]);
   const [companiesList, setCompaniesList] = useState<CompanyCardData[]>(DEFAULT_COMPANIES);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [visibleCount, setVisibleCount] = useState(9);
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
@@ -516,70 +516,56 @@ export default function CompanyProblems() {
                 {filteredCompanies.slice(0, visibleCount).map((company) => (
                   <div
                     key={company.name}
-                  className="bg-surface dark:bg-background rounded-2xl border border-border dark:border-border/80 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between overflow-hidden"
-                >
-                  {/* Card Body */}
-                  <div className="p-5 sm:p-6 flex gap-4 sm:gap-5 items-start">
-                    {/* Left Box (Yellow/Gold Card Banner) */}
-                    <div className="w-36 h-40 sm:w-40 sm:h-44 shrink-0 rounded-2xl bg-gradient-to-br from-amber-400 via-amber-400 to-yellow-500 p-3 sm:p-3.5 flex flex-col items-center justify-between text-center relative overflow-hidden shadow-sm">
-                      {/* Logo Header */}
-                      <CompanyLogoHeader name={company.name} iconType={company.iconType} logoUrl={company.logoUrl} />
-
-                      {/* Subtitle */}
-                      <span className="text-[10px] sm:text-[11px] font-extrabold text-slate-950 uppercase tracking-tight mt-0.5">
-                        Interview Prepration
-                      </span>
-
-                      {/* Blue Circle Illustration */}
-                      <CompanyCircleIllustration iconType={company.iconType} name={company.name} logoUrl={company.logoUrl} />
+                    className="bg-surface dark:bg-[#0B0F19] rounded-2xl border border-border dark:border-border/80 shadow-sm hover:shadow-md hover:border-emerald-500/30 transition-all duration-300 flex flex-col p-6 group"
+                  >
+                    {/* Card Header */}
+                    <div className="flex items-center space-x-4 mb-5">
+                      <div className="shrink-0 scale-75 origin-left -my-2 -ml-2">
+                        <CompanyCircleIllustration iconType={company.iconType} name={company.name} logoUrl={company.logoUrl} />
+                      </div>
+                      <div>
+                        <h2 className="text-xl font-bold text-text-primary dark:text-text-inverse truncate">
+                          {company.name}
+                        </h2>
+                        <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
+                          Interview Preparation
+                        </span>
+                      </div>
                     </div>
 
-                    {/* Right Side (Company Details & Checklist) */}
-                    <div className="flex-1 min-w-0 pt-0.5">
-                      <h2 className="text-lg sm:text-xl font-bold text-text-primary dark:text-text-inverse truncate">
-                        {company.name}
-                      </h2>
-
-                      <div className="text-[10px] sm:text-[11px] font-bold text-text-muted dark:text-text-muted uppercase tracking-wider mt-2.5 sm:mt-3 mb-2">
-                        PREPARATION INCLUDES:
-                      </div>
-
-                      <ul className="space-y-1.5 sm:space-y-2">
-                        <li className="flex items-center text-xs sm:text-[13px] text-text-primary dark:text-text-secondary font-medium">
-                          <CheckCircle2 className="text-primary shrink-0 h-4 w-4 mr-2" />
-                          <span className="truncate">{company.name} Interview Practise Set</span>
+                    {/* Card Body */}
+                    <div className="flex-1 mb-6">
+                      <ul className="space-y-3">
+                        <li className="flex items-start text-sm text-text-primary dark:text-text-secondary font-medium">
+                          <CheckCircle2 className="text-emerald-500 shrink-0 h-4 w-4 mr-3 mt-0.5" />
+                          <span className="leading-snug">Comprehensive {company.name} Interview Practice Set</span>
                         </li>
-                        <li className="flex items-center text-xs sm:text-[13px] text-text-primary dark:text-text-secondary font-medium">
-                          <CheckCircle2 className="text-primary shrink-0 h-4 w-4 mr-2" />
-                          <span>Coding Assessments</span>
+                        <li className="flex items-start text-sm text-text-primary dark:text-text-secondary font-medium">
+                          <CheckCircle2 className="text-emerald-500 shrink-0 h-4 w-4 mr-3 mt-0.5" />
+                          <span className="leading-snug">Coding & Algorithmic Assessments</span>
                         </li>
-                        <li className="flex items-center text-xs sm:text-[13px] text-text-primary dark:text-text-secondary font-medium">
-                          <CheckCircle2 className="text-primary shrink-0 h-4 w-4 mr-2" />
-                          <span>Technical MCQ Assessments</span>
-                        </li>
-                        <li className="flex items-center text-xs sm:text-[13px] text-text-primary dark:text-text-secondary font-medium">
-                          <CheckCircle2 className="text-primary shrink-0 h-4 w-4 mr-2" />
-                          <span className="truncate">CS Fundamentals MCQ Assessments</span>
+                        <li className="flex items-start text-sm text-text-primary dark:text-text-secondary font-medium">
+                          <CheckCircle2 className="text-emerald-500 shrink-0 h-4 w-4 mr-3 mt-0.5" />
+                          <span className="leading-snug">Technical & CS Fundamentals MCQ</span>
                         </li>
                       </ul>
                     </div>
-                  </div>
 
-                  {/* Card Footer */}
-                  <div className="px-5 py-3.5 bg-background/70 dark:bg-background/70 border-t border-slate-100 dark:border-border/80 flex items-center justify-between">
-                    <div className="inline-flex items-center justify-center p-2 rounded-lg border border-blue-200 dark:border-blue-900/60 bg-blue-50 dark:bg-blue-950/40 text-primary dark:text-primary">
-                      <Award className="w-5 h-5" />
+                    {/* Card Footer */}
+                    <div className="pt-5 border-t border-border flex items-center justify-between mt-auto">
+                      <div className="flex items-center text-xs font-bold text-text-muted">
+                        <Award className="w-4 h-4 mr-1.5 text-emerald-500" />
+                        <span>Premium Prep</span>
+                      </div>
+                      <button
+                        onClick={() => handleStartPreparing(company.name)}
+                        className="bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold px-5 py-2.5 rounded-xl inline-flex items-center space-x-2 shadow-sm transition-all group-hover:scale-[1.02]"
+                      >
+                        <span>Start Preparing</span>
+                        <ArrowUpRight className="h-4 w-4" />
+                      </button>
                     </div>
-
-                    <button
-                      onClick={() => handleStartPreparing(company.name)}
-                      className="bg-[#0066cc] hover:bg-blue-700 text-text-inverse text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg inline-flex items-center space-x-1.5 shadow-sm hover:shadow transition-all group"
-                    >
-                      <span>Start Preparing</span>
-                      <ArrowUpRight className="h-4 w-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                    </button>
                   </div>
-                </div>
                 ))}
                 {visibleCount < filteredCompanies.length && (
                   <div ref={loadMoreRef} className="col-span-full py-8 flex justify-center text-text-muted text-sm font-medium animate-pulse">

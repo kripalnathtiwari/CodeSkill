@@ -45,7 +45,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="w-full bg-[#111111] dark:bg-background text-text-secondary py-10 px-6 border-t border-border relative overflow-hidden">
+    <footer className="w-full bg-[#0a0a0a] text-slate-300 py-10 px-6 border-t border-white/10 relative overflow-hidden">
       <div className="max-w-[90rem] mx-auto flex flex-col xl:flex-row gap-16 xl:gap-12 justify-between relative z-10">
 
         {/* Brand & Address Section */}
@@ -60,7 +60,7 @@ export default function Footer() {
             </div>
           </Link>
 
-          <p className="text-sm text-text-muted leading-relaxed mb-6 pr-4">
+          <p className="text-sm text-slate-300 leading-relaxed mb-6 pr-4">
             CodeSkill is an advanced interactive learning platform designed to empower developers. We bridge the gap between academic learning and industry requirements with real-world projects, guided courses, and practical coding challenges.
           </p>
 
@@ -83,8 +83,8 @@ export default function Footer() {
           <div className="space-y-4">
             <div className="flex items-start space-x-3 text-sm">
               <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-              <div className="text-text-muted">
-                <p className="font-semibold text-text-secondary mb-1">Corporate Address:</p>
+              <div className="text-slate-300">
+                <p className="font-semibold text-white mb-1">Corporate Address:</p>
                 <p>1st Floor, Tech Park, Phase 1</p>
                 <p>Electronic City, Bangalore</p>
                 <p>Karnataka 560100, India</p>
@@ -93,8 +93,8 @@ export default function Footer() {
 
             <div className="flex items-start space-x-3 text-sm">
               <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-              <div className="text-text-muted">
-                <p className="font-semibold text-text-secondary mb-1">Registered Address:</p>
+              <div className="text-slate-300">
+                <p className="font-semibold text-white mb-1">Registered Address:</p>
                 <p>42, Innovation Hub, Sector 5</p>
                 <p>Salt Lake City, Kolkata</p>
                 <p>West Bengal 700091, India</p>
@@ -104,67 +104,33 @@ export default function Footer() {
         </div>
 
         {/* Links Section */}
-        <div className="w-full xl:w-3/4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-8 gap-y-12">
+        <div className="w-full xl:w-3/4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-12">
 
           <div className="space-y-5">
             <h4 className="text-primary font-bold text-lg mb-4">Company</h4>
             <ul className="space-y-3 text-sm">
-              <li><Link to="/about" className="hover:text-text-inverse transition-colors">About Us</Link></li>
-              <li><Link to="#" className="hover:text-text-inverse transition-colors">Legal</Link></li>
-              <li><Link to="#" className="hover:text-text-inverse transition-colors">Privacy Policy</Link></li>
-              <li><Link to="#" className="hover:text-text-inverse transition-colors">Careers</Link></li>
-              <li><Link to="/contact" className="hover:text-text-inverse transition-colors">Contact Us</Link></li>
-              <li><Link to="#" className="hover:text-text-inverse transition-colors">Corporate Solution</Link></li>
-              <li><Link to="#" className="hover:text-text-inverse transition-colors">Campus Training Program</Link></li>
+              <li><Link to="/about" className="text-slate-300 hover:text-white transition-colors">About Us</Link></li>
+              <li><Link to="/contact" className="text-slate-300 hover:text-white transition-colors">Contact Us</Link></li>
+              <li><Link to="/college-request-session" className="text-slate-300 hover:text-white transition-colors">Campus Training Program</Link></li>
             </ul>
           </div>
 
           <div className="space-y-4">
-            <h4 className="text-primary font-bold text-lg mb-4">Explore</h4>
-            <ul className="space-y-2 text-sm">
-              <li><Link to="/problems" className="hover:text-text-inverse transition-colors">POTD</Link></li>
-              <li><Link to="/problems" className="hover:text-text-inverse transition-colors">Practice Problems</Link></li>
-              <li><Link to="#" className="hover:text-text-inverse transition-colors">Blogs</Link></li>
-              <li><Link to="/courses-training" className="hover:text-text-inverse transition-colors">Upskill Courses</Link></li>
-              <li><Link to="#" className="hover:text-text-inverse transition-colors">Connect</Link></li>
+            <h4 className="text-primary font-bold text-lg mb-4">Practice & Prep</h4>
+            <ul className="space-y-3 text-sm">
+              <li><Link to="/problems" className="text-slate-300 hover:text-white transition-colors">Practice Problems</Link></li>
+              <li><Link to="/aptitude" className="text-slate-300 hover:text-white transition-colors">Aptitude Questions</Link></li>
+              <li><Link to="/company-problems" className="text-slate-300 hover:text-white transition-colors">Company Interview Prep</Link></li>
+              <li><Link to="/contests" className="text-slate-300 hover:text-white transition-colors">Coding Contests</Link></li>
             </ul>
           </div>
 
           <div className="space-y-4">
-            <h4 className="text-primary font-bold text-lg mb-4">Tutorials</h4>
-            <ul className="space-y-2 text-sm">
-              <li><Link to="#" className="hover:text-text-inverse transition-colors">Programming Languages</Link></li>
-              <li><Link to="#" className="hover:text-text-inverse transition-colors">DSA</Link></li>
-              <li><Link to="#" className="hover:text-text-inverse transition-colors">Web Technology</Link></li>
-              <li><Link to="#" className="hover:text-text-inverse transition-colors">AI, ML & Data Science</Link></li>
-              <li><Link to="#" className="hover:text-text-inverse transition-colors">DevOps</Link></li>
-              <li><Link to="#" className="hover:text-text-inverse transition-colors">CS Core Subjects</Link></li>
-              <li><Link to="#" className="hover:text-text-inverse transition-colors">GATE</Link></li>
-              <li><Link to="#" className="hover:text-text-inverse transition-colors">School Subjects</Link></li>
-              <li><Link to="#" className="hover:text-text-inverse transition-colors">Software and Tools</Link></li>
-            </ul>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="text-primary font-bold text-lg mb-4">Courses</h4>
-            <ul className="space-y-2 text-sm">
-              <li><Link to="/course/st-1" className="hover:text-text-inverse transition-colors">Full Stack Bootcamp</Link></li>
-              <li><Link to="/course/st-2" className="hover:text-text-inverse transition-colors">Data Science & AI</Link></li>
-              <li><Link to="/course/f-1" className="hover:text-text-inverse transition-colors">Data Science & ML</Link></li>
-              <li><Link to="/course/f-2" className="hover:text-text-inverse transition-colors">Full Stack Web Dev</Link></li>
-              <li><Link to="/course/f-3" className="hover:text-text-inverse transition-colors">Cloud Architecture</Link></li>
-              <li><Link to="/course/c-1" className="hover:text-text-inverse transition-colors">Advanced DSA</Link></li>
-            </ul>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="text-primary font-bold text-lg mb-4">Preparation Corner</h4>
-            <ul className="space-y-2 text-sm">
-              <li><Link to="/company-problems" className="hover:text-text-inverse transition-colors">Interview Corner</Link></li>
-              <li><Link to="/problems" className="hover:text-text-inverse transition-colors">Aptitude</Link></li>
-              <li><Link to="/problems" className="hover:text-text-inverse transition-colors">Puzzles</Link></li>
-              <li><Link to="/courses-training" className="hover:text-text-inverse transition-colors">CS 160</Link></li>
-              <li><Link to="/courses-training" className="hover:text-text-inverse transition-colors">System Design</Link></li>
+            <h4 className="text-primary font-bold text-lg mb-4">Learning & Tools</h4>
+            <ul className="space-y-3 text-sm">
+              <li><Link to="/courses-training" className="text-slate-300 hover:text-white transition-colors">Upskill Courses</Link></li>
+              <li><Link to="/test-series" className="text-slate-300 hover:text-white transition-colors">Test Series</Link></li>
+              <li><Link to="/sandbox" className="text-slate-300 hover:text-white transition-colors">Online Compiler</Link></li>
             </ul>
           </div>
 
@@ -199,18 +165,18 @@ export default function Footer() {
 
       {/* BOTTOM: Copyright & Legal Links */}
       <div className="max-w-[90rem] mx-auto flex flex-col md:flex-row items-center justify-between gap-4 pt-4 relative z-10">
-        <p className="text-sm text-text-muted text-center md:text-left">
+        <p className="text-sm text-slate-400 text-center md:text-left">
           © {new Date().getFullYear()} CodeSkill | All Rights Reserved
         </p>
         
         <div className="flex items-center gap-6">
-          <Link to="/terms" className="text-sm text-text-muted hover:text-primary transition-colors">
+          <Link to="/terms" className="text-sm text-slate-400 hover:text-white transition-colors">
             Terms & Condition
           </Link>
-          <Link to="/privacy" className="text-sm text-text-muted hover:text-primary transition-colors">
+          <Link to="/privacy" className="text-sm text-slate-400 hover:text-white transition-colors">
             Privacy Policy
           </Link>
-          <Link to="/refund" className="text-sm text-text-muted hover:text-primary transition-colors">
+          <Link to="/refund" className="text-sm text-slate-400 hover:text-white transition-colors">
             Cancellation & Refund Policy
           </Link>
         </div>

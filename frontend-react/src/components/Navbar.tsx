@@ -1,10 +1,49 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Code2, Trophy, BookOpen, User, Flame, LogOut, ShieldAlert, Building2, Sun, Moon, GraduationCap, Target, Home as HomeIcon, Settings, ChevronDown, Lock, Menu, X, Briefcase, FileText, Sparkles, TrendingUp, Info } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
   const { user, logout, isLoading } = useAuth();
+  const location = useLocation();
+  
+  // Scroll Spy for Home Page sections
+  const [activeSection, setActiveSection] = useState(location.pathname);
+
+  useEffect(() => {
+    if (location.pathname !== "/") {
+      setActiveSection(location.pathname);
+      return;
+    }
+
+    const handleScroll = () => {
+      const sections = [
+        { id: "our-product", path: "/our-product" },
+        { id: "why-us", path: "/why-us" },
+        { id: "about", path: "/about" },
+      ];
+
+      let current = "/"; 
+      
+      for (const section of sections) {
+        const element = document.getElementById(section.id);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          // If the section's top is past the top third of the viewport, and bottom is not past it yet
+          if (rect.top <= window.innerHeight * 0.3 && rect.bottom >= window.innerHeight * 0.3) {
+            current = section.path;
+          }
+        }
+      }
+      
+      setActiveSection(current);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll(); // Check initially
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [location.pathname]);
   
   // Theme toggle state
   const [isDark, setIsDark] = useState(() => {
@@ -103,14 +142,14 @@ export default function Navbar() {
           </div>
         </div>
         {!user && (
-          <Link to="/our-product" className="hover:text-primary transition-colors flex items-center space-x-1">
+          <Link to="/our-product" className={`hover:text-primary transition-colors flex items-center space-x-1 ${activeSection === '/our-product' ? 'text-primary border-b-2 border-primary' : ''}`}>
             <span>Our Product</span>
           </Link>
         )}
-        <Link to="/why-us" className="hover:text-primary transition-colors flex items-center space-x-1 uppercase">
+        <Link to="/why-us" className={`hover:text-primary transition-colors flex items-center space-x-1 uppercase ${activeSection === '/why-us' ? 'text-primary border-b-2 border-primary' : ''}`}>
           <span>Why Us</span>
         </Link>
-        <Link to="/about" className="hover:text-primary transition-colors flex items-center space-x-1 uppercase">
+        <Link to="/about" className={`hover:text-primary transition-colors flex items-center space-x-1 uppercase ${activeSection === '/about' ? 'text-primary border-b-2 border-primary' : ''}`}>
           <span>About Us</span>
         </Link>
 
@@ -317,14 +356,14 @@ export default function Navbar() {
           </div>
           
           {!user && (
-            <Link to="/our-product" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-4 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary rounded-lg flex items-center space-x-2 text-text-primary dark:text-text-secondary">
+            <Link to="/our-product" onClick={() => setIsMobileMenuOpen(false)} className={`py-3 px-4 rounded-lg flex items-center space-x-2 ${activeSection === '/our-product' ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary text-text-primary dark:text-text-secondary'}`}>
               <span>Our Product</span>
             </Link>
           )}
-          <Link to="/why-us" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-4 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary rounded-lg flex items-center space-x-2 text-text-primary dark:text-text-secondary uppercase">
+          <Link to="/why-us" onClick={() => setIsMobileMenuOpen(false)} className={`py-3 px-4 rounded-lg flex items-center space-x-2 uppercase ${activeSection === '/why-us' ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary text-text-primary dark:text-text-secondary'}`}>
             <span>Why Us</span>
           </Link>
-          <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-4 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary rounded-lg flex items-center space-x-2 text-text-primary dark:text-text-secondary uppercase">
+          <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className={`py-3 px-4 rounded-lg flex items-center space-x-2 uppercase ${activeSection === '/about' ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary text-text-primary dark:text-text-secondary'}`}>
             <span>About Us</span>
           </Link>
 

@@ -15,6 +15,11 @@ const FeaturesGrid = lazy(() => import("../components/home/FeaturesGrid"));
 const WeeklyTestSection = lazy(() => import("../components/home/WeeklyTestSection"));
 const PlatformIllustration = lazy(() => import("../components/home/PlatformIllustration"));
 
+// Page Sections
+const OurProduct = lazy(() => import("./OurProduct"));
+const WhyUs = lazy(() => import("./WhyUs"));
+const About = lazy(() => import("./About"));
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -240,6 +245,15 @@ export default function Home() {
           <WeeklyTestSection />
           <CompilerSection />
           <FeaturesGrid />
+        </Suspense>
+      </div>
+
+      {/* Appended Page Sections for Continuous Flow */}
+      <div className="w-full">
+        <Suspense fallback={<SectionSkeleton />}>
+          <div id="our-product"><OurProduct /></div>
+          <div id="why-us"><WhyUs /></div>
+          <div id="about"><About /></div>
         </Suspense>
       </div>
 

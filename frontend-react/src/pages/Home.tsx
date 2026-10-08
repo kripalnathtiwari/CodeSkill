@@ -251,7 +251,7 @@ export default function Home() {
       {/* Appended Page Sections for Continuous Flow */}
       <div className="w-full">
         <Suspense fallback={<SectionSkeleton />}>
-          <div id="our-product"><OurProduct /></div>
+          <div id="our-product"><OurProduct hideBanner={true} /></div>
           <div id="why-us"><WhyUs /></div>
           <div id="about"><About /></div>
         </Suspense>

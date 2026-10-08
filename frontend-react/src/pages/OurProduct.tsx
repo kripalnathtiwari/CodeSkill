@@ -13,7 +13,11 @@ const sliderImages = [
   "https://res.cloudinary.com/zihn8u4b/image/upload/v1789487036/atscheking.png"
 ];
 
-export default function OurProduct() {
+interface OurProductProps {
+  hideBanner?: boolean;
+}
+
+export default function OurProduct({ hideBanner = false }: OurProductProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
@@ -26,13 +30,15 @@ export default function OurProduct() {
   return (
     <div className="min-h-screen bg-background dark:bg-background relative pb-20 overflow-hidden">
       {/* Top Banner Image */}
-      <div className="w-full relative mb-16 md:mb-24">
-        <img 
-          src="https://res.cloudinary.com/zihn8u4b/image/upload/v1789538527/back2.png" 
-          alt="Placement Journey Hero"
-          className="w-full h-auto object-cover"
-        />
-      </div>
+      {!hideBanner && (
+        <div className="w-full relative mb-16 md:mb-24">
+          <img 
+            src="https://res.cloudinary.com/zihn8u4b/image/upload/v1789538527/back2.png" 
+            alt="Placement Journey Hero"
+            className="w-full h-auto object-cover"
+          />
+        </div>
+      )}
 
       {/* Decorative Grid Background */}
       <div className="absolute inset-0 bg-grid-pattern opacity-50 pointer-events-none" />

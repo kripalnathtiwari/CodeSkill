@@ -1,6 +1,27 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Search, Code2, User, Building2, Target } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
+import { motion, animate, useInView } from 'framer-motion';
+import { Search, Code2, User, Building2, Target, ArrowRight } from 'lucide-react';
+
+function AnimatedCounter({ from, to, suffix = "", duration = 2 }: { from: number, to: number, suffix?: string, duration?: number }) {
+  const nodeRef = useRef<HTMLSpanElement>(null);
+  const inView = useInView(nodeRef, { once: true });
+
+  useEffect(() => {
+    if (inView && nodeRef.current) {
+      const controls = animate(from, to, {
+        duration: duration,
+        onUpdate(value) {
+          if (nodeRef.current) {
+            nodeRef.current.textContent = Math.round(value) + suffix;
+          }
+        }
+      });
+      return () => controls.stop();
+    }
+  }, [from, to, suffix, duration, inView]);
+
+  return <span ref={nodeRef}>{from}{suffix}</span>;
+}
 
 export default function About() {
   return (
@@ -28,19 +49,19 @@ export default function About() {
             className="bg-primary/5 dark:bg-primary/10 border border-primary/20 rounded-[2rem] p-8 md:p-12 shadow-xl grid grid-cols-2 gap-y-12 gap-x-8"
           >
             <div className="text-center space-y-2">
-              <div className="text-4xl md:text-5xl font-black text-primary">30K+</div>
+              <div className="text-4xl md:text-5xl font-black text-primary"><AnimatedCounter from={0} to={30} suffix="K+" /></div>
               <div className="text-sm font-bold text-text-secondary uppercase tracking-wider">Students Empowered</div>
             </div>
             <div className="text-center space-y-2">
-              <div className="text-4xl md:text-5xl font-black text-primary">25K+</div>
+              <div className="text-4xl md:text-5xl font-black text-primary"><AnimatedCounter from={0} to={25} suffix="K+" /></div>
               <div className="text-sm font-bold text-text-secondary uppercase tracking-wider">Certifications</div>
             </div>
             <div className="text-center space-y-2">
-              <div className="text-4xl md:text-5xl font-black text-primary">450K+</div>
+              <div className="text-4xl md:text-5xl font-black text-primary"><AnimatedCounter from={0} to={450} suffix="K+" /></div>
               <div className="text-sm font-bold text-text-secondary uppercase tracking-wider">Minutes Streamed</div>
             </div>
             <div className="text-center space-y-2">
-              <div className="text-4xl md:text-5xl font-black text-primary">50+</div>
+              <div className="text-4xl md:text-5xl font-black text-primary"><AnimatedCounter from={0} to={50} suffix="+" /></div>
               <div className="text-sm font-bold text-text-secondary uppercase tracking-wider">Industry Experts</div>
             </div>
           </motion.div>
@@ -57,15 +78,42 @@ export default function About() {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: { staggerChildren: 0.2 }
+              }
+            }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative"
+          >
+            {/* Connecting Path Line (Desktop only) */}
+            <div className="hidden lg:block absolute top-[68px] left-[12%] right-[12%] h-0.5 border-t-2 border-dashed border-slate-300 dark:border-slate-700 z-0 opacity-50"></div>
+
+            {/* Step 1 */}
             <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="bg-background p-8 rounded-3xl border border-border hover:border-primary/50 transition-all duration-300 shadow-sm hover:shadow-xl group"
+              variants={{
+                hidden: { opacity: 0, y: 50, scale: 0.9 },
+                visible: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", bounce: 0.4, duration: 0.8 } }
+              }}
+              whileHover={{ scale: 1.05, y: -10, transition: { duration: 0.2 } }}
+              className="bg-background p-8 rounded-3xl border border-border hover:border-primary/50 transition-all duration-300 shadow-sm hover:shadow-xl group cursor-pointer relative z-10"
             >
-              <div className="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
-                <Code2 className="w-7 h-7" />
+              <div className="hidden lg:flex absolute -right-6 top-14 w-8 h-8 bg-surface rounded-full border border-border items-center justify-center z-20 text-slate-400">
+                <ArrowRight className="w-4 h-4" />
+              </div>
+              <div className="flex justify-between items-start mb-8">
+                <div className="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Code2 className="w-7 h-7" />
+                </div>
+                <div className="flex flex-col items-end">
+                  <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Step</span>
+                  <span className="text-xl font-black text-primary">01</span>
+                </div>
               </div>
               <h3 className="text-2xl font-bold mb-4 text-text-primary">Immersive Bootcamps</h3>
               <p className="text-text-secondary text-base leading-relaxed">
@@ -73,15 +121,26 @@ export default function About() {
               </p>
             </motion.div>
 
+            {/* Step 2 */}
             <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="bg-background p-8 rounded-3xl border border-border hover:border-blue-500/50 transition-all duration-300 shadow-sm hover:shadow-xl group"
+              variants={{
+                hidden: { opacity: 0, y: 50, scale: 0.9 },
+                visible: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", bounce: 0.4, duration: 0.8 } }
+              }}
+              whileHover={{ scale: 1.05, y: -10, transition: { duration: 0.2 } }}
+              className="bg-background p-8 rounded-3xl border border-border hover:border-blue-500/50 transition-all duration-300 shadow-sm hover:shadow-xl group cursor-pointer relative z-10"
             >
-              <div className="w-14 h-14 bg-blue-500/10 text-blue-500 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
-                <User className="w-7 h-7" />
+              <div className="hidden lg:flex absolute -right-6 top-14 w-8 h-8 bg-surface rounded-full border border-border items-center justify-center z-20 text-slate-400">
+                <ArrowRight className="w-4 h-4" />
+              </div>
+              <div className="flex justify-between items-start mb-8">
+                <div className="w-14 h-14 bg-blue-500/10 text-blue-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <User className="w-7 h-7" />
+                </div>
+                <div className="flex flex-col items-end">
+                  <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Step</span>
+                  <span className="text-xl font-black text-blue-500">02</span>
+                </div>
               </div>
               <h3 className="text-2xl font-bold mb-4 text-text-primary">Expert Mentorship</h3>
               <p className="text-text-secondary text-base leading-relaxed">
@@ -89,15 +148,26 @@ export default function About() {
               </p>
             </motion.div>
 
+            {/* Step 3 */}
             <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="bg-background p-8 rounded-3xl border border-border hover:border-emerald-500/50 transition-all duration-300 shadow-sm hover:shadow-xl group"
+              variants={{
+                hidden: { opacity: 0, y: 50, scale: 0.9 },
+                visible: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", bounce: 0.4, duration: 0.8 } }
+              }}
+              whileHover={{ scale: 1.05, y: -10, transition: { duration: 0.2 } }}
+              className="bg-background p-8 rounded-3xl border border-border hover:border-emerald-500/50 transition-all duration-300 shadow-sm hover:shadow-xl group cursor-pointer relative z-10"
             >
-              <div className="w-14 h-14 bg-emerald-500/10 text-emerald-500 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
-                <Building2 className="w-7 h-7" />
+              <div className="hidden lg:flex absolute -right-6 top-14 w-8 h-8 bg-surface rounded-full border border-border items-center justify-center z-20 text-slate-400">
+                <ArrowRight className="w-4 h-4" />
+              </div>
+              <div className="flex justify-between items-start mb-8">
+                <div className="w-14 h-14 bg-emerald-500/10 text-emerald-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Building2 className="w-7 h-7" />
+                </div>
+                <div className="flex flex-col items-end">
+                  <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Step</span>
+                  <span className="text-xl font-black text-emerald-500">03</span>
+                </div>
               </div>
               <h3 className="text-2xl font-bold mb-4 text-text-primary">Campus Integration</h3>
               <p className="text-text-secondary text-base leading-relaxed">
@@ -105,22 +175,30 @@ export default function About() {
               </p>
             </motion.div>
 
+            {/* Step 4 */}
             <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-              className="bg-background p-8 rounded-3xl border border-border hover:border-rose-500/50 transition-all duration-300 shadow-sm hover:shadow-xl group"
+              variants={{
+                hidden: { opacity: 0, y: 50, scale: 0.9 },
+                visible: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", bounce: 0.4, duration: 0.8 } }
+              }}
+              whileHover={{ scale: 1.05, y: -10, transition: { duration: 0.2 } }}
+              className="bg-background p-8 rounded-3xl border border-border hover:border-rose-500/50 transition-all duration-300 shadow-sm hover:shadow-xl group cursor-pointer relative z-10"
             >
-              <div className="w-14 h-14 bg-rose-500/10 text-rose-500 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
-                <Target className="w-7 h-7" />
+              <div className="flex justify-between items-start mb-8">
+                <div className="w-14 h-14 bg-rose-500/10 text-rose-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Target className="w-7 h-7" />
+                </div>
+                <div className="flex flex-col items-end">
+                  <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Goal</span>
+                  <span className="text-xl font-black text-rose-500">04</span>
+                </div>
               </div>
               <h3 className="text-2xl font-bold mb-4 text-text-primary">Career Acceleration</h3>
               <p className="text-text-secondary text-base leading-relaxed">
                 Comprehensive placement support including ATS-friendly resume building, mock interviews, and access to direct hiring drives.
               </p>
             </motion.div>
-          </div>
+          </motion.div>
         </div>
       </section>
 

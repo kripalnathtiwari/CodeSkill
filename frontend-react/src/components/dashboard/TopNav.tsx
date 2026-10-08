@@ -84,7 +84,7 @@ export default function TopNav({ isDark, toggleTheme }: TopNavProps) {
               </div>
               
               <div className="py-2">
-                <Link to="/edit-profile" onClick={() => setIsProfileOpen(false)} className="flex items-center px-4 py-2 text-sm text-text-primary hover:bg-background hover:text-primary transition-colors">
+                <Link to="/dashboard/edit-profile" onClick={() => setIsProfileOpen(false)} className="flex items-center px-4 py-2 text-sm text-text-primary hover:bg-background hover:text-primary transition-colors">
                   <Settings className="w-4 h-4 mr-3" />
                   Edit Profile
                 </Link>

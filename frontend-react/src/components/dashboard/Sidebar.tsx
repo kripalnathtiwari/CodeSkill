@@ -157,7 +157,7 @@ export default function Sidebar() {
       {/* Bottom Section */}
       <div className="p-4 border-t border-border space-y-1">
         <Link
-          to="/edit-profile"
+          to="/dashboard/edit-profile"
           className={`flex items-center ${isCollapsed ? 'justify-center px-0' : 'space-x-3 px-3'} py-3 rounded-xl transition-colors font-medium text-sm text-text-secondary hover:bg-background hover:text-text-primary`}
           title={isCollapsed ? 'Settings' : undefined}
         >

@@ -66,41 +66,20 @@ export default function Footer() {
 
           {/* Social Icons */}
           <div className="flex items-center space-x-3 pb-4">
-            <Link to="#" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-text-muted hover:text-primary hover:border-primary/50 transition-all">
+            <Link to="#" className="w-9 h-9 rounded-full bg-[#0A66C2]/10 border border-[#0A66C2]/20 flex items-center justify-center text-[#0A66C2] hover:bg-[#0A66C2] hover:text-white transition-all shadow-sm">
               <Linkedin className="w-4 h-4" />
             </Link>
-            <Link to="#" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-text-muted hover:text-primary hover:border-primary/50 transition-all">
+            <Link to="#" className="w-9 h-9 rounded-full bg-[#E1306C]/10 border border-[#E1306C]/20 flex items-center justify-center text-[#E1306C] hover:bg-[#E1306C] hover:text-white transition-all shadow-sm">
               <Instagram className="w-4 h-4" />
             </Link>
-            <Link to="#" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-text-muted hover:text-primary hover:border-primary/50 transition-all">
+            <Link to="#" className="w-9 h-9 rounded-full bg-[#1877F2]/10 border border-[#1877F2]/20 flex items-center justify-center text-[#1877F2] hover:bg-[#1877F2] hover:text-white transition-all shadow-sm">
               <Facebook className="w-4 h-4" />
             </Link>
-            <Link to="#" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-text-muted hover:text-primary hover:border-primary/50 transition-all">
+            <Link to="#" className="w-9 h-9 rounded-full bg-[#FF0000]/10 border border-[#FF0000]/20 flex items-center justify-center text-[#FF0000] hover:bg-[#FF0000] hover:text-white transition-all shadow-sm">
               <Youtube className="w-4 h-4" />
             </Link>
           </div>
 
-          <div className="space-y-4">
-            <div className="flex items-start space-x-3 text-sm">
-              <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-              <div className="text-slate-300">
-                <p className="font-semibold text-white mb-1">Corporate Address:</p>
-                <p>1st Floor, Tech Park, Phase 1</p>
-                <p>Electronic City, Bangalore</p>
-                <p>Karnataka 560100, India</p>
-              </div>
-            </div>
-
-            <div className="flex items-start space-x-3 text-sm">
-              <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-              <div className="text-slate-300">
-                <p className="font-semibold text-white mb-1">Registered Address:</p>
-                <p>42, Innovation Hub, Sector 5</p>
-                <p>Salt Lake City, Kolkata</p>
-                <p>West Bengal 700091, India</p>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Links Section */}
@@ -116,12 +95,15 @@ export default function Footer() {
           </div>
 
           <div className="space-y-4">
-            <h4 className="text-primary font-bold text-lg mb-4">Practice & Prep</h4>
+            <h4 className="text-primary font-bold text-lg mb-4">Courses</h4>
             <ul className="space-y-3 text-sm">
-              <li><Link to="/problems" className="text-slate-300 hover:text-white transition-colors">Practice Problems</Link></li>
-              <li><Link to="/aptitude" className="text-slate-300 hover:text-white transition-colors">Aptitude Questions</Link></li>
-              <li><Link to="/company-problems" className="text-slate-300 hover:text-white transition-colors">Company Interview Prep</Link></li>
-              <li><Link to="/contests" className="text-slate-300 hover:text-white transition-colors">Coding Contests</Link></li>
+              <li><Link to="/course/st-1" className="text-slate-300 hover:text-white transition-colors">Full Stack Web Dev Bootcamp</Link></li>
+              <li><Link to="/course/st-2" className="text-slate-300 hover:text-white transition-colors">Data Science & AI Program</Link></li>
+              <li><Link to="/course/c-1" className="text-slate-300 hover:text-white transition-colors">Data Science & Machine Learning</Link></li>
+              <li><Link to="/course/c-2" className="text-slate-300 hover:text-white transition-colors">Full Stack Web Development</Link></li>
+              <li><Link to="/course/c-3" className="text-slate-300 hover:text-white transition-colors">Cloud Architecture & System Design</Link></li>
+              <li><Link to="/course/dsa-1" className="text-slate-300 hover:text-white transition-colors">Advanced DSA</Link></li>
+              <li><Link to="/course/sd-1" className="text-slate-300 hover:text-white transition-colors">System Design Masterclass</Link></li>
             </ul>
           </div>
 
@@ -137,30 +119,56 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* MIDDLE: Big Brand Name with Shine Animation */}
-      <div className="relative w-full max-w-[90rem] mx-auto py-12 md:py-16 my-12 border-t border-b border-white/10 overflow-hidden">
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="relative text-center text-[14vw] md:text-[10vw] lg:text-[8rem] xl:text-[10rem] font-black tracking-tighter leading-none select-none"
-        >
-          {/* Base text (dim) */}
-          <span className="text-white/5">
-            CodeSkill
-          </span>
-          
-          {/* Shining gradient overlay */}
-          <span 
-            className="absolute inset-0 bg-clip-text text-transparent bg-[length:200%_100%] animate-shine"
-            style={{
-              backgroundImage: "linear-gradient(110deg, transparent 40%, rgba(16,185,129,0.9) 50%, transparent 60%)"
-            }}
+      {/* MIDDLE: Big Brand Name with Addresses Flanking */}
+      <div className="relative w-full max-w-[90rem] mx-auto py-12 md:py-16 my-12 border-t border-b border-white/10 overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8 md:gap-4">
+        
+        {/* Left: Corporate Address */}
+        <div className="w-full md:w-1/4 flex items-start justify-center md:justify-start space-x-3 text-sm z-10">
+          <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+          <div className="text-slate-300">
+            <p className="font-semibold text-white mb-1">Corporate Address:</p>
+            <p>1st Floor, Tech Park, Phase 1</p>
+            <p>Electronic City, Bangalore</p>
+            <p>Karnataka 560100, India</p>
+          </div>
+        </div>
+
+        {/* Center: Big Brand Name */}
+        <div className="w-full md:w-1/2 flex justify-center text-center">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="relative text-[14vw] md:text-[10vw] lg:text-[8rem] xl:text-[10rem] font-black tracking-tighter leading-none select-none"
           >
-            CodeSkill
-          </span>
-        </motion.h1>
+            {/* Base text (dim) */}
+            <span className="text-white/5">
+              CodeSkill
+            </span>
+            
+            {/* Shining gradient overlay */}
+            <span 
+              className="absolute inset-0 bg-clip-text text-transparent bg-[length:200%_100%] animate-shine"
+              style={{
+                backgroundImage: "linear-gradient(110deg, transparent 40%, rgba(16,185,129,0.9) 50%, transparent 60%)"
+              }}
+            >
+              CodeSkill
+            </span>
+          </motion.h1>
+        </div>
+
+        {/* Right: Registered Address */}
+        <div className="w-full md:w-1/4 flex items-start justify-center md:justify-end space-x-3 text-sm z-10 text-left md:text-right">
+          <div className="text-slate-300 order-2 md:order-1 md:pr-3 pl-3 md:pl-0">
+            <p className="font-semibold text-white mb-1">Registered Address:</p>
+            <p>42, Innovation Hub, Sector 5</p>
+            <p>Salt Lake City, Kolkata</p>
+            <p>West Bengal 700091, India</p>
+          </div>
+          <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5 order-1 md:order-2" />
+        </div>
       </div>
 
       {/* BOTTOM: Copyright & Legal Links */}

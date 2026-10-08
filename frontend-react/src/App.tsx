@@ -38,6 +38,7 @@ const OtherPracticeTopic = lazy(() => import('./pages/OtherPracticeTopic'));
 const SolveOtherPractice = lazy(() => import('./pages/SolveOtherPractice'));
 const VerifyCertificate = lazy(() => import('./pages/VerifyCertificate'));
 const About = lazy(() => import('./pages/About'));
+const WhyUs = lazy(() => import('./pages/WhyUs'));
 const Contact = lazy(() => import('./pages/Contact'));
 const CollegeRequestSession = lazy(() => import('./pages/CollegeRequestSession'));
 const CVBuilder = lazy(() => import('./pages/CVBuilder'));
@@ -71,13 +72,14 @@ function AppContent() {
           <Suspense fallback={<GlobalLoader />}>
             <Routes>
               <Route path="/" element={<GuestRoute><Home /></GuestRoute>} />
+              <Route path="/why-us" element={<GuestRoute><WhyUs /></GuestRoute>} />
               <Route path="/about" element={<GuestRoute><About /></GuestRoute>} />
               <Route path="/contact" element={<GuestRoute><Contact /></GuestRoute>} />
               <Route path="/college-request-session" element={<GuestRoute><CollegeRequestSession /></GuestRoute>} />
               <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
               <Route path="/forgot-password" element={<GuestRoute><ForgotPassword /></GuestRoute>} />
               <Route path="/change-password" element={<GuestRoute><ChangePassword /></GuestRoute>} />
-              <Route path="/sandbox" element={<GuestRoute><Sandbox /></GuestRoute>} />
+              <Route path="/sandbox" element={<ProtectedRoute><Sandbox /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/dashboard/courses" element={<ProtectedRoute><DashboardLayout><CoursesTraining /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/practice" element={<ProtectedRoute><DashboardLayout><Problems /></DashboardLayout></ProtectedRoute>} />
@@ -94,7 +96,7 @@ function AppContent() {
               <Route path="/dashboard/projects" element={<ProtectedRoute><DashboardLayout><ProjectIdeas /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/projects/:id" element={<ProtectedRoute><DashboardLayout><ProjectIdeaDetail /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
-              <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
+              <Route path="/dashboard/edit-profile" element={<ProtectedRoute><DashboardLayout><EditProfile /></DashboardLayout></ProtectedRoute>} />
               <Route path="/my-courses" element={<ProtectedRoute><MyCourses /></ProtectedRoute>} />
               <Route path="/dashboard/my-courses" element={<ProtectedRoute><DashboardLayout><MyCourses /></DashboardLayout></ProtectedRoute>} />
               <Route path="/problems" element={<GuestRoute><Problems /></GuestRoute>} />
@@ -102,9 +104,9 @@ function AppContent() {
               <Route path="/aptitude" element={<GuestRoute><Aptitude /></GuestRoute>} />
               <Route path="/aptitude/topic/:topic" element={<GuestRoute><AptitudeTopic /></GuestRoute>} />
               <Route path="/company-problems" element={<GuestRoute><CompanyProblems /></GuestRoute>} />
-              <Route path="/test-series" element={<GuestRoute><TestSeries /></GuestRoute>} />
-              <Route path="/courses-training" element={<GuestRoute><CoursesTraining /></GuestRoute>} />
-              <Route path="/course/:id" element={<GuestRoute><CourseDetails /></GuestRoute>} />
+              <Route path="/test-series" element={<ProtectedRoute><TestSeries /></ProtectedRoute>} />
+              <Route path="/courses-training" element={<CoursesTraining />} />
+              <Route path="/course/:id" element={<CourseDetails />} />
               <Route path="/dashboard/course/:id" element={<ProtectedRoute><DashboardLayout><CourseDetails /></DashboardLayout></ProtectedRoute>} />
               <Route path="/register/:id" element={<ProtectedRoute><CourseRegistration /></ProtectedRoute>} />
               <Route path="/dashboard/register/:id" element={<ProtectedRoute><DashboardLayout><CourseRegistration /></DashboardLayout></ProtectedRoute>} />

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { Code2, Trophy, BookOpen, User, Flame, LogOut, ShieldAlert, Building2, Sun, Moon, GraduationCap, Target, Home as HomeIcon, Settings, ChevronDown, Lock, Menu, X, Briefcase, FileText, Sparkles, TrendingUp } from "lucide-react";
+import { Code2, Trophy, BookOpen, User, Flame, LogOut, ShieldAlert, Building2, Sun, Moon, GraduationCap, Target, Home as HomeIcon, Settings, ChevronDown, Lock, Menu, X, Briefcase, FileText, Sparkles, TrendingUp, Info } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
@@ -76,6 +76,7 @@ export default function Navbar() {
           <HomeIcon className="h-4 w-4" />
           <span>Home</span>
         </Link>
+
         <div className="relative group">
           <Link to="/courses-training?category=all" className="hover:text-primary transition-colors flex items-center space-x-1 py-4">
             <GraduationCap className="h-4 w-4" />
@@ -109,6 +110,14 @@ export default function Navbar() {
             <span>Our Product</span>
           </Link>
         )}
+        <Link to="/why-us" className="hover:text-primary transition-colors flex items-center space-x-1 uppercase">
+          <Info className="h-4 w-4" />
+          <span>Why Us</span>
+        </Link>
+        <Link to="/about" className="hover:text-primary transition-colors flex items-center space-x-1 uppercase">
+          <Info className="h-4 w-4" />
+          <span>About Us</span>
+        </Link>
 
         {user && (
           <>
@@ -234,7 +243,7 @@ export default function Navbar() {
                       <BookOpen className="w-4 h-4 mr-3" />
                       My Courses
                     </Link>
-                    <Link to="/edit-profile" onClick={() => setIsProfileOpen(false)} className="flex items-center px-4 py-2 text-sm text-text-primary dark:text-text-secondary hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary dark:hover:text-primary transition-colors">
+                    <Link to="/dashboard/edit-profile" onClick={() => setIsProfileOpen(false)} className="flex items-center px-4 py-2 text-sm text-text-primary dark:text-text-secondary hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary dark:hover:text-primary transition-colors">
                       <Settings className="w-4 h-4 mr-3" />
                       Edit Profile
                     </Link>
@@ -299,6 +308,7 @@ export default function Navbar() {
             <HomeIcon className="h-4 w-4" />
             <span>Home</span>
           </Link>
+
           <div className="py-2 px-4 flex flex-col space-y-2">
             <div className="flex items-center justify-between w-full text-text-primary dark:text-text-secondary font-medium py-2">
               <Link 
@@ -335,6 +345,14 @@ export default function Navbar() {
               <span>Our Product</span>
             </Link>
           )}
+          <Link to="/why-us" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-4 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary rounded-lg flex items-center space-x-2 text-text-primary dark:text-text-secondary uppercase">
+            <Info className="h-4 w-4" />
+            <span>Why Us</span>
+          </Link>
+          <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-4 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary rounded-lg flex items-center space-x-2 text-text-primary dark:text-text-secondary uppercase">
+            <Info className="h-4 w-4" />
+            <span>About Us</span>
+          </Link>
 
           {user && (
             <>

@@ -19,7 +19,7 @@ const iconUrls: Record<string, string> = {
 
 export default function WhyUsOrbitVisual() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const reqRef = useRef<number>();
+  const reqRef = useRef<number>(0);
   const lastTimeRef = useRef<number>(performance.now());
   const elapsedRef = useRef<number>(0);
   
@@ -261,7 +261,7 @@ export default function WhyUsOrbitVisual() {
               width="2474"
               height="1899"
               loading="eager"
-              fetchpriority="high"
+              fetchPriority="high"
             />
         </div>
 

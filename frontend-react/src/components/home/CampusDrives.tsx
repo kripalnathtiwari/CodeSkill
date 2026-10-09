@@ -23,7 +23,7 @@ export default function CampusDrives() {
             Colleges: Elevate Student Readiness with Custom Trainer Bookings
           </h2>
 
-          <p className="text-lg text-text-secondary dark:text-text-muted leading-relaxed">
+          <p className="text-xl text-text-secondary dark:text-text-muted leading-relaxed">
             Bring industry subject-matter experts to your campus. Schedule interactive bootcamps, hands-on hackathons, or custom placement training modules tailored to your engineering curriculum.
           </p>
 
@@ -34,8 +34,8 @@ export default function CampusDrives() {
               "Lab assignments, hackathons, and placement certifications"
             ].map((item, idx) => (
               <li key={idx} className="flex items-start text-text-primary dark:text-text-secondary">
-                <CheckCircle2 className="w-5 h-5 text-primary mr-3 mt-0.5 flex-shrink-0" />
-                <span className="font-medium text-[15px]">{item}</span>
+                <CheckCircle2 className="w-5 h-5 text-primary mr-3 mt-1 flex-shrink-0" />
+                <span className="font-medium text-lg">{item}</span>
               </li>
             ))}
           </ul>
@@ -80,7 +80,7 @@ export default function CampusDrives() {
                     </div>
                   </div>
                   <div>
-                    <p className="text-slate-300 text-[15px] leading-relaxed">
+                    <p className="text-slate-300 text-lg leading-relaxed">
                       <span className="font-bold text-white">{step.title}</span> {step.desc}
                     </p>
                   </div>

@@ -2,34 +2,46 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ShieldCheck, Target, Zap, Users, Trophy, Code2, ArrowRight, GraduationCap, Building, Briefcase, BookOpen } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import WhyUsOrbitVisual from '../components/WhyUsOrbitVisual';
 
 export default function WhyUs() {
   return (
     <div className="min-h-screen bg-background text-text-primary transition-colors duration-300">
       
       {/* Hero Section */}
-      <section className="relative w-full px-4 sm:px-6 lg:px-8 py-20 lg:py-28 overflow-hidden">
-        <div className="absolute inset-0 z-0 opacity-5 dark:opacity-[0.03] pointer-events-none" 
-             style={{ backgroundImage: "radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)", backgroundSize: "32px 32px" }}>
-        </div>
-        <div className="max-w-[90rem] mx-auto text-center space-y-8 relative z-10">
-          <div className="w-16 h-1.5 bg-primary rounded-full mx-auto mb-8"></div>
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight text-text-primary max-w-4xl mx-auto leading-tight"
-          >
-            We Don't Just Teach Code.<br />
-            <span className="text-primary">We Engineer Careers.</span>
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-lg md:text-xl text-text-secondary leading-relaxed max-w-3xl mx-auto"
-          >
-            A modern, no-nonsense approach to tech education. From day one, you'll be building real products, writing production-ready code, and preparing to stand out in the most competitive industry in the world.
-          </motion.p>
+      <section className="relative w-full px-4 sm:px-6 lg:px-8 py-20 lg:py-28 overflow-hidden bg-[#020617] border-b border-white/5">
+        <div className="max-w-[1280px] mx-auto relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-[48px] items-center">
+          
+          {/* Left Column: Text */}
+          <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
+            <div className="w-[68px] h-[5px] bg-[#00A651] rounded-full mb-6"></div>
+            <h1 
+              className="font-black text-white drop-shadow-sm"
+              style={{
+                fontSize: "clamp(40px, 5.2vw, 76px)",
+                lineHeight: 1.12,
+                letterSpacing: "-0.02em"
+              }}
+            >
+              We Don't Just Teach Code.<br />
+              <span className="text-[#00A651]">We Engineer Careers.</span>
+            </h1>
+            <p 
+              className="mt-6 text-slate-300"
+              style={{
+                fontSize: "18px",
+                lineHeight: 1.9,
+                maxWidth: "560px"
+              }}
+            >
+              A modern, no-nonsense approach to tech education. From day one, you'll be building real products, writing production-ready code, and preparing to stand out in the most competitive industry in the world.
+            </p>
+          </div>
+
+          {/* Right Column: 3D Orbit Visual */}
+          <div className="w-full relative mt-12 lg:mt-0 lg:pl-10">
+            <WhyUsOrbitVisual />
+          </div>
         </div>
       </section>
 

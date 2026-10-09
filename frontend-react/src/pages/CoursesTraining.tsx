@@ -55,13 +55,13 @@ export default function CoursesTraining() {
       
       {/* Header Banner */}
       <div className="relative rounded-3xl overflow-hidden glass-card p-10 flex flex-col md:flex-row md:items-center justify-between border border-border dark:border-border/60 shadow-sm">
-        <div className="space-y-4 max-w-2xl relative z-10">
+        <div className="space-y-4 w-full relative z-10">
           <div className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-full text-primary dark:text-primary text-xs font-bold uppercase tracking-widest">
             <GraduationCap className="h-4 w-4" />
             <span>Elevate Your Career</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-text-primary dark:text-text-primary">
-            Premium Courses & <span className="bg-gradient-to-r from-blue-400 to-sky-400 bg-clip-text text-transparent">Training</span>
+          <h1 className="text-3xl md:text-4xl lg:text-4xl xl:text-5xl font-extrabold tracking-tight text-text-primary dark:text-text-primary lg:whitespace-nowrap">
+            Industry-Ready Courses & <span className="text-primary drop-shadow-sm">Career Training</span>
           </h1>
           <p className="text-lg text-text-secondary dark:text-text-muted leading-relaxed">
             Fast-track your tech career with industry-relevant training programs, live bootcamps, and comprehensive self-paced courses.
@@ -143,27 +143,27 @@ export default function CoursesTraining() {
               {/* Course Info */}
               <div className="p-6 flex flex-col flex-1">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-xl font-bold text-text-primary dark:text-text-primary group-hover:text-primary transition-colors line-clamp-2">
+                  <h3 className="text-2xl font-bold text-text-primary dark:text-text-primary group-hover:text-primary transition-colors line-clamp-2">
                     {course.title}
                   </h3>
                 </div>
                 
-                <p className="text-sm text-text-secondary dark:text-text-muted mb-6 flex-1 line-clamp-3">
+                <p className="text-base md:text-lg text-text-secondary dark:text-text-muted mb-6 flex-1 line-clamp-3">
                   {course.description}
                 </p>
                 
                 <div className="space-y-4 mt-auto">
                   <div className="flex flex-wrap gap-2">
                     {course.tags.slice(0, 3).map((tag: string) => (
-                      <span key={tag} className="bg-surface-secondary dark:bg-slate-800 text-text-secondary dark:text-text-secondary text-[10px] px-2 py-1 rounded-md uppercase font-semibold tracking-wider">
+                      <span key={tag} className="bg-surface-secondary dark:bg-slate-800 text-text-secondary dark:text-text-secondary text-xs px-2 py-1 rounded-md uppercase font-semibold tracking-wider">
                         {tag}
                       </span>
                     ))}
                   </div>
                   
-                  <div className="flex items-center justify-between text-sm pt-4 border-t border-slate-100 dark:border-border/60 text-text-muted dark:text-text-muted font-medium">
+                  <div className="flex items-center justify-between text-base pt-4 border-t border-slate-100 dark:border-border/60 text-text-muted dark:text-text-muted font-medium">
                     <div className="flex items-center space-x-1.5">
-                      <Clock className="h-4 w-4" />
+                      <Clock className="h-5 w-5" />
                       <span>{course.duration}</span>
                     </div>
                     <div className="flex items-center space-x-1.5 text-primary dark:text-primary font-bold">

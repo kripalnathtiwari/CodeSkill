@@ -11,10 +11,10 @@ export default function TrainerReviews() {
         transition={{ duration: 0.6 }}
       >
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-text-primary dark:text-text-primary mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-text-primary dark:text-text-primary mb-4">
             What Colleges Say About Our Trainers
           </h2>
-          <p className="text-text-secondary dark:text-text-muted max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-text-secondary dark:text-text-muted max-w-3xl mx-auto leading-relaxed">
             Read authentic feedback from institutions and students who have experienced our transformative on-campus training programs.
           </p>
         </div>
@@ -69,7 +69,7 @@ export default function TrainerReviews() {
                     </svg>
                   ))}
                 </div>
-                <p className="text-text-secondary dark:text-text-secondary italic mb-8 leading-relaxed text-[15px] font-medium">
+                <p className="text-text-secondary dark:text-text-secondary italic mb-8 leading-relaxed text-base md:text-[17px] font-medium">
                   "{review.quote}"
                 </p>
               </div>
@@ -79,9 +79,9 @@ export default function TrainerReviews() {
                   {review.initial}
                 </div>
                 <div>
-                  <h4 className="font-bold text-text-primary dark:text-text-primary text-[15px]">{review.name}</h4>
-                  <p className="text-text-muted dark:text-text-muted text-xs mt-0.5">{review.role}</p>
-                  <p className="text-primary dark:text-primary text-xs font-bold mt-1 pr-2 line-clamp-1">{review.course}</p>
+                  <h4 className="font-bold text-text-primary dark:text-text-primary text-base md:text-lg">{review.name}</h4>
+                  <p className="text-text-muted dark:text-text-muted text-sm mt-0.5">{review.role}</p>
+                  <p className="text-primary dark:text-primary text-sm font-bold mt-1 pr-2 line-clamp-1">{review.course}</p>
                 </div>
               </div>
             </motion.div>

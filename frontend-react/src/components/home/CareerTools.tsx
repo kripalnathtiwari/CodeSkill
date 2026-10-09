@@ -81,39 +81,39 @@ export default function CareerTools() {
                 </span>
               </h2>
 
-              <p className="text-lg text-text-secondary dark:text-text-secondary leading-relaxed max-w-xl font-medium">
+              <p className="text-xl text-text-secondary dark:text-text-secondary leading-relaxed max-w-xl font-medium">
                 Our comprehensive suite of career tools is engineered to ensure you don't let Applicant Tracking Systems (ATS) reject your hard work. 
                 We use intelligent parsing and advanced algorithms to analyze your resume's structure, keyword optimization, and overall readability.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
                 <div className="flex items-start space-x-3 bg-surface/50 dark:bg-slate-800/40 p-4 rounded-xl border border-border/50 hover:border-primary/30 transition-colors">
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                    <TrendingUp className="w-4 h-4 text-primary" />
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                    <TrendingUp className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-text-primary dark:text-text-inverse text-sm">Keyword Matching</h4>
-                    <p className="text-xs text-text-secondary dark:text-text-muted mt-1">AI-driven extraction ensures your skills align with targeted job roles.</p>
+                    <h4 className="font-semibold text-text-primary dark:text-text-inverse text-lg">Keyword Matching</h4>
+                    <p className="text-sm md:text-base text-text-secondary dark:text-text-muted mt-1 leading-relaxed">AI-driven extraction ensures your skills align with targeted job roles.</p>
                   </div>
                 </div>
 
                 <div className="flex items-start space-x-3 bg-surface/50 dark:bg-slate-800/40 p-4 rounded-xl border border-border/50 hover:border-blue-500/30 transition-colors">
-                  <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0">
-                    <ShieldCheck className="w-4 h-4 text-blue-500" />
+                  <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0">
+                    <ShieldCheck className="w-5 h-5 text-blue-500" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-text-primary dark:text-text-inverse text-sm">ATS Compatibility</h4>
-                    <p className="text-xs text-text-secondary dark:text-text-muted mt-1">Receive an instant readability and ATS compatibility score before applying.</p>
+                    <h4 className="font-semibold text-text-primary dark:text-text-inverse text-lg">ATS Compatibility</h4>
+                    <p className="text-sm md:text-base text-text-secondary dark:text-text-muted mt-1 leading-relaxed">Receive an instant readability and ATS compatibility score before applying.</p>
                   </div>
                 </div>
                 
                 <div className="flex items-start space-x-3 bg-surface/50 dark:bg-slate-800/40 p-4 rounded-xl border border-border/50 sm:col-span-2 hover:border-emerald-500/30 transition-colors">
-                  <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center shrink-0">
-                    <FileText className="w-4 h-4 text-emerald-500" />
+                  <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center shrink-0">
+                    <FileText className="w-5 h-5 text-emerald-500" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-text-primary dark:text-text-inverse text-sm">Recruiter-Approved Formats</h4>
-                    <p className="text-xs text-text-secondary dark:text-text-muted mt-1">Build standout resumes from scratch using professional, structured templates that recruiters love.</p>
+                    <h4 className="font-semibold text-text-primary dark:text-text-inverse text-lg">Recruiter-Approved Formats</h4>
+                    <p className="text-sm md:text-base text-text-secondary dark:text-text-muted mt-1 leading-relaxed">Build standout resumes from scratch using professional, structured templates that recruiters love.</p>
                   </div>
                 </div>
               </div>

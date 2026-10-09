@@ -50,8 +50,8 @@ const WeeklyTestSection = () => {
                   <span className="text-emerald-500 font-bold text-lg">1</span>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-text-primary dark:text-text-inverse mb-1 text-base">Detailed Records</h4>
-                  <p className="text-sm text-text-secondary dark:text-text-muted leading-relaxed">Comprehensive historical records of every test attempt and code submission.</p>
+                  <h4 className="font-bold text-text-primary dark:text-text-inverse mb-1 text-2xl">Detailed Records</h4>
+                  <p className="text-lg text-text-secondary dark:text-text-muted leading-relaxed">Comprehensive historical records of every test attempt and code submission.</p>
                 </div>
               </div>
               
@@ -60,8 +60,8 @@ const WeeklyTestSection = () => {
                   <span className="text-amber-500 font-bold text-lg">2</span>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-text-primary dark:text-text-inverse mb-1 text-base">Identify Weaknesses</h4>
-                  <p className="text-sm text-text-secondary dark:text-text-muted leading-relaxed">AI-driven analysis pinpoints exact topics where you need more practice.</p>
+                  <h4 className="font-bold text-text-primary dark:text-text-inverse mb-1 text-2xl">Identify Weaknesses</h4>
+                  <p className="text-lg text-text-secondary dark:text-text-muted leading-relaxed">AI-driven analysis pinpoints exact topics where you need more practice.</p>
                 </div>
               </div>
               
@@ -70,8 +70,8 @@ const WeeklyTestSection = () => {
                   <span className="text-purple-500 font-bold text-lg">3</span>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-text-primary dark:text-text-inverse mb-1 text-base">Peer Benchmarking</h4>
-                  <p className="text-sm text-text-secondary dark:text-text-muted leading-relaxed">Compare your test scores and logic efficiency with top-performing students.</p>
+                  <h4 className="font-bold text-text-primary dark:text-text-inverse mb-1 text-2xl">Peer Benchmarking</h4>
+                  <p className="text-lg text-text-secondary dark:text-text-muted leading-relaxed">Compare your test scores and logic efficiency with top-performing students.</p>
                 </div>
               </div>
               
@@ -80,8 +80,8 @@ const WeeklyTestSection = () => {
                   <span className="text-orange-500 font-bold text-lg">4</span>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-text-primary dark:text-text-inverse mb-1 text-base">Global Ranking</h4>
-                  <p className="text-sm text-text-secondary dark:text-text-muted leading-relaxed">Climb the leaderboard by consistently performing well in weekly assessments.</p>
+                  <h4 className="font-bold text-text-primary dark:text-text-inverse mb-1 text-2xl">Global Ranking</h4>
+                  <p className="text-lg text-text-secondary dark:text-text-muted leading-relaxed">Climb the leaderboard by consistently performing well in weekly assessments.</p>
                 </div>
               </div>
             </div>

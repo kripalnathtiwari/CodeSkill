@@ -14,8 +14,8 @@ export default function FeaturedCourses() {
         transition={{ duration: 0.6 }}
       >
         <div className="flex flex-col items-center mb-14 text-center">
-          <h2 className="text-3xl font-bold text-text-primary dark:text-text-primary mb-4">Master Your Skills</h2>
-          <p className="text-slate-700 dark:text-slate-300 max-w-3xl">
+          <h2 className="text-4xl md:text-5xl font-bold text-text-primary dark:text-text-primary mb-4">Master Your Skills</h2>
+          <p className="text-lg md:text-xl text-slate-700 dark:text-slate-300 max-w-4xl mx-auto leading-relaxed">
             Explore our most popular self-paced courses and summer training programs designed by industry experts. Whether you're looking to master full-stack development, dive into data analytics, or prepare for top tech company interviews, we have the perfect learning path to help you land your dream tech job.
           </p>
         </div>
@@ -62,19 +62,19 @@ export default function FeaturedCourses() {
 
               <div className="p-6 flex flex-col flex-1">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-lg font-bold text-text-primary dark:text-text-primary group-hover:text-primary transition-colors">
+                  <h3 className="text-xl font-bold text-text-primary dark:text-text-primary group-hover:text-primary transition-colors">
                     {course.title}
                   </h3>
-                  <span className="bg-primary/10 text-primary border border-primary/20 px-2 py-1 rounded-md text-sm font-bold ml-2 whitespace-nowrap">
+                  <span className="bg-primary/10 text-primary border border-primary/20 px-2 py-1 rounded-md text-base font-bold ml-2 whitespace-nowrap">
                     {course.price}
                   </span>
                 </div>
-                <p className="text-sm text-text-secondary dark:text-text-muted mb-6 flex-1">
+                <p className="text-base text-text-secondary dark:text-text-muted mb-6 flex-1">
                   {course.description}
                 </p>
 
                 <div className="space-y-4">
-                  <div className="flex flex-col space-y-2 text-xs font-medium text-text-muted dark:text-text-muted">
+                  <div className="flex flex-col space-y-2 text-sm font-medium text-text-muted dark:text-text-muted">
                     <div className="flex items-center space-x-2">
                       <Clock className="h-3.5 w-3.5 text-primary" />
                       <span>{course.duration}</span>
@@ -91,7 +91,7 @@ export default function FeaturedCourses() {
 
                   <div className="flex flex-wrap gap-2 pt-2">
                     {course.tags.map((tag: string) => (
-                      <span key={tag} className="bg-surface-secondary dark:bg-background text-text-secondary dark:text-text-muted text-[10px] px-2 py-1 rounded font-semibold tracking-wider uppercase">
+                      <span key={tag} className="bg-surface-secondary dark:bg-background text-text-secondary dark:text-text-muted text-xs px-2 py-1 rounded font-semibold tracking-wider uppercase">
                         {tag}
                       </span>
                     ))}

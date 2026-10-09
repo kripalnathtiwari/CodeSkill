@@ -145,7 +145,7 @@ export default function CourseDetails() {
             className="fixed top-16 left-0 right-0 z-40 bg-surface border-b border-border shadow-xl py-3 px-6"
           >
             <div className="w-full flex items-center justify-between">
-              <h2 className="text-text-primary font-bold text-lg md:text-xl truncate mr-4">
+              <h2 className="text-text-primary font-bold text-xl md:text-2xl truncate mr-4">
                 {courseData.title}
               </h2>
               {renderActionButton("whitespace-nowrap px-6 py-2.5 bg-primary hover:bg-primary text-text-inverse font-bold rounded-lg transition-colors shadow-lg")}
@@ -164,8 +164,8 @@ export default function CourseDetails() {
       {/* Header Info */}
       <div className="w-full px-6 py-4 flex flex-col md:flex-row md:justify-between md:items-end gap-4">
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold text-text-primary mb-2">{courseData.title}</h1>
-          <div className="flex items-center space-x-4 text-sm font-medium">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-text-primary mb-4">{courseData.title}</h1>
+          <div className="flex items-center space-x-4 text-base font-medium">
             <span className="bg-slate-200 dark:bg-slate-800 text-text-primary px-2 py-1 rounded">{courseData.type}</span>
             <span className="text-yellow-400 flex items-center tracking-widest text-lg">★★★★<span className="text-yellow-400/50">★</span></span>
             <span 
@@ -204,20 +204,20 @@ export default function CourseDetails() {
               <span>{courseData.interested}</span>
             </div>
 
-            <h2 className="text-lg md:text-xl text-text-secondary font-medium mb-6">
+            <h2 className="text-2xl lg:text-3xl text-text-secondary font-medium mb-6 leading-snug">
               {courseData.subtitle}
             </h2>
 
-            <ul className="space-y-3 mb-8">
+            <ul className="space-y-4 mb-8">
               {courseData.bullets.map((bullet, idx) => (
-                <li key={idx} className="flex items-start text-sm text-text-muted">
-                  <span className="w-1.5 h-1.5 rounded-full bg-background0 mt-1.5 mr-3 flex-shrink-0" />
+                <li key={idx} className="flex items-start text-lg text-text-muted">
+                  <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600 mt-2 mr-3 flex-shrink-0" />
                   <span className="leading-relaxed">{bullet}</span>
                 </li>
               ))}
             </ul>
 
-            <div className="flex flex-wrap items-center gap-4 text-sm text-text-secondary font-medium mb-8">
+            <div className="flex flex-wrap items-center gap-4 text-base text-text-secondary font-medium mb-8">
               <div className="flex items-center bg-slate-100 dark:bg-slate-800/50 px-3 py-1.5 rounded-lg border border-border/50">
                 <BarChart className="w-4 h-4 mr-2 text-text-muted" />
                 <span>{courseData.level}</span>
@@ -245,7 +245,7 @@ export default function CourseDetails() {
 
       {/* Course Overview Section */}
       <div id="course-overview" className="max-w-5xl mx-auto px-6 mb-20">
-        <h2 className="text-2xl font-bold text-center text-text-primary mb-10">Course Overview</h2>
+        <h2 className="text-4xl font-bold text-center text-text-primary mb-10">Course Overview</h2>
         
         <div className="space-y-4">
           {courseData.overview.map((module, idx) => (
@@ -262,8 +262,8 @@ export default function CourseDetails() {
               </div>
               {/* Text Content */}
               <div className="p-5 md:p-6 flex-1">
-                <h3 className="text-lg font-bold text-text-secondary mb-1">{module.title}</h3>
-                <p className="text-sm text-text-muted font-medium leading-relaxed">{module.desc}</p>
+                <h3 className="text-2xl font-bold text-text-secondary mb-1">{module.title}</h3>
+                <p className="text-base md:text-lg text-text-muted font-medium leading-relaxed">{module.desc}</p>
               </div>
             </motion.div>
           ))}
@@ -275,7 +275,7 @@ export default function CourseDetails() {
         
         {/* Skills */}
         <div>
-          <h2 className="text-xl font-bold text-text-secondary mb-6">Skills You Will Learn</h2>
+          <h2 className="text-3xl font-bold text-text-secondary mb-6">Skills You Will Learn</h2>
           <div className="bg-surface rounded-xl p-8 border-l-4 border-primary shadow-md">
             <div className="flex flex-wrap gap-3">
               {courseData.skills.map((skill, idx) => (
@@ -289,7 +289,7 @@ export default function CourseDetails() {
 
         {/* Tech Stack */}
         <div>
-          <h2 className="text-xl font-bold text-text-secondary mb-6">Tech Stack You Will Learn</h2>
+          <h2 className="text-3xl font-bold text-text-secondary mb-6">Tech Stack You Will Learn</h2>
           <div className="bg-surface rounded-xl p-8 border-l-4 border-primary shadow-md">
             <div className="flex flex-wrap gap-3">
               {courseData.techStack.map((tech, idx) => (
@@ -309,21 +309,21 @@ export default function CourseDetails() {
           
           {/* Left Text */}
           <div className="w-full md:w-1/2 p-10 flex flex-col justify-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-text-primary mb-2">{courseData.partner} Certification Exams</h2>
-            <p className="text-lg text-text-secondary font-medium mb-10">Add More Value To Your Course</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-2">{courseData.partner} Certification Exams</h2>
+            <p className="text-xl md:text-2xl text-text-secondary font-medium mb-10">Add More Value To Your Course</p>
 
             <div className="space-y-8">
               <div>
-                <h4 className="text-lg font-bold text-text-primary mb-1">{courseData.partner}-Certified Exams</h4>
-                <p className="text-sm text-text-muted">Put your skills to the test with exclusive {courseData.partner} exams.</p>
+                <h4 className="text-xl font-bold text-text-primary mb-1">{courseData.partner}-Certified Exams</h4>
+                <p className="text-base md:text-lg text-text-muted">Put your skills to the test with exclusive {courseData.partner} exams.</p>
               </div>
               <div>
-                <h4 className="text-lg font-bold text-text-primary mb-1">Global Recognition</h4>
-                <p className="text-sm text-text-muted">Gain recognition from top employers worldwide.</p>
+                <h4 className="text-xl font-bold text-text-primary mb-1">Global Recognition</h4>
+                <p className="text-base md:text-lg text-text-muted">Gain recognition from top employers worldwide.</p>
               </div>
               <div>
-                <h4 className="text-lg font-bold text-text-primary mb-1">Boost Your Career</h4>
-                <p className="text-sm text-text-muted">Gain a certification that sets you apart from the competition.</p>
+                <h4 className="text-xl font-bold text-text-primary mb-1">Boost Your Career</h4>
+                <p className="text-base md:text-lg text-text-muted">Gain a certification that sets you apart from the competition.</p>
               </div>
             </div>
           </div>

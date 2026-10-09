@@ -15,16 +15,16 @@ export default function EngineSection() {
         {/* Left Side Content */}
         <div className="space-y-8">
           <div>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-text-primary dark:text-text-primary mb-4 leading-tight">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-text-primary dark:text-text-primary mb-4 leading-tight">
               How We Build <span className="text-primary dark:text-primary">Industry-Ready Engineers</span>
             </h2>
-            <p className="text-text-secondary dark:text-text-muted text-lg font-medium leading-relaxed">
+            <p className="text-text-secondary dark:text-text-muted text-xl font-medium leading-relaxed">
               A structured 4-year parallel program running inside your campus from pre-assessment to global placement offers.
             </p>
           </div>
 
           <div>
-            <h3 className="text-blue-700 dark:text-primary font-bold uppercase tracking-[0.2em] text-sm md:text-base mb-6">
+            <h3 className="text-blue-700 dark:text-primary font-bold uppercase tracking-[0.2em] text-base md:text-lg mb-6">
               Parallel Execution Engine
             </h3>
             
@@ -44,7 +44,7 @@ export default function EngineSection() {
                   <div className="flex-shrink-0 w-10 h-10 bg-primary/10 dark:bg-primary/15 rounded-full flex items-center justify-center">
                     {step.icon}
                   </div>
-                  <h4 className="text-text-primary dark:text-text-secondary font-bold text-sm sm:text-base">
+                  <h4 className="text-text-primary dark:text-text-secondary font-bold text-base sm:text-lg">
                     {step.title}
                   </h4>
                 </div>

@@ -17,7 +17,6 @@ const PlatformIllustration = lazy(() => import("../components/home/PlatformIllus
 
 // Page Sections
 const OurProduct = lazy(() => import("./OurProduct"));
-const WhyUs = lazy(() => import("./WhyUs"));
 const About = lazy(() => import("./About"));
 
 const containerVariants = {
@@ -151,7 +150,7 @@ export default function Home() {
 
             <motion.p
               variants={itemVariants}
-              className="text-base sm:text-lg text-text-secondary dark:text-text-secondary max-w-2xl leading-relaxed font-medium"
+              className="text-lg sm:text-xl lg:text-2xl text-text-secondary dark:text-text-secondary max-w-2xl leading-relaxed font-medium"
             >
               Create, edit, compile, and execute code solutions dynamically in 10+ programming languages. Backed by highly scalable, interactive environments.
             </motion.p>
@@ -252,8 +251,7 @@ export default function Home() {
       <div className="w-full">
         <Suspense fallback={<SectionSkeleton />}>
           <div id="our-product"><OurProduct hideBanner={true} /></div>
-          <div id="why-us"><WhyUs /></div>
-          <div id="about"><About /></div>
+          <div id="about"><About hideHeader={true} /></div>
         </Suspense>
       </div>
 

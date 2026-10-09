@@ -61,16 +61,16 @@ export default function CompilerSection() {
             ].map((feature, idx) => (
               <div
                 key={idx}
-                className="flex space-x-4 bg-background dark:bg-slate-900/50 p-5 lg:p-6 rounded-2xl border border-border/50 hover:border-primary/30 transition-colors shadow-sm"
+                className="flex space-x-4 bg-background dark:bg-slate-900/50 p-5 lg:p-6 rounded-2xl border border-border/50 hover:border-primary/30 transition-colors shadow-sm group"
               >
-                <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
-                  {feature.icon}
+                <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary font-black text-xl group-hover:scale-110 transition-transform">
+                  0{idx + 1}
                 </div>
                 <div>
-                  <h3 className="text-lg lg:text-xl font-bold text-text-primary dark:text-text-primary mb-2">
+                  <h3 className="text-xl lg:text-2xl font-bold text-text-primary dark:text-text-primary mb-2">
                     {feature.title}
                   </h3>
-                  <p className="text-sm lg:text-base text-text-secondary dark:text-text-muted leading-relaxed">
+                  <p className="text-base lg:text-lg text-text-secondary dark:text-text-muted leading-relaxed">
                     {feature.desc}
                   </p>
                 </div>

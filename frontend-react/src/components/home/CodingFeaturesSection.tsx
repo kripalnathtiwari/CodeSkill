@@ -35,8 +35,8 @@ const CodingFeaturesSection = () => {
                   <MonitorPlay className="w-5 h-5 text-blue-500" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-text-primary dark:text-text-inverse mb-1 text-base">Real-Time Execution</h4>
-                  <p className="text-sm text-text-secondary dark:text-text-muted leading-relaxed">Run and test your code instantly without setting up local environments.</p>
+                  <h4 className="font-bold text-text-primary dark:text-text-inverse mb-1 text-xl">Real-Time Execution</h4>
+                  <p className="text-base text-text-secondary dark:text-text-muted leading-relaxed">Run and test your code instantly without setting up local environments.</p>
                 </div>
               </div>
               
@@ -45,8 +45,8 @@ const CodingFeaturesSection = () => {
                   <Sparkles className="w-5 h-5 text-purple-500" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-text-primary dark:text-text-inverse mb-1 text-base">Intelligent Assistance</h4>
-                  <p className="text-sm text-text-secondary dark:text-text-muted leading-relaxed">Syntax highlighting and auto-completion to code faster and with fewer errors.</p>
+                  <h4 className="font-bold text-text-primary dark:text-text-inverse mb-1 text-xl">Intelligent Assistance</h4>
+                  <p className="text-base text-text-secondary dark:text-text-muted leading-relaxed">Syntax highlighting and auto-completion to code faster and with fewer errors.</p>
                 </div>
               </div>
               
@@ -55,8 +55,8 @@ const CodingFeaturesSection = () => {
                   <Layout className="w-5 h-5 text-emerald-500" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-text-primary dark:text-text-inverse mb-1 text-base">Split-Pane Interface</h4>
-                  <p className="text-sm text-text-secondary dark:text-text-muted leading-relaxed">Read problem statements and write code side-by-side efficiently.</p>
+                  <h4 className="font-bold text-text-primary dark:text-text-inverse mb-1 text-xl">Split-Pane Interface</h4>
+                  <p className="text-base text-text-secondary dark:text-text-muted leading-relaxed">Read problem statements and write code side-by-side efficiently.</p>
                 </div>
               </div>
               
@@ -65,8 +65,8 @@ const CodingFeaturesSection = () => {
                   <Zap className="w-5 h-5 text-orange-500" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-text-primary dark:text-text-inverse mb-1 text-base">Zero Latency</h4>
-                  <p className="text-sm text-text-secondary dark:text-text-muted leading-relaxed">Lightning-fast compiler that evaluates your edge cases in milliseconds.</p>
+                  <h4 className="font-bold text-text-primary dark:text-text-inverse mb-1 text-xl">Zero Latency</h4>
+                  <p className="text-base text-text-secondary dark:text-text-muted leading-relaxed">Lightning-fast compiler that evaluates your edge cases in milliseconds.</p>
                 </div>
               </div>
             </div>

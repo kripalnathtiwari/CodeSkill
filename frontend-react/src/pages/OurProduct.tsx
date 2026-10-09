@@ -33,7 +33,7 @@ export default function OurProduct({ hideBanner = false }: OurProductProps) {
       {!hideBanner && (
         <div className="w-full relative mb-16 md:mb-24">
           <img 
-            src="https://res.cloudinary.com/zihn8u4b/image/upload/v1789538527/back2.png" 
+            src="https://res.cloudinary.com/zihn8u4b/image/upload/v1791577249/One_Platform_Every_Learning_Journey.png" 
             alt="Placement Journey Hero"
             className="w-full h-auto object-cover"
           />
@@ -59,60 +59,60 @@ export default function OurProduct({ hideBanner = false }: OurProductProps) {
             <p className="text-xl text-text-secondary dark:text-text-muted leading-relaxed">
               Prepare for your dream placement with structured training designed around real hiring requirements. Build the skills, confidence, and interview readiness you need to stand out.
             </p>
-            <ul className="space-y-4 mt-8">
+            <ul className="space-y-6 mt-8">
               <li className="flex items-start">
                 <div className="flex-shrink-0 mt-1">
-                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Brain className="w-4 h-4 text-primary" />
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <span className="text-base font-bold text-primary">i</span>
                   </div>
                 </div>
-                <div className="ml-4">
-                  <h4 className="text-base font-semibold text-text-primary dark:text-text-inverse">Aptitude & Reasoning</h4>
-                  <p className="text-text-secondary dark:text-text-muted text-sm mt-1">Master placement-focused aptitude questions.</p>
+                <div className="ml-5">
+                  <h4 className="text-lg font-semibold text-text-primary dark:text-text-inverse">Aptitude & Reasoning</h4>
+                  <p className="text-text-secondary dark:text-text-muted text-base mt-1.5">Master placement-focused aptitude questions.</p>
                 </div>
               </li>
               <li className="flex items-start">
                 <div className="flex-shrink-0 mt-1">
-                  <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
-                    <Code2 className="w-4 h-4 text-accent" />
+                  <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+                    <span className="text-base font-bold text-accent">ii</span>
                   </div>
                 </div>
-                <div className="ml-4">
-                  <h4 className="text-base font-semibold text-text-primary dark:text-text-inverse">Coding & DSA</h4>
-                  <p className="text-text-secondary dark:text-text-muted text-sm mt-1">Practice coding problems based on real interview patterns.</p>
+                <div className="ml-5">
+                  <h4 className="text-lg font-semibold text-text-primary dark:text-text-inverse">Coding & DSA</h4>
+                  <p className="text-text-secondary dark:text-text-muted text-base mt-1.5">Practice coding problems based on real interview patterns.</p>
                 </div>
               </li>
               <li className="flex items-start">
                 <div className="flex-shrink-0 mt-1">
-                  <div className="w-8 h-8 rounded-lg bg-info/10 flex items-center justify-center">
-                    <FileText className="w-4 h-4 text-info" />
+                  <div className="w-10 h-10 rounded-xl bg-info/10 flex items-center justify-center">
+                    <span className="text-base font-bold text-info">iii</span>
                   </div>
                 </div>
-                <div className="ml-4">
-                  <h4 className="text-base font-semibold text-text-primary dark:text-text-inverse">Resume Building</h4>
-                  <p className="text-text-secondary dark:text-text-muted text-sm mt-1">Create a professional, job-ready resume.</p>
+                <div className="ml-5">
+                  <h4 className="text-lg font-semibold text-text-primary dark:text-text-inverse">Resume Building</h4>
+                  <p className="text-text-secondary dark:text-text-muted text-base mt-1.5">Create a professional, job-ready resume.</p>
                 </div>
               </li>
               <li className="flex items-start">
                 <div className="flex-shrink-0 mt-1">
-                  <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
-                    <Users className="w-4 h-4 text-purple-500" />
+                  <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                    <span className="text-base font-bold text-purple-500">iv</span>
                   </div>
                 </div>
-                <div className="ml-4">
-                  <h4 className="text-base font-semibold text-text-primary dark:text-text-inverse">Mock Interviews</h4>
-                  <p className="text-text-secondary dark:text-text-muted text-sm mt-1">Experience realistic technical and HR interviews.</p>
+                <div className="ml-5">
+                  <h4 className="text-lg font-semibold text-text-primary dark:text-text-inverse">Mock Interviews</h4>
+                  <p className="text-text-secondary dark:text-text-muted text-base mt-1.5">Experience realistic technical and HR interviews.</p>
                 </div>
               </li>
               <li className="flex items-start">
                 <div className="flex-shrink-0 mt-1">
-                  <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                    <Briefcase className="w-4 h-4 text-emerald-500" />
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
+                    <span className="text-base font-bold text-emerald-500">v</span>
                   </div>
                 </div>
-                <div className="ml-4">
-                  <h4 className="text-base font-semibold text-text-primary dark:text-text-inverse">Placement Preparation</h4>
-                  <p className="text-text-secondary dark:text-text-muted text-sm mt-1">Follow a structured path from learning to getting placed.</p>
+                <div className="ml-5">
+                  <h4 className="text-lg font-semibold text-text-primary dark:text-text-inverse">Placement Preparation</h4>
+                  <p className="text-text-secondary dark:text-text-muted text-base mt-1.5">Follow a structured path from learning to getting placed.</p>
                 </div>
               </li>
             </ul>
@@ -159,24 +159,24 @@ export default function OurProduct({ hideBanner = false }: OurProductProps) {
             <ul className="space-y-6 mt-8">
               <li className="flex items-start">
                 <div className="flex-shrink-0 mt-1">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Target className="w-5 h-5 text-primary" />
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <Target className="w-6 h-6 text-primary" />
                   </div>
                 </div>
-                <div className="ml-4">
-                  <h4 className="text-xl font-semibold text-text-primary dark:text-text-inverse">Targeted Preparation</h4>
-                  <p className="text-text-secondary dark:text-text-muted text-base mt-1">Focus your learning with topic-wise questions designed to strengthen specific concepts and improve retention.</p>
+                <div className="ml-5">
+                  <h4 className="text-2xl font-bold text-text-primary dark:text-text-inverse">Targeted Preparation</h4>
+                  <p className="text-text-secondary dark:text-text-muted text-lg mt-2 leading-relaxed">Focus your learning with topic-wise questions designed to strengthen specific concepts and improve retention.</p>
                 </div>
               </li>
               <li className="flex items-start">
                 <div className="flex-shrink-0 mt-1">
-                  <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
-                    <BookOpen className="w-5 h-5 text-accent" />
+                  <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
+                    <BookOpen className="w-6 h-6 text-accent" />
                   </div>
                 </div>
-                <div className="ml-4">
-                  <h4 className="text-xl font-semibold text-text-primary dark:text-text-inverse">Custom Question Banks</h4>
-                  <p className="text-text-secondary dark:text-text-muted text-base mt-1">Practice with hand-picked, industry-relevant problems that simulate real product-based company interviews.</p>
+                <div className="ml-5">
+                  <h4 className="text-2xl font-bold text-text-primary dark:text-text-inverse">Custom Question Banks</h4>
+                  <p className="text-text-secondary dark:text-text-muted text-lg mt-2 leading-relaxed">Practice with hand-picked, industry-relevant problems that simulate real product-based company interviews.</p>
                 </div>
               </li>
             </ul>
@@ -228,31 +228,22 @@ export default function OurProduct({ hideBanner = false }: OurProductProps) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-20 max-w-5xl mx-auto">
           
           <div className="glass-card p-6 rounded-2xl text-center md:text-left hover:-translate-y-1 transition-transform duration-300">
-            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 mx-auto md:mx-0">
-              <MonitorPlay className="w-6 h-6 text-primary" />
-            </div>
-            <h3 className="text-xl font-semibold text-text-primary dark:text-text-inverse mb-2">Live Execution</h3>
-            <p className="text-text-secondary dark:text-text-muted text-sm">
+            <h3 className="text-2xl font-bold text-text-primary dark:text-text-inverse mb-2">Live Execution</h3>
+            <p className="text-text-secondary dark:text-text-muted text-lg leading-relaxed">
               Write, compile, and run your code instantly within the browser. No complex setups required.
             </p>
           </div>
 
           <div className="glass-card p-6 rounded-2xl text-center md:text-left hover:-translate-y-1 transition-transform duration-300">
-            <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-4 mx-auto md:mx-0">
-              <Layout className="w-6 h-6 text-accent" />
-            </div>
-            <h3 className="text-xl font-semibold text-text-primary dark:text-text-inverse mb-2">Split-Pane Layout</h3>
-            <p className="text-text-secondary dark:text-text-muted text-sm">
+            <h3 className="text-2xl font-bold text-text-primary dark:text-text-inverse mb-2">Split-Pane Layout</h3>
+            <p className="text-text-secondary dark:text-text-muted text-lg leading-relaxed">
               Read problem descriptions and code side-by-side with our optimized dual-pane interface.
             </p>
           </div>
 
           <div className="glass-card p-6 rounded-2xl text-center md:text-left hover:-translate-y-1 transition-transform duration-300">
-            <div className="w-12 h-12 rounded-xl bg-info/10 flex items-center justify-center mb-4 mx-auto md:mx-0">
-              <Zap className="w-6 h-6 text-info" />
-            </div>
-            <h3 className="text-xl font-semibold text-text-primary dark:text-text-inverse mb-2">Instant Feedback</h3>
-            <p className="text-text-secondary dark:text-text-muted text-sm">
+            <h3 className="text-2xl font-bold text-text-primary dark:text-text-inverse mb-2">Instant Feedback</h3>
+            <p className="text-text-secondary dark:text-text-muted text-lg leading-relaxed">
               Get immediate evaluation on your test cases to debug faster and improve problem-solving speed.
             </p>
           </div>
@@ -275,8 +266,8 @@ export default function OurProduct({ hideBanner = false }: OurProductProps) {
             {/* Item 1 */}
             <div className="flex items-center text-left lg:text-right justify-start lg:justify-end gap-5">
               <div className="order-2 lg:order-1 flex-1 lg:flex-none lg:max-w-xs xl:max-w-sm">
-                <h3 className="text-xl font-bold text-text-primary dark:text-text-inverse mb-1">Industry-Aligned Curriculum</h3>
-                <p className="text-text-secondary dark:text-text-muted text-sm leading-relaxed">
+                <h3 className="text-2xl font-bold text-text-primary dark:text-text-inverse mb-2">Industry-Aligned Curriculum</h3>
+                <p className="text-text-secondary dark:text-text-muted text-lg leading-relaxed">
                   Our parallel syllabus integrates seamlessly with your academic schedule, covering DSA, Full Stack, AI/ML, and Cloud.
                 </p>
               </div>
@@ -287,8 +278,8 @@ export default function OurProduct({ hideBanner = false }: OurProductProps) {
             {/* Item 2 */}
             <div className="flex items-center text-left lg:text-right justify-start lg:justify-end gap-5">
               <div className="order-2 lg:order-1 flex-1 lg:flex-none lg:max-w-xs xl:max-w-sm">
-                <h3 className="text-xl font-bold text-text-primary dark:text-text-inverse mb-1">Expert Industry Mentors</h3>
-                <p className="text-text-secondary dark:text-text-muted text-sm leading-relaxed">
+                <h3 className="text-2xl font-bold text-text-primary dark:text-text-inverse mb-2">Expert Industry Mentors</h3>
+                <p className="text-text-secondary dark:text-text-muted text-lg leading-relaxed">
                   Live sessions and mock interviews conducted by professionals from Google, Microsoft, Amazon, and top startups.
                 </p>
               </div>
@@ -299,8 +290,8 @@ export default function OurProduct({ hideBanner = false }: OurProductProps) {
             {/* Item 3 */}
             <div className="flex items-center text-left lg:text-right justify-start lg:justify-end gap-5">
               <div className="order-2 lg:order-1 flex-1 lg:flex-none lg:max-w-xs xl:max-w-sm">
-                <h3 className="text-xl font-bold text-text-primary dark:text-text-inverse mb-1">Zero Infrastructure Cost</h3>
-                <p className="text-text-secondary dark:text-text-muted text-sm leading-relaxed">
+                <h3 className="text-2xl font-bold text-text-primary dark:text-text-inverse mb-2">Zero Infrastructure Cost</h3>
+                <p className="text-text-secondary dark:text-text-muted text-lg leading-relaxed">
                   We run the entire program inside your existing labs and classrooms — no new hardware or facility investment required.
                 </p>
               </div>
@@ -332,8 +323,8 @@ export default function OurProduct({ hideBanner = false }: OurProductProps) {
                 <Award className="w-6 h-6 text-blue-600" />
               </div>
               <div className="flex-1 lg:flex-none lg:max-w-xs xl:max-w-sm">
-                <h3 className="text-xl font-bold text-text-primary dark:text-text-inverse mb-1">Global Certifications</h3>
-                <p className="text-text-secondary dark:text-text-muted text-sm leading-relaxed">
+                <h3 className="text-2xl font-bold text-text-primary dark:text-text-inverse mb-2">Global Certifications</h3>
+                <p className="text-text-secondary dark:text-text-muted text-lg leading-relaxed">
                   Students earn industry-recognized certifications in AI, Cloud, and System Design, validated by our hiring partners.
                 </p>
               </div>
@@ -344,8 +335,8 @@ export default function OurProduct({ hideBanner = false }: OurProductProps) {
                 <Zap className="w-6 h-6 text-blue-600" />
               </div>
               <div className="flex-1 lg:flex-none lg:max-w-xs xl:max-w-sm">
-                <h3 className="text-xl font-bold text-text-primary dark:text-text-inverse mb-1">Guaranteed Placement Support</h3>
-                <p className="text-text-secondary dark:text-text-muted text-sm leading-relaxed">
+                <h3 className="text-2xl font-bold text-text-primary dark:text-text-inverse mb-2">Guaranteed Placement Support</h3>
+                <p className="text-text-secondary dark:text-text-muted text-lg leading-relaxed">
                   Dedicated placement cells, mock hiring drives, and direct referrals to our 100+ active hiring partners.
                 </p>
               </div>
@@ -356,8 +347,8 @@ export default function OurProduct({ hideBanner = false }: OurProductProps) {
                 <CheckCircle2 className="w-6 h-6 text-blue-600" />
               </div>
               <div className="flex-1 lg:flex-none lg:max-w-xs xl:max-w-sm">
-                <h3 className="text-xl font-bold text-text-primary dark:text-text-inverse mb-1">100% placement record</h3>
-                <p className="text-text-secondary dark:text-text-muted text-sm leading-relaxed">
+                <h3 className="text-2xl font-bold text-text-primary dark:text-text-inverse mb-2">100% placement record</h3>
+                <p className="text-text-secondary dark:text-text-muted text-lg leading-relaxed">
                   Proven track record of successful placements for all enrolled cohorts.
                 </p>
               </div>

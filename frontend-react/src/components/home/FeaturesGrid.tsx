@@ -44,10 +44,10 @@ export default function FeaturesGrid() {
                 transition={{ repeat: Infinity, duration: 3, ease: "easeInOut", delay: idx * 0.5 }}
                 className={`h-16 w-16 rounded-2xl flex items-center justify-center mb-6 border ${feature.bgClass} ${feature.borderClass} ${feature.textClass}`}
               >
-                <feature.icon className="h-8 w-8" />
+                <span className="text-2xl font-black">0{idx + 1}</span>
               </motion.div>
-              <h3 className="text-xl font-bold text-text-primary dark:text-text-primary">{feature.title}</h3>
-              <p className="text-sm text-text-secondary dark:text-text-muted leading-relaxed font-medium">
+              <h3 className="text-2xl font-bold text-text-primary dark:text-text-primary">{feature.title}</h3>
+              <p className="text-base md:text-lg text-text-secondary dark:text-text-muted leading-relaxed font-medium">
                 {feature.desc}
               </p>
             </motion.div>

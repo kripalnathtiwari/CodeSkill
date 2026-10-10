@@ -67,9 +67,9 @@ function AppContent() {
   return (
     <div className={`min-h-screen flex flex-col ${isDashboard ? 'bg-background' : 'bg-background dark:bg-background text-slate-950 dark:text-text-inverse'}`}>
       {!hideNavbar && <Navbar />}
-      <main className="flex-grow flex flex-col">
-        <ErrorBoundary>
-          <Suspense fallback={<GlobalLoader />}>
+      <ErrorBoundary>
+        <Suspense fallback={<GlobalLoader />}>
+          <main className="flex-grow flex flex-col">
             <Routes>
               <Route path="/" element={<GuestRoute><Home /></GuestRoute>} />
               <Route path="/why-us" element={<GuestRoute><WhyUs /></GuestRoute>} />
@@ -133,12 +133,12 @@ function AppContent() {
               <Route path="/jobs" element={<GuestRoute><Jobs /></GuestRoute>} />
               <Route path="/our-product" element={<GuestRoute><OurProduct /></GuestRoute>} />
             </Routes>
-          </Suspense>
-        </ErrorBoundary>
-      </main>
+          </main>
 
-      {/* ✅ Universal Footer — appears on every public page automatically */}
-      {!hideFooter && <Footer />}
+          {/* ✅ Universal Footer — appears on every public page automatically */}
+          {!hideFooter && <Footer />}
+        </Suspense>
+      </ErrorBoundary>
     </div>
   );
 }

@@ -30,12 +30,12 @@ export default function FeaturedCourses() {
           viewport={{ once: true, margin: "-50px" }}
           className="grid grid-cols-1 md:grid-cols-3 gap-6"
         >
-          {getCoursesByCategory("featured").map(course => (
+          {getCoursesByCategory("featured").map((course, index) => (
             <motion.div
               key={course.id}
               variants={{
-                hidden: { opacity: 0, y: 40 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.6, type: "spring", bounce: 0.3 } }
+                hidden: { opacity: 0, x: index % 2 === 0 ? -100 : 100 },
+                visible: { opacity: 1, x: 0, transition: { duration: 0.8, type: "spring", bounce: 0.4 } }
               }}
               whileHover={{ y: -8 }}
               className="group bg-surface dark:bg-background rounded-2xl border border-border dark:border-border hover:border-primary/50 transition-all flex flex-col shadow-sm hover:shadow-2xl overflow-hidden"

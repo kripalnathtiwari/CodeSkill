@@ -13,7 +13,12 @@ export default function WhyUs() {
         <div className="max-w-[1280px] mx-auto relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-[48px] items-center">
           
           {/* Left Column: Text */}
-          <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
+          <motion.div 
+            initial={{ opacity: 0, x: -100 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1, type: "spring", bounce: 0.4 }}
+            className="flex flex-col items-center lg:items-start text-center lg:text-left"
+          >
             <div className="w-[68px] h-[5px] bg-[#00A651] rounded-full mb-6"></div>
             <h1 
               className="font-black text-white drop-shadow-sm"
@@ -36,11 +41,45 @@ export default function WhyUs() {
             >
               A modern, no-nonsense approach to tech education. From day one, you'll be building real products, writing production-ready code, and preparing to stand out in the most competitive industry in the world.
             </p>
-          </div>
+          </motion.div>
 
           {/* Right Column: 3D Orbit Visual */}
-          <div className="w-full relative mt-12 lg:mt-0 lg:pl-10">
-            <WhyUsOrbitVisual />
+          <div className="w-full relative mt-12 lg:mt-0 lg:pl-10 flex justify-center perspective-1000">
+            <motion.div 
+              initial={{ opacity: 0, y: -400 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.5, type: "spring", bounce: 0.4 }}
+              className="w-full relative z-10"
+            >
+              <WhyUsOrbitVisual />
+            </motion.div>
+            
+            {/* Impact Dust/Smoke rings */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0, width: "10%" }}
+              animate={{ opacity: [0, 0.8, 0], scale: [0, 2, 4], width: ["10%", "50%", "100%"] }}
+              transition={{ delay: 0.6, duration: 1.2, ease: "easeOut" }}
+              className="absolute bottom-[10%] left-1/2 -translate-x-1/2 h-8 border-[2px] border-emerald-400/30 rounded-[100%] z-0"
+              style={{ boxShadow: "0 0 20px rgba(52, 211, 153, 0.5)" }}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: [0, 0.6, 0], scale: [0.5, 3, 5], y: [0, -20, -50] }}
+              transition={{ delay: 0.6, duration: 1.5, ease: "easeOut" }}
+              className="absolute bottom-[15%] left-1/2 -translate-x-1/2 w-32 h-16 bg-white/10 blur-2xl rounded-[100%] z-0"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: [0, 0.4, 0], scale: [0.5, 2.5, 4], x: [-100, -150], y: [0, -10, -30] }}
+              transition={{ delay: 0.6, duration: 1.5, ease: "easeOut" }}
+              className="absolute bottom-[15%] left-1/2 w-24 h-12 bg-emerald-500/20 blur-xl rounded-full z-0"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: [0, 0.4, 0], scale: [0.5, 2.5, 4], x: [100, 150], y: [0, -10, -30] }}
+              transition={{ delay: 0.6, duration: 1.5, ease: "easeOut" }}
+              className="absolute bottom-[15%] right-1/2 w-24 h-12 bg-emerald-500/20 blur-xl rounded-full z-0"
+            />
           </div>
         </div>
       </section>

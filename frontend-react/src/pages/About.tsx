@@ -33,7 +33,24 @@ export default function About({ hideHeader = false }: AboutProps = {}) {
       {!hideHeader && (
         <div className="w-full text-center py-16 px-4 bg-surface border-b border-border mb-8 overflow-hidden">
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tight max-w-6xl mx-auto leading-tight relative z-10">
-            <span className="text-primary block mb-2 lg:mb-4">CodeSkill</span>
+            <span className="text-primary flex justify-center mb-2 lg:mb-4 overflow-hidden">
+              <motion.span
+                initial={{ x: -100, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ type: "spring", stiffness: 100, damping: 20, duration: 1 }}
+                className="inline-block"
+              >
+                Code
+              </motion.span>
+              <motion.span
+                initial={{ x: 100, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ type: "spring", stiffness: 100, damping: 20, duration: 1 }}
+                className="inline-block"
+              >
+                Skill
+              </motion.span>
+            </span>
             <span className="text-text-primary">Turning Learners Into Leaders.</span>
           </h1>
           

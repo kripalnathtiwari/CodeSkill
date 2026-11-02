@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { DSA_TRACKS, DSAQuestion, DSATrack } from '../data/dsaPracticeData';
+import { DSA_TRACKS } from '../data/dsaPracticeData';
+import type { DSAQuestion, DSATrack } from '../data/dsaPracticeData';
 import {
   CheckCircle2,
   Lock,
@@ -497,7 +498,9 @@ export default function Problems() {
                     </span>
                     <div className="flex items-center gap-1">
                       {isCompleted && (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-500" title="All problems solved!" />
+                        <span title="All problems solved!">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                        </span>
                       )}
                       {!isUnlocked ? (
                         <Lock className="w-4 h-4 text-slate-400" />

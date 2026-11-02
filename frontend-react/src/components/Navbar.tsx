@@ -164,7 +164,7 @@ export default function Navbar() {
               <div className="absolute top-[80%] left-0 w-64 bg-surface dark:bg-background border border-border dark:border-border rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 z-50 overflow-hidden">
                 <div className="flex flex-col py-2">
                   <Link to="/problems" className="px-4 py-3 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary transition-colors text-sm border-b border-slate-100 dark:border-border/50 last:border-0 flex items-center space-x-2">
-                    <span>DSA Problem</span>
+                    <span>DSA Practice</span>
                   </Link>
                   <Link to="/company-problems" className="px-4 py-3 hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary transition-colors text-sm border-b border-slate-100 dark:border-border/50 last:border-0 flex items-center space-x-2">
                     <span>Company interview preperation</span>
@@ -382,7 +382,7 @@ export default function Navbar() {
                 
                 {isMobileProblemsOpen && (
                   <div className="pl-6 flex flex-col space-y-2 text-sm mt-1 mb-2 animate-in slide-in-from-top-2 duration-200">
-                    <Link to="/problems" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary text-text-secondary dark:text-text-muted py-1.5">DSA Problem</Link>
+                    <Link to="/problems" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary text-text-secondary dark:text-text-muted py-1.5">DSA Practice</Link>
                     <Link to="/company-problems" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary text-text-secondary dark:text-text-muted py-1.5">Company interview prep</Link>
                     <Link to="/aptitude" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary text-text-secondary dark:text-text-muted py-1.5">Aptitude questions</Link>
                     <Link to="/other-practice" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary text-text-secondary dark:text-text-muted py-1.5">More Practice</Link>

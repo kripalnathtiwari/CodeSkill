@@ -238,25 +238,25 @@ export default function Problems() {
     switch (platform) {
       case 'LeetCode':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded text-sm font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
             LeetCode
           </span>
         );
       case 'GeeksforGeeks':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded text-sm font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
             GeeksforGeeks
           </span>
         );
       case 'Codeforces':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded text-sm font-bold bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
             Codeforces
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded text-sm font-bold bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20">
             {platform}
           </span>
         );
@@ -268,25 +268,25 @@ export default function Problems() {
     switch (difficulty) {
       case 'Easy':
         return (
-          <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-900/40">
+          <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-900/40">
             Easy
           </span>
         );
       case 'Medium':
         return (
-          <span className="text-xs font-medium text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded border border-amber-200 dark:border-amber-900/40">
+          <span className="text-sm font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-0.5 rounded border border-amber-200 dark:border-amber-900/40">
             Medium
           </span>
         );
       case 'Hard':
         return (
-          <span className="text-xs font-medium text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 px-2 py-0.5 rounded border border-rose-200 dark:border-rose-900/40">
+          <span className="text-sm font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 px-2.5 py-0.5 rounded border border-rose-200 dark:border-rose-900/40">
             Hard
           </span>
         );
       case 'Div. 2/3':
         return (
-          <span className="text-xs font-medium text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 px-2 py-0.5 rounded border border-indigo-200 dark:border-indigo-900/40">
+          <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 px-2.5 py-0.5 rounded border border-indigo-200 dark:border-indigo-900/40">
             Div. 2/3 CP
           </span>
         );
@@ -489,7 +489,7 @@ export default function Problems() {
               <h1 className="text-2xl sm:text-3xl font-black text-text-primary dark:text-white">
                 DSA <span className="text-primary">Practice</span>
               </h1>
-              <p className="text-xs sm:text-sm text-text-secondary dark:text-text-muted mt-1 max-w-2xl">
+              <p className="text-[20px] font-bold text-text-secondary dark:text-slate-200 mt-2 max-w-3xl leading-relaxed">
                 Solve well-known, high-frequency interview questions across LeetCode, GeeksforGeeks, and Codeforces. Tick off completed problems to advance your tier.
               </p>
             </div>
@@ -517,16 +517,16 @@ export default function Problems() {
                 <button
                   key={track.id}
                   onClick={() => handleSwitchTrack(track.id)}
-                  className={`p-3.5 rounded-xl border text-left transition-all relative overflow-hidden flex flex-col justify-between ${
+                  className={`p-4 rounded-xl border text-left transition-all relative overflow-hidden flex flex-col justify-between ${
                     isActive
-                      ? 'border-primary bg-primary/5 dark:bg-primary/10 shadow-sm ring-1 ring-primary'
+                      ? 'border-primary bg-primary/5 dark:bg-primary/10 shadow-sm ring-2 ring-primary'
                       : isUnlocked
                       ? 'border-border dark:border-border/80 hover:border-slate-400 dark:hover:border-slate-600 bg-background dark:bg-slate-900/40'
                       : 'border-border/40 bg-background/50 dark:bg-slate-900/20 opacity-60 cursor-not-allowed'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span className={`text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider ${
+                    <span className={`text-xs font-black px-2.5 py-1 rounded uppercase tracking-wider ${
                       isActive
                         ? 'bg-primary text-white'
                         : 'bg-surface dark:bg-slate-800 text-text-muted'
@@ -536,7 +536,7 @@ export default function Problems() {
                     <div className="flex items-center gap-1">
                       {isCompleted && (
                         <span title="All problems solved!">
-                          <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                          <CheckCircle2 className="w-5 h-5 text-emerald-500" />
                         </span>
                       )}
                       {!isUnlocked ? (
@@ -548,17 +548,17 @@ export default function Problems() {
                   </div>
 
                   <div>
-                    <h3 className={`text-sm font-bold truncate ${isActive ? 'text-primary' : 'text-text-primary dark:text-white'}`}>
+                    <h3 className={`text-[20px] font-bold truncate leading-tight ${isActive ? 'text-primary' : 'text-text-primary dark:text-white'}`}>
                       {track.title}
                     </h3>
-                    <div className="flex items-center justify-between text-xs text-text-muted mt-1">
+                    <div className="flex items-center justify-between text-[18px] sm:text-[20px] font-bold text-text-muted mt-2">
                       <span>{trackSolved} / {trackProblems.length} Solved</span>
-                      <span className="font-semibold">{Math.round((trackSolved / trackProblems.length) * 100)}%</span>
+                      <span className="font-bold">{Math.round((trackSolved / trackProblems.length) * 100)}%</span>
                     </div>
                   </div>
 
                   {/* Micro Progress Bar */}
-                  <div className="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden mt-2.5">
+                  <div className="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden mt-3">
                     <div
                       className="bg-primary h-full transition-all duration-300 rounded-full"
                       style={{ width: `${(trackSolved / trackProblems.length) * 100}%` }}
@@ -573,25 +573,25 @@ export default function Problems() {
           {currentTrack && (
             <div className="bg-background dark:bg-slate-900/60 rounded-xl p-4 sm:p-5 border border-border/80 space-y-3">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
-                    <Flame className="w-4 h-4" />
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
+                    <Flame className="w-5 h-5" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-text-primary dark:text-white">
+                    <h4 className="text-[20px] font-bold text-text-primary dark:text-white">
                       {currentTrack.title} Progress
                     </h4>
-                    <p className="text-xs text-text-muted">
+                    <p className="text-[18px] sm:text-[20px] font-bold text-text-muted">
                       {currentTrack.tagline}
                     </p>
                   </div>
                 </div>
 
                 <div className="text-right">
-                  <span className="text-lg font-black text-primary">
+                  <span className="text-2xl font-black text-primary">
                     {trackStats.solved}
                   </span>
-                  <span className="text-xs text-text-muted"> / {trackStats.total} Solved ({trackStats.percent}%)</span>
+                  <span className="text-[18px] sm:text-[20px] font-bold text-text-muted"> / {trackStats.total} Solved ({trackStats.percent}%)</span>
                 </div>
               </div>
 
@@ -604,7 +604,7 @@ export default function Problems() {
               </div>
 
               {/* Helpful Hint */}
-              <div className="flex items-center justify-between text-[11px] text-text-muted pt-1">
+              <div className="flex items-center justify-between text-[16px] sm:text-[18px] font-bold text-text-muted pt-1">
                 <span>💡 Click any question to solve on its original platform. Check the tick box on the right once solved.</span>
                 {trackStats.percent === 100 && (
                   <span className="text-emerald-500 font-bold">🎉 Level Complete!</span>
@@ -707,22 +707,22 @@ export default function Problems() {
                   {/* Topic Group Header */}
                   <div className="px-5 py-4 border-b border-border/80 bg-background/50 dark:bg-slate-900/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">
-                        <Layers className="w-3.5 h-3.5" />
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
+                        <Layers className="w-4 h-4" />
                       </div>
-                      <h2 className="text-sm font-bold text-text-primary dark:text-white">
+                      <h2 className="text-[20px] font-bold text-text-primary dark:text-white">
                         {topic}
                       </h2>
-                      <span className="text-xs text-text-muted font-normal">
+                      <span className="text-[18px] sm:text-[20px] text-text-muted font-bold">
                         ({questions.length} problems)
                       </span>
                     </div>
 
                     <div className="flex items-center gap-3 self-end sm:self-auto">
-                      <div className="text-xs text-text-muted font-medium">
-                        <span className="text-primary font-bold">{topicSolved}</span> / {questions.length} Solved
+                      <div className="text-[18px] sm:text-[20px] text-text-muted font-bold">
+                        <span className="text-primary font-black">{topicSolved}</span> / {questions.length} Solved
                       </div>
-                      <div className="w-20 bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                      <div className="w-24 bg-slate-200 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
                         <div
                           className="bg-primary h-full rounded-full transition-all duration-300"
                           style={{ width: `${topicPercent}%` }}
@@ -745,28 +745,28 @@ export default function Problems() {
                         >
                           {/* Left: Index, Title, Snippet, Badges */}
                           <div className="flex items-start sm:items-center gap-3.5 min-w-0 flex-1">
-                            <span className="text-xs font-bold text-text-muted w-6 text-center shrink-0 mt-0.5 sm:mt-0">
+                            <span className="text-[20px] font-bold text-text-muted w-7 text-center shrink-0 mt-0.5 sm:mt-0">
                               {idx + 1}.
                             </span>
 
-                            <div className="min-w-0 flex-1 space-y-1">
-                              <div className="flex flex-wrap items-center gap-2">
+                            <div className="min-w-0 flex-1 space-y-1.5">
+                              <div className="flex flex-wrap items-center gap-2.5">
                                 <a
                                   href={q.url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className={`text-sm font-bold hover:text-primary transition-colors flex items-center gap-1 group ${
+                                  className={`text-[20px] font-bold hover:text-primary transition-colors flex items-center gap-1.5 group ${
                                     isSolved ? 'text-text-primary dark:text-slate-300 line-through opacity-85' : 'text-text-primary dark:text-white'
                                   }`}
                                   title="Open problem in new tab"
                                 >
                                   <span>{q.title}</span>
                                   {q.problemNumber && (
-                                    <span className="text-xs text-text-muted font-normal">
+                                    <span className="text-[18px] sm:text-[20px] text-text-muted font-bold">
                                       ({q.problemNumber})
                                     </span>
                                   )}
-                                  <ArrowUpRight className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+                                  <ArrowUpRight className="w-4 h-4 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
                                 </a>
 
                                 {renderPlatformBadge(q.platform)}
@@ -774,7 +774,7 @@ export default function Problems() {
                               </div>
 
                               {q.descriptionSnippet && (
-                                <p className="text-xs text-text-muted line-clamp-1">
+                                <p className="text-[18px] sm:text-[20px] font-bold text-text-secondary dark:text-slate-300 line-clamp-1 leading-relaxed">
                                   {q.descriptionSnippet}
                                 </p>
                               )}
@@ -788,10 +788,10 @@ export default function Problems() {
                               href={q.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="hidden sm:inline-flex items-center gap-1 text-xs font-bold text-text-muted hover:text-primary px-2.5 py-1.5 rounded-lg border border-border/80 hover:border-primary/50 bg-background dark:bg-slate-900 transition-colors"
+                              className="hidden sm:inline-flex items-center gap-1.5 text-sm font-bold text-text-muted hover:text-primary px-3 py-1.5 rounded-lg border border-border/80 hover:border-primary/50 bg-background dark:bg-slate-900 transition-colors"
                             >
                               <span>Solve</span>
-                              <ArrowUpRight className="w-3 h-3" />
+                              <ArrowUpRight className="w-3.5 h-3.5" />
                             </a>
 
                             {/* The Interactive Tick Box */}

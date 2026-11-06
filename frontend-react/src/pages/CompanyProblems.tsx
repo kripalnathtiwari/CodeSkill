@@ -20,7 +20,12 @@ import {
   X,
   FileText,
   Eye,
-  Maximize2
+  Maximize2,
+  Target,
+  Layers,
+  Clock,
+  BookOpen,
+  Check
 } from "lucide-react";
 import axios from "axios";
 import { getApiUrl } from "../utils/apiConfig";
@@ -579,297 +584,378 @@ export default function CompanyProblems() {
       ) : (
         /* Company Problems Practice View (when a user clicks "Start Preparing") */
         <div className="space-y-6">
-          {/* Promotional Card */}
-          <div className="bg-gradient-to-br from-[#f8fbff] to-[#eef5ff] dark:from-slate-900/80 dark:to-slate-800/80 rounded-3xl p-8 md:p-10 flex flex-col md:flex-row items-center justify-between border border-blue-100/50 dark:border-blue-800/30 shadow-sm relative overflow-hidden">
-            {/* Soft background glow */}
-            <div className="absolute right-0 top-0 w-64 h-64 bg-blue-400/10 blur-3xl rounded-full translate-x-1/2 -translate-y-1/4"></div>
-            
-            <div className="space-y-4 relative z-10">
-              <h2 className="text-3xl md:text-[40px] font-black text-[#0052cc] dark:text-blue-400 leading-[1.1] tracking-tight">
-                Prepare Smart.<br/>
-                Practice Better.<br/>
-                Get Hired.
-              </h2>
-              <p className="text-slate-500 dark:text-slate-400 font-medium text-lg md:text-xl">
-                Your dream role at <span className="font-bold text-slate-700 dark:text-slate-300">{selectedCompany}</span> awaits!
-              </p>
-            </div>
-            <div className="mt-8 md:mt-0 flex-shrink-0 relative z-10">
-              <div className="w-32 h-32 md:w-44 md:h-44 flex items-center justify-center text-[80px] md:text-[110px] drop-shadow-xl filter pb-4">
-                🏆
-                {/* Sparkles */}
-                <span className="absolute top-0 right-8 text-2xl text-yellow-400 animate-pulse">✨</span>
-                <span className="absolute bottom-4 left-4 text-xl text-yellow-400 animate-pulse delay-150">✨</span>
-              </div>
-            </div>
-          </div>
+          {(() => {
+            const codingQuestions = questions.filter(q => q.questionType === "CODING" || q.type === "CODING");
+            const solvedCodingCount = codingQuestions.filter(q => solvedCodingProblems.has(String(q.id || q._id))).length;
+            const takenMcqCount = testSeriesList.filter(ts => takenTests.has(String(ts.name))).length;
+            const totalItems = codingQuestions.length + testSeriesList.length;
+            const totalCompleted = solvedCodingCount + takenMcqCount;
+            const readinessPct = totalItems > 0 ? Math.round((totalCompleted / totalItems) * 100) : 0;
+            const currentCompanyObj = companiesList.find(c => c.name.toLowerCase() === selectedCompany?.toLowerCase());
 
-          {/* New Header Banner for Selected Company */}
-          <div className="relative rounded-2xl overflow-hidden bg-gradient-to-r from-blue-700 via-blue-600 to-sky-500 p-8 flex flex-col md:flex-row md:items-center justify-between shadow-xl mb-6 border border-blue-500/30">
-            {/* Background Decorations */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full blur-2xl translate-y-1/2 -translate-x-1/4 pointer-events-none"></div>
+            return (
+              <>
+                {/* Enterprise Company Hero Banner */}
+                <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#0a101f] via-[#101b33] to-[#0a1329] p-6 sm:p-8 lg:p-10 border border-slate-700/60 shadow-2xl text-white">
+                  {/* Subtle Background Glow Orbs */}
+                  <div className="absolute top-0 right-1/4 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                  <div className="absolute bottom-0 left-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-            <div className="relative z-10 space-y-6 max-w-2xl">
-              <div className="flex items-center space-x-2 text-[10px] sm:text-xs font-bold text-white/80 uppercase tracking-widest border border-white/20 rounded-full px-4 py-1.5 w-fit bg-white/10 backdrop-blur-sm">
-                <Award className="w-3.5 h-3.5" />
-                <span>ALGOTUTOR PRACTICE</span>
-                <span>|</span>
-                <span>INTERVIEW PREPARATION</span>
-              </div>
-              
-              <div className="flex items-center gap-5">
-                <div className="bg-white p-2.5 rounded-2xl shadow-lg shrink-0">
-                  {companiesList.find(c => c.name.toLowerCase() === selectedCompany?.toLowerCase())?.logoUrl ? (
-                    <img
-                      src={companiesList.find(c => c.name.toLowerCase() === selectedCompany?.toLowerCase())?.logoUrl}
-                      alt={`${selectedCompany} logo`}
-                      className="h-12 w-12 sm:h-16 sm:w-16 object-contain"
-                      onError={(e) => {
-                        (e.target as HTMLElement).style.display = "none";
-                      }}
-                    />
-                  ) : (
-                    <CompanyCircleIllustration iconType={companiesList.find(c => c.name.toLowerCase() === selectedCompany?.toLowerCase())?.iconType || "default"} name={selectedCompany} />
-                  )}
-                </div>
-                <div>
-                  <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white flex flex-col space-y-1">
-                    <span>{selectedCompany}</span>
-                    <span className="text-xl sm:text-3xl font-semibold text-blue-100">Interview Preparation</span>
-                  </h1>
-                </div>
-              </div>
+                  <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+                    {/* Left: Branding, Titles, Badges */}
+                    <div className="space-y-6 max-w-2xl">
+                      {/* Top Pill */}
+                      <div className="inline-flex items-center gap-2 text-[11px] sm:text-xs font-bold text-sky-300 uppercase tracking-widest border border-sky-400/30 rounded-full px-4 py-1.5 bg-sky-500/10 backdrop-blur-md">
+                        <Sparkles className="w-3.5 h-3.5 text-sky-400" />
+                        <span>INTERVIEW PREPARATION</span>
+                        <span className="text-white/30">•</span>
+                        <span>{selectedCompany.toUpperCase()} RECRUITMENT TRACK</span>
+                      </div>
 
-              <div className="flex flex-wrap items-center gap-3 pt-4">
-                <div className="flex items-center space-x-2 bg-black/20 backdrop-blur-sm px-3.5 py-2 rounded-xl border border-white/10 text-white/95 text-xs sm:text-sm font-medium hover:bg-black/30 transition-colors">
-                  <Code2 className="w-4 h-4" />
-                  <span>Company-Specific Preparation</span>
-                </div>
-                <div className="flex items-center space-x-2 bg-black/20 backdrop-blur-sm px-3.5 py-2 rounded-xl border border-white/10 text-white/95 text-xs sm:text-sm font-medium hover:bg-black/30 transition-colors">
-                  <Flame className="w-4 h-4 text-orange-300" />
-                  <span>Expert-Led Content</span>
-                </div>
-                <div className="flex items-center space-x-2 bg-black/20 backdrop-blur-sm px-3.5 py-2 rounded-xl border border-white/10 text-white/95 text-xs sm:text-sm font-medium hover:bg-black/30 transition-colors">
-                  <Award className="w-4 h-4 text-yellow-300" />
-                  <span>Real Interview Experience</span>
-                </div>
-                <div className="flex items-center space-x-2 bg-black/20 backdrop-blur-sm px-3.5 py-2 rounded-xl border border-white/10 text-white/95 text-xs sm:text-sm font-medium hover:bg-black/30 transition-colors">
-                  <Users className="w-4 h-4 text-emerald-300" />
-                  <span>Career Success</span>
-                </div>
-              </div>
-            </div>
+                      {/* Company Header Block */}
+                      <div className="flex items-center gap-4 sm:gap-6">
+                        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-2xl p-2.5 sm:p-3 shadow-xl flex items-center justify-center shrink-0 border border-white/20">
+                          {currentCompanyObj?.logoUrl ? (
+                            <img
+                              src={currentCompanyObj.logoUrl}
+                              alt={`${selectedCompany} logo`}
+                              className="w-full h-full object-contain"
+                              onError={(e) => {
+                                (e.target as HTMLElement).style.display = "none";
+                              }}
+                            />
+                          ) : (
+                            <CompanyCircleIllustration iconType={currentCompanyObj?.iconType || "default"} name={selectedCompany} />
+                          )}
+                        </div>
 
-            {/* Right side graphic approximation */}
-            <div className="hidden md:flex relative z-10 items-center justify-center pr-8">
-              <div className="bg-white rounded-2xl shadow-2xl p-7 relative w-72 h-64 flex flex-col transform rotate-2 hover:rotate-0 transition-transform duration-500 border border-slate-100">
-                <div className="flex items-center space-x-3 mb-5">
-                  {companiesList.find(c => c.name.toLowerCase() === selectedCompany?.toLowerCase())?.logoUrl ? (
-                    <img
-                      src={companiesList.find(c => c.name.toLowerCase() === selectedCompany?.toLowerCase())?.logoUrl}
-                      alt={`${selectedCompany} logo`}
-                      className="h-7 w-7 object-contain"
-                    />
-                  ) : (
-                    <Building2 className="w-7 h-7 text-blue-600" />
-                  )}
-                  <span className="font-extrabold text-slate-800 text-lg">{selectedCompany}</span>
-                </div>
-                <h3 className="font-black text-3xl leading-tight text-slate-900 mb-2">
-                  Interview<br/>
-                  <span className="text-blue-600">Preparation</span>
-                </h3>
-                <p className="text-[11px] font-bold text-slate-500 mt-auto flex space-x-1">
-                  <span className="text-slate-700">Practice.</span>
-                  <span className="text-blue-600">Prepare.</span>
-                  <span className="text-slate-900">Succeed.</span>
-                </p>
-                
-                {/* Floating clipboard icon approximation */}
-                <div className="absolute -right-14 top-6 bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border-[5px] border-blue-600 w-24 h-36 flex flex-col items-center justify-center overflow-hidden transform -rotate-6">
-                  <div className="w-12 h-3 bg-blue-600 rounded-b-md absolute top-0"></div>
-                  <div className="space-y-3 mt-4 w-full px-4">
-                    <div className="flex items-center space-x-2"><CheckCircle2 className="w-5 h-5 text-blue-600 shrink-0" /><div className="h-1.5 bg-slate-200 w-full rounded-full"></div></div>
-                    <div className="flex items-center space-x-2"><CheckCircle2 className="w-5 h-5 text-blue-600 shrink-0" /><div className="h-1.5 bg-slate-200 w-full rounded-full"></div></div>
-                    <div className="flex items-center space-x-2"><CheckCircle2 className="w-5 h-5 text-blue-600 shrink-0" /><div className="h-1.5 bg-slate-200 w-full rounded-full"></div></div>
-                    <div className="flex items-center space-x-2"><CheckCircle2 className="w-5 h-5 text-blue-600 shrink-0" /><div className="h-1.5 bg-slate-200 w-8 rounded-full"></div></div>
-                  </div>
-                  
-                  {/* Floating logo circle over clipboard */}
-                  <div className="absolute -bottom-4 -right-4 w-14 h-14 bg-white rounded-full shadow-lg border-2 border-slate-100 flex items-center justify-center">
-                    {companiesList.find(c => c.name.toLowerCase() === selectedCompany?.toLowerCase())?.logoUrl ? (
-                      <img src={companiesList.find(c => c.name.toLowerCase() === selectedCompany?.toLowerCase())?.logoUrl} className="w-8 h-8 object-contain" />
-                    ) : (
-                      <Building2 className="w-6 h-6 text-blue-600" />
-                    )}
-                  </div>
-                </div>
-                
-                {/* Decorative dots */}
-                <div className="absolute top-4 left-4 grid grid-cols-3 gap-1">
-                  {[...Array(9)].map((_, i) => <div key={i} className="w-1 h-1 bg-blue-200 rounded-full"></div>)}
-                </div>
-                <div className="absolute bottom-16 right-4 grid grid-cols-3 gap-1 opacity-50">
-                  {[...Array(9)].map((_, i) => <div key={i} className="w-1 h-1 bg-slate-300 rounded-full"></div>)}
-                </div>
-              </div>
-            </div>
-          </div>
+                        <div>
+                          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white flex flex-wrap items-baseline gap-2">
+                            <span>{selectedCompany}</span>
+                            <span className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sky-300 via-blue-200 to-indigo-200">
+                              Interview Preparation
+                            </span>
+                          </h1>
+                          <p className="text-slate-300 text-xs sm:text-sm font-medium mt-1.5 leading-relaxed">
+                            Master online assessments and technical rounds with curated coding challenges and diagnostic MCQs for {selectedCompany}.
+                          </p>
+                        </div>
+                      </div>
 
-          <div className="w-full">
-            {!selectedTestSeries ? (
-              // COURSE CONTENT ACCORDION VIEW (Screenshot 3)
-              <div className="bg-white dark:bg-background rounded-2xl border border-border dark:border-border/80 shadow-sm overflow-hidden">
-                <div className="p-5 sm:p-6 border-b border-border dark:border-border/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-900/20">
-                  <div className="flex items-center space-x-3 text-slate-900 dark:text-white">
-                    <div className="bg-blue-600 p-2 rounded-lg text-white">
-                      <FileText className="w-5 h-5" />
+                      {/* Feature Pills */}
+                      <div className="flex flex-wrap items-center gap-2.5 pt-1">
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-200 text-xs sm:text-sm font-semibold backdrop-blur-sm hover:bg-white/10 transition-colors">
+                          <Code2 className="w-4 h-4 text-emerald-400" />
+                          <span>Company-Specific Preparation</span>
+                        </div>
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-200 text-xs sm:text-sm font-semibold backdrop-blur-sm hover:bg-white/10 transition-colors">
+                          <Flame className="w-4 h-4 text-amber-400" />
+                          <span>Expert-Led Content</span>
+                        </div>
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-200 text-xs sm:text-sm font-semibold backdrop-blur-sm hover:bg-white/10 transition-colors">
+                          <Award className="w-4 h-4 text-sky-400" />
+                          <span>Real Interview Experience</span>
+                        </div>
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-200 text-xs sm:text-sm font-semibold backdrop-blur-sm hover:bg-white/10 transition-colors">
+                          <Users className="w-4 h-4 text-indigo-400" />
+                          <span>Career Success</span>
+                        </div>
+                      </div>
                     </div>
-                    <h2 className="text-xl font-bold">Course Content</h2>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <span className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-blue-50 border border-blue-100 text-blue-700 text-sm font-bold dark:bg-blue-900/30 dark:border-blue-800/50 dark:text-blue-300">
-                      <FileText className="w-4 h-4" />
-                      <span>2 Sections</span>
-                    </span>
-                    <span className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-blue-50 border border-blue-100 text-blue-700 text-sm font-bold dark:bg-blue-900/30 dark:border-blue-800/50 dark:text-blue-300">
-                      <FileText className="w-4 h-4" />
-                      <span>{testSeriesList.length} Lessons</span>
-                    </span>
+
+                    {/* Right: Modern Readiness Hub Card */}
+                    <div className="w-full lg:w-84 bg-white/10 dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl p-5 sm:p-6 border border-white/15 shadow-2xl relative shrink-0">
+                      <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                        <div className="flex items-center gap-2 text-xs font-bold text-sky-300">
+                          <Target className="w-4 h-4" />
+                          <span>READINESS MATRIX</span>
+                        </div>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                          {readinessPct === 100 ? "Ready!" : "In Progress"}
+                        </span>
+                      </div>
+
+                      <div className="py-4 space-y-3">
+                        <div className="flex items-center justify-between text-xs font-semibold text-slate-300">
+                          <span>Overall Track Completion</span>
+                          <span className="font-bold text-white">{readinessPct}%</span>
+                        </div>
+                        <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
+                          <div
+                            className="bg-gradient-to-r from-emerald-400 via-teal-400 to-sky-400 h-full rounded-full transition-all duration-500"
+                            style={{ width: `${readinessPct}%` }}
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2.5 pt-2">
+                          <div className="bg-white/5 rounded-xl p-3 border border-white/10">
+                            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Coding Solved</div>
+                            <div className="text-base sm:text-lg font-black text-white mt-1">
+                              <span className="text-emerald-400">{solvedCodingCount}</span>
+                              <span className="text-slate-400 text-xs font-normal"> / {codingQuestions.length}</span>
+                            </div>
+                          </div>
+                          <div className="bg-white/5 rounded-xl p-3 border border-white/10">
+                            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">MCQ Completed</div>
+                            <div className="text-base sm:text-lg font-black text-white mt-1">
+                              <span className="text-sky-400">{takenMcqCount}</span>
+                              <span className="text-slate-400 text-xs font-normal"> / {testSeriesList.length}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="pt-3 border-t border-white/10 flex items-center justify-between text-[11px] font-medium text-slate-300">
+                        <span className="flex items-center gap-1.5">
+                          <Clock className="w-3.5 h-3.5 text-amber-400" />
+                          <span>Practice. Prepare. Succeed.</span>
+                        </span>
+                        <span className="text-sky-300 font-bold">2 Assessment Rounds</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                
-                <div className="p-4 sm:p-6 space-y-4">
-                  {/* CODING ASSESSMENT ACCORDION */}
-                  <div className="rounded-xl border border-border dark:border-border/60 overflow-hidden bg-white dark:bg-slate-900/30">
-                    {(() => {
-                      const codingQuestions = questions.filter(q => q.questionType === "CODING" || q.type === "CODING");
-                      return (
-                        <>
-                          <button 
+
+                {/* Main Content Area */}
+                <div className="w-full">
+                  {!selectedTestSeries ? (
+                    /* COURSE CONTENT ACCORDION VIEW */
+                    <div className="bg-surface dark:bg-[#121826] rounded-2xl border border-border dark:border-border/80 shadow-sm overflow-hidden">
+                      {/* Course Content Header */}
+                      <div className="p-5 sm:p-6 border-b border-border/80 dark:border-border/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background/50 dark:bg-slate-900/40">
+                        <div className="flex items-center space-x-3 text-text-primary dark:text-white">
+                          <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
+                            <Layers className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <h2 className="text-xl font-bold">Course Content</h2>
+                            <p className="text-xs text-text-muted mt-0.5">
+                              Step-by-step assessment rounds aligned with {selectedCompany}'s hiring format.
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Top Summary Badges */}
+                        <div className="flex items-center space-x-2.5 flex-wrap">
+                          <span className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-surface dark:bg-slate-800 border border-border text-text-primary dark:text-slate-200 text-xs sm:text-sm font-bold shadow-xs">
+                            <Layers className="w-4 h-4 text-primary" />
+                            <span>2 Sections</span>
+                          </span>
+                          <span className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs sm:text-sm font-bold shadow-xs">
+                            <Code2 className="w-4 h-4" />
+                            <span>{codingQuestions.length} Problems</span>
+                          </span>
+                          <span className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-xs sm:text-sm font-bold shadow-xs">
+                            <FileText className="w-4 h-4" />
+                            <span>{testSeriesList.length} Lessons</span>
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Accordions Container */}
+                      <div className="p-4 sm:p-6 space-y-4">
+                        {/* 1. CODING ASSESSMENT ACCORDION */}
+                        <div className="rounded-xl border border-border dark:border-border/70 overflow-hidden bg-background dark:bg-slate-900/30 transition-all">
+                          <button
                             onClick={() => setModulesExpanded(!modulesExpanded)}
-                            className="w-full p-4 sm:p-5 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                            className={`w-full p-4 sm:p-5 flex items-center justify-between text-left transition-colors ${
+                              modulesExpanded ? 'bg-primary/5 dark:bg-primary/10 border-b border-border dark:border-border/60' : 'hover:bg-slate-50 dark:hover:bg-slate-800/40'
+                            }`}
                           >
-                            <div className="flex items-center space-x-3">
-                              <ChevronRight className={`w-5 h-5 text-blue-600 transition-transform ${modulesExpanded ? 'rotate-90' : ''}`} />
-                              <Code2 className="w-5 h-5 text-blue-600" />
-                              <span className="font-bold text-base sm:text-lg text-slate-900 dark:text-white truncate">
-                                {selectedCompany} Coding Assessment
+                            <div className="flex items-center space-x-3.5 min-w-0">
+                              <ChevronRight className={`w-5 h-5 text-primary shrink-0 transition-transform duration-200 ${modulesExpanded ? 'rotate-90' : ''}`} />
+                              <div className="w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold shrink-0">
+                                <Code2 className="w-5 h-5" />
+                              </div>
+                              <div className="min-w-0">
+                                <span className="font-bold text-base sm:text-lg text-text-primary dark:text-white truncate block">
+                                  {selectedCompany} Coding Assessment
+                                </span>
+                                <span className="text-xs text-text-muted hidden sm:block">
+                                  Algorithmic challenges, Data Structures & Problem Solving rounds
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center space-x-3 shrink-0">
+                              <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-bold">
+                                {solvedCodingCount} / {codingQuestions.length} Solved
+                              </span>
+                              <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-text-muted text-xs font-bold hidden sm:block">
+                                {codingQuestions.length} Problems
                               </span>
                             </div>
-                            <span className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-bold whitespace-nowrap hidden sm:block">
-                              {codingQuestions.length} Problems
-                            </span>
                           </button>
-                          
+
                           {modulesExpanded && (
-                            <div className="border-t border-slate-100 dark:border-border/50 divide-y divide-slate-100 dark:divide-slate-800 bg-slate-50/30 dark:bg-transparent">
+                            <div className="divide-y divide-border/60 bg-surface/50 dark:bg-slate-900/10">
                               {codingQuestions.length === 0 ? (
-                                <div className="p-6 text-center text-sm text-text-muted">No coding problems available for this company yet.</div>
+                                <div className="p-8 text-center text-sm text-text-muted space-y-1">
+                                  <Code2 className="w-8 h-8 text-text-muted mx-auto opacity-50 mb-2" />
+                                  <p className="font-semibold text-text-primary dark:text-white">No coding problems available yet</p>
+                                  <p className="text-xs">Questions for {selectedCompany} will appear here once published.</p>
+                                </div>
                               ) : (
-                                codingQuestions.map((q, idx) => (
-                                  <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 pl-12 hover:bg-white dark:hover:bg-slate-800/40 transition-colors gap-4">
-                                    <div className="flex items-center space-x-3 min-w-0">
-                                      <Code2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                                      <span className="font-semibold text-sm sm:text-base text-slate-800 dark:text-text-inverse truncate">{q.title || q.statement}</span>
-                                    </div>
-                                    <div className="flex items-center justify-between sm:justify-end sm:space-x-6 w-full sm:w-auto">
-                                      <div className="flex items-center space-x-2">
-                                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                                          (q.difficulty || 'MEDIUM').toUpperCase() === 'EASY' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400' :
-                                          (q.difficulty || 'MEDIUM').toUpperCase() === 'MEDIUM' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400' :
-                                          'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400'
+                                codingQuestions.map((q, idx) => {
+                                  const isSolved = solvedCodingProblems.has(String(q.id || q._id));
+                                  const diff = (q.difficulty || 'MEDIUM').toUpperCase();
+
+                                  return (
+                                    <div
+                                      key={idx}
+                                      className={`p-4 sm:px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-background/80 dark:hover:bg-slate-800/40 transition-colors ${
+                                        isSolved ? 'bg-emerald-50/20 dark:bg-emerald-950/10' : ''
+                                      }`}
+                                    >
+                                      <div className="flex items-center space-x-3.5 min-w-0 flex-1">
+                                        <span className="w-6 text-center text-xs font-bold text-text-muted shrink-0">
+                                          {idx + 1}.
+                                        </span>
+                                        <div className="w-7 h-7 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-xs shrink-0">
+                                          <Code2 className="w-3.5 h-3.5" />
+                                        </div>
+                                        <span className={`font-bold text-sm sm:text-base truncate ${
+                                          isSolved ? 'text-text-primary dark:text-slate-300 line-through opacity-85' : 'text-text-primary dark:text-white'
                                         }`}>
-                                          {q.difficulty || 'MEDIUM'}
+                                          {q.title || q.statement}
                                         </span>
                                       </div>
-                                      {solvedCodingProblems.has(String(q.id || q._id)) ? (
-                                        <div className="bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 px-5 py-2 rounded-lg text-sm font-semibold flex items-center space-x-2 shadow-sm shrink-0 cursor-not-allowed">
-                                          <CheckCircle2 className="w-4 h-4" />
-                                          <span>Solved</span>
-                                        </div>
-                                      ) : (
-                                        <Link 
-                                          to={`/solve-problem/${q.slug || q.id || q._id}`}
-                                          className="bg-[#0066cc] hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-semibold flex items-center space-x-2 transition-colors shadow-sm shrink-0"
-                                        >
-                                          <Code2 className="w-4 h-4" />
-                                          <span>Solve</span>
-                                        </Link>
-                                      )}
+
+                                      <div className="flex items-center justify-between sm:justify-end space-x-4 w-full sm:w-auto shrink-0">
+                                        <span className={`px-2.5 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider ${
+                                          diff === 'EASY' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400' :
+                                          diff === 'MEDIUM' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400' :
+                                          'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400'
+                                        }`}>
+                                          {diff}
+                                        </span>
+
+                                        {isSolved ? (
+                                          <div className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold border border-emerald-500/20 shrink-0 cursor-default">
+                                            <CheckCircle2 className="w-4 h-4" />
+                                            <span>Solved</span>
+                                          </div>
+                                        ) : (
+                                          <Link
+                                            to={`/solve-problem/${q.slug || q.id || q._id}`}
+                                            className="inline-flex items-center space-x-1.5 px-4 py-1.5 rounded-xl bg-primary hover:bg-primary/90 text-white text-xs font-bold shadow-sm transition-all shrink-0 group"
+                                          >
+                                            <Code2 className="w-3.5 h-3.5" />
+                                            <span>Solve</span>
+                                            <ArrowUpRight className="w-3 h-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                                          </Link>
+                                        )}
+                                      </div>
                                     </div>
-                                  </div>
-                                ))
+                                  );
+                                })
                               )}
                             </div>
                           )}
-                        </>
-                      );
-                    })()}
-                  </div>
+                        </div>
 
-                  {/* MCQ ASSESSMENT ACCORDION */}
-                  <div className="rounded-xl border border-border dark:border-border/60 overflow-hidden bg-white dark:bg-slate-900/30">
-                    <button 
-                      onClick={() => setMcqModulesExpanded(!mcqModulesExpanded)}
-                      className="w-full p-4 sm:p-5 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
-                    >
-                      <div className="flex items-center space-x-3">
-                        <ChevronRight className={`w-5 h-5 text-blue-600 transition-transform ${mcqModulesExpanded ? 'rotate-90' : ''}`} />
-                        <FileText className="w-5 h-5 text-blue-600" />
-                        <span className="font-bold text-base sm:text-lg text-slate-900 dark:text-white truncate">
-                          {selectedCompany} MCQ Assessment
-                        </span>
-                      </div>
-                      <span className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-bold whitespace-nowrap hidden sm:block">
-                        {testSeriesList.length} Lessons
-                      </span>
-                    </button>
-                    
-                    {mcqModulesExpanded && (
-                      <div className="border-t border-slate-100 dark:border-border/50 divide-y divide-slate-100 dark:divide-slate-800 bg-slate-50/30 dark:bg-transparent">
-                        {testSeriesList.length === 0 ? (
-                          <div className="p-6 text-center text-sm text-text-muted">No MCQ test series available.</div>
-                        ) : (
-                          testSeriesList.map((ts, idx) => {
-                            const qCount = questions.filter(q => q.testSeriesTags?.some((t:any) => t.name === ts.name)).length;
-                            return (
-                              <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 pl-12 hover:bg-white dark:hover:bg-slate-800/40 transition-colors gap-4">
-                                <div className="flex items-center space-x-3 min-w-0">
-                                  <FileText className="w-4 h-4 text-blue-400 shrink-0" />
-                                  <span className="font-semibold text-sm sm:text-base text-slate-800 dark:text-text-inverse truncate">{ts.name}</span>
-                                </div>
-                                <div className="flex items-center justify-between sm:justify-end sm:space-x-6 w-full sm:w-auto">
-                                  <div className="flex items-center space-x-1.5 text-text-muted text-xs sm:text-sm font-medium">
-                                    <FileText className="w-3.5 h-3.5" />
-                                    <span>{qCount} Questions</span>
-                                  </div>
-                                  {takenTests.has(String(ts.name)) ? (
-                                    <div className="bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 px-5 py-2 rounded-lg text-sm font-semibold flex items-center space-x-2 shadow-sm shrink-0 cursor-not-allowed">
-                                      <CheckCircle2 className="w-4 h-4" />
-                                      <span>Taken</span>
-                                    </div>
-                                  ) : (
-                                    <Link 
-                                      to={`/take-test/${encodeURIComponent(ts.name)}`}
-                                      className="bg-[#0066cc] hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-semibold flex items-center space-x-2 transition-colors shadow-sm shrink-0"
-                                    >
-                                      <Eye className="w-4 h-4" />
-                                      <span>Take Test</span>
-                                    </Link>
-                                  )}
-                                </div>
+                        {/* 2. MCQ ASSESSMENT ACCORDION */}
+                        <div className="rounded-xl border border-border dark:border-border/70 overflow-hidden bg-background dark:bg-slate-900/30 transition-all">
+                          <button
+                            onClick={() => setMcqModulesExpanded(!mcqModulesExpanded)}
+                            className={`w-full p-4 sm:p-5 flex items-center justify-between text-left transition-colors ${
+                              mcqModulesExpanded ? 'bg-primary/5 dark:bg-primary/10 border-b border-border dark:border-border/60' : 'hover:bg-slate-50 dark:hover:bg-slate-800/40'
+                            }`}
+                          >
+                            <div className="flex items-center space-x-3.5 min-w-0">
+                              <ChevronRight className={`w-5 h-5 text-primary shrink-0 transition-transform duration-200 ${mcqModulesExpanded ? 'rotate-90' : ''}`} />
+                              <div className="w-9 h-9 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold shrink-0">
+                                <FileText className="w-5 h-5" />
                               </div>
-                            );
-                          })
-                        )}
+                              <div className="min-w-0">
+                                <span className="font-bold text-base sm:text-lg text-text-primary dark:text-white truncate block">
+                                  {selectedCompany} MCQ Assessment
+                                </span>
+                                <span className="text-xs text-text-muted hidden sm:block">
+                                  CS Fundamentals, Technical Aptitude & Domain Knowledge rounds
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center space-x-3 shrink-0">
+                              <span className="px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-xs font-bold">
+                                {takenMcqCount} / {testSeriesList.length} Taken
+                              </span>
+                              <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-text-muted text-xs font-bold hidden sm:block">
+                                {testSeriesList.length} Lessons
+                              </span>
+                            </div>
+                          </button>
+
+                          {mcqModulesExpanded && (
+                            <div className="divide-y divide-border/60 bg-surface/50 dark:bg-slate-900/10">
+                              {testSeriesList.length === 0 ? (
+                                <div className="p-8 text-center text-sm text-text-muted space-y-1">
+                                  <FileText className="w-8 h-8 text-text-muted mx-auto opacity-50 mb-2" />
+                                  <p className="font-semibold text-text-primary dark:text-white">No MCQ assessments available yet</p>
+                                  <p className="text-xs">Practice test series for {selectedCompany} will appear here.</p>
+                                </div>
+                              ) : (
+                                testSeriesList.map((ts, idx) => {
+                                  const qCount = questions.filter(q => q.testSeriesTags?.some((t: any) => t.name === ts.name)).length;
+                                  const isTaken = takenTests.has(String(ts.name));
+
+                                  return (
+                                    <div
+                                      key={idx}
+                                      className={`p-4 sm:px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-background/80 dark:hover:bg-slate-800/40 transition-colors ${
+                                        isTaken ? 'bg-emerald-50/20 dark:bg-emerald-950/10' : ''
+                                      }`}
+                                    >
+                                      <div className="flex items-center space-x-3.5 min-w-0 flex-1">
+                                        <span className="w-6 text-center text-xs font-bold text-text-muted shrink-0">
+                                          {idx + 1}.
+                                        </span>
+                                        <div className="w-7 h-7 rounded-md bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xs shrink-0">
+                                          <FileText className="w-3.5 h-3.5" />
+                                        </div>
+                                        <div className="min-w-0">
+                                          <span className="font-bold text-sm sm:text-base text-text-primary dark:text-white truncate block">
+                                            {ts.name}
+                                          </span>
+                                          <span className="text-xs text-text-muted">
+                                            Comprehensive MCQ Practice Set
+                                          </span>
+                                        </div>
+                                      </div>
+
+                                      <div className="flex items-center justify-between sm:justify-end space-x-4 w-full sm:w-auto shrink-0">
+                                        <div className="inline-flex items-center space-x-1.5 text-text-muted text-xs font-semibold px-2.5 py-1 rounded-lg bg-surface dark:bg-slate-800 border border-border">
+                                          <FileText className="w-3.5 h-3.5 text-primary" />
+                                          <span>{qCount} Questions</span>
+                                        </div>
+
+                                        {isTaken ? (
+                                          <div className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold border border-emerald-500/20 shrink-0 cursor-default">
+                                            <CheckCircle2 className="w-4 h-4" />
+                                            <span>Taken</span>
+                                          </div>
+                                        ) : (
+                                          <Link
+                                            to={`/take-test/${encodeURIComponent(ts.name)}`}
+                                            className="inline-flex items-center space-x-1.5 px-4 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-sm transition-all shrink-0 group"
+                                          >
+                                            <Eye className="w-3.5 h-3.5" />
+                                            <span>Take Test</span>
+                                            <ArrowUpRight className="w-3 h-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                                          </Link>
+                                        )}
+                                      </div>
+                                    </div>
+                                  );
+                                })
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ) : (
+                    </div>
+                  ) : (
                 // TABLE VIEW (Screenshot 2)
                 <div className="bg-white dark:bg-background rounded-2xl border border-border dark:border-border/80 shadow-sm overflow-hidden">
                   <div className="p-4 sm:p-5 border-b border-border dark:border-border/50 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/40">
@@ -972,8 +1058,11 @@ export default function CompanyProblems() {
                 </div>
               )}
             </div>
-          </div>
-      )}
+          </>
+        );
+      })()}
     </div>
-  );
+  )}
+</div>
+);
 }

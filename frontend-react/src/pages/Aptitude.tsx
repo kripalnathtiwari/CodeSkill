@@ -374,49 +374,22 @@ export default function AptitudePage() {
                 <List className="w-4 h-4" />
               </button>
             </div>
-          </div>
-        </div>
 
-        {/* 3. COMPANY FILTER STRIP */}
-        <div className="bg-surface/60 dark:bg-[#111827]/60 backdrop-blur-sm border border-border/80 rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row sm:items-center gap-3">
-          <div className="flex items-center gap-2 text-xs font-bold text-text-muted shrink-0 uppercase tracking-wider">
-            <Building2 className="w-4 h-4 text-primary" />
-            <span>Company Focus:</span>
+            {(selectedDifficulty !== "All" || selectedTopic !== "All" || searchQuery) && (
+              <button
+                onClick={() => {
+                  setSelectedDifficulty("All");
+                  setSelectedTopic("All");
+                  setSearchQuery("");
+                }}
+                className="inline-flex items-center gap-1 text-xs font-bold text-text-muted hover:text-rose-400 px-2 py-1 rounded-lg transition-colors"
+                title="Reset filters"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Reset</span>
+              </button>
+            )}
           </div>
-
-          <div className="flex flex-wrap gap-2 items-center flex-1">
-            {uniqueCompanies.slice(0, 10).map((company) => {
-              const isSelected = selectedCompany.toLowerCase() === company.toLowerCase();
-              return (
-                <button
-                  key={company}
-                  onClick={() => setSelectedCompany(company)}
-                  className={`px-3 py-1 rounded-xl text-xs font-bold transition-all ${
-                    isSelected
-                      ? "bg-primary text-white shadow-sm shadow-primary/30"
-                      : "bg-background dark:bg-[#0B0F19] text-text-secondary dark:text-slate-300 border border-border/80 hover:border-primary/50 hover:text-primary"
-                  }`}
-                >
-                  {company}
-                </button>
-              );
-            })}
-          </div>
-
-          {(selectedCompany !== "All" || selectedDifficulty !== "All" || selectedTopic !== "All" || searchQuery) && (
-            <button
-              onClick={() => {
-                setSelectedCompany("All");
-                setSelectedDifficulty("All");
-                setSelectedTopic("All");
-                setSearchQuery("");
-              }}
-              className="inline-flex items-center gap-1 text-xs font-bold text-text-muted hover:text-rose-400 self-start sm:self-auto transition-colors"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>Reset</span>
-            </button>
-          )}
         </div>
 
         {/* 4. TOPICS SECTION */}

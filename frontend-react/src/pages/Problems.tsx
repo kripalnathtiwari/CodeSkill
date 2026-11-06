@@ -67,8 +67,32 @@ export default function Problems() {
         setUnlockedTracks(['beginner']);
       }
 
+      const initialSolved = new Set<string>();
       if (savedSolved) {
-        setSolvedIds(new Set(JSON.parse(savedSolved)));
+        try {
+          JSON.parse(savedSolved).forEach((id: string) => initialSolved.add(String(id)));
+        } catch (e) {}
+      }
+
+      // Also check if any were saved in solved_problems_progress
+      const altKey = `solved_problems_progress_${studentKey}`;
+      const altSolved = localStorage.getItem(altKey);
+      if (altSolved) {
+        try {
+          JSON.parse(altSolved).forEach((id: string) => initialSolved.add(String(id)));
+        } catch (e) {}
+      }
+
+      setSolvedIds(initialSolved);
+
+      // Keep both storage keys synchronized
+      if (initialSolved.size > 0) {
+        const arr = Array.from(initialSolved);
+        localStorage.setItem(solvedStorageKey, JSON.stringify(arr));
+        localStorage.setItem(altKey, JSON.stringify(arr));
+        if (user?.email) {
+          localStorage.setItem(`solved_problems_progress_${user.email}`, JSON.stringify(arr));
+        }
       }
     } catch (e) {
       console.error('Failed to load DSA practice state:', e);
@@ -125,7 +149,20 @@ export default function Problems() {
     }
 
     setSolvedIds(nextSolved);
-    localStorage.setItem(solvedStorageKey, JSON.stringify(Array.from(nextSolved)));
+    const solvedArray = Array.from(nextSolved);
+    localStorage.setItem(solvedStorageKey, JSON.stringify(solvedArray));
+
+    // Synchronize to solved_problems_progress for dashboard stats & analytics
+    localStorage.setItem(`solved_problems_progress_${studentKey}`, JSON.stringify(solvedArray));
+    if (user?.email) {
+      localStorage.setItem(`solved_problems_progress_${user.email}`, JSON.stringify(solvedArray));
+      localStorage.setItem(`codeskill_dsa_solved_${user.email.toLowerCase().trim()}`, JSON.stringify(solvedArray));
+
+      // Record daily progress for streak & calendar
+      import('../utils/progressTracker').then(({ recordDailyProgress }) => {
+        recordDailyProgress(user.email, wasSolved ? -1 : 1, wasSolved ? -10 : 10);
+      });
+    }
 
     // Check if current track is now fully completed to unlock next level
     if (!wasSolved && currentTrack) {

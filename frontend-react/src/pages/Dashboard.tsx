@@ -23,9 +23,26 @@ export default function Dashboard() {
     queryKey: ['dsaStats', user?.email],
     queryFn: async () => {
       if (!user?.email) return { total: 0 };
-      const solvedStr = localStorage.getItem(`solved_problems_progress_${user.email}`);
-      if (!solvedStr) return { total: 0 };
-      return { total: JSON.parse(solvedStr).length };
+      const emailLower = user.email.toLowerCase().trim();
+      const allSolvedIds = new Set<string>();
+
+      try {
+        const dsaSolved = localStorage.getItem(`codeskill_dsa_solved_${emailLower}`) || 
+                          localStorage.getItem(`codeskill_dsa_solved_${user.email}`);
+        if (dsaSolved) {
+          JSON.parse(dsaSolved).forEach((id: string) => allSolvedIds.add(String(id)));
+        }
+      } catch (e) {}
+
+      try {
+        const progSolved = localStorage.getItem(`solved_problems_progress_${emailLower}`) || 
+                           localStorage.getItem(`solved_problems_progress_${user.email}`);
+        if (progSolved) {
+          JSON.parse(progSolved).forEach((id: string) => allSolvedIds.add(String(id)));
+        }
+      } catch (e) {}
+
+      return { total: allSolvedIds.size };
     },
     enabled: !!user?.email
   });
@@ -70,20 +87,50 @@ export default function Dashboard() {
     queryKey: ['tagsProgress', user?.email],
     queryFn: async () => {
       if (!user?.email) return [];
-      const solvedStr = localStorage.getItem(`solved_problems_progress_${user.email}`);
-      if (!solvedStr) return [];
-      const solvedIds = JSON.parse(solvedStr);
-      if (!solvedIds.length) return [];
-      
+      const emailLower = user.email.toLowerCase().trim();
+      const allSolvedIds = new Set<string>();
+
+      try {
+        const dsaSolved = localStorage.getItem(`codeskill_dsa_solved_${emailLower}`) || 
+                          localStorage.getItem(`codeskill_dsa_solved_${user.email}`);
+        if (dsaSolved) {
+          JSON.parse(dsaSolved).forEach((id: string) => allSolvedIds.add(String(id)));
+        }
+      } catch (e) {}
+
+      try {
+        const progSolved = localStorage.getItem(`solved_problems_progress_${emailLower}`) || 
+                           localStorage.getItem(`solved_problems_progress_${user.email}`);
+        if (progSolved) {
+          JSON.parse(progSolved).forEach((id: string) => allSolvedIds.add(String(id)));
+        }
+      } catch (e) {}
+
+      if (allSolvedIds.size === 0) return [];
+
+      const tagCounts: Record<string, number> = {};
+
+      // Match against standard DSA_TRACKS questions (Arrays, Strings, Linked List, etc.)
+      try {
+        const { DSA_TRACKS } = await import('../data/dsaPracticeData');
+        DSA_TRACKS.forEach(track => {
+          track.questions.forEach(q => {
+            if (allSolvedIds.has(String(q.id))) {
+              tagCounts[q.topic] = (tagCounts[q.topic] || 0) + 1;
+            }
+          });
+        });
+      } catch (e) {}
+
+      // Match against API questions if any
       try {
         const { getApiUrl } = await import('../utils/apiConfig');
         const axios = (await import('axios')).default;
         const res = await axios.get(getApiUrl("/api/v1/questions?limit=100&type=CODING"));
         const questions = res.data?.questions || res.data || [];
         
-        const tagCounts: Record<string, number> = {};
         questions.forEach((q: any) => {
-          if (solvedIds.includes(q.id) || solvedIds.includes(q._id) || solvedIds.includes(q.slug)) {
+          if (allSolvedIds.has(String(q.id)) || allSolvedIds.has(String(q._id)) || allSolvedIds.has(String(q.slug))) {
             let tags: string[] = [];
             if (Array.isArray(q.tags)) tags = q.tags;
             else if (typeof q.tags === 'string') {
@@ -95,13 +142,15 @@ export default function Dashboard() {
             });
           }
         });
-        
-        return Object.entries(tagCounts)
-          .map(([name, count]) => ({ name, value: count }))
-          .sort((a, b) => b.value - a.value);
-      } catch (e) {
-         return [{ name: "Arrays", value: Math.floor(solvedIds.length/2) }, { name: "Strings", value: Math.ceil(solvedIds.length/2) }];
+      } catch (e) {}
+
+      if (Object.keys(tagCounts).length === 0 && allSolvedIds.size > 0) {
+        tagCounts["Arrays"] = allSolvedIds.size;
       }
+
+      return Object.entries(tagCounts)
+        .map(([name, count]) => ({ name, value: count }))
+        .sort((a, b) => b.value - a.value);
     },
     enabled: !!user?.email
   });

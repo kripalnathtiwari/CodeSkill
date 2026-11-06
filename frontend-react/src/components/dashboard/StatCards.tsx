@@ -19,7 +19,7 @@ export default function StatCards({ enrolledCount, testsAttempted, problemsSolve
       icon: <Book className="w-6 h-6 text-emerald-500" />,
       iconBg: "bg-emerald-100 dark:bg-emerald-500/20",
       action: "View Courses",
-      onClick: () => navigate('/dashboard/courses')
+      onClick: () => navigate('/dashboard/my-courses')
     },
     {
       title: "Tests Attempted",

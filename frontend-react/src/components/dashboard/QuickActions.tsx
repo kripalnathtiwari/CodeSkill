@@ -10,7 +10,7 @@ export default function QuickActions() {
       label: "Explore Courses",
       icon: <BookOpen className="w-6 h-6 text-emerald-600" />,
       bg: "bg-emerald-100 dark:bg-emerald-500/20",
-      path: "/dashboard/courses"
+      path: "/dashboard/my-courses"
     },
     {
       label: "Take a Test",

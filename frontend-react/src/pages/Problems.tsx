@@ -477,29 +477,29 @@ export default function Problems() {
         )}
 
         {/* Top Header & Track Selector */}
-        <div className="bg-surface dark:bg-[#151a23] rounded-2xl border border-border dark:border-border/80 p-6 shadow-sm space-y-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs font-bold px-2 py-0.5 rounded bg-primary/10 text-primary uppercase tracking-wide">
+        <div className="bg-surface dark:bg-[#151a23] rounded-2xl border border-border dark:border-border/80 p-6 sm:p-8 shadow-sm space-y-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2.5">
+                <span className="text-xs sm:text-sm font-extrabold px-3 py-1 rounded-lg bg-primary/10 text-primary uppercase tracking-wider">
                   Practice Center
                 </span>
-                <span className="text-xs text-text-muted">Student DSA Journey</span>
+                <span className="text-xs sm:text-sm font-semibold text-text-muted">Student DSA Journey</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-black text-text-primary dark:text-white">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-text-primary dark:text-white">
                 DSA <span className="text-primary">Practice</span>
               </h1>
-              <p className="text-[20px] font-bold text-text-secondary dark:text-slate-200 mt-2 max-w-3xl leading-relaxed">
+              <p className="text-[20px] sm:text-[21px] font-semibold text-text-secondary dark:text-slate-300 mt-3 max-w-4xl leading-relaxed">
                 Solve well-known, high-frequency interview questions across LeetCode, GeeksforGeeks, and Codeforces. Tick off completed problems to advance your tier.
               </p>
             </div>
 
             <button
               onClick={handleResetTrack}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold border border-border dark:border-border text-text-secondary dark:text-text-muted hover:bg-background dark:hover:bg-slate-800 transition-colors shrink-0 self-start md:self-auto"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border border-border dark:border-border text-text-secondary dark:text-text-muted hover:bg-background dark:hover:bg-slate-800 transition-colors shrink-0 self-start md:self-auto shadow-xs"
               title="Change your starting level or recalibrate"
             >
-              <RotateCcw className="w-3.5 h-3.5" />
+              <RotateCcw className="w-4 h-4" />
               <span>Change Level</span>
             </button>
           </div>

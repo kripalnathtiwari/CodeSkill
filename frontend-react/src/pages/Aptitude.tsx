@@ -438,29 +438,29 @@ export default function AptitudePage() {
                   <div className="space-y-4">
                     {/* Header Row: Badge & Icon */}
                     <div className="flex items-center justify-between">
-                      <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${color.bg}`}>
+                      <span className={`text-xs sm:text-sm font-extrabold px-3 py-1 rounded-full uppercase tracking-wider ${color.bg}`}>
                         Quantitative
                       </span>
 
-                      <div className="w-11 h-11 rounded-2xl bg-background dark:bg-[#0B0F19] flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+                      <div className="w-12 h-12 rounded-2xl bg-background dark:bg-[#0B0F19] flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
                         {icon}
                       </div>
                     </div>
 
                     {/* Topic Title & Subtitle */}
                     <div>
-                      <h2 className="text-xl font-bold text-text-primary dark:text-white group-hover:text-primary transition-colors leading-snug">
+                      <h2 className="text-2xl font-black text-text-primary dark:text-white group-hover:text-primary transition-colors leading-snug">
                         {topic}
                       </h2>
-                      <p className="text-xs text-text-muted mt-1">
+                      <p className="text-sm sm:text-[15px] font-medium text-text-muted dark:text-slate-300 mt-1.5 leading-relaxed">
                         High frequency placement test questions with solutions
                       </p>
                     </div>
 
                     {/* Metrics Row */}
-                    <div className="flex items-center justify-between text-xs font-semibold pt-2 border-t border-border/60">
-                      <span className="text-text-primary dark:text-slate-200 flex items-center gap-1.5">
-                        <BookOpen className="w-3.5 h-3.5 text-primary" />
+                    <div className="flex items-center justify-between text-sm sm:text-base font-bold pt-2.5 border-t border-border/60">
+                      <span className="text-text-primary dark:text-slate-200 flex items-center gap-2">
+                        <BookOpen className="w-4 h-4 text-primary" />
                         <span>{qCount} {qCount === 1 ? 'Problem' : 'Problems'}</span>
                       </span>
 
@@ -470,7 +470,7 @@ export default function AptitudePage() {
                     </div>
 
                     {/* Micro Progress Bar */}
-                    <div className="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                    <div className="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
                       <div
                         className={`bg-gradient-to-r ${color.bar} h-full rounded-full transition-all duration-500`}
                         style={{ width: `${percentInTopic}%` }}
@@ -479,12 +479,12 @@ export default function AptitudePage() {
                   </div>
 
                   {/* Action Link Footer */}
-                  <div className="mt-5 pt-4 border-t border-border/60 flex items-center justify-between text-xs font-bold text-primary group-hover:text-primary-hover">
-                    <span className="flex items-center gap-1">
-                      {isAllSolved && <Check className="w-4 h-4 text-emerald-500" />}
+                  <div className="mt-6 pt-4 border-t border-border/60 flex items-center justify-between text-sm sm:text-base font-extrabold text-primary group-hover:text-primary-hover">
+                    <span className="flex items-center gap-1.5">
+                      {isAllSolved && <Check className="w-5 h-5 text-emerald-500" />}
                       <span>{isAllSolved ? "Review Questions" : "Start Practicing"}</span>
                     </span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />
                   </div>
                 </div>
               );
@@ -492,7 +492,7 @@ export default function AptitudePage() {
           </div>
         ) : (
           /* LIST VIEW */
-          <div className="space-y-3">
+          <div className="space-y-3.5">
             {paginatedTopics.map((topic, idx) => {
               const qCount = topicCounts[topic] ?? groupedByTopic[topic]?.length ?? 0;
               const color = getTopicColor(idx);
@@ -505,34 +505,34 @@ export default function AptitudePage() {
                 <div
                   key={topic}
                   onClick={() => handleNavigateTopic(topic)}
-                  className="bg-surface dark:bg-[#111827] border border-border/80 hover:border-primary/60 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 cursor-pointer group"
+                  className="bg-surface dark:bg-[#111827] border border-border/80 hover:border-primary/60 rounded-2xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 cursor-pointer group"
                 >
                   <div className="flex items-center gap-4 min-w-0 flex-1">
-                    <div className="w-12 h-12 rounded-2xl bg-background dark:bg-[#0B0F19] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-sm">
+                    <div className="w-13 h-13 rounded-2xl bg-background dark:bg-[#0B0F19] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-sm">
                       {icon}
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <h2 className="text-lg font-bold text-text-primary dark:text-white group-hover:text-primary transition-colors truncate">
+                    <div className="min-w-0 flex-1 space-y-1">
+                      <div className="flex items-center gap-2.5 flex-wrap">
+                        <h2 className="text-xl sm:text-2xl font-black text-text-primary dark:text-white group-hover:text-primary transition-colors truncate">
                           {topic}
                         </h2>
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${color.bg}`}>
+                        <span className={`text-xs sm:text-sm font-extrabold px-3 py-0.5 rounded-full uppercase tracking-wider ${color.bg}`}>
                           Quantitative
                         </span>
                       </div>
-                      <p className="text-xs text-text-muted mt-0.5">
+                      <p className="text-sm sm:text-[15px] font-medium text-text-muted dark:text-slate-300">
                         {qCount} {qCount === 1 ? 'Problem' : 'Problems'} curated for interview rounds
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-6 shrink-0 w-full sm:w-auto justify-between sm:justify-end">
-                    <div className="w-28 space-y-1">
-                      <div className="flex justify-between text-[11px] text-text-muted font-semibold">
+                    <div className="w-32 space-y-1.5">
+                      <div className="flex justify-between text-xs sm:text-sm text-text-muted font-bold">
                         <span>Progress</span>
                         <span>{percentInTopic}%</span>
                       </div>
-                      <div className="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                      <div className="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
                         <div
                           className={`bg-gradient-to-r ${color.bar} h-full rounded-full transition-all`}
                           style={{ width: `${percentInTopic}%` }}
@@ -540,9 +540,9 @@ export default function AptitudePage() {
                       </div>
                     </div>
 
-                    <button className="inline-flex items-center gap-1 px-4 py-2 bg-primary/10 hover:bg-primary text-primary hover:text-white rounded-xl text-xs font-bold transition-all group-hover:translate-x-0.5">
+                    <button className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-primary/10 hover:bg-primary text-primary hover:text-white rounded-xl text-sm sm:text-base font-extrabold transition-all group-hover:translate-x-1 shadow-xs">
                       <span>Practice</span>
-                      <ChevronRight className="w-3.5 h-3.5" />
+                      <ChevronRight className="w-4 h-4" />
                     </button>
                   </div>
                 </div>

@@ -2,40 +2,43 @@ import React, { useState } from 'react';
 import { Layers, Cpu, Database, Network, ArrowRight, BookOpen, Code } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+import React, { useState } from 'react';
+import { Layers, Cpu, Database, Network, ArrowRight, BookOpen, Code, Sparkles, CheckCircle2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
 export default function MyProgress({ enrollments = [], practiceProgress = [] }: { enrollments: any[], practiceProgress?: any[] }) {
   const [activeTab, setActiveTab] = useState<'Courses' | 'Practice'>('Courses');
   const navigate = useNavigate();
 
-  // Pick up to 4 enrolled courses to display progress
+  // Pick enrolled courses to display progress
   const progressData = enrollments.slice(0, 4).map((course, idx) => {
     const isCompleted = course.status === 'completed' || course.status === 'Success';
-    // If it's a mock or active course, give it a randomish realistic progress like 35%, 60% based on string length, 
-    // or just 100% if completed, 10% if UNPAID, 45% if active
     let value = 45;
     if (isCompleted) value = 100;
     else if (course.status === 'UNPAID') value = 10;
     else value = Math.min(95, 20 + ((course.courseName?.length || 5) * 5));
 
     const colors = [
-      { icon: <Layers className="w-5 h-5 text-blue-500" />, bg: "bg-blue-100 dark:bg-blue-900/30", color: "bg-emerald-500" },
-      { icon: <Cpu className="w-5 h-5 text-yellow-500" />, bg: "bg-yellow-100 dark:bg-yellow-900/30", color: "bg-emerald-500" },
-      { icon: <Database className="w-5 h-5 text-blue-500" />, bg: "bg-blue-100 dark:bg-blue-900/30", color: "bg-emerald-500" },
-      { icon: <Network className="w-5 h-5 text-purple-500" />, bg: "bg-purple-100 dark:bg-purple-900/30", color: "bg-emerald-500" }
+      { icon: <Layers className="w-5 h-5 text-emerald-500" />, bg: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400", bar: "from-emerald-500 to-teal-500" },
+      { icon: <Cpu className="w-5 h-5 text-amber-500" />, bg: "bg-amber-500/10 text-amber-600 dark:text-amber-400", bar: "from-amber-500 to-orange-500" },
+      { icon: <Database className="w-5 h-5 text-sky-500" />, bg: "bg-sky-500/10 text-sky-600 dark:text-sky-400", bar: "from-sky-500 to-blue-500" },
+      { icon: <Network className="w-5 h-5 text-indigo-500" />, bg: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400", bar: "from-indigo-500 to-purple-500" }
     ];
 
     return {
       name: course.courseName || "Course",
       value: value,
+      isCompleted,
       ...colors[idx % colors.length]
     };
   });
 
   const dsaProgressData = practiceProgress?.slice(0, 4).map((tag, idx) => {
     const colors = [
-      { icon: <Code className="w-5 h-5 text-orange-500" />, bg: "bg-orange-100 dark:bg-orange-900/30" },
-      { icon: <Database className="w-5 h-5 text-blue-500" />, bg: "bg-blue-100 dark:bg-blue-900/30" },
-      { icon: <Cpu className="w-5 h-5 text-purple-500" />, bg: "bg-purple-100 dark:bg-purple-900/30" },
-      { icon: <Layers className="w-5 h-5 text-emerald-500" />, bg: "bg-emerald-100 dark:bg-emerald-900/30" }
+      { icon: <Code className="w-5 h-5 text-emerald-500" />, bg: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400", bar: "from-emerald-500 to-teal-500" },
+      { icon: <Database className="w-5 h-5 text-sky-500" />, bg: "bg-sky-500/10 text-sky-600 dark:text-sky-400", bar: "from-sky-500 to-blue-500" },
+      { icon: <Cpu className="w-5 h-5 text-indigo-500" />, bg: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400", bar: "from-indigo-500 to-purple-500" },
+      { icon: <Layers className="w-5 h-5 text-amber-500" />, bg: "bg-amber-500/10 text-amber-600 dark:text-amber-400", bar: "from-amber-500 to-orange-500" }
     ];
     return {
       name: tag.name,
@@ -45,86 +48,171 @@ export default function MyProgress({ enrollments = [], practiceProgress = [] }: 
   }) || [];
 
   return (
-    <div className="bg-white/80 dark:bg-[#111827]/80 backdrop-blur-md border border-border/50 dark:border-border/30 rounded-3xl p-8 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col w-full h-full">
-      <div className="flex items-center justify-between mb-8">
-        <h2 className="text-xl font-extrabold text-text-primary tracking-tight">My Progress</h2>
-        <div className="flex space-x-2 bg-surface-secondary dark:bg-slate-800/50 p-1 rounded-xl">
-          {['Courses', 'Practice'].map(tab => (
-            <button 
-              key={tab}
-              onClick={() => setActiveTab(tab as any)}
-              className={`text-sm font-bold transition-all px-4 py-1.5 rounded-lg ${
-                activeTab === tab 
-                  ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' 
-                  : 'text-text-muted hover:text-text-primary'
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
+    <div className="bg-surface dark:bg-[#111827] border border-border dark:border-border/80 rounded-2xl p-6 sm:p-7 shadow-sm hover:shadow-md transition-all flex flex-col justify-between w-full h-full min-h-[420px]">
+      <div>
+        {/* Header: Title and Filter Tabs */}
+        <div className="flex items-center justify-between mb-6 pb-4 border-b border-border/60">
+          <div>
+            <h2 className="text-xl font-black text-text-primary dark:text-white tracking-tight">
+              My Progress
+            </h2>
+            <p className="text-xs text-text-muted mt-0.5">
+              Track course syllabus completion and technical practice goals
+            </p>
+          </div>
+
+          <div className="flex items-center space-x-1.5 bg-background dark:bg-slate-900/60 p-1 rounded-xl border border-border/80">
+            {(['Courses', 'Practice'] as const).map(tab => (
+              <button 
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`text-xs font-bold transition-all px-3.5 py-1.5 rounded-lg ${
+                  activeTab === tab 
+                    ? 'bg-primary text-white shadow-xs' 
+                    : 'text-text-muted hover:text-text-primary'
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Content List */}
+        <div className="space-y-4">
+          {activeTab === 'Courses' ? (
+            progressData.length > 0 ? (
+              <div className="space-y-3.5">
+                {progressData.map((item, idx) => (
+                  <div 
+                    key={idx} 
+                    className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl bg-background/60 dark:bg-slate-900/40 border border-border/60 hover:border-primary/40 transition-all gap-4 group"
+                  >
+                    <div className="flex items-center space-x-3.5 min-w-0 flex-1">
+                      <div className={`p-3 rounded-xl shrink-0 ${item.bg} group-hover:scale-105 transition-transform shadow-xs`}>
+                        {item.icon}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-sm font-bold text-text-primary dark:text-white truncate">
+                            {item.name}
+                          </span>
+                          <span className="text-xs font-extrabold text-primary ml-2 shrink-0">
+                            {item.value}%
+                          </span>
+                        </div>
+                        <div className="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
+                          <div 
+                            className={`h-full rounded-full bg-gradient-to-r ${item.bar} transition-all duration-700 ease-out`}
+                            style={{ width: `${item.value}%` }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <button 
+                      onClick={() => navigate('/dashboard/my-courses')}
+                      className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:text-primary-hover px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors shrink-0 self-end sm:self-center"
+                    >
+                      <span>Resume</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))}
+
+                {/* Helpful learning tip if few courses */}
+                {progressData.length <= 2 && (
+                  <div className="p-4 rounded-xl border border-dashed border-primary/30 bg-primary/5 flex items-center justify-between gap-4 mt-2">
+                    <div className="flex items-center gap-3">
+                      <Sparkles className="w-5 h-5 text-primary shrink-0" />
+                      <div>
+                        <p className="text-xs font-bold text-text-primary dark:text-white">Accelerate Your Engineering Career</p>
+                        <p className="text-[11px] text-text-muted">Explore full-stack and data science live programs.</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => navigate('/dashboard/my-courses')}
+                      className="text-xs font-bold text-primary hover:underline shrink-0"
+                    >
+                      Browse Catalog →
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="py-12 flex flex-col items-center justify-center text-center space-y-3">
+                <BookOpen className="w-12 h-12 text-text-muted opacity-40" />
+                <p className="text-base font-bold text-text-primary dark:text-white">No enrolled courses yet</p>
+                <p className="text-xs text-text-muted max-w-sm">Enroll in our verified training tracks to begin your structured curriculum.</p>
+                <button
+                  onClick={() => navigate('/dashboard/my-courses')}
+                  className="mt-2 px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold shadow-sm"
+                >
+                  Explore Courses
+                </button>
+              </div>
+            )
+          ) : (
+            dsaProgressData.length > 0 ? (
+              <div className="space-y-3.5">
+                {dsaProgressData.map((item, idx) => (
+                  <div 
+                    key={idx} 
+                    className="flex items-center justify-between p-4 rounded-xl bg-background/60 dark:bg-slate-900/40 border border-border/60 hover:border-primary/40 transition-all gap-4 group"
+                  >
+                    <div className="flex items-center space-x-3.5 min-w-0 flex-1">
+                      <div className={`p-3 rounded-xl shrink-0 ${item.bg} group-hover:scale-105 transition-transform shadow-xs`}>
+                        {item.icon}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-bold text-text-primary dark:text-white truncate">
+                            {item.name}
+                          </span>
+                          <span className="text-xs font-bold bg-primary/10 text-primary px-3 py-1 rounded-full border border-primary/20">
+                            {item.value} solved
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <button 
+                      onClick={() => navigate('/dashboard/practice')}
+                      className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:text-primary-hover px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors shrink-0"
+                    >
+                      <span>Practice</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="py-12 flex flex-col items-center justify-center text-center space-y-3">
+                <Code className="w-12 h-12 text-text-muted opacity-40" />
+                <p className="text-base font-bold text-text-primary dark:text-white">No problem data yet</p>
+                <p className="text-xs text-text-muted max-w-sm">Solve high-frequency interview questions in the DSA practice center.</p>
+                <button
+                  onClick={() => navigate('/dashboard/practice')}
+                  className="mt-2 px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold shadow-sm"
+                >
+                  Start Practicing
+                </button>
+              </div>
+            )
+          )}
         </div>
       </div>
 
-      <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 content-start min-w-0">
-        {activeTab === 'Courses' ? (
-          progressData.length > 0 ? (
-            progressData.map((item, idx) => (
-              <div key={idx} className="flex items-center space-x-4 group p-3 rounded-2xl hover:bg-surface-secondary dark:hover:bg-slate-800/40 transition-colors">
-                <div className={`p-3 rounded-2xl shrink-0 ${item.bg} group-hover:scale-110 transition-transform duration-300`}>
-                  {item.icon}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-bold text-text-primary truncate">{item.name}</span>
-                    <span className="text-xs font-bold text-text-muted">{item.value}%</span>
-                  </div>
-                  <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2.5 overflow-hidden">
-                    <div 
-                      className={`h-full rounded-full ${item.color} shadow-sm transition-all duration-1000 ease-out`}
-                      style={{ width: `${item.value}%` }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="col-span-1 md:col-span-2 flex flex-col items-center justify-center h-full text-center space-y-3 opacity-70 py-8">
-               <BookOpen className="w-12 h-12 text-text-muted" />
-               <p className="text-base font-bold text-text-primary">No courses yet</p>
-               <p className="text-sm text-text-muted">Enroll in a course to see progress.</p>
-            </div>
-          )
-        ) : (
-          dsaProgressData.length > 0 ? (
-            dsaProgressData.map((item, idx) => (
-              <div key={idx} className="flex items-center space-x-4 group p-3 rounded-2xl hover:bg-surface-secondary dark:hover:bg-slate-800/40 transition-colors">
-                <div className={`p-3 rounded-2xl shrink-0 ${item.bg} group-hover:scale-110 transition-transform duration-300 shadow-sm`}>
-                  {item.icon}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-bold text-text-primary truncate">{item.name}</span>
-                    <span className="text-xs font-bold bg-primary/10 text-primary px-3 py-1 rounded-full">{item.value} solved</span>
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="col-span-1 md:col-span-2 flex flex-col items-center justify-center h-full text-center space-y-3 opacity-70 py-8">
-               <Code className="w-12 h-12 text-text-muted" />
-               <p className="text-base font-bold text-text-primary">No practice data</p>
-               <p className="text-sm text-text-muted">Solve problems to see progress.</p>
-            </div>
-          )
-        )}
-      </div>
-
-      <div className="mt-6 pt-4 border-t border-border flex justify-end">
+      {/* Footer Link */}
+      <div className="mt-6 pt-4 border-t border-border/60 flex items-center justify-between">
+        <span className="text-xs font-semibold text-text-muted">
+          {activeTab === 'Courses' ? `${enrollments.length} Active Courses` : 'Practice Center Active'}
+        </span>
         <button 
-          onClick={() => navigate(activeTab === 'Courses' ? '/dashboard/courses' : '/dashboard/practice')}
-          className="flex items-center space-x-1 text-sm font-bold text-primary hover:text-primary-hover group"
+          onClick={() => navigate(activeTab === 'Courses' ? '/dashboard/my-courses' : '/dashboard/practice')}
+          className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:text-primary-hover group"
         >
-          <span>{activeTab === 'Courses' ? 'View All Courses' : 'Practice More'}</span>
+          <span>{activeTab === 'Courses' ? 'View All Courses' : 'Practice More Problems'}</span>
           <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
         </button>
       </div>

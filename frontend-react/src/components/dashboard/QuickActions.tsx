@@ -7,47 +7,62 @@ export default function QuickActions() {
 
   const actions = [
     {
-      label: "Explore Courses",
-      icon: <BookOpen className="w-6 h-6 text-emerald-600" />,
-      bg: "bg-emerald-100 dark:bg-emerald-500/20",
+      label: "My Courses",
+      sub: "Active modules & catalog",
+      icon: <BookOpen className="w-5 h-5 text-emerald-500" />,
+      bg: "bg-emerald-500/10 border-emerald-500/20 group-hover:border-emerald-500/40",
       path: "/dashboard/my-courses"
     },
     {
       label: "Take a Test",
-      icon: <FileSignature className="w-6 h-6 text-purple-600" />,
-      bg: "bg-purple-100 dark:bg-purple-500/20",
+      sub: "Contests & diagnostics",
+      icon: <FileSignature className="w-5 h-5 text-purple-500" />,
+      bg: "bg-purple-500/10 border-purple-500/20 group-hover:border-purple-500/40",
       path: "/dashboard/tests"
     },
     {
       label: "Practice Problems",
-      icon: <Code className="w-6 h-6 text-orange-600" />,
-      bg: "bg-orange-100 dark:bg-orange-500/20",
+      sub: "150+ DSA question bank",
+      icon: <Code className="w-5 h-5 text-orange-500" />,
+      bg: "bg-orange-500/10 border-orange-500/20 group-hover:border-orange-500/40",
       path: "/dashboard/practice"
     },
     {
       label: "Read Notes",
-      icon: <FileText className="w-6 h-6 text-blue-600" />,
-      bg: "bg-blue-100 dark:bg-blue-500/20",
+      sub: "Cheat sheets & guides",
+      icon: <FileText className="w-5 h-5 text-blue-500" />,
+      bg: "bg-blue-500/10 border-blue-500/20 group-hover:border-blue-500/40",
       path: "/dashboard/notes"
     }
   ];
 
   return (
-    <div className="bg-white/80 dark:bg-[#111827]/80 backdrop-blur-md border border-border/50 dark:border-border/30 rounded-3xl p-8 shadow-sm flex flex-col h-full hover:shadow-md transition-shadow">
-      <h2 className="text-xl font-extrabold text-text-primary mb-8 tracking-tight">Quick Actions</h2>
+    <div className="bg-surface dark:bg-[#111827] border border-border dark:border-border/80 rounded-2xl p-6 sm:p-7 shadow-sm hover:shadow-md transition-all flex flex-col justify-between h-full">
+      <div className="flex items-center justify-between mb-4 pb-3 border-b border-border/60">
+        <h2 className="text-sm font-bold text-text-muted uppercase tracking-wider">
+          Quick Navigation
+        </h2>
+        <span className="text-[11px] font-bold text-primary">Fast Access</span>
+      </div>
       
-      <div className="grid grid-cols-4 gap-4 flex-1 items-center">
+      <div className="grid grid-cols-2 gap-3 flex-1">
         {actions.map((action, idx) => (
           <button 
             key={idx}
             onClick={() => navigate(action.path)}
-            className="flex flex-col items-center text-center space-y-4 group"
+            className="flex items-center space-x-3 p-3.5 rounded-xl border border-border/70 hover:border-primary/50 dark:border-border/60 dark:hover:border-primary/50 bg-background/50 dark:bg-slate-900/40 hover:bg-surface-secondary dark:hover:bg-slate-800/50 transition-all text-left group"
           >
-            <div className={`w-16 h-16 rounded-[20px] flex items-center justify-center ${action.bg} group-hover:-translate-y-2 group-hover:shadow-lg transition-all duration-300 shadow-sm relative overflow-hidden`}>
-              <div className="absolute inset-0 bg-white/20 dark:bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border ${action.bg} group-hover:scale-105 transition-transform shadow-xs`}>
               {action.icon}
             </div>
-            <span className="text-xs font-bold text-text-primary leading-tight max-w-[80%]">{action.label}</span>
+            <div className="min-w-0 flex-1">
+              <span className="text-xs sm:text-sm font-bold text-text-primary dark:text-white truncate block group-hover:text-primary transition-colors">
+                {action.label}
+              </span>
+              <span className="text-[11px] text-text-muted truncate block">
+                {action.sub}
+              </span>
+            </div>
           </button>
         ))}
       </div>

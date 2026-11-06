@@ -48,31 +48,34 @@ export default function StatCards({ enrolledCount, testsAttempted, problemsSolve
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
       {cards.map((card, idx) => (
         <div 
           key={idx} 
-          className="bg-white/80 dark:bg-[#111827]/80 backdrop-blur-md border border-border/50 dark:border-border/30 rounded-3xl p-6 flex flex-col justify-between shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group cursor-pointer"
+          className="bg-surface dark:bg-[#111827] border border-border dark:border-border/80 rounded-2xl p-5 sm:p-6 flex flex-col justify-between shadow-sm hover:shadow-md hover:border-primary/50 dark:hover:border-primary/50 transition-all duration-300 relative overflow-hidden group cursor-pointer"
           onClick={card.onClick}
         >
-          {/* Subtle gradient background on hover */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          {/* Subtle gradient accent on hover */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-transparent group-hover:bg-primary transition-all duration-300" />
 
-          <div className="flex items-center space-x-4 mb-5 relative z-10">
-            <div className={`p-4 rounded-2xl ${card.iconBg} shadow-sm group-hover:scale-110 transition-transform duration-300`}>
+          <div className="flex items-center space-x-4 mb-4 relative z-10">
+            <div className={`w-13 h-13 p-3.5 rounded-2xl ${card.iconBg} shadow-xs group-hover:scale-105 transition-transform duration-300 flex items-center justify-center shrink-0`}>
               {card.icon}
             </div>
-            <div>
-              <h3 className="text-3xl font-extrabold text-text-primary leading-none group-hover:text-primary transition-colors">{card.value}</h3>
-              <p className="text-[11px] font-bold text-text-muted mt-1 uppercase tracking-wider">{card.title}</p>
+            <div className="min-w-0 flex-1">
+              <h3 className="text-3xl font-black text-text-primary dark:text-white leading-none group-hover:text-primary transition-colors tracking-tight">
+                {card.value}
+              </h3>
+              <p className="text-xs font-bold text-text-muted mt-1.5 uppercase tracking-wider truncate">
+                {card.title}
+              </p>
             </div>
           </div>
-          <button 
-            className="flex items-center space-x-1 text-xs font-bold text-primary group-hover:text-primary-hover relative z-10"
-          >
+
+          <div className="pt-3 border-t border-border/50 flex items-center justify-between text-xs font-bold text-primary group-hover:text-primary-hover relative z-10">
             <span>{card.action}</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </button>
+          </div>
         </div>
       ))}
     </div>

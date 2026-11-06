@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Trophy, Calendar, Clock, Users, ArrowRight, Award, Star, Search, Lock, X, ChevronDown, Building2 } from "lucide-react";
 import Fuse from "fuse.js";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { getApiUrl } from "../utils/apiConfig";
@@ -80,8 +80,9 @@ function SearchableDropdown({ options, value, onChange, placeholder, disabled }:
 
 export default function Contests() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState("upcoming");
+  const [activeTab, setActiveTab] = useState((location.state as any)?.tab || "upcoming");
   const [searchQuery, setSearchQuery] = useState("");
 
   // Access Code Modal State

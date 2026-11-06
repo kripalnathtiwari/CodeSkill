@@ -261,7 +261,7 @@ export default function Problems() {
   // =========================================================================
   if (!selectedTrackId) {
     return (
-      <div className="min-h-screen bg-background dark:bg-black py-12 px-4 sm:px-6 lg:px-8 font-sans">
+      <div className="min-h-screen bg-background dark:bg-black py-12 px-4 sm:px-6 lg:px-8 font-sans" style={{ fontSize: '20px' }}>
         <div className="max-w-5xl mx-auto space-y-10">
           
           {/* Header */}
@@ -389,7 +389,7 @@ export default function Problems() {
   // VIEW 2: ACTIVE DSA PRACTICE DASHBOARD
   // =========================================================================
   return (
-    <div className="min-h-screen bg-background dark:bg-black py-8 px-4 sm:px-6 lg:px-8 font-sans">
+    <div className="min-h-screen bg-background dark:bg-black py-8 px-4 sm:px-6 lg:px-8 font-sans" style={{ fontSize: '20px' }}>
       <div className="max-w-6xl mx-auto space-y-6">
 
         {/* Level Up & Congratulations Banner */}

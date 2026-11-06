@@ -27,7 +27,7 @@ export default function StatCards({ enrolledCount, testsAttempted, problemsSolve
       icon: <Target className="w-6 h-6 text-purple-500" />,
       iconBg: "bg-purple-100 dark:bg-purple-500/20",
       action: "View Results",
-      onClick: () => navigate('/dashboard/tests')
+      onClick: () => navigate('/dashboard/tests', { state: { tab: 'past' } })
     },
     {
       title: "Problems Solved",

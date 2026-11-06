@@ -8,7 +8,7 @@ export const getAllAptitudeProblems = async (req: AuthenticatedRequest, res: Res
     const { limit = '20', cursor, topic, difficulty } = req.query;
 
     const parsedLimit = parseInt(limit as string, 10);
-    const limitNum = Number.isNaN(parsedLimit) || parsedLimit <= 0 ? 20 : Math.min(parsedLimit, 50);
+    const limitNum = Number.isNaN(parsedLimit) || parsedLimit <= 0 ? 20 : Math.min(parsedLimit, 500);
 
     const where: any = {};
     if (topic && topic !== "All") where.topic = topic;
@@ -123,6 +123,34 @@ export const createAptitudeProblem = async (req: AuthenticatedRequest, res: Resp
   } catch (error) {
     console.error('Error creating aptitude problem:', error);
     res.status(500).json({ error: 'Failed to create aptitude problem' });
+  }
+};
+
+export const createBulkAptitudeProblems = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { problems } = req.body;
+    if (!Array.isArray(problems) || problems.length === 0) {
+      res.status(400).json({ error: 'Problems array is required' });
+      return;
+    }
+
+    const created = await prisma.aptitudeProblem.createMany({
+      data: problems.map((p: any) => ({
+        title: p.title || "Untitled Question",
+        description: p.description || p.title || "No description",
+        topic: p.topic || "General Aptitude",
+        difficulty: p.difficulty || "Medium",
+        options: typeof p.options === 'string' ? p.options : JSON.stringify(p.options || []),
+        correctAnswer: p.correctAnswer || p.correctOption || "A",
+        explanation: p.explanation || null
+      }))
+    });
+
+    await invalidateCachePattern("/api/v1/aptitude-problems");
+    res.status(201).json({ count: created.count, message: `Successfully created ${created.count} questions` });
+  } catch (error) {
+    console.error('Error creating bulk aptitude problems:', error);
+    res.status(500).json({ error: 'Failed to create bulk aptitude problems' });
   }
 };
 

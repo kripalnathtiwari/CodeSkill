@@ -32,7 +32,7 @@ const getNavItems = (userRole?: string) => {
     { path: '/dashboard/my-courses', label: 'Enrolled Courses', icon: GraduationCap },
     
     { isHeader: true, label: 'Practice' },
-    { path: '/dashboard/practice', label: 'DSA Problem', icon: Terminal },
+    { path: '/dashboard/practice', label: 'DSA Practice', icon: Terminal },
     { path: '/dashboard/practice/company-problems', label: 'Company Interview Prep', icon: Building },
     { path: '/dashboard/practice/aptitude', label: 'Aptitude Question', icon: BrainCircuit },
     { path: '/dashboard/practice/other', label: 'More Practice', icon: LayoutGrid },

@@ -27,9 +27,20 @@ export default function AptitudeTopic() {
       const response = await axios.get(url);
       
       const parsedProblems = (response.data.data || []).map((p: any) => {
+        let opts = p.options;
+        try {
+          while (typeof opts === 'string') {
+            const parsed = JSON.parse(opts);
+            if (parsed === opts || (typeof parsed !== 'string' && typeof parsed !== 'object')) break;
+            opts = parsed;
+          }
+        } catch (e) {}
+
         return {
           ...p,
           _id: p.id,
+          options: opts,
+          correctOption: p.correctAnswer || p.correctOption
         };
       });
 

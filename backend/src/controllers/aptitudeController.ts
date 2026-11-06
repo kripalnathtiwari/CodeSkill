@@ -28,8 +28,12 @@ export const getAllAptitudeProblems = async (req: AuthenticatedRequest, res: Res
       select: {
         id: true,
         title: true,
+        description: true,
         topic: true,
         difficulty: true,
+        options: true,
+        correctAnswer: true,
+        explanation: true,
         createdAt: true,
       }
     });

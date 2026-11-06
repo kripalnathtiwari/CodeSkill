@@ -16,6 +16,7 @@ export default function AptitudePage() {
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("All");
   const [selectedTopic, setSelectedTopic] = useState<string>("All");
   const [aptitudeQuestions, setAptitudeQuestions] = useState<any[]>([]);
+  const [topicCounts, setTopicCounts] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [solvedIds, setSolvedIds] = useState<Set<string>>(new Set());
 
@@ -26,9 +27,10 @@ export default function AptitudePage() {
     const fetchAggregates = async () => {
       try {
         const response = await axios.get(getApiUrl("/api/v1/aptitude-problems/metadata/aggregates"));
-        const topicCounts = response.data.topicCounts || {};
+        const counts = response.data.topicCounts || {};
+        setTopicCounts(counts);
         
-        const topicsList = Object.keys(topicCounts).sort();
+        const topicsList = Object.keys(counts).sort();
         setAptitudeQuestions(topicsList.map(t => ({ topic: t }))); // Mock to populate groupedByTopic
       } catch (error) {
         console.error("Error fetching aptitude aggregates:", error);
@@ -201,7 +203,7 @@ export default function AptitudePage() {
                       {topic}
                     </h2>
                     <p className="text-sm text-text-muted dark:text-text-muted font-medium mt-0.5">
-                      {groupedByTopic[topic].length} {groupedByTopic[topic].length === 1 ? 'Question' : 'Questions'}
+                      {topicCounts[topic] ?? groupedByTopic[topic]?.length ?? 0} {(topicCounts[topic] ?? groupedByTopic[topic]?.length ?? 0) === 1 ? 'Question' : 'Questions'}
                     </p>
                   </div>
                 </div>

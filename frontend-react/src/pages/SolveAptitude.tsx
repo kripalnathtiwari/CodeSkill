@@ -24,6 +24,33 @@ export default function SolveAptitude() {
   // Temporary selection before saving
   // Removed in favor of direct auto-save to `answered` state
 
+  // Helper to extract option text safely from any format (object, array, JSON string)
+  const parseOptions = (opts: any) => {
+    if (!opts) return {};
+    let parsed = opts;
+    try {
+      while (typeof parsed === 'string') {
+        const next = JSON.parse(parsed);
+        if (next === parsed || (typeof next !== 'string' && typeof next !== 'object')) break;
+        parsed = next;
+      }
+    } catch (e) {}
+    return parsed;
+  };
+
+  const getOptionText = (q: any, opt: string) => {
+    if (!q || !q.options) return "";
+    const opts = parseOptions(q.options);
+    if (Array.isArray(opts)) {
+      const idx = opt === "A" ? 0 : opt === "B" ? 1 : opt === "C" ? 2 : 3;
+      return opts[idx] || "";
+    }
+    if (typeof opts === "object" && opts !== null) {
+      return opts[opt] || opts[opt.toLowerCase()] || opts[opt.toUpperCase()] || "";
+    }
+    return "";
+  };
+
   useEffect(() => {
     const loadQuestion = async () => {
       let parsedAll: any[] = [];
@@ -32,14 +59,7 @@ export default function SolveAptitude() {
       if (storedList) {
         const list = JSON.parse(storedList);
         parsedAll = list.map((p: any) => {
-          let opts = p.options;
-          try {
-            while (typeof opts === 'string') {
-              const parsed = JSON.parse(opts);
-              if (parsed === opts || typeof parsed !== 'string' && typeof parsed !== 'object') break;
-              opts = parsed;
-            }
-          } catch(e) {}
+          const opts = parseOptions(p.options);
           return {
             ...p,
             options: opts,
@@ -50,14 +70,7 @@ export default function SolveAptitude() {
         try {
           const response = await axios.get(getApiUrl(`/api/v1/aptitude-problems/${id}`));
           let p = response.data;
-          let opts = p.options;
-          try {
-            while (typeof opts === 'string') {
-              const parsed = JSON.parse(opts);
-              if (parsed === opts || typeof opts !== 'string' && typeof opts !== 'object') break;
-              opts = parsed;
-            }
-          } catch(e) {}
+          const opts = parseOptions(p.options);
           
           parsedAll = [{
             ...p,
@@ -74,9 +87,32 @@ export default function SolveAptitude() {
         setAllQuestions(parsedAll);
         const index = parsedAll.findIndex((q: any) => String(q._id) === String(id) || String(q.id) === String(id));
         if (index !== -1) {
+          const selected = parsedAll[index];
           setCurrentIndex(index);
-          setQuestion(parsedAll[index]);
           setVisited(prev => ({ ...prev, [index]: true }));
+
+          // Verify options exist; if not, fetch directly from API
+          const hasOptions = ['A', 'B', 'C', 'D'].some(o => getOptionText(selected, o));
+          if (!hasOptions) {
+            try {
+              const res = await axios.get(getApiUrl(`/api/v1/aptitude-problems/${id}`));
+              const fullP = res.data;
+              const fullOpts = parseOptions(fullP.options);
+              const merged = {
+                ...selected,
+                ...fullP,
+                options: fullOpts,
+                correctOption: fullP.correctAnswer || fullP.correctOption
+              };
+              setQuestion(merged);
+              parsedAll[index] = merged;
+              setAllQuestions([...parsedAll]);
+            } catch (e) {
+              setQuestion(selected);
+            }
+          } else {
+            setQuestion(selected);
+          }
         } else {
           navigate("/aptitude");
         }
@@ -114,11 +150,32 @@ export default function SolveAptitude() {
     );
   }
 
-  const navigateToQuestion = (index: number) => {
+  const navigateToQuestion = async (index: number) => {
     if (index >= 0 && index < allQuestions.length) {
       setCurrentIndex(index);
-      setQuestion(allQuestions[index]);
       setVisited(prev => ({ ...prev, [index]: true }));
+      const target = allQuestions[index];
+      const hasOptions = ['A', 'B', 'C', 'D'].some(o => getOptionText(target, o));
+      if (!hasOptions) {
+        try {
+          const qId = target._id || target.id;
+          const res = await axios.get(getApiUrl(`/api/v1/aptitude-problems/${qId}`));
+          const fullP = res.data;
+          const merged = {
+            ...target,
+            ...fullP,
+            options: parseOptions(fullP.options),
+            correctOption: fullP.correctAnswer || fullP.correctOption
+          };
+          setQuestion(merged);
+          allQuestions[index] = merged;
+          setAllQuestions([...allQuestions]);
+        } catch (e) {
+          setQuestion(target);
+        }
+      } else {
+        setQuestion(target);
+      }
     }
   };
 
@@ -242,7 +299,7 @@ export default function SolveAptitude() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
               {['A', 'B', 'C', 'D'].map((opt) => {
-                const optionText = question.options?.[opt];
+                const optionText = getOptionText(question, opt);
                 if (!optionText) return null;
 
                 const isSelected = answered[currentIndex] === opt;

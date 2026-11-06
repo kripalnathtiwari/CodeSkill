@@ -3,7 +3,7 @@ import axios from "axios";
 import { API_BASE_URL as API_URL } from "../../utils/apiConfig";
 import {
   Plus, Edit, Trash2, Search, BrainCircuit, X, Save, ArrowLeft, AlertTriangle, Upload, FileJson, FileText, Lock, Loader2,
-  Copy, Layers, CheckCircle2, FileUp, ListPlus
+  Copy, Layers, CheckCircle2, FileUp, ListPlus, ChevronDown, ChevronRight, Minimize2, Maximize2
 } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
 
@@ -137,6 +137,28 @@ export default function AptitudeManagement() {
   const [isReviewingBulk, setIsReviewingBulk] = useState(false);
   const [pendingBulkQuestions, setPendingBulkQuestions] = useState<any[]>([]);
   const [bulkApplyTopic, setBulkApplyTopic] = useState("");
+
+  // Topic Collapse / Minimize State
+  const [collapsedTopics, setCollapsedTopics] = useState<Record<string, boolean>>({});
+
+  const toggleCollapse = (topicName: string) => {
+    setCollapsedTopics(prev => ({
+      ...prev,
+      [topicName]: !prev[topicName]
+    }));
+  };
+
+  const collapseAll = () => {
+    const allCollapsed: Record<string, boolean> = {};
+    Object.keys(groupedByTopic).forEach(t => {
+      allCollapsed[t] = true;
+    });
+    setCollapsedTopics(allCollapsed);
+  };
+
+  const expandAll = () => {
+    setCollapsedTopics({});
+  };
 
   // Upload State
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -1370,7 +1392,7 @@ Answer: B`}
         </div>
       </div>
 
-      <div className="flex justify-between items-center bg-surface dark:bg-[#111827] border border-border rounded-2xl p-4 shadow-xl">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-surface dark:bg-[#111827] border border-border rounded-2xl p-4 shadow-xl">
         <div className="relative w-80">
           <input
             type="text" placeholder="Search questions..."
@@ -1379,7 +1401,27 @@ Answer: B`}
           />
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
         </div>
-        <span className="text-sm font-medium text-text-muted">Total: {filtered.length} questions</span>
+        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+          <span className="text-sm font-medium text-text-muted">Total: {filtered.length} questions</span>
+          <div className="flex items-center gap-1.5 border-l border-border pl-3">
+            <button
+              onClick={collapseAll}
+              className="px-2.5 py-1 text-xs font-semibold rounded-lg text-text-muted hover:text-text-primary hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors flex items-center gap-1"
+              title="Minimize all topic sections"
+            >
+              <Minimize2 className="w-3.5 h-3.5" />
+              <span>Collapse All</span>
+            </button>
+            <button
+              onClick={expandAll}
+              className="px-2.5 py-1 text-xs font-semibold rounded-lg text-text-muted hover:text-text-primary hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors flex items-center gap-1"
+              title="Expand all topic sections"
+            >
+              <Maximize2 className="w-3.5 h-3.5" />
+              <span>Expand All</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <div className="space-y-8">
@@ -1445,72 +1487,93 @@ Answer: B`}
                     <Plus className="w-4 h-4" />
                     <span>Add Question</span>
                   </button>
+
+                  {/* Minimize / Expand Button */}
+                  <button
+                    onClick={() => toggleCollapse(topicName)}
+                    className="p-1.5 text-text-muted hover:text-text-primary hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-lg transition-colors flex items-center gap-1 text-xs font-semibold border border-border"
+                    title={collapsedTopics[topicName] ? "Expand Topic" : "Minimize Topic"}
+                  >
+                    {collapsedTopics[topicName] ? (
+                      <>
+                        <ChevronRight className="w-4 h-4 text-primary" />
+                        <span className="hidden sm:inline text-primary">Expand</span>
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown className="w-4 h-4 text-text-muted" />
+                        <span className="hidden sm:inline">Minimize</span>
+                      </>
+                    )}
+                  </button>
                 </div>
               </div>
 
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-text-secondary">
-                  <thead className="bg-white dark:bg-[#1a2333] text-text-muted uppercase text-xs font-semibold">
-                    <tr>
-                      <th className="px-6 py-4">Title</th>
-                      <th className="px-6 py-4">Difficulty</th>
-                      <th className="px-6 py-4">Company</th>
-                      <th className="px-6 py-4">Answer</th>
-                      <th className="px-6 py-4 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-800">
-                    {groupedByTopic[topicName].map((problem: any, idx: number) => (
-                      <tr key={problem._id || `fallback-key-${idx}`} className="hover:bg-slate-200/30 dark:hover:bg-slate-800/30 transition-colors">
-                        <td className="px-6 py-4 font-medium text-text-primary">
-                          <span className="line-clamp-1">{problem.title}</span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className={`px-2 py-1 rounded text-xs font-bold ${
-                            problem.difficulty === "Easy" ? "bg-primary/10 text-primary" :
-                            problem.difficulty === "Medium" ? "bg-amber-500/10 text-amber-400" :
-                            "bg-rose-500/10 text-rose-500"
-                          }`}>
-                            {problem.difficulty}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          {problem.company ? (
-                            <span className="text-xs px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-text-secondary font-medium">
-                              {problem.company}
-                            </span>
-                          ) : (
-                            <span className="text-xs text-text-muted">-</span>
-                          )}
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="text-xs px-2.5 py-1 rounded-md bg-primary/10 text-primary font-bold uppercase tracking-wider">
-                            Option {problem.correctOption}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-right">
-                          <div className="flex items-center justify-end space-x-1">
-                            <button
-                              onClick={() => handleOpenEditProblem(problem)}
-                              className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
-                              title="Edit Question"
-                            >
-                              <Edit className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => setDeleteConfirmId(problem._id)}
-                              className="p-2 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors"
-                              title="Delete Question"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </td>
+              {!collapsedTopics[topicName] && (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm text-text-secondary">
+                    <thead className="bg-white dark:bg-[#1a2333] text-text-muted uppercase text-xs font-semibold">
+                      <tr>
+                        <th className="px-6 py-4">Title</th>
+                        <th className="px-6 py-4">Difficulty</th>
+                        <th className="px-6 py-4">Company</th>
+                        <th className="px-6 py-4">Answer</th>
+                        <th className="px-6 py-4 text-right">Actions</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800">
+                      {groupedByTopic[topicName].map((problem: any, idx: number) => (
+                        <tr key={problem._id || `fallback-key-${idx}`} className="hover:bg-slate-200/30 dark:hover:bg-slate-800/30 transition-colors">
+                          <td className="px-6 py-4 font-medium text-text-primary">
+                            <span className="line-clamp-1">{problem.title}</span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className={`px-2 py-1 rounded text-xs font-bold ${
+                              problem.difficulty === "Easy" ? "bg-primary/10 text-primary" :
+                              problem.difficulty === "Medium" ? "bg-amber-500/10 text-amber-400" :
+                              "bg-rose-500/10 text-rose-500"
+                            }`}>
+                              {problem.difficulty}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            {problem.company ? (
+                              <span className="text-xs px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-text-secondary font-medium">
+                                {problem.company}
+                              </span>
+                            ) : (
+                              <span className="text-xs text-text-muted">-</span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className="text-xs px-2.5 py-1 rounded-md bg-primary/10 text-primary font-bold uppercase tracking-wider">
+                              Option {problem.correctOption || problem.correctAnswer || "A"}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <div className="flex items-center justify-end space-x-1">
+                              <button
+                                onClick={() => handleOpenEditProblem(problem)}
+                                className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                                title="Edit Question"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => setDeleteConfirmId(problem._id)}
+                                className="p-2 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors"
+                                title="Delete Question"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           ))
         )}

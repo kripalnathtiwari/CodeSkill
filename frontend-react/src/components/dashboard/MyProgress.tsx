@@ -1,8 +1,4 @@
 import React, { useState } from 'react';
-import { Layers, Cpu, Database, Network, ArrowRight, BookOpen, Code } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-
-import React, { useState } from 'react';
 import { Layers, Cpu, Database, Network, ArrowRight, BookOpen, Code, Sparkles, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 

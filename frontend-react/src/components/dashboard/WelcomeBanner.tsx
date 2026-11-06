@@ -1,11 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { ArrowRight } from 'lucide-react';
-
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
 import { ArrowRight, Sparkles, Quote, Target } from 'lucide-react';
 
 export default function WelcomeBanner({ solvedCount }: { solvedCount: number }) {

@@ -1,7 +1,11 @@
 import React from "react";
 import { useAuth } from "../context/AuthContext";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { BookOpen, Award, Lock } from "lucide-react";
+import UserRankCard from "../components/dashboard/UserRankCard";
+
+import SiteMetricsCard from "../components/dashboard/SiteMetricsCard";
+import TopPerformersCard from "../components/dashboard/TopPerformersCard";
+
 
 import DashboardLayout from "../components/dashboard/DashboardLayout";
 import WelcomeBanner from "../components/dashboard/WelcomeBanner";
@@ -196,12 +200,16 @@ export default function Dashboard() {
         <WelcomeBanner solvedCount={dsaStats.total} />
 
         {/* 5 Stat Cards */}
-        <StatCards 
-          enrolledCount={enrollmentsData.length}
-          testsAttempted={testStats.attempted}
-          problemsSolved={dsaStats.total}
-          globalRank={userRank}
-        />
+        <div className="flex flex-col md:flex-row gap-4 items-stretch">
+          <SiteMetricsCard />
+          <StatCards 
+            enrolledCount={enrollmentsData.length}
+            testsAttempted={testStats.attempted}
+            problemsSolved={dsaStats.total}
+            globalRank={userRank}
+          />
+          
+        </div>
 
         {/* Grid Layout for Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -241,6 +249,7 @@ export default function Dashboard() {
               testTotal={testStats.attempted}
               weeklyProgress={weeklyProgress} 
             />
+            <TopPerformersCard />
           </div>
           
         </div>

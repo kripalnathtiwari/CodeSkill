@@ -4,6 +4,7 @@ import { Award, PlayCircle, BookOpen } from "lucide-react";
 import CertificateModal from "../components/CertificateModal";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
+import { getCourseById } from "../data/coursesData";
 
 export default function MyCourses() {
   const { user } = useAuth();
@@ -182,7 +183,9 @@ export default function MyCourses() {
           </motion.div>
         ) : (
           <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {enrollments.map((course, idx) => (
+            {enrollments.map((course, idx) => {
+              const meta = getCourseById(course.courseId);
+              return (
               <div key={idx} className="group glass-card bg-surface/80 dark:bg-background/80 backdrop-blur-xl rounded-3xl border border-border dark:border-border p-8 flex flex-col shadow-xl shadow-slate-200/30 dark:shadow-none hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-[50px] -z-10 group-hover:bg-primary/10 transition-colors duration-500"></div>
                 <div className="flex justify-between items-start mb-4">
@@ -190,6 +193,12 @@ export default function MyCourses() {
                     <h3 className="text-xl font-bold mb-1">{course.courseName}</h3>
                     <p className="text-sm text-text-muted dark:text-text-muted">Registered on: {new Date(course.dateRegistered).toLocaleDateString()}</p>
                     <p className="text-sm text-text-muted dark:text-text-muted mt-1">Student: <span className="font-semibold text-text-primary dark:text-text-secondary">{course.fullName}</span></p>
+                    {(meta?.trainer?.name || meta?.trainerName) && (
+                      <p className="text-sm text-primary font-medium mt-1">
+                        Trainer: <span className="font-bold">{meta?.trainer?.name || meta?.trainerName}</span>
+                        {(meta?.trainer?.company || meta?.trainerCompany) ? ` · ${meta?.trainer?.company || meta?.trainerCompany}` : ''}
+                      </p>
+                    )}
                   </div>
                   <span className={`px-3 py-1 text-xs font-bold rounded-full ${
                     (course.status === 'completed' || courseSettings[course.courseName]?.certificatePublished) 
@@ -255,7 +264,7 @@ export default function MyCourses() {
                   )}
                 </div>
               </div>
-            ))}
+            );})}
           </motion.div>
         )}
       </motion.div>

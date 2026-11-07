@@ -194,25 +194,61 @@ export default function SolveAptitude() {
   };
 
   const handleSubmitTest = () => {
-    // Log activity for all correctly answered questions
+    // Log activity and save analytics for all attempted questions
     if (user?.email) {
       const token = localStorage.getItem("accessToken");
       let correctCount = 0;
+      const emailLower = user.email.toLowerCase().trim();
+      const analyticsKey = `aptitude_analytics_${emailLower}`;
+      
+      let savedAnalytics: any[] = [];
+      try {
+        savedAnalytics = JSON.parse(localStorage.getItem(analyticsKey) || "[]");
+      } catch (e) {
+        savedAnalytics = [];
+      }
       
       allQuestions.forEach((q, idx) => {
-        const isCorrect = answered[idx]?.trim().toUpperCase() === q.correctOption?.trim().toUpperCase();
-        if (isCorrect) {
-          correctCount++;
-          if (token) {
-            axios.post(getApiUrl("/api/v1/auth/log-activity"), {
-              action: `APTITUDE_SOLVED_${q._id || q.id}`
-            }, {
-              headers: { Authorization: `Bearer ${token}` }
-            }).catch(err => console.error("Failed to log aptitude", err));
+        const userAns = answered[idx];
+        if (userAns !== undefined && userAns !== null && userAns !== "") {
+          const isCorrect = userAns.trim().toUpperCase() === q.correctOption?.trim().toUpperCase();
+          const qId = q._id || q.id;
+
+          if (isCorrect) {
+            correctCount++;
+            if (token) {
+              axios.post(getApiUrl("/api/v1/auth/log-activity"), {
+                action: `APTITUDE_SOLVED_${qId}`
+              }, {
+                headers: { Authorization: `Bearer ${token}` }
+              }).catch(err => console.error("Failed to log aptitude", err));
+            }
+          }
+
+          const recordIndex = savedAnalytics.findIndex((item: any) => String(item.id) === String(qId));
+          if (recordIndex === -1) {
+            savedAnalytics.push({
+              id: qId,
+              topic: q.topic || question?.topic || "Aptitude",
+              difficulty: q.difficulty || "Medium",
+              correct: isCorrect,
+              userAnswer: userAns,
+              attemptedAt: new Date().toISOString()
+            });
+          } else {
+            savedAnalytics[recordIndex].correct = isCorrect || savedAnalytics[recordIndex].correct;
+            savedAnalytics[recordIndex].userAnswer = userAns;
+            savedAnalytics[recordIndex].attemptedAt = new Date().toISOString();
           }
         }
       });
       
+      try {
+        localStorage.setItem(analyticsKey, JSON.stringify(savedAnalytics));
+      } catch (e) {
+        console.error("Failed to save aptitude analytics", e);
+      }
+
       // Track real progress
       recordDailyProgress(user?.email, correctCount, correctCount * 5);
       
@@ -329,6 +365,30 @@ export default function SolveAptitude() {
                     onClick={() => {
                       if (!showSolution[currentIndex]) {
                         setAnswered(prev => ({ ...prev, [currentIndex]: opt }));
+                        if (user?.email && question) {
+                          try {
+                            const analyticsKey = `aptitude_analytics_${user.email.toLowerCase().trim()}`;
+                            const saved = JSON.parse(localStorage.getItem(analyticsKey) || "[]");
+                            const qId = question._id || question.id;
+                            const isCorr = opt.trim().toUpperCase() === question.correctOption?.trim().toUpperCase();
+                            const recIdx = saved.findIndex((item: any) => String(item.id) === String(qId));
+                            if (recIdx === -1) {
+                              saved.push({
+                                id: qId,
+                                topic: question.topic || "Aptitude",
+                                difficulty: question.difficulty || "Medium",
+                                correct: isCorr,
+                                userAnswer: opt,
+                                attemptedAt: new Date().toISOString()
+                              });
+                            } else {
+                              saved[recIdx].correct = isCorr || saved[recIdx].correct;
+                              saved[recIdx].userAnswer = opt;
+                              saved[recIdx].attemptedAt = new Date().toISOString();
+                            }
+                            localStorage.setItem(analyticsKey, JSON.stringify(saved));
+                          } catch (e) {}
+                        }
                       }
                     }}
                   >

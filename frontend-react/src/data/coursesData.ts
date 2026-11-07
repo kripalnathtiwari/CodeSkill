@@ -14,6 +14,16 @@ export const COURSES_DATA = {
     partner: "CodeSkill",
     price: "₹4,999",
     tags: ["MERN Stack", "Projects", "Live Classes"],
+    trainer: {
+      name: "Aditya Verma",
+      role: "Senior Full Stack Architect",
+      company: "Ex-Amazon",
+      experience: "10+ Years",
+      rating: "4.9",
+      students: "15,000+",
+      bio: "Full-stack architect with a track record of deploying distributed web applications and mentoring thousands of aspiring software engineers.",
+      image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300"
+    },
     icon: MonitorPlay,
     color: "from-primary to-sky-400",
     image: "/images/fullstack.png",
@@ -45,6 +55,16 @@ export const COURSES_DATA = {
     partner: "CodeSkill",
     price: "₹5,499",
     tags: ["Python", "AI/ML", "Internship"],
+    trainer: {
+      name: "Dr. Rohan Mehrotra",
+      role: "Lead AI Researcher & ML Specialist",
+      company: "Ex-Google DeepMind",
+      experience: "8+ Years",
+      rating: "4.95",
+      students: "12,000+",
+      bio: "Ph.D. in Machine Learning specializing in deep neural networks, computer vision, and scalable production AI pipelines.",
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300"
+    },
     icon: Sun,
     color: "from-amber-500 to-orange-400",
     image: "/images/datascience.png",
@@ -77,6 +97,16 @@ export const COURSES_DATA = {
     partner: "CodeSkill",
     price: "₹3,999",
     tags: ["Python", "AI / ML", "Data Science"],
+    trainer: {
+      name: "Dr. Rohan Mehrotra",
+      role: "Lead AI Researcher & ML Specialist",
+      company: "Ex-Google DeepMind",
+      experience: "8+ Years",
+      rating: "4.95",
+      students: "12,000+",
+      bio: "Ph.D. in Machine Learning specializing in deep neural networks, computer vision, and scalable production AI pipelines.",
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300"
+    },
     icon: Brain,
     color: "from-amber-500 to-orange-400",
     image: "/images/datascience.png",
@@ -106,6 +136,16 @@ export const COURSES_DATA = {
     partner: "CodeSkill",
     price: "₹3,499",
     tags: ["React", "Node.js", "Full Stack"],
+    trainer: {
+      name: "Sneha Kapoor",
+      role: "Principal Frontend Engineer",
+      company: "Microsoft MVP",
+      experience: "9+ Years",
+      rating: "4.9",
+      students: "18,000+",
+      bio: "Specialist in React ecosystem, micro-frontends, high-performance UI engineering, and modern design systems.",
+      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300"
+    },
     icon: MonitorPlay,
     color: "from-primary to-sky-400",
     image: "/images/fullstack.png",
@@ -135,6 +175,16 @@ export const COURSES_DATA = {
     partner: "CodeSkill",
     price: "₹4,499",
     tags: ["AWS", "Scalability", "Backend"],
+    trainer: {
+      name: "Vikram Malhotra",
+      role: "Staff Systems Engineer",
+      company: "Ex-Uber / Netflix",
+      experience: "12+ Years",
+      rating: "5.0",
+      students: "9,000+",
+      bio: "Specializes in high-throughput distributed systems, fault-tolerant cloud architecture, and microservices scaling.",
+      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300"
+    },
     icon: Users,
     color: "from-purple-500 to-indigo-400",
     image: "/images/cloud.png",
@@ -166,6 +216,16 @@ export const COURSES_DATA = {
     partner: "CodeSkill",
     price: "₹2,499",
     tags: ["C++ / Java", "Interview Prep", "Algorithms"],
+    trainer: {
+      name: "Kunal Shah",
+      role: "Competitive Programming Master",
+      company: "Codeforces Candidate Master",
+      experience: "7+ Years",
+      rating: "4.95",
+      students: "22,000+",
+      bio: "Cracked multiple ACM-ICPC regionals and helped over 20,000 students crack coding rounds at top tech companies.",
+      image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300"
+    },
     icon: Code2,
     color: "from-rose-500 to-pink-400",
     image: "/images/dsa.png",
@@ -195,6 +255,16 @@ export const COURSES_DATA = {
     partner: "CodeSkill",
     price: "₹3,999",
     tags: ["Architecture", "Scalability", "Backend"],
+    trainer: {
+      name: "Vikram Malhotra",
+      role: "Staff Systems Engineer",
+      company: "Ex-Uber / Netflix",
+      experience: "12+ Years",
+      rating: "5.0",
+      students: "9,000+",
+      bio: "Specializes in high-throughput distributed systems, fault-tolerant cloud architecture, and microservices scaling.",
+      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300"
+    },
     icon: Users,
     color: "from-purple-500 to-indigo-400",
     image: "/images/system_design.png",
@@ -224,6 +294,16 @@ export const COURSES_DATA = {
     partner: "CodeSkill",
     price: "₹1,999",
     tags: ["React", "Frontend", "UI/UX"],
+    trainer: {
+      name: "Sneha Kapoor",
+      role: "Principal Frontend Engineer",
+      company: "Microsoft MVP",
+      experience: "9+ Years",
+      rating: "4.9",
+      students: "18,000+",
+      bio: "Specialist in React ecosystem, micro-frontends, high-performance UI engineering, and modern design systems.",
+      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300"
+    },
     icon: MonitorPlay,
     color: "from-rose-500 to-pink-400",
     image: "/images/react.png",
@@ -243,6 +323,32 @@ export const COURSES_DATA = {
   }
 };
 
-export const getAllCourses = () => Object.values(COURSES_DATA);
+export const getAllCourses = () => {
+  let customCourses: any[] = [];
+  if (typeof window !== "undefined") {
+    try {
+      const saved = localStorage.getItem("admin_custom_courses");
+      if (saved) customCourses = JSON.parse(saved);
+    } catch (e) {}
+  }
+  return [...Object.values(COURSES_DATA), ...customCourses];
+};
+
 export const getCoursesByCategory = (cat: string) => getAllCourses().filter(c => c.category === cat);
-export const getCourseById = (id: string) => COURSES_DATA[id as keyof typeof COURSES_DATA];
+
+export const getCourseById = (id: string) => {
+  if (COURSES_DATA[id as keyof typeof COURSES_DATA]) {
+    return COURSES_DATA[id as keyof typeof COURSES_DATA];
+  }
+  if (typeof window !== "undefined") {
+    try {
+      const saved = localStorage.getItem("admin_custom_courses");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        const found = parsed.find((c: any) => String(c.id) === String(id));
+        if (found) return found;
+      }
+    } catch (e) {}
+  }
+  return undefined;
+};

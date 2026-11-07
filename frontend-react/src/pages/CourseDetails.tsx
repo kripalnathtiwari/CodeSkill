@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
-import { Play, TrendingUp, BarChart, Clock, Users, ChevronRight, Award, FileText, Settings, Database, Brain, Rocket, Shield } from "lucide-react";
+import { Play, TrendingUp, BarChart, Clock, Users, ChevronRight, Award, FileText, Settings, Database, Brain, Rocket, Shield, Sparkles, Star, Briefcase, CheckCircle2, UserCheck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getCourseById } from "../data/coursesData";
 import RatingModal from "../components/RatingModal";
@@ -67,28 +67,75 @@ export default function CourseDetails() {
     );
   }
 
+  // Trainer details resolution
+  const trainerData = course.trainer || (course.trainerName ? {
+    name: course.trainerName,
+    role: course.trainerRole || "Senior Industry Mentor",
+    company: course.trainerCompany || "CodeSkill",
+    bio: course.trainerBio || "Experienced instructor dedicated to hands-on learning, real-world architecture, and career readiness.",
+    image: course.trainerImage || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300",
+    rating: "4.9",
+    students: "10,000+",
+    experience: "8+ Years"
+  } : {
+    name: "CodeSkill Expert Trainer",
+    role: "Senior Industry Mentor",
+    company: "CodeSkill",
+    bio: "Experienced technology practitioner dedicated to student success and modern real-world engineering.",
+    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300",
+    rating: "4.9",
+    students: "12,000+",
+    experience: "8+ Years"
+  });
+
+  const rawModules = Array.isArray(course.modules) && course.modules.length > 0
+    ? course.modules
+    : [
+        { title: "Course Introduction & Setup", desc: course.overview || "Overview of essential toolchains, workflow foundations, and setup." },
+        { title: "Core Architecture & Concepts", desc: course.description || "In-depth modules covering production patterns and best practices." },
+        { title: "Real-World Projects & Deployment", desc: "Build industry-grade projects with portfolio review and guidance." }
+      ];
+
+  const rawBullets = Array.isArray(course.bullets) && course.bullets.length > 0
+    ? course.bullets
+    : [
+        "Master industry-standard technologies and architecture patterns.",
+        "Interactive live sessions and practical guided mentorship.",
+        "Hands-on real-world capstone projects for your portfolio.",
+        "Industry-recognized certification upon completion."
+      ];
+
+  const rawSkills = Array.isArray(course.skills) && course.skills.length > 0
+    ? course.skills
+    : Array.isArray(course.skillsYouWillLearn) && course.skillsYouWillLearn.length > 0
+      ? course.skillsYouWillLearn
+      : Array.isArray(course.tags) && course.tags.length > 0
+        ? course.tags
+        : ["Full Stack Engineering", "System Design", "Problem Solving"];
+
   // Map the new data structure
   const courseData = {
     id: course.id,
     title: course.title,
     subtitle: course.description,
     type: course.category === "summer" ? "Summer Bootcamp" : "Self-Paced",
-    rating: "4.8/5 ratings",
-    interested: `${course.students} interested Geeks`,
-    level: course.level,
-    duration: course.duration,
-    seats: course.seats,
-    partner: course.partner,
+    rating: course.rating ? `${course.rating}/5 ratings` : "4.8/5 ratings",
+    interested: course.students ? `${course.students} interested Geeks` : "1.5k+ interested Geeks",
+    level: course.level || "Beginner to Advanced",
+    duration: course.duration || "Self-Paced",
+    seats: course.seats || "Open Enrollment",
+    partner: course.partner || "CodeSkill",
     price: course.price,
-    bullets: course.bullets,
-    overview: course.modules.map((m: any, idx: number) => ({
+    bullets: rawBullets,
+    overview: rawModules.map((m: any, idx: number) => ({
       icon: [FileText, Database, Brain, BarChart, Settings, Shield, Rocket][idx % 7],
       title: m.title,
       desc: m.desc
     })),
-    skills: course.skills,
-    techStack: course.skills,
-    image: course.image || "/images/video_thumbnail.png"
+    skills: rawSkills,
+    techStack: rawSkills,
+    image: course.image || "/images/video_thumbnail.png",
+    trainer: trainerData
   };
 
   const renderActionButton = (className: string) => {
@@ -209,7 +256,7 @@ export default function CourseDetails() {
             </h2>
 
             <ul className="space-y-4 mb-8">
-              {courseData.bullets.map((bullet, idx) => (
+              {courseData.bullets.map((bullet: string, idx: number) => (
                 <li key={idx} className="flex items-start text-lg text-text-muted">
                   <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600 mt-2 mr-3 flex-shrink-0" />
                   <span className="leading-relaxed">{bullet}</span>
@@ -232,6 +279,30 @@ export default function CourseDetails() {
               </div>
             </div>
 
+            {courseData.trainer && (
+              <div className="flex items-center space-x-3.5 mb-6 p-3.5 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-border/60">
+                <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-primary/40 shrink-0 bg-primary/10">
+                  <img
+                    src={courseData.trainer.image}
+                    alt={courseData.trainer.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center space-x-2">
+                    <p className="text-xs uppercase tracking-wider text-text-muted font-bold">Trainer</p>
+                    {courseData.trainer.company && (
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                        {courseData.trainer.company}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-base font-bold text-text-primary truncate">{courseData.trainer.name}</p>
+                  <p className="text-xs text-primary font-medium truncate">{courseData.trainer.role}</p>
+                </div>
+              </div>
+            )}
+
             <div className="mb-8">
               <p className="text-xs text-text-muted font-bold uppercase tracking-wider mb-2">Certification Exam by:</p>
               <h3 className="text-3xl font-extrabold text-text-primary tracking-tight">{courseData.partner}</h3>
@@ -248,7 +319,7 @@ export default function CourseDetails() {
         <h2 className="text-4xl font-bold text-center text-text-primary mb-10">Course Overview</h2>
         
         <div className="space-y-4">
-          {courseData.overview.map((module, idx) => (
+          {courseData.overview.map((module: any, idx: number) => (
             <motion.div 
               key={idx}
               initial={{ opacity: 0, y: 10 }}
@@ -270,6 +341,96 @@ export default function CourseDetails() {
         </div>
       </div>
 
+      {/* Meet Your Trainer / Instructor Section */}
+      {courseData.trainer && (
+        <div className="max-w-5xl mx-auto px-6 mb-20">
+          <div className="flex flex-col items-center mb-8 text-center">
+            <div className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-full text-primary text-xs font-bold uppercase tracking-widest mb-3">
+              <Sparkles className="h-4 w-4" />
+              <span>Mentorship by Industry Leaders</span>
+            </div>
+            <h2 className="text-4xl font-bold text-text-primary">Meet Your Trainer</h2>
+            <p className="text-text-muted mt-2 max-w-xl text-base">Learn directly from seasoned practitioners with proven industry track records.</p>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="bg-surface rounded-3xl p-8 md:p-10 border border-border shadow-xl relative overflow-hidden"
+          >
+            <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
+              {/* Trainer Photo & Badge */}
+              <div className="relative shrink-0 text-center md:text-left">
+                <div className="w-32 h-32 md:w-36 md:h-36 rounded-2xl overflow-hidden ring-4 ring-primary/20 shadow-2xl mx-auto bg-slate-100 dark:bg-slate-800">
+                  <img
+                    src={courseData.trainer.image}
+                    alt={courseData.trainer.name}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+                <div className="mt-3 inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs font-bold">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>Verified Trainer</span>
+                </div>
+              </div>
+
+              {/* Trainer Details */}
+              <div className="flex-1 space-y-4 text-center md:text-left">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                  <div>
+                    <h3 className="text-2xl md:text-3xl font-extrabold text-text-primary">
+                      {courseData.trainer.name}
+                    </h3>
+                    <p className="text-base md:text-lg text-primary font-semibold mt-0.5">
+                      {courseData.trainer.role}
+                    </p>
+                  </div>
+
+                  {courseData.trainer.company && (
+                    <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-border text-sm font-bold text-text-primary self-center md:self-auto">
+                      <Briefcase className="w-4 h-4 text-primary" />
+                      <span>{courseData.trainer.company}</span>
+                    </div>
+                  )}
+                </div>
+
+                <p className="text-base md:text-lg text-text-secondary leading-relaxed">
+                  {courseData.trainer.bio}
+                </p>
+
+                {/* Trainer Highlights */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-border/60">
+                  <div className="flex items-center space-x-3 bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-border/50">
+                    <Star className="w-5 h-5 text-amber-500 fill-amber-400 shrink-0" />
+                    <div>
+                      <div className="text-base font-bold text-text-primary">{courseData.trainer.rating || "4.9"} / 5.0</div>
+                      <div className="text-xs text-text-muted">Instructor Rating</div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-3 bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-border/50">
+                    <Users className="w-5 h-5 text-primary shrink-0" />
+                    <div>
+                      <div className="text-base font-bold text-text-primary">{courseData.trainer.students || "10,000+"}</div>
+                      <div className="text-xs text-text-muted">Students Trained</div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-3 bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-border/50">
+                    <Award className="w-5 h-5 text-primary shrink-0" />
+                    <div>
+                      <div className="text-base font-bold text-text-primary">{courseData.trainer.experience || "8+ Years"}</div>
+                      <div className="text-xs text-text-muted">Industry Experience</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
       {/* Skills & Tech Stack Section */}
       <div className="max-w-5xl mx-auto px-6 mb-20 space-y-12">
         
@@ -278,7 +439,7 @@ export default function CourseDetails() {
           <h2 className="text-3xl font-bold text-text-secondary mb-6">Skills You Will Learn</h2>
           <div className="bg-surface rounded-xl p-8 border-l-4 border-primary shadow-md">
             <div className="flex flex-wrap gap-3">
-              {courseData.skills.map((skill, idx) => (
+              {courseData.skills.map((skill: string, idx: number) => (
                 <span key={idx} className="bg-blue-50 border border-blue-100 text-primary font-semibold px-4 py-2 rounded-full text-sm">
                   {skill}
                 </span>
@@ -292,7 +453,7 @@ export default function CourseDetails() {
           <h2 className="text-3xl font-bold text-text-secondary mb-6">Tech Stack You Will Learn</h2>
           <div className="bg-surface rounded-xl p-8 border-l-4 border-primary shadow-md">
             <div className="flex flex-wrap gap-3">
-              {courseData.techStack.map((tech, idx) => (
+              {courseData.techStack.map((tech: string, idx: number) => (
                 <span key={idx} className="bg-blue-50 border border-blue-100 text-primary font-semibold px-4 py-2 rounded-lg text-sm">
                   {tech}
                 </span>

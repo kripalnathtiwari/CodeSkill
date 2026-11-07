@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Trophy, Calendar, Clock, Users, ArrowRight, Award, Star, Search, Lock, X, ChevronDown, Building2 } from "lucide-react";
+import { Trophy, Calendar, Clock, Users, ArrowRight, Award, Star, Search, Lock, X, ChevronDown, Building2, Sparkles, Filter, RotateCcw } from "lucide-react";
 import Fuse from "fuse.js";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { getApiUrl } from "../utils/apiConfig";
+import TestCalendarFilter, { formatDateKey, formatDisplayDate } from "../components/contests/TestCalendarFilter";
 
 function SearchableDropdown({ options, value, onChange, placeholder, disabled }: any) {
   const [isOpen, setIsOpen] = useState(false);
@@ -84,6 +85,10 @@ export default function Contests() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState((location.state as any)?.tab || "upcoming");
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Calendar Date Filtering State
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [dateFilterPreset, setDateFilterPreset] = useState<"all" | "today" | "tomorrow" | "week" | "custom">("all");
 
   // Access Code Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -261,7 +266,79 @@ export default function Contests() {
     };
   });
 
+  // Helper to check if a date falls within the current week
+  const isDateInCurrentWeek = (dateStr: string | null): boolean => {
+    if (!dateStr) return false;
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return false;
+    const now = new Date();
+    const currentDay = now.getDay();
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - currentDay);
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
+
+    return d.getTime() >= startOfWeek.getTime() && d.getTime() <= endOfWeek.getTime();
+  };
+
   const allContests = [...formattedCustomTests, ...defaultContests];
+
+  // Map of test dates for calendar highlights (relevant to selected college/section)
+  const testDatesMap = React.useMemo(() => {
+    const map: Record<string, number> = {};
+    allContests.forEach(c => {
+      let matchesCollege = true;
+      if (c.collegeId && c.collegeId !== "all") {
+        if (c.collegeId !== selectedCollegeId) {
+          matchesCollege = false;
+        } else {
+          if (selectedCategory !== "all" && c.category && c.category !== selectedCategory) {
+            matchesCollege = false;
+          }
+          if (matchesCollege && selectedSection !== "all" && c.section && c.section !== selectedSection) {
+            matchesCollege = false;
+          }
+        }
+      }
+      if (matchesCollege) {
+        const dKey = c.scheduledAt ? formatDateKey(new Date(c.scheduledAt)) : null;
+        if (dKey) {
+          map[dKey] = (map[dKey] || 0) + 1;
+        }
+      }
+    });
+    return map;
+  }, [allContests, selectedCollegeId, selectedCategory, selectedSection]);
+
+  // Count tests across all tabs on the selected date for smart tab recommendations
+  const testsInOtherTabsForDate = React.useMemo(() => {
+    if (!selectedDate && dateFilterPreset === "all") return null;
+    const counts: Record<string, number> = { live: 0, upcoming: 0, past: 0 };
+    allContests.forEach(c => {
+      let matchesCollege = true;
+      if (c.collegeId && c.collegeId !== "all") {
+        if (c.collegeId !== selectedCollegeId) matchesCollege = false;
+        else {
+          if (selectedCategory !== "all" && c.category && c.category !== selectedCategory) matchesCollege = false;
+          if (matchesCollege && selectedSection !== "all" && c.section && c.section !== selectedSection) matchesCollege = false;
+        }
+      }
+      if (matchesCollege) {
+        let matchesDate = false;
+        const dKey = c.scheduledAt ? formatDateKey(new Date(c.scheduledAt)) : null;
+        if (selectedDate && dKey === selectedDate) matchesDate = true;
+        else if (dateFilterPreset === "week" && isDateInCurrentWeek(c.scheduledAt)) matchesDate = true;
+
+        if (matchesDate && counts[c.status] !== undefined) {
+          counts[c.status]++;
+        }
+      }
+    });
+    return counts;
+  }, [allContests, selectedDate, dateFilterPreset, selectedCollegeId, selectedCategory, selectedSection]);
 
   const filteredContests = allContests.filter(c => {
     const matchesTab = c.status === activeTab;
@@ -290,7 +367,20 @@ export default function Contests() {
       }
     }
 
-    return matchesTab && matchesSearch && matchesCollege;
+    // Date filtering condition
+    let matchesDate = true;
+    if (selectedDate) {
+      const dKey = c.scheduledAt ? formatDateKey(new Date(c.scheduledAt)) : null;
+      if (dKey !== selectedDate) {
+        matchesDate = false;
+      }
+    } else if (dateFilterPreset === "week") {
+      if (!isDateInCurrentWeek(c.scheduledAt)) {
+        matchesDate = false;
+      }
+    }
+
+    return matchesTab && matchesSearch && matchesCollege && matchesDate;
   });
 
   return (
@@ -344,7 +434,7 @@ export default function Contests() {
           />
         </div>
 
-        {/* Tabs and Search */}
+        {/* Tabs and Search / Calendar Filters */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 border-b border-border dark:border-border pb-4">
           <div className="flex flex-wrap items-center gap-3">
             {["live", "upcoming", "past"].map((tab) => (
@@ -361,18 +451,55 @@ export default function Contests() {
             ))}
           </div>
 
-          {/* Search Bar */}
-          <div className="relative w-full md:w-80">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search tests or tags..."
-              className="w-full bg-surface dark:bg-background border border-border dark:border-border rounded-full pl-12 pr-4 py-2.5 text-text-primary dark:text-text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-blue-500 transition-all shadow-sm text-sm"
+          {/* Search Bar & Calendar Date Filter */}
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+            {/* Interactive Calendar Filtering System */}
+            <TestCalendarFilter
+              selectedDate={selectedDate}
+              onSelectDate={setSelectedDate}
+              dateFilterPreset={dateFilterPreset}
+              onSelectPreset={setDateFilterPreset}
+              testDatesMap={testDatesMap}
             />
-            <Search className="absolute left-4 top-3 h-4 w-4 text-text-muted" />
+
+            {/* Search Input */}
+            <div className="relative w-full sm:w-72">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search tests or tags..."
+                className="w-full bg-surface dark:bg-background border border-border dark:border-border rounded-full pl-12 pr-4 py-2.5 text-text-primary dark:text-text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-blue-500 transition-all shadow-sm text-sm"
+              />
+              <Search className="absolute left-4 top-3 h-4 w-4 text-text-muted" />
+            </div>
           </div>
         </div>
+
+        {/* Active Date Filter Banner */}
+        {(selectedDate || dateFilterPreset !== "all") && (
+          <div className="flex flex-wrap items-center justify-between gap-3 bg-primary/10 border border-primary/20 rounded-2xl px-5 py-3 shadow-sm animate-in fade-in duration-200">
+            <div className="flex items-center space-x-2 text-primary font-bold text-sm">
+              <Calendar className="w-4 h-4" />
+              <span>
+                Filtered by Date: {dateFilterPreset === "today" ? "Today" : dateFilterPreset === "tomorrow" ? "Tomorrow" : dateFilterPreset === "week" ? "This Week" : selectedDate ? formatDisplayDate(selectedDate) : ""}
+              </span>
+              <span className="text-xs font-normal text-text-muted">
+                ({filteredContests.length} {activeTab} {filteredContests.length === 1 ? "test" : "tests"} found)
+              </span>
+            </div>
+            <button
+              onClick={() => {
+                setSelectedDate(null);
+                setDateFilterPreset("all");
+              }}
+              className="text-xs font-bold text-primary hover:underline flex items-center space-x-1 transition-all"
+            >
+              <span>Clear Date Filter</span>
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
 
         {/* Contests Grid */}
         <div className="flex flex-col border border-border dark:border-border rounded-md overflow-hidden bg-surface dark:bg-[#111827]">
@@ -431,12 +558,52 @@ export default function Contests() {
           })}
 
           {filteredContests.length === 0 && (
-            <div className="col-span-1 lg:col-span-2 text-center py-20 bg-surface dark:bg-[#111827] rounded-3xl border border-border dark:border-border">
+            <div className="col-span-1 lg:col-span-2 text-center py-20 bg-surface dark:bg-[#111827] rounded-3xl border border-border dark:border-border p-6">
               <Trophy className="w-16 h-16 text-text-secondary dark:text-text-primary mx-auto mb-4" />
               {(selectedCollegeId === "all" || (availableSections.length > 0 && selectedSection === "all")) ? (
                 <>
                   <h3 className="text-2xl font-bold text-text-primary dark:text-text-primary mb-2">Select College & Section</h3>
                   <p className="text-text-muted">Please select your college and section name to view your tests.</p>
+                </>
+              ) : (selectedDate || dateFilterPreset !== "all") ? (
+                <>
+                  <h3 className="text-2xl font-bold text-text-primary dark:text-text-primary mb-2">No {activeTab} tests on this date</h3>
+                  <p className="text-text-muted max-w-md mx-auto mb-4">
+                    There are no {activeTab} tests scheduled for {selectedDate ? formatDisplayDate(selectedDate) : dateFilterPreset === "today" ? "today" : dateFilterPreset === "tomorrow" ? "tomorrow" : "this week"}.
+                  </p>
+
+                  {/* Smart suggestion if other tabs have tests on this date */}
+                  {testsInOtherTabsForDate && (
+                    <div className="flex flex-wrap items-center justify-center gap-3 my-4">
+                      {(["live", "upcoming", "past"] as const).map(tabKey => {
+                        const count = testsInOtherTabsForDate[tabKey];
+                        if (tabKey !== activeTab && count > 0) {
+                          return (
+                            <button
+                              key={tabKey}
+                              onClick={() => setActiveTab(tabKey)}
+                              className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-primary text-text-inverse font-bold text-xs shadow-md hover:bg-primary/90 transition-colors"
+                            >
+                              <span>Switch to {tabKey.toUpperCase()} ({count} found)</span>
+                              <ArrowRight className="w-3.5 h-3.5" />
+                            </button>
+                          );
+                        }
+                        return null;
+                      })}
+                    </div>
+                  )}
+
+                  <button
+                    onClick={() => {
+                      setSelectedDate(null);
+                      setDateFilterPreset("all");
+                    }}
+                    className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl border border-border text-xs font-bold text-text-secondary hover:bg-background transition-colors"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>Clear Date Filter</span>
+                  </button>
                 </>
               ) : (
                 <>

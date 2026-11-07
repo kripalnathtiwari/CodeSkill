@@ -1,5 +1,5 @@
-﻿import React, { useState, useEffect } from "react";
-import { Plus, Edit, Trash2, Search, Image as ImageIcon, AlertTriangle, X, Save, ArrowLeft, Lock } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Plus, Edit, Trash2, Search, Image as ImageIcon, AlertTriangle, X, Save, ArrowLeft, Lock, UserCheck, User, Sparkles } from "lucide-react";
 import { COURSES_DATA } from "../../data/coursesData";
 
 export default function CourseManagement() {
@@ -26,6 +26,14 @@ export default function CourseManagement() {
   const [skillsYouWillLearn, setSkillsYouWillLearn] = useState("");
   const [techStack, setTechStack] = useState("");
 
+  // Trainer / Instructor Details State
+  const [trainerName, setTrainerName] = useState("");
+  const [trainerRole, setTrainerRole] = useState("");
+  const [trainerCompany, setTrainerCompany] = useState("");
+  const [trainerBio, setTrainerBio] = useState("");
+  const [trainerImage, setTrainerImage] = useState("");
+  const [trainerLinkedin, setTrainerLinkedin] = useState("");
+
   useEffect(() => {
     const saved = localStorage.getItem("admin_custom_courses");
     if (saved) {
@@ -39,6 +47,8 @@ export default function CourseManagement() {
     setDuration("4 Weeks"); setLevel("Beginner to Advanced");
     setLanguage("English"); setVisibility("PUBLIC"); setPublishStatus("DRAFT");
     setSeoTitle(""); setOverview(""); setSkillsYouWillLearn(""); setTechStack("");
+    setTrainerName(""); setTrainerRole(""); setTrainerCompany("");
+    setTrainerBio(""); setTrainerImage(""); setTrainerLinkedin("");
   };
 
   const openCreate = () => {
@@ -63,6 +73,15 @@ export default function CourseManagement() {
     setOverview(course.overview || "");
     setSkillsYouWillLearn(Array.isArray(course.skillsYouWillLearn) ? course.skillsYouWillLearn.join(", ") : (course.skillsYouWillLearn || ""));
     setTechStack(Array.isArray(course.techStack) ? course.techStack.join(", ") : (course.techStack || ""));
+    
+    // Populate Trainer Info
+    setTrainerName(course.trainer?.name || course.trainerName || "");
+    setTrainerRole(course.trainer?.role || course.trainerRole || "");
+    setTrainerCompany(course.trainer?.company || course.trainerCompany || "");
+    setTrainerBio(course.trainer?.bio || course.trainerBio || "");
+    setTrainerImage(course.trainer?.image || course.trainerImage || "");
+    setTrainerLinkedin(course.trainer?.linkedin || course.trainerLinkedin || "");
+
     setEditingCourse(course);
     setIsCreating(true);
   };
@@ -72,13 +91,43 @@ export default function CourseManagement() {
   const handleSave = () => {
     if (!title || !description || !price) return alert("Please fill all required fields!");
 
+    const trainerObj = {
+      name: trainerName.trim() || "CodeSkill Expert Trainer",
+      role: trainerRole.trim() || "Senior Industry Mentor",
+      company: trainerCompany.trim() || "CodeSkill",
+      bio: trainerBio.trim() || "Experienced technology practitioner and educator passionate about mentoring developers.",
+      image: trainerImage.trim() || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300",
+      linkedin: trainerLinkedin.trim() || "",
+      rating: "4.9",
+      students: "10,000+",
+      experience: "8+ Years"
+    };
+
     if (editingCourse && !isDefaultCourse(editingCourse.id)) {
       // UPDATE existing custom course
       const saved = localStorage.getItem("admin_custom_courses");
       const existingCustom = saved ? JSON.parse(saved) : [];
       const updatedCustom = existingCustom.map((c: any) =>
         c.id === editingCourse.id
-          ? { ...c, title, description, category, price, image: image || c.image, tags: tags.split(",").map((t: string) => t.trim()).filter(Boolean), duration, level, language, visibility, publishStatus, seoTitle, overview, skillsYouWillLearn: skillsYouWillLearn.split(",").map((t: string) => t.trim()).filter(Boolean), techStack: techStack.split(",").map((t: string) => t.trim()).filter(Boolean) }
+          ? {
+              ...c,
+              title, description, category, price,
+              image: image || c.image,
+              tags: tags.split(",").map((t: string) => t.trim()).filter(Boolean),
+              duration, level, language, visibility, publishStatus, seoTitle, overview,
+              skillsYouWillLearn: skillsYouWillLearn.split(",").map((t: string) => t.trim()).filter(Boolean),
+              techStack: techStack.split(",").map((t: string) => t.trim()).filter(Boolean),
+              skills: skillsYouWillLearn.split(",").map((t: string) => t.trim()).filter(Boolean).length > 0
+                ? skillsYouWillLearn.split(",").map((t: string) => t.trim()).filter(Boolean)
+                : (c.skills || ["Full Stack", "Problem Solving"]),
+              trainer: trainerObj,
+              trainerName: trainerObj.name,
+              trainerRole: trainerObj.role,
+              trainerCompany: trainerObj.company,
+              trainerBio: trainerObj.bio,
+              trainerImage: trainerObj.image,
+              trainerLinkedin: trainerObj.linkedin
+            }
           : c
       );
       localStorage.setItem("admin_custom_courses", JSON.stringify(updatedCustom));
@@ -90,11 +139,37 @@ export default function CourseManagement() {
         title, description, category, price,
         image: image || "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
         tags: tags.split(",").map((t: string) => t.trim()).filter(Boolean),
-        students: 0, rating: 5.0, duration, level,
+        students: "100+", rating: 5.0, duration, level,
         features: ["Live Sessions", "Certificate", "Projects"],
+        partner: "CodeSkill",
         language, visibility, publishStatus, seoTitle, overview,
         skillsYouWillLearn: skillsYouWillLearn.split(",").map((t: string) => t.trim()).filter(Boolean),
-        techStack: techStack.split(",").map((t: string) => t.trim()).filter(Boolean)
+        techStack: techStack.split(",").map((t: string) => t.trim()).filter(Boolean),
+        skills: skillsYouWillLearn.split(",").map((t: string) => t.trim()).filter(Boolean).length > 0
+          ? skillsYouWillLearn.split(",").map((t: string) => t.trim()).filter(Boolean)
+          : ["Full Stack Development", "Problem Solving", "Modern Tooling"],
+        bullets: [
+          "Master in-demand tools and architectural principles from scratch.",
+          "Live interactive sessions and practical guided mentorship.",
+          "Build portfolio-ready projects aligned with current industry standards.",
+          "Earn a verified certificate of completion."
+        ],
+        modules: overview ? [
+          { title: "Course Introduction & Setup", desc: overview },
+          { title: "Core Architecture & Practical Sessions", desc: description || "Deep dive into real-world scenarios and hands-on coding." },
+          { title: "Capstone Project & Certification", desc: "Build industry-standard applications with code review." }
+        ] : [
+          { title: "Introduction & Setup", desc: "Getting started with core development tools and workflows." },
+          { title: "Core Modules & Practical Sessions", desc: description || "Deep dive into real-world scenarios and hands-on coding." },
+          { title: "Capstone Project & Certification", desc: "Final portfolio review, exam preparation, and certificate issuance." }
+        ],
+        trainer: trainerObj,
+        trainerName: trainerObj.name,
+        trainerRole: trainerObj.role,
+        trainerCompany: trainerObj.company,
+        trainerBio: trainerObj.bio,
+        trainerImage: trainerObj.image,
+        trainerLinkedin: trainerObj.linkedin
       };
       const saved = localStorage.getItem("admin_custom_courses");
       const existingCustom = saved ? JSON.parse(saved) : [];
@@ -368,6 +443,87 @@ export default function CourseManagement() {
               />
             </div>
           </div>
+
+          {/* Trainer / Instructor Details Section */}
+          <div className="pt-6 border-t border-border space-y-6">
+            <div className="flex items-center space-x-3">
+              <div className="p-2.5 rounded-xl bg-primary/10 text-primary border border-primary/20">
+                <UserCheck className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-text-primary">Trainer / Instructor Details</h3>
+                <p className="text-xs text-text-muted">Add details of the expert mentor/trainer conducting this course.</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-bold text-text-muted mb-2">Trainer Name *</label>
+                <input
+                  type="text"
+                  value={trainerName}
+                  onChange={e => setTrainerName(e.target.value)}
+                  disabled={!!isEditingDefault}
+                  className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  placeholder="e.g. Dr. Angela Yu, Saurabh Sharma"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-text-muted mb-2">Trainer Role / Title</label>
+                <input
+                  type="text"
+                  value={trainerRole}
+                  onChange={e => setTrainerRole(e.target.value)}
+                  disabled={!!isEditingDefault}
+                  className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  placeholder="e.g. Senior Software Architect, Lead AI Specialist"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-text-muted mb-2">Trainer Company / Experience</label>
+                <input
+                  type="text"
+                  value={trainerCompany}
+                  onChange={e => setTrainerCompany(e.target.value)}
+                  disabled={!!isEditingDefault}
+                  className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  placeholder="e.g. Ex-Microsoft, 8+ Years Exp"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-text-muted mb-2">Trainer Photo / Avatar URL</label>
+                <input
+                  type="text"
+                  value={trainerImage}
+                  onChange={e => setTrainerImage(e.target.value)}
+                  disabled={!!isEditingDefault}
+                  className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  placeholder="https://..."
+                />
+                {trainerImage && (
+                  <div className="mt-3 flex items-center space-x-3">
+                    <img src={trainerImage} alt="Trainer Preview" className="w-12 h-12 rounded-full object-cover border border-border shadow-sm" />
+                    <span className="text-xs text-text-muted">Avatar preview</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="col-span-1 md:col-span-2">
+                <label className="block text-sm font-bold text-text-muted mb-2">Trainer Bio / Background</label>
+                <textarea
+                  value={trainerBio}
+                  onChange={e => setTrainerBio(e.target.value)}
+                  rows={3}
+                  disabled={!!isEditingDefault}
+                  className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed resize-none transition-colors"
+                  placeholder="Brief summary of the trainer's industry background, mentoring achievements, or tech stack specialties..."
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -408,6 +564,7 @@ export default function CourseManagement() {
             <thead className="bg-white dark:bg-[#1a2333] text-text-muted uppercase text-xs font-semibold">
               <tr>
                 <th className="px-6 py-4">Course</th>
+                <th className="px-6 py-4">Trainer</th>
                 <th className="px-6 py-4">Category</th>
                 <th className="px-6 py-4">Price</th>
                 <th className="px-6 py-4">Language</th>
@@ -426,7 +583,26 @@ export default function CourseManagement() {
                       </div>
                       <div className="min-w-0">
                         <p className="line-clamp-1 font-semibold">{course.title}</p>
-                        <p className="text-xs text-text-muted">{course.duration || "â€”"} Â· {course.level || "â€”"}</p>
+                        <p className="text-xs text-text-muted">{course.duration || "—"} · {course.level || "—"}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 overflow-hidden flex items-center justify-center shrink-0">
+                        {course.trainer?.image || course.trainerImage ? (
+                          <img src={course.trainer?.image || course.trainerImage} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <User className="w-4 h-4 text-primary" />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-text-primary truncate">
+                          {course.trainer?.name || course.trainerName || "CodeSkill Trainer"}
+                        </p>
+                        <p className="text-[11px] text-text-muted truncate">
+                          {course.trainer?.company || course.trainerCompany || course.trainer?.role || course.trainerRole || "Instructor"}
+                        </p>
                       </div>
                     </div>
                   </td>
@@ -466,7 +642,7 @@ export default function CourseManagement() {
               ))}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-text-muted">No courses found matching your search.</td>
+                  <td colSpan={8} className="px-6 py-12 text-center text-text-muted">No courses found matching your search.</td>
                 </tr>
               )}
             </tbody>

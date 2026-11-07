@@ -97,6 +97,27 @@ export default function FeaturedCourses() {
                     ))}
                   </div>
 
+                  {/* Trainer Info */}
+                  {(course.trainer?.name || (course as any).trainerName) && (
+                    <div className="flex items-center space-x-2 pt-2 border-t border-border/50 text-xs">
+                      <div className="w-6 h-6 rounded-full overflow-hidden bg-primary/10 border border-primary/20 shrink-0">
+                        <img 
+                          src={course.trainer?.image || (course as any).trainerImage || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100"} 
+                          alt="" 
+                          className="w-full h-full object-cover" 
+                        />
+                      </div>
+                      <span className="font-bold text-text-primary dark:text-text-primary truncate">
+                        {course.trainer?.name || (course as any).trainerName}
+                      </span>
+                      {(course.trainer?.company || (course as any).trainerCompany) && (
+                        <span className="text-[10px] text-text-muted dark:text-text-muted truncate">
+                          · {course.trainer?.company || (course as any).trainerCompany}
+                        </span>
+                      )}
+                    </div>
+                  )}
+
                   <Link to={`/course/${course.id}`} className="block mt-4">
                     <button className="w-full py-2.5 rounded-lg border border-border dark:border-border text-text-primary dark:text-text-secondary font-bold hover:bg-primary hover:text-text-inverse dark:hover:bg-primary hover:border-primary transition-all duration-300 flex items-center justify-center space-x-2 group-hover:shadow-[0_0_15px_rgba(16,185,129,0.3)]">
                       <span>Explore Syllabus</span>

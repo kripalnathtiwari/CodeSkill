@@ -154,14 +154,35 @@ export default function CoursesTraining() {
                 
                 <div className="space-y-4 mt-auto">
                   <div className="flex flex-wrap gap-2">
-                    {course.tags.slice(0, 3).map((tag: string) => (
+                    {(Array.isArray(course.tags) ? course.tags.slice(0, 3) : []).map((tag: string) => (
                       <span key={tag} className="bg-surface-secondary dark:bg-slate-800 text-text-secondary dark:text-text-secondary text-xs px-2 py-1 rounded-md uppercase font-semibold tracking-wider">
                         {tag}
                       </span>
                     ))}
                   </div>
+
+                  {/* Trainer Info */}
+                  {(course.trainer?.name || course.trainerName) && (
+                    <div className="flex items-center space-x-2.5 pt-3 border-t border-slate-100 dark:border-border/60">
+                      <div className="w-8 h-8 rounded-full overflow-hidden bg-primary/10 border border-primary/20 shrink-0">
+                        <img 
+                          src={course.trainer?.image || course.trainerImage || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100"} 
+                          alt="" 
+                          className="w-full h-full object-cover" 
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-bold text-text-primary dark:text-text-primary truncate">
+                          {course.trainer?.name || course.trainerName}
+                        </p>
+                        <p className="text-[11px] text-text-muted dark:text-text-muted truncate">
+                          {course.trainer?.role || course.trainerRole || "Course Instructor"}
+                        </p>
+                      </div>
+                    </div>
+                  )}
                   
-                  <div className="flex items-center justify-between text-base pt-4 border-t border-slate-100 dark:border-border/60 text-text-muted dark:text-text-muted font-medium">
+                  <div className="flex items-center justify-between text-base pt-3 border-t border-slate-100 dark:border-border/60 text-text-muted dark:text-text-muted font-medium">
                     <div className="flex items-center space-x-1.5">
                       <Clock className="h-5 w-5" />
                       <span>{course.duration}</span>

@@ -1,8 +1,8 @@
 import React from "react";
 import { useAuth } from "../context/AuthContext";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { BookOpen, Award, Lock } from "lucide-react";
 import UserRankCard from "../components/dashboard/UserRankCard";
-
 import SiteMetricsCard from "../components/dashboard/SiteMetricsCard";
 import TopPerformersCard from "../components/dashboard/TopPerformersCard";
 
@@ -47,6 +47,111 @@ export default function Dashboard() {
       } catch (e) {}
 
       return { total: allSolvedIds.size };
+    },
+    enabled: !!user?.email
+  });
+
+  const { data: mcqStats = { attempted: 0, correct: 0, incorrect: 0, accuracy: 0, topicBreakdown: [] } } = useQuery({
+    queryKey: ['mcqStats', user?.email],
+    queryFn: async () => {
+      if (!user?.email) return { attempted: 0, correct: 0, incorrect: 0, accuracy: 0, topicBreakdown: [] };
+      const emailLower = user.email.toLowerCase().trim();
+
+      const attemptedMap = new Map<string, { correct: boolean; topic?: string; difficulty?: string }>();
+
+      // 1. Aptitude analytics
+      try {
+        const aptData = localStorage.getItem(`aptitude_analytics_${emailLower}`) ||
+                        localStorage.getItem(`aptitude_analytics_${user.email}`);
+        if (aptData) {
+          const parsed = JSON.parse(aptData);
+          if (Array.isArray(parsed)) {
+            parsed.forEach((item: any) => {
+              const id = String(item.id || item._id);
+              if (id) {
+                attemptedMap.set(`apt_${id}`, {
+                  correct: Boolean(item.correct),
+                  topic: item.topic || "Aptitude",
+                  difficulty: item.difficulty || "Medium"
+                });
+              }
+            });
+          }
+        }
+      } catch (e) {}
+
+      // 2. Other practice analytics
+      try {
+        const otherData = localStorage.getItem(`other_practice_analytics_${emailLower}`) ||
+                          localStorage.getItem(`other_practice_analytics_${user.email}`);
+        if (otherData) {
+          const parsed = JSON.parse(otherData);
+          if (Array.isArray(parsed)) {
+            parsed.forEach((item: any) => {
+              const id = String(item.id || item._id);
+              if (id) {
+                attemptedMap.set(`other_${id}`, {
+                  correct: Boolean(item.correct),
+                  topic: item.topic || "Practice",
+                  difficulty: item.difficulty || "Medium"
+                });
+              }
+            });
+          }
+        }
+      } catch (e) {}
+
+      // 3. Test MCQs from all_student_scores
+      let testAttempted = 0;
+      let testCorrect = 0;
+      try {
+        const allScores = JSON.parse(localStorage.getItem("all_student_scores") || "[]");
+        const myScores = allScores.filter((s: { studentEmail?: string }) => 
+          s.studentEmail?.toLowerCase().trim() === emailLower ||
+          s.studentEmail?.toLowerCase().trim() === user.email?.toLowerCase().trim()
+        );
+        myScores.forEach((s: any) => {
+          const totalQ = Number(s.totalQuestions) || 0;
+          const score = Number(s.score) || 0;
+          if (totalQ > 0) {
+            testAttempted += totalQ;
+            testCorrect += Math.min(score, totalQ);
+          }
+        });
+      } catch (e) {}
+
+      let aptitudeAttempted = 0;
+      let aptitudeCorrect = 0;
+      const topicCounts: Record<string, { attempted: number; correct: number }> = {};
+
+      attemptedMap.forEach((val) => {
+        aptitudeAttempted++;
+        if (val.correct) aptitudeCorrect++;
+        const topic = val.topic || "General";
+        if (!topicCounts[topic]) topicCounts[topic] = { attempted: 0, correct: 0 };
+        topicCounts[topic].attempted++;
+        if (val.correct) topicCounts[topic].correct++;
+      });
+
+      const totalAttempted = aptitudeAttempted + testAttempted;
+      const totalCorrect = aptitudeCorrect + testCorrect;
+      const totalIncorrect = Math.max(0, totalAttempted - totalCorrect);
+      const accuracy = totalAttempted > 0 ? Math.round((totalCorrect / totalAttempted) * 100) : 0;
+
+      const topicBreakdown = Object.entries(topicCounts).map(([name, stat]) => ({
+        name,
+        attempted: stat.attempted,
+        correct: stat.correct,
+        accuracy: stat.attempted > 0 ? Math.round((stat.correct / stat.attempted) * 100) : 0
+      })).sort((a, b) => b.attempted - a.attempted);
+
+      return {
+        attempted: totalAttempted,
+        correct: totalCorrect,
+        incorrect: totalIncorrect,
+        accuracy,
+        topicBreakdown
+      };
     },
     enabled: !!user?.email
   });
@@ -197,7 +302,7 @@ export default function Dashboard() {
       <div className="space-y-6 pb-12 w-full max-w-7xl mx-auto">
         
         {/* Top Banner */}
-        <WelcomeBanner solvedCount={dsaStats.total} />
+        <WelcomeBanner solvedCount={dsaStats.total + mcqStats.correct} />
 
         {/* 5 Stat Cards */}
         <div className="flex flex-col md:flex-row gap-4 items-stretch">
@@ -205,10 +310,11 @@ export default function Dashboard() {
           <StatCards 
             enrolledCount={enrollmentsData.length}
             testsAttempted={testStats.attempted}
-            problemsSolved={dsaStats.total}
+            problemsSolved={dsaStats.total + mcqStats.correct}
+            codingSolved={dsaStats.total}
+            mcqStats={mcqStats}
             globalRank={userRank}
           />
-          
         </div>
 
         {/* Grid Layout for Main Content */}
@@ -216,7 +322,12 @@ export default function Dashboard() {
           
           {/* Top Row: Focus on Progress and Daily Engagement */}
           <div className="lg:col-span-2 flex flex-col min-w-0">
-            <MyProgress enrollments={enrollmentsData} practiceProgress={tagsProgress} />
+            <MyProgress 
+              enrollments={enrollmentsData} 
+              practiceProgress={tagsProgress}
+              codingSolved={dsaStats.total}
+              mcqStats={mcqStats}
+            />
           </div>
           
           <div className="lg:col-span-1 space-y-6 flex flex-col min-w-0">

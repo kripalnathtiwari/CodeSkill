@@ -1,12 +1,12 @@
 import React from 'react';
-import { Book, Target, Code, Trophy, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Book, Target, Trophy, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface StatCardsProps {
   enrolledCount: number;
   testsAttempted: number;
-  problemsSolved: number;
   globalRank: number | null;
+  problemsSolved?: number;
   codingSolved?: number;
   mcqStats?: {
     attempted: number;
@@ -19,17 +19,9 @@ interface StatCardsProps {
 export default function StatCards({ 
   enrolledCount, 
   testsAttempted, 
-  problemsSolved, 
-  globalRank,
-  codingSolved,
-  mcqStats 
+  globalRank
 }: StatCardsProps) {
   const navigate = useNavigate();
-
-  const codingCount = codingSolved !== undefined ? codingSolved : problemsSolved;
-  const mcqCorrectCount = mcqStats?.correct || 0;
-  const mcqAttemptedCount = mcqStats?.attempted || 0;
-  const totalSolved = codingCount + mcqCorrectCount;
 
   const cards = [
     {
@@ -49,26 +41,6 @@ export default function StatCards({
       onClick: () => navigate('/dashboard/tests', { state: { tab: 'past' } })
     },
     {
-      title: "Problems Solved",
-      value: totalSolved,
-      icon: <Code className="w-6 h-6 text-orange-500" />,
-      iconBg: "bg-orange-100 dark:bg-orange-500/20",
-      action: "Start Practicing",
-      subPills: (
-        <div className="flex flex-wrap items-center gap-1.5 mt-2">
-          <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-            <Code className="w-3 h-3 text-emerald-500" />
-            Coding: {codingCount}
-          </span>
-          <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
-            <CheckCircle2 className="w-3 h-3 text-indigo-500" />
-            MCQ: {mcqCorrectCount}/{mcqAttemptedCount}
-          </span>
-        </div>
-      ),
-      onClick: () => navigate('/dashboard/practice')
-    },
-    {
       title: "Global Rank",
       value: globalRank ? `#${globalRank}` : "N/A",
       icon: <Trophy className="w-6 h-6 text-emerald-500" />,
@@ -79,7 +51,7 @@ export default function StatCards({
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 w-full">
       {cards.map((card, idx) => (
         <div 
           key={idx} 
@@ -102,12 +74,6 @@ export default function StatCards({
               </p>
             </div>
           </div>
-
-          {card.subPills && (
-            <div className="mb-3 relative z-10">
-              {card.subPills}
-            </div>
-          )}
 
           <div className="pt-3 border-t border-border/50 flex items-center justify-between text-xs font-bold text-primary group-hover:text-primary-hover relative z-10">
             <span>{card.action}</span>

@@ -45,7 +45,7 @@ export default function MyProgress({
   codingSolved = 0,
   mcqStats
 }: MyProgressProps) {
-  const [activeTab, setActiveTab] = useState<'Courses' | 'Practice'>('Courses');
+  const [activeTab, setActiveTab] = useState<'Practice' | 'Courses'>('Practice');
   const navigate = useNavigate();
 
   // Pick enrolled courses to display progress
@@ -166,7 +166,7 @@ export default function MyProgress({
           </div>
 
           <div className="flex items-center space-x-1.5 bg-background dark:bg-slate-900/60 p-1 rounded-xl border border-border/80 shrink-0">
-            {(['Courses', 'Practice'] as const).map(tab => (
+            {(['Practice', 'Courses'] as const).map(tab => (
               <button 
                 key={tab}
                 onClick={() => setActiveTab(tab)}

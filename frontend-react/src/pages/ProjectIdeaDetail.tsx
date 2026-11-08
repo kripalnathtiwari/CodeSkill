@@ -107,7 +107,7 @@ export default function ProjectIdeaDetail() {
   };
 
   return (
-    <div className="w-full space-y-8 pb-16 text-xs">
+    <div className="w-full space-y-8 pb-16 text-[15px]">
       {/* Top Navigation & Breadcrumb */}
       <div className="flex items-center justify-between">
         <button 
@@ -238,7 +238,7 @@ export default function ProjectIdeaDetail() {
 
         {/* Formatted Markdown Content */}
         <div className="prose prose-slate dark:prose-invert max-w-none text-text-secondary dark:text-slate-300 leading-relaxed
-          prose-headings:text-text-primary dark:prose-headings:text-white prose-headings:font-black tracking-tight
+          prose-headings:text-text-primary dark:prose-headings:text-white prose-headings:font-normal tracking-tight
           prose-h1:text-2xl sm:prose-h1:text-3xl prose-h1:border-b prose-h1:border-border/60 prose-h1:pb-3 prose-h1:mt-8
           prose-h2:text-xl sm:prose-h2:text-2xl prose-h2:text-primary dark:prose-h2:text-primary prose-h2:mt-8 prose-h2:mb-3
           prose-h3:text-lg sm:prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-2

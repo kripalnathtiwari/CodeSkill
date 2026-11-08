@@ -310,7 +310,7 @@ const executeJsSafely = (userCode: string, harnessCode: string, timeoutMs = 2000
       };
     `;
     let blobUrl = '';
-    let worker = null;
+    let worker: Worker | null = null;
 
     try {
       const blob = new Blob([workerScript], { type: 'application/javascript' });
@@ -318,13 +318,13 @@ const executeJsSafely = (userCode: string, harnessCode: string, timeoutMs = 2000
       worker = new Worker(blobUrl);
     } catch {
       try {
-        const logs = [];
-        const mockConsole = { log: (...args) => logs.push(args.map(String).join(' ')) };
+        const logs: string[] = [];
+        const mockConsole = { log: (...args: any[]) => logs.push(args.map(String).join(' ')) };
         const fn = new Function('console', userCode + '\n' + harnessCode);
         fn(mockConsole);
         resolve({ output: logs.join('\n').trim() });
-      } catch (e) {
-        resolve({ output: '', error: 'Runtime Error: ' + e.message });
+      } catch (e: any) {
+        resolve({ output: '', error: 'Runtime Error: ' + (e?.message || String(e)) });
       }
       return;
     }
@@ -337,7 +337,7 @@ const executeJsSafely = (userCode: string, harnessCode: string, timeoutMs = 2000
       resolve({ output: '', error: 'Time Limit Exceeded (> 2.0s). Infinite loop detected!' });
     }, timeoutMs);
 
-    worker.onmessage = (e) => {
+    worker.onmessage = (e: MessageEvent) => {
       if (finished) return;
       finished = true;
       clearTimeout(timer);
@@ -350,13 +350,13 @@ const executeJsSafely = (userCode: string, harnessCode: string, timeoutMs = 2000
       }
     };
 
-    worker.onerror = (err) => {
+    worker.onerror = (err: any) => {
       if (finished) return;
       finished = true;
       clearTimeout(timer);
       if (worker) worker.terminate();
       if (blobUrl) URL.revokeObjectURL(blobUrl);
-      resolve({ output: '', error: 'Runtime Error: ' + (err.message || 'Script error') });
+      resolve({ output: '', error: 'Runtime Error: ' + (err?.message || 'Script error') });
     };
 
     worker.postMessage({ code: userCode, callCode: harnessCode });

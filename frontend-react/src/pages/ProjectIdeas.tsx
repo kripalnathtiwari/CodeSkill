@@ -65,15 +65,15 @@ export default function ProjectIdeas() {
       {/* Premium Header */}
       <div className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-background to-indigo-500/5 p-8 md:p-12 rounded-[2rem] border border-primary/20 shadow-sm">
         {/* Decorative background elements */}
-        <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/3 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none"></section>
+        <div className="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/3 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></section>
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-bold tracking-wide uppercase mb-6">
               <Lightbulb className="w-4 h-4" />
               <span>Inspiration Hub</span>
-            </div>
+            </section>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-primary tracking-tight leading-tight mb-6">
               CodeSkill Project Ideas
@@ -82,27 +82,27 @@ export default function ProjectIdeas() {
             <p className="text-text-secondary text-lg md:text-xl leading-relaxed max-w-2xl">
               Explore and get inspired by hand-picked project ideas for your portfolio. Build these real-world applications to master your skills and stand out to top recruiters.
             </p>
-          </div>
+          </section>
 
           <div className="hidden lg:flex items-center justify-center relative w-56 h-56 shrink-0">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-indigo-500/20 rounded-[2rem] transform rotate-6 animate-pulse"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-indigo-500/20 rounded-[2rem] transform rotate-6 animate-pulse"></section>
             <div className="absolute inset-0 bg-surface dark:bg-slate-800 rounded-[2rem] border border-border shadow-xl transform -rotate-3 flex items-center justify-center p-6 transition-transform hover:rotate-0 duration-500">
               <Code2 className="w-20 h-20 text-primary/80" />
-            </div>
-          </div>
-        </div>
-      </div>
+            </section>
+          </section>
+        </section>
+      </section>
 
       {loading ? (
         <div className="flex justify-center items-center h-64">
           <Loader2 className="w-10 h-10 animate-spin text-primary" />
-        </div>
+        </section>
       ) : projects.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center bg-surface-secondary/50 dark:bg-slate-800/20 rounded-3xl border border-dashed border-border/60">
           <Lightbulb className="w-16 h-16 text-text-muted/30 mb-4" />
           <h3 className="text-xl font-bold text-text-primary mb-2">Coming Soon</h3>
           <p className="text-text-muted max-w-md">We are currently gathering an awesome list of project ideas across different domains. Check back later!</p>
-        </div>
+        </section>
       ) : (
         <>
           {/* Filters */}
@@ -123,10 +123,10 @@ export default function ProjectIdeas() {
                     {d}
                   </button>
                 ))}
-              </div>
-            </div>
+              </section>
+            </section>
 
-            <div className="w-full md:w-px h-px md:h-8 bg-border dark:bg-border/50 shrink-0"></div>
+            <div className="w-full md:w-px h-px md:h-8 bg-border dark:bg-border/50 shrink-0"></section>
 
             <div className="flex items-center gap-4 w-full md:w-auto overflow-x-auto hide-scrollbar">
               <span className="text-sm font-bold text-text-secondary uppercase tracking-wider whitespace-nowrap">Difficulty</span>
@@ -144,16 +144,16 @@ export default function ProjectIdeas() {
                     {d}
                   </button>
                 ))}
-              </div>
-            </div>
-          </div>
+              </section>
+            </section>
+          </section>
 
           {/* Project Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredProjects.length === 0 ? (
               <div className="col-span-full py-12 text-center text-text-muted">
                 No projects found matching your filters.
-              </div>
+              </section>
             ) : (
               filteredProjects.map(project => (
                 <div 
@@ -164,13 +164,13 @@ export default function ProjectIdeas() {
                   {project.imageUrl && (
                     <div className="w-full h-48 overflow-hidden">
                       <img src={project.imageUrl} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    </div>
+                    </section>
                   )}
                   <div className="p-6 flex-1 flex flex-col">
                     <div className="flex justify-between items-start gap-4 mb-4">
                       <div className="p-3 bg-primary/10 text-primary rounded-2xl group-hover:bg-primary group-hover:text-white transition-colors">
                         {getDomainIcon(project.domain)}
-                      </div>
+                      </section>
                       <span className={`px-3 py-1 text-xs font-bold rounded-full uppercase tracking-wider ${
                         project.difficulty === 'Beginner' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
                         project.difficulty === 'Intermediate' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' :
@@ -178,7 +178,7 @@ export default function ProjectIdeas() {
                       }`}>
                         {project.difficulty}
                       </span>
-                    </div>
+                    </section>
 
                     <h3 className="text-xl font-bold text-text-primary mb-2 line-clamp-2 group-hover:text-primary transition-colors">
                       {project.title}
@@ -195,15 +195,15 @@ export default function ProjectIdeas() {
                             {tech}
                           </span>
                         ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                      </section>
+                    </section>
+                  </section>
+                </section>
               ))
             )}
-          </div>
+          </section>
         </>
       )}
-    </div>
+    </section>
   );
 }

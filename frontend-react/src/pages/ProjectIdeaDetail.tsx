@@ -107,7 +107,7 @@ export default function ProjectIdeaDetail() {
   };
 
   return (
-    <div className="w-full space-y-8 pb-16">
+    <div className="w-full space-y-8 pb-16 text-xs">
       {/* Top Navigation & Breadcrumb */}
       <div className="flex items-center justify-between">
         <button 

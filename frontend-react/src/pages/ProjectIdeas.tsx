@@ -58,7 +58,7 @@ export default function ProjectIdeas() {
   };
 
   return (
-    <div className="w-full space-y-8">
+    <div className="w-full space-y-8 text-xs">
       {/* Premium Header */}
       <div className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-background to-indigo-500/5 p-8 md:p-12 rounded-[2rem] border border-primary/20 shadow-sm">
         {/* Decorative background elements */}

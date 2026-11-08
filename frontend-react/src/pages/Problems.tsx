@@ -41,8 +41,6 @@ export default function Problems() {
   const [selectedTopic, setSelectedTopic] = useState<string>('All');
   const [selectedPlatform, setSelectedPlatform] = useState<string>('All');
   const [selectedStatus, setSelectedStatus] = useState<'ALL' | 'SOLVED' | 'UNSOLVED'>('ALL');
-  const [selectedPlatform, setSelectedPlatform] = useState<string>('All');
-  const [selectedStatus, setSelectedStatus] = useState<'ALL' | 'SOLVED' | 'UNSOLVED'>('ALL');
   const [showLevelUpAlert, setShowLevelUpAlert] = useState<string | null>(null);
   const [lockNotice, setLockNotice] = useState<string | null>(null);
 

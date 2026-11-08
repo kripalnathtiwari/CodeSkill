@@ -61,7 +61,7 @@ export default function ProjectIdeas() {
   };
 
   return (
-    <div className="flex-1 p-6 md:p-8 w-full max-w-7xl mx-auto space-y-8 relative">
+    <section className="min-h-screen bg-background dark:bg-background p-6 md:p-8 w-full flex flex-col space-y-8">
       {/* Premium Header */}
       <div className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-background to-indigo-500/5 p-8 md:p-12 rounded-[2rem] border border-primary/20 shadow-sm">
         {/* Decorative background elements */}

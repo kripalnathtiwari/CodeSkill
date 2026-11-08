@@ -38,60 +38,9 @@ export default function Problems() {
   const [unlockedTracks, setUnlockedTracks] = useState<string[]>([]);
   const [solvedIds, setSolvedIds] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 30; // Adjust as needed
-
-  // Flatten questions with their topic for easy pagination
-  const flattened = useMemo(() => {
-    const flat: { q: DSAQuestion; topic: string }[] = [];
-    Object.entries(groupedQuestions).forEach(([topic, qs]) => {
-      qs.forEach((question) => flat.push({ q: question, topic }));
-    });
-    return flat;
-  }, [groupedQuestions]);
-
-  const totalPages = Math.max(1, Math.ceil(flattened.length / itemsPerPage));
-  const paginated = useMemo(() => {
-    const start = (currentPage - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    const slice = flattened.slice(start, end);
-    // Regroup sliced items by topic for rendering
-    const groups: Record<string, DSAQuestion[]> = {};
-    slice.forEach(({ q, topic }) => {
-      if (!groups[topic]) groups[topic] = [];
-      groups[topic].push(q);
-    });
-    return groups;
-  }, [flattened, currentPage]);
-
-  // Reset pagination when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery, selectedTopic, selectedPlatform, selectedStatus]);
-
-  // Helper to render pagination controls
-  const renderPagination = () => (
-    <div className="flex justify-center items-center space-x-4 mt-6">
-      <button
-        onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-        disabled={currentPage === 1}
-        className="px-3 py-1 rounded disabled:opacity-50 bg-primary/10 text-primary hover:bg-primary/20"
-      >
-        ← Prev
-      </button>
-      <span className="text-sm text-text-muted">
-        Page {currentPage} of {totalPages}
-      </span>
-      <button
-        onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-        disabled={currentPage === totalPages}
-        className="px-3 py-1 rounded disabled:opacity-50 bg-primary/10 text-primary hover:bg-primary/20"
-      >
-        Next →
-      </button>
-    </div>
-  );
+  const [selectedTopic, setSelectedTopic] = useState<string>('All');
+  const [selectedPlatform, setSelectedPlatform] = useState<string>('All');
+  const [selectedStatus, setSelectedStatus] = useState<'ALL' | 'SOLVED' | 'UNSOLVED'>('ALL');
   const [selectedPlatform, setSelectedPlatform] = useState<string>('All');
   const [selectedStatus, setSelectedStatus] = useState<'ALL' | 'SOLVED' | 'UNSOLVED'>('ALL');
   const [showLevelUpAlert, setShowLevelUpAlert] = useState<string | null>(null);

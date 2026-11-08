@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Building2, Plus, Trash2, Edit2, Save, X, Phone, Mail, Calendar, User, BookOpen, ArrowLeft, ChevronRight, ChevronDown, ChevronUp, Search, Upload, Award, Download, Layers, ListFilter, FileText, CheckCircle2, XCircle, BarChart2 } from "lucide-react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
+import { Building2, Plus, Trash2, Edit2, Save, X, Phone, Mail, Calendar, User, BookOpen, ArrowLeft, ChevronRight, ChevronDown, ChevronUp, Search, Upload, Award, Download, Layers, ListFilter, FileText, CheckCircle2, XCircle, BarChart2, Check, Filter } from "lucide-react";
 import CourseCategorySection from "./CourseCategorySection";
 import axios from "axios";
 import { API_BASE_URL as API_URL } from "../../utils/apiConfig";
@@ -732,6 +732,7 @@ type StudentMasterRecord = {
   regNum: string;
   courseName: string;
   sectionName: string;
+  collegeName?: string;
   dsaAttempted: number;
   dsaCorrect: number;
   dsaWrong: number;
@@ -747,12 +748,20 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
   const [editingStudentStats, setEditingStudentStats] = useState<StudentMasterRecord | null>(null);
   const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false);
   const [statsVersion, setStatsVersion] = useState(0);
+
+  // College, Course, and Section filtering states
+  const [allCollegesList, setAllCollegesList] = useState<College[]>([]);
+  const [selectedCollegeFilter, setSelectedCollegeFilter] = useState<string>(collegeName || "all");
+  const [selectedCourseFilter, setSelectedCourseFilter] = useState<string>("all");
+  const [selectedSectionFilter, setSelectedSectionFilter] = useState<string>("all");
+
   const [newStudentForm, setNewStudentForm] = useState({
     name: "",
     email: "",
     regNum: "",
     courseName: "B.Tech",
     sectionName: "General Section",
+    collegeName: collegeName || "",
     dsaAttempted: 0,
     dsaCorrect: 0,
     dsaWrong: 0,
@@ -761,6 +770,25 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
     aptWrong: 0,
   });
 
+  // Load available colleges list
+  useEffect(() => {
+    try {
+      const list = JSON.parse(localStorage.getItem("admin_colleges_v2") || "[]");
+      setAllCollegesList(list);
+    } catch (e) {
+      setAllCollegesList([]);
+    }
+  }, []);
+
+  // Sync selectedCollegeFilter when prop collegeName changes
+  useEffect(() => {
+    if (collegeName) {
+      setSelectedCollegeFilter(collegeName);
+      setNewStudentForm((prev) => ({ ...prev, collegeName }));
+    }
+  }, [collegeName]);
+
+  // Load and filter scores based on selectedCollegeFilter
   useEffect(() => {
     const data = localStorage.getItem("all_student_scores");
     if (data) {
@@ -798,11 +826,17 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
         localStorage.setItem("all_student_scores", JSON.stringify(allScores));
       }
 
-      // Filter only scores that belong to this college
-      const collegeScores = allScores.filter((s: any) => s.collegeName === collegeName);
-      setScores(collegeScores);
+      // Filter scores according to selected college filter
+      if (selectedCollegeFilter === "all") {
+        setScores(allScores);
+      } else {
+        const collegeScores = allScores.filter((s: any) => s.collegeName === selectedCollegeFilter);
+        setScores(collegeScores);
+      }
+    } else {
+      setScores([]);
     }
-  }, [collegeName]);
+  }, [selectedCollegeFilter, statsVersion]);
 
   const [expandedCategories, setExpandedCategories] = useState<{ [catName: string]: boolean }>({});
 
@@ -963,15 +997,21 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
 
   // Build categories and sections tree
   const buildCategoryTree = () => {
-    const savedCategoriesStr = localStorage.getItem(`admin_course_categories_${collegeName}`);
+    const collegesToScan =
+      selectedCollegeFilter === "all"
+        ? (allCollegesList.length > 0 ? allCollegesList.map((c) => c.name) : [collegeName])
+        : [selectedCollegeFilter];
+
     let courseCategories: any[] = [];
-    if (savedCategoriesStr) {
-      try {
-        courseCategories = JSON.parse(savedCategoriesStr);
-      } catch (e) {
-        courseCategories = [];
+    collegesToScan.forEach((col) => {
+      const savedCategoriesStr = localStorage.getItem(`admin_course_categories_${col}`);
+      if (savedCategoriesStr) {
+        try {
+          const parsed = JSON.parse(savedCategoriesStr);
+          if (Array.isArray(parsed)) courseCategories.push(...parsed);
+        } catch (e) {}
       }
-    }
+    });
 
     const sectionToCategoryMap: Record<string, string> = {};
     const tree: Record<string, Record<string, any[]>> = {};
@@ -1013,19 +1053,111 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
       tree[catName][secName].push(s);
     });
 
-    return tree;
+    // Apply Course & Section filtering to Category Tree
+    const filteredTree: Record<string, Record<string, any[]>> = {};
+    Object.entries(tree).forEach(([catName, sectionsMap]) => {
+      if (selectedCourseFilter !== "all" && catName.toLowerCase() !== selectedCourseFilter.toLowerCase()) {
+        return;
+      }
+      const filteredSections: Record<string, any[]> = {};
+      Object.entries(sectionsMap).forEach(([secName, sectionScores]) => {
+        if (selectedSectionFilter !== "all" && secName.toLowerCase() !== selectedSectionFilter.toLowerCase()) {
+          return;
+        }
+        filteredSections[secName] = sectionScores;
+      });
+      if (Object.keys(filteredSections).length > 0 || selectedSectionFilter === "all") {
+        filteredTree[catName] = filteredSections;
+      }
+    });
+
+    return filteredTree;
   };
 
   const categoryTree = buildCategoryTree();
+
+  // Extract available courses dynamically for filter dropdown
+  const availableCourses = useMemo(() => {
+    const set = new Set<string>();
+    const collegesToScan =
+      selectedCollegeFilter === "all"
+        ? (allCollegesList.length > 0 ? allCollegesList.map((c) => c.name) : [collegeName])
+        : [selectedCollegeFilter];
+
+    collegesToScan.forEach((col) => {
+      try {
+        const catStr = localStorage.getItem(`admin_course_categories_${col}`);
+        if (catStr) {
+          const cats = JSON.parse(catStr);
+          if (Array.isArray(cats)) {
+            cats.forEach((c: any) => {
+              if (c.courseName) set.add(c.courseName);
+            });
+          }
+        }
+      } catch (e) {}
+    });
+
+    scores.forEach((s) => {
+      if (s.courseCategory && s.courseCategory !== "General Course") set.add(s.courseCategory);
+      if (s.courseName && s.courseName !== "General Course") set.add(s.courseName);
+    });
+
+    return Array.from(set).sort();
+  }, [selectedCollegeFilter, allCollegesList, collegeName, scores]);
+
+  // Extract available sections dynamically for filter dropdown based on selectedCourseFilter
+  const availableSections = useMemo(() => {
+    const set = new Set<string>();
+    const collegesToScan =
+      selectedCollegeFilter === "all"
+        ? (allCollegesList.length > 0 ? allCollegesList.map((c) => c.name) : [collegeName])
+        : [selectedCollegeFilter];
+
+    collegesToScan.forEach((col) => {
+      try {
+        const catStr = localStorage.getItem(`admin_course_categories_${col}`);
+        if (catStr) {
+          const cats = JSON.parse(catStr);
+          if (Array.isArray(cats)) {
+            cats.forEach((c: any) => {
+              if (selectedCourseFilter === "all" || c.courseName?.toLowerCase() === selectedCourseFilter.toLowerCase()) {
+                if (Array.isArray(c.classes)) {
+                  c.classes.forEach((cls: any) => {
+                    if (cls.className) set.add(cls.className);
+                  });
+                }
+              }
+            });
+          }
+        }
+      } catch (e) {}
+    });
+
+    scores.forEach((s) => {
+      const maps = getTestMetadataMaps();
+      const { catName, secName } = resolveScoreMetadata(s, {}, maps);
+      if (selectedCourseFilter === "all" || catName.toLowerCase() === selectedCourseFilter.toLowerCase()) {
+        if (secName && secName !== "All Sections" && secName !== "General Section (Default)") {
+          set.add(secName);
+        }
+      }
+    });
+
+    return Array.from(set).sort();
+  }, [selectedCollegeFilter, selectedCourseFilter, allCollegesList, collegeName, scores]);
 
   const handleDeleteSectionResults = (sectionName: string) => {
     if (window.confirm(`Are you sure you want to delete ALL test results for Section ${sectionName}? This action cannot be undone.`)) {
       const data = localStorage.getItem("all_student_scores");
       if (data) {
         const allScores = JSON.parse(data);
-        const newScores = allScores.filter((s: any) => !(s.collegeName === collegeName && (s.sectionName || "Global / Unassigned") === sectionName));
+        const newScores = allScores.filter((s: any) => {
+          if (selectedCollegeFilter !== "all" && s.collegeName !== selectedCollegeFilter) return true;
+          return (s.sectionName || "Global / Unassigned") !== sectionName;
+        });
         localStorage.setItem("all_student_scores", JSON.stringify(newScores));
-        setScores(newScores.filter((s: any) => s.collegeName === collegeName));
+        setStatsVersion((v) => v + 1);
       }
     }
   };
@@ -1038,14 +1170,14 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
         const allScores = JSON.parse(data);
         const maps = getTestMetadataMaps();
         const newScores = allScores.filter((s: any) => {
-          if (s.collegeName !== collegeName) return true;
+          if (selectedCollegeFilter !== "all" && s.collegeName !== selectedCollegeFilter) return true;
           const { catName, secName } = resolveScoreMetadata(s, {}, maps);
           if (catName === categoryName) return false;
           if (sectionNames.includes(secName)) return false;
           return true;
         });
         localStorage.setItem("all_student_scores", JSON.stringify(newScores));
-        setScores(newScores.filter((s: any) => s.collegeName === collegeName));
+        setStatsVersion((v) => v + 1);
       }
     }
   };
@@ -1062,7 +1194,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
           s.date === target.date
         ));
         localStorage.setItem("all_student_scores", JSON.stringify(newScores));
-        setScores(newScores.filter((s: any) => s.collegeName === collegeName));
+        setScores(newScores.filter((s: any) => (selectedCollegeFilter === "all" ? true : s.collegeName === selectedCollegeFilter)));
 
         // Also remove local browser attempt key (testResult_*) if any, so student can re-attempt on this browser
         const keysToRemove: string[] = [];
@@ -1090,7 +1222,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
     // 1. Group tests chronologically by testName + date
     const testEventsMap = new Map<string, any>();
     const maps = getTestMetadataMaps();
-    targetScores.forEach(s => {
+    targetScores.forEach((s) => {
       const key = `${s.testName}_${s.date}`;
       if (!testEventsMap.has(key)) {
         const { catName } = resolveScoreMetadata(s, {}, maps);
@@ -1110,9 +1242,9 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
 
     const testColumns = Array.from(new Set(eventToColumnMap.values()));
 
-    // 2. Group by student (using name + email as unique identifier if email is unknown)
+    // 2. Group by student
     const studentMap: Record<string, any> = {};
-    targetScores.forEach(s => {
+    targetScores.forEach((s) => {
       const email = s.studentEmail || "unknown";
       const name = s.studentName || "N/A";
       const identifier = email === "unknown" ? `${name}-${email}` : email;
@@ -1125,7 +1257,8 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
           name: name,
           email: email,
           regNumber: bestReg || "N/A",
-          scores: {}
+          college: s.collegeName || "N/A",
+          scores: {},
         };
       } else if (!studentMap[identifier].regNumber || studentMap[identifier].regNumber === "N/A") {
         const sReg = s.regNumber || s.regNum || s.regNo || s.rollNumber || s.rollNo;
@@ -1138,25 +1271,23 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
 
       const key = `${s.testName}_${s.date}`;
       const colName = eventToColumnMap.get(key) as string;
-      // Save their score for this test as an integer (just the score) to prevent Excel from converting fractions (e.g. 1/1) into dates (1-Jan)
       studentMap[identifier].scores[colName] = s.score;
     });
 
     // 3. Build CSV string
-    // Headers: Name, Email, Reg Number, and each test column with Course Name, Test Name, and Date in the first row
-    const headers = ["Name", "Email", "Reg Number", ...testColumns].map(
-      h => `"${String(h).replace(/"/g, '""')}"`
+    const headers = ["Name", "Email", "Reg Number", "College", ...testColumns].map(
+      (h) => `"${String(h).replace(/"/g, '""')}"`
     );
     const rows = [headers.join(",")];
 
-    Object.values(studentMap).forEach(student => {
+    Object.values(studentMap).forEach((student) => {
       const row = [
         `"${student.name}"`,
         `"${student.email}"`,
-        `"${student.regNumber}"`
+        `"${student.regNumber}"`,
+        `"${student.college}"`,
       ];
-      // Add score for each test column
-      testColumns.forEach(test => {
+      testColumns.forEach((test) => {
         row.push(`"${student.scores[test] !== undefined ? student.scores[test] : 0}"`);
       });
       rows.push(row.join(","));
@@ -1175,55 +1306,72 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
 
   const buildMasterStudentList = (): StudentMasterRecord[] => {
     const studentMap: Record<string, StudentMasterRecord> = {};
-    const savedCategoriesStr = localStorage.getItem(`admin_course_categories_${collegeName}`);
-    let courseCategories: any[] = [];
-    if (savedCategoriesStr) {
+    const collegesToScan =
+      selectedCollegeFilter === "all"
+        ? (allCollegesList.length > 0 ? allCollegesList.map((c) => c.name) : [collegeName])
+        : [selectedCollegeFilter];
+
+    collegesToScan.forEach((col) => {
+      let courseCategories: any[] = [];
+      const savedCategoriesStr = localStorage.getItem(`admin_course_categories_${col}`);
+      if (savedCategoriesStr) {
+        try {
+          courseCategories = JSON.parse(savedCategoriesStr);
+        } catch (e) {}
+      }
+
+      let customStats: Record<string, any> = {};
       try {
-        courseCategories = JSON.parse(savedCategoriesStr);
-      } catch (e) {
-        courseCategories = [];
-      }
-    }
+        const statsStr = localStorage.getItem(`college_student_stats_${col}`);
+        if (statsStr) customStats = JSON.parse(statsStr);
+      } catch (e) {}
 
-    let customStats: Record<string, any> = {};
-    try {
-      const statsStr = localStorage.getItem(`college_student_stats_${collegeName}`);
-      if (statsStr) customStats = JSON.parse(statsStr);
-    } catch (e) {
-      customStats = {};
-    }
+      // 1. Gather all students added to this college in Course Categories & Sections
+      courseCategories.forEach((cat: any) => {
+        const cName = cat.courseName || "General Course";
+        if (Array.isArray(cat.classes)) {
+          cat.classes.forEach((cls: any) => {
+            const sName = cls.className || "General Section";
+            if (Array.isArray(cls.students)) {
+              cls.students.forEach((stu: any) => {
+                const key = (stu.email || stu.name || "").toLowerCase();
+                if (key && !studentMap[key]) {
+                  const sReg = stu.regNum || stu.regNumber || stu.regNo || stu.rollNumber || stu.rollNo;
+                  const reg = (sReg && sReg !== "N/A" && String(sReg).trim() !== "") ? String(sReg).trim() : getStudentRegNumberByEmail(stu.email, scores);
+                  studentMap[key] = {
+                    id: stu.id || key,
+                    name: stu.name || "Unnamed Student",
+                    email: stu.email || "unknown",
+                    regNum: reg || "N/A",
+                    courseName: cName,
+                    sectionName: sName,
+                    collegeName: col,
+                    dsaAttempted: 0,
+                    dsaCorrect: 0,
+                    dsaWrong: 0,
+                    aptAttempted: 0,
+                    aptCorrect: 0,
+                    aptWrong: 0,
+                  };
+                }
+              });
+            }
+          });
+        }
+      });
 
-    // 1. Gather all students added to this college in Course Categories & Sections
-    courseCategories.forEach((cat: any) => {
-      const cName = cat.courseName || "General Course";
-      if (Array.isArray(cat.classes)) {
-        cat.classes.forEach((cls: any) => {
-          const sName = cls.className || "General Section";
-          if (Array.isArray(cls.students)) {
-            cls.students.forEach((stu: any) => {
-              const key = (stu.email || stu.name || "").toLowerCase();
-              if (key && !studentMap[key]) {
-                const sReg = stu.regNum || stu.regNumber || stu.regNo || stu.rollNumber || stu.rollNo;
-                const reg = (sReg && sReg !== "N/A" && String(sReg).trim() !== "") ? String(sReg).trim() : getStudentRegNumberByEmail(stu.email, scores);
-                studentMap[key] = {
-                  id: stu.id || key,
-                  name: stu.name || "Unnamed Student",
-                  email: stu.email || "unknown",
-                  regNum: reg || "N/A",
-                  courseName: cName,
-                  sectionName: sName,
-                  dsaAttempted: 0,
-                  dsaCorrect: 0,
-                  dsaWrong: 0,
-                  aptAttempted: 0,
-                  aptCorrect: 0,
-                  aptWrong: 0,
-                };
-              }
-            });
-          }
-        });
-      }
+      // Apply custom stats for this college
+      Object.values(studentMap).forEach((rec) => {
+        const key = rec.email.toLowerCase();
+        if (customStats[key]) {
+          rec.dsaAttempted = Number(customStats[key].dsaAttempted ?? rec.dsaAttempted);
+          rec.dsaCorrect = Number(customStats[key].dsaCorrect ?? rec.dsaCorrect);
+          rec.dsaWrong = Number(customStats[key].dsaWrong ?? rec.dsaWrong);
+          rec.aptAttempted = Number(customStats[key].aptAttempted ?? rec.aptAttempted);
+          rec.aptCorrect = Number(customStats[key].aptCorrect ?? rec.aptCorrect);
+          rec.aptWrong = Number(customStats[key].aptWrong ?? rec.aptWrong);
+        }
+      });
     });
 
     // 2. Gather from scores and count DSA & Aptitude solved automatically
@@ -1242,6 +1390,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
             regNum: reg || "N/A",
             courseName: catName,
             sectionName: secName,
+            collegeName: s.collegeName || (selectedCollegeFilter !== "all" ? selectedCollegeFilter : "N/A"),
             dsaAttempted: 0,
             dsaCorrect: 0,
             dsaWrong: 0,
@@ -1275,43 +1424,49 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
       }
     });
 
-    // 3. Apply custom/edited stats from localStorage
-    Object.values(studentMap).forEach((rec) => {
-      const key = rec.email.toLowerCase();
-      if (customStats[key]) {
-        rec.dsaAttempted = Number(customStats[key].dsaAttempted ?? rec.dsaAttempted);
-        rec.dsaCorrect = Number(customStats[key].dsaCorrect ?? rec.dsaCorrect);
-        rec.dsaWrong = Number(customStats[key].dsaWrong ?? rec.dsaWrong);
-        rec.aptAttempted = Number(customStats[key].aptAttempted ?? rec.aptAttempted);
-        rec.aptCorrect = Number(customStats[key].aptCorrect ?? rec.aptCorrect);
-        rec.aptWrong = Number(customStats[key].aptWrong ?? rec.aptWrong);
-      }
-    });
-
     return Object.values(studentMap);
   };
 
   const masterStudentList = buildMasterStudentList();
-  const filteredMasterStudents = masterStudentList.filter((s) => {
-    const q = searchQuery.toLowerCase();
-    const name = (s.name || "").toLowerCase();
-    const email = (s.email || "").toLowerCase();
-    const reg = (s.regNum || "").toLowerCase();
-    const course = (s.courseName || "").toLowerCase();
-    const sec = (s.sectionName || "").toLowerCase();
-    return (
-      name.includes(q) ||
-      email.includes(q) ||
-      reg.includes(q) ||
-      course.includes(q) ||
-      sec.includes(q)
-    );
-  });
+
+  // Multi-dimensional filtering for Master Students
+  const filteredMasterStudents = useMemo(() => {
+    return masterStudentList.filter((s) => {
+      // Course Category filter
+      if (selectedCourseFilter !== "all" && s.courseName?.toLowerCase() !== selectedCourseFilter.toLowerCase()) {
+        return false;
+      }
+      // Section filter
+      if (selectedSectionFilter !== "all" && s.sectionName?.toLowerCase() !== selectedSectionFilter.toLowerCase()) {
+        return false;
+      }
+      // Search Query
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase().trim();
+        const name = (s.name || "").toLowerCase();
+        const email = (s.email || "").toLowerCase();
+        const reg = (s.regNum || "").toLowerCase();
+        const course = (s.courseName || "").toLowerCase();
+        const sec = (s.sectionName || "").toLowerCase();
+        const col = (s.collegeName || "").toLowerCase();
+        const matches =
+          name.includes(q) ||
+          email.includes(q) ||
+          reg.includes(q) ||
+          course.includes(q) ||
+          sec.includes(q) ||
+          col.includes(q);
+        if (!matches) return false;
+      }
+      return true;
+    });
+  }, [masterStudentList, selectedCourseFilter, selectedSectionFilter, searchQuery]);
 
   const handleSaveStudentStats = (updated: StudentMasterRecord) => {
+    const targetCol = updated.collegeName || (selectedCollegeFilter !== "all" ? selectedCollegeFilter : collegeName);
     let customStats: Record<string, any> = {};
     try {
-      const statsStr = localStorage.getItem(`college_student_stats_${collegeName}`);
+      const statsStr = localStorage.getItem(`college_student_stats_${targetCol}`);
       if (statsStr) customStats = JSON.parse(statsStr);
     } catch (e) {
       customStats = {};
@@ -1324,7 +1479,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
       aptCorrect: Number(updated.aptCorrect),
       aptWrong: Number(updated.aptWrong),
     };
-    localStorage.setItem(`college_student_stats_${collegeName}`, JSON.stringify(customStats));
+    localStorage.setItem(`college_student_stats_${targetCol}`, JSON.stringify(customStats));
     setEditingStudentStats(null);
     setStatsVersion((v) => v + 1);
   };
@@ -1333,7 +1488,8 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
     e.preventDefault();
     if (!newStudentForm.name.trim() || !newStudentForm.email.trim()) return;
 
-    const savedCategoriesStr = localStorage.getItem(`admin_course_categories_${collegeName}`);
+    const targetCol = newStudentForm.collegeName || (selectedCollegeFilter !== "all" ? selectedCollegeFilter : collegeName);
+    const savedCategoriesStr = localStorage.getItem(`admin_course_categories_${targetCol}`);
     let courseCategories: any[] = [];
     if (savedCategoriesStr) {
       try {
@@ -1383,11 +1539,11 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
       classId: courseCategories[catIndex].classes[clsIndex].id,
     };
     courseCategories[catIndex].classes[clsIndex].students.push(newStu);
-    localStorage.setItem(`admin_course_categories_${collegeName}`, JSON.stringify(courseCategories));
+    localStorage.setItem(`admin_course_categories_${targetCol}`, JSON.stringify(courseCategories));
 
     let customStats: Record<string, any> = {};
     try {
-      const statsStr = localStorage.getItem(`college_student_stats_${collegeName}`);
+      const statsStr = localStorage.getItem(`college_student_stats_${targetCol}`);
       if (statsStr) customStats = JSON.parse(statsStr);
     } catch (e) {
       customStats = {};
@@ -1400,7 +1556,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
       aptCorrect: Number(newStudentForm.aptCorrect),
       aptWrong: Number(newStudentForm.aptWrong),
     };
-    localStorage.setItem(`college_student_stats_${collegeName}`, JSON.stringify(customStats));
+    localStorage.setItem(`college_student_stats_${targetCol}`, JSON.stringify(customStats));
 
     setIsAddStudentModalOpen(false);
     setNewStudentForm({
@@ -1409,6 +1565,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
       regNum: "",
       courseName: "B.Tech",
       sectionName: "General Section",
+      collegeName: targetCol,
       dsaAttempted: 0,
       dsaCorrect: 0,
       dsaWrong: 0,
@@ -1425,6 +1582,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
       "Student Name",
       "Reg Number",
       "Email",
+      "College",
       "Course Category",
       "Section",
       "DSA Attempted",
@@ -1438,6 +1596,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
       `"${(s.name || "").replace(/"/g, '""')}"`,
       `"${(s.regNum || "").replace(/"/g, '""')}"`,
       `"${(s.email || "").replace(/"/g, '""')}"`,
+      `"${(s.collegeName || "").replace(/"/g, '""')}"`,
       `"${(s.courseName || "").replace(/"/g, '""')}"`,
       `"${(s.sectionName || "").replace(/"/g, '""')}"`,
       s.dsaAttempted,
@@ -1452,43 +1611,98 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `${collegeName.replace(/\s+/g, "_")}_All_Student_Records.csv`);
+    const downloadLabel = selectedCollegeFilter === "all" ? "All_Colleges" : selectedCollegeFilter.replace(/\s+/g, "_");
+    link.setAttribute("download", `${downloadLabel}_All_Student_Records.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
+  // Modern, high-contrast, professional metric badge renderer for DSA & Aptitude solved questions
+  const renderSolvedStatsCell = (attempted: number, correct: number, wrong: number) => {
+    const accuracy = attempted > 0 ? Math.round((correct / attempted) * 100) : 0;
+    return (
+      <div className="space-y-1.5 min-w-[170px]">
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {/* Attempted Badge */}
+          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 shadow-sm">
+            Att: {attempted}
+          </span>
+          {/* Correct Badge */}
+          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-xs font-bold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 shadow-sm">
+            <Check className="w-3 h-3 text-emerald-600 dark:text-emerald-400 stroke-[2.5]" />
+            <span>{correct}</span>
+          </span>
+          {/* Wrong Badge */}
+          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-xs font-bold bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60 shadow-sm">
+            <X className="w-3 h-3 text-rose-600 dark:text-rose-400 stroke-[2.5]" />
+            <span>{wrong}</span>
+          </span>
+        </div>
+        {/* Micro Accuracy Progress Bar */}
+        {attempted > 0 && (
+          <div className="flex items-center gap-2">
+            <div className="flex-1 h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden flex border border-slate-200/50 dark:border-slate-700/50">
+              <div
+                style={{ width: `${accuracy}%` }}
+                className="bg-emerald-500 h-full rounded-full transition-all"
+                title={`${accuracy}% accuracy`}
+              />
+              {accuracy < 100 && (
+                <div
+                  style={{ width: `${100 - accuracy}%` }}
+                  className="bg-rose-400/60 h-full"
+                />
+              )}
+            </div>
+            <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 font-mono">
+              {accuracy}%
+            </span>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const isFilterActive =
+    (selectedCollegeFilter !== collegeName && selectedCollegeFilter !== "all") ||
+    selectedCourseFilter !== "all" ||
+    selectedSectionFilter !== "all" ||
+    searchQuery.trim() !== "";
+
   return (
     <div className="space-y-6">
       {/* Test Results Top Navigation & Action Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface dark:bg-[#111827] p-4 rounded-2xl border border-border shadow-lg">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface dark:bg-[#111827] p-4 rounded-2xl border border-border shadow-md">
         {/* Sub-tabs: Category Wise & All Record */}
         <div className="flex items-center space-x-3">
           <button
             onClick={() => setResultsSubTab("categoryWise")}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${resultsSubTab === "categoryWise"
-                ? "bg-purple-600 text-text-primary shadow-md shadow-purple-600/30"
-                : "bg-slate-100/80 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-800 text-text-secondary hover:text-text-inverse"
-              }`}
+            className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+              resultsSubTab === "categoryWise"
+                ? "bg-purple-600 text-white shadow-md shadow-purple-600/30"
+                : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700"
+            }`}
           >
             <Layers className="w-4 h-4" />
             <span>Category Wise</span>
-            <span className="ml-1 px-2 py-0.5 rounded-full text-xs bg-black/30 font-semibold">
+            <span className="ml-1 px-2 py-0.5 rounded-full text-xs bg-black/25 dark:bg-black/40 text-white font-semibold">
               {Object.keys(categoryTree).length}
             </span>
           </button>
 
           <button
             onClick={() => setResultsSubTab("allRecord")}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${resultsSubTab === "allRecord"
-                ? "bg-purple-600 text-text-primary shadow-md shadow-purple-600/30"
-                : "bg-slate-100/80 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-800 text-text-secondary hover:text-text-inverse"
-              }`}
+            className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+              resultsSubTab === "allRecord"
+                ? "bg-purple-600 text-white shadow-md shadow-purple-600/30"
+                : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700"
+            }`}
           >
             <ListFilter className="w-4 h-4" />
             <span>All Record</span>
-            <span className="ml-1 px-2 py-0.5 rounded-full text-xs bg-black/30 font-semibold">
-              {scores.length}
+            <span className="ml-1 px-2 py-0.5 rounded-full text-xs bg-black/25 dark:bg-black/40 text-white font-semibold">
+              {filteredMasterStudents.length}
             </span>
           </button>
         </div>
@@ -1496,13 +1710,148 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
         {/* Master Export Button */}
         {scores.length > 0 && (
           <button
-            onClick={() => generateAggregatedCSV(scores, `${collegeName.replace(/\s+/g, '_')}_All_Test_Records`)}
-            className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-500 text-text-inverse px-5 py-2.5 rounded-xl font-bold transition-all shadow-lg"
+            onClick={() =>
+              generateAggregatedCSV(
+                scores,
+                `${(selectedCollegeFilter === "all" ? "All_Colleges" : selectedCollegeFilter).replace(/\s+/g, "_")}_All_Test_Records`
+              )
+            }
+            className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-lg text-sm"
           >
-            <Download className="w-5 h-5" />
-            <span>Export All College Records (CSV)</span>
+            <Download className="w-4 h-4" />
+            <span>Export Test Records (CSV)</span>
           </button>
         )}
+      </div>
+
+      {/* College, Course Category & Section Interactive Filter Bar */}
+      <div className="bg-surface dark:bg-[#111827] p-4 rounded-2xl border border-border shadow-md space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/60 pb-3">
+          <div className="flex items-center space-x-2 text-text-primary font-bold text-sm">
+            <Filter className="w-4 h-4 text-primary" />
+            <span>Filter by College, Category & Section</span>
+            <span className="text-xs text-text-muted font-normal">
+              ({filteredMasterStudents.length} matching students)
+            </span>
+          </div>
+          {isFilterActive && (
+            <button
+              onClick={() => {
+                setSelectedCollegeFilter(collegeName || "all");
+                setSelectedCourseFilter("all");
+                setSelectedSectionFilter("all");
+                setSearchQuery("");
+              }}
+              className="inline-flex items-center space-x-1 text-xs text-rose-600 dark:text-rose-400 hover:underline font-bold"
+            >
+              <X className="w-3.5 h-3.5" />
+              <span>Clear All Filters</span>
+            </button>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {/* 1. College Dropdown */}
+          <div>
+            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
+              Select College
+            </label>
+            <div className="relative">
+              <Building2 className="w-4 h-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
+              <select
+                value={selectedCollegeFilter}
+                onChange={(e) => {
+                  setSelectedCollegeFilter(e.target.value);
+                  setSelectedCourseFilter("all");
+                  setSelectedSectionFilter("all");
+                }}
+                className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl pl-9 pr-8 py-2 text-xs sm:text-sm text-slate-900 dark:text-slate-100 font-medium focus:outline-none focus:border-primary transition-colors cursor-pointer"
+              >
+                <option value="all">All Colleges (Combined)</option>
+                {allCollegesList.map((col) => (
+                  <option key={col.id || col.name} value={col.name}>
+                    {col.name}
+                  </option>
+                ))}
+                {allCollegesList.length === 0 && collegeName && (
+                  <option value={collegeName}>{collegeName}</option>
+                )}
+              </select>
+            </div>
+          </div>
+
+          {/* 2. Course Category Dropdown */}
+          <div>
+            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
+              Course Category
+            </label>
+            <div className="relative">
+              <BookOpen className="w-4 h-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
+              <select
+                value={selectedCourseFilter}
+                onChange={(e) => {
+                  setSelectedCourseFilter(e.target.value);
+                  setSelectedSectionFilter("all");
+                }}
+                className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl pl-9 pr-8 py-2 text-xs sm:text-sm text-slate-900 dark:text-slate-100 font-medium focus:outline-none focus:border-primary transition-colors cursor-pointer"
+              >
+                <option value="all">All Course Categories</option>
+                {availableCourses.map((crs) => (
+                  <option key={crs} value={crs}>
+                    {crs}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* 3. Section Dropdown */}
+          <div>
+            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
+              Section
+            </label>
+            <div className="relative">
+              <Layers className="w-4 h-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
+              <select
+                value={selectedSectionFilter}
+                onChange={(e) => setSelectedSectionFilter(e.target.value)}
+                className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl pl-9 pr-8 py-2 text-xs sm:text-sm text-slate-900 dark:text-slate-100 font-medium focus:outline-none focus:border-primary transition-colors cursor-pointer"
+              >
+                <option value="all">All Sections</option>
+                {availableSections.map((sec) => (
+                  <option key={sec} value={sec}>
+                    {sec}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* 4. Student Search Bar */}
+          <div>
+            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
+              Search Student
+            </label>
+            <div className="relative">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              <input
+                type="text"
+                placeholder="Search name, reg, email..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl pl-9 pr-8 py-2 text-xs sm:text-sm text-slate-900 dark:text-slate-100 font-medium placeholder-slate-400 focus:outline-none focus:border-primary transition-colors"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
       {resultsSubTab === "categoryWise" ? (
@@ -1512,53 +1861,64 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
             <div className="bg-surface dark:bg-[#111827] rounded-3xl border border-border p-12 text-center text-text-muted">
               <BookOpen className="w-16 h-16 mx-auto mb-4 opacity-20" />
               <h3 className="text-xl font-bold text-text-muted mb-2">No Course Categories Found</h3>
-              <p>Create Course Categories and Sections first, or assign tests to students.</p>
+              <p>
+                {isFilterActive
+                  ? "No categories match your active filters. Try clearing or relaxing the filters above."
+                  : "Create Course Categories and Sections first, or assign tests to students."}
+              </p>
             </div>
           ) : (
             Object.entries(categoryTree).map(([categoryName, sectionsMap]) => {
               const allCategoryScores = Object.values(sectionsMap).flat();
               const uniqueCategoryStudents = new Set(allCategoryScores.map((s) => s.studentEmail || s.studentName));
-              const isExpanded = expandedCategories[categoryName] === true; // Minimized by default
+              const isExpanded = expandedCategories[categoryName] === true;
 
               return (
-                <div key={categoryName} className="bg-surface dark:bg-[#111827] rounded-3xl border border-border shadow-xl overflow-hidden transition-all">
+                <div
+                  key={categoryName}
+                  className="bg-surface dark:bg-[#111827] rounded-3xl border border-border shadow-md overflow-hidden transition-all"
+                >
                   {/* Category Header */}
                   <div
                     onClick={() => toggleCategoryExpand(categoryName)}
-                    className="bg-slate-100/60 dark:bg-slate-800/60 hover:bg-slate-200/80 dark:hover:bg-slate-800/80 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer border-b border-border/80 transition-all select-none"
+                    className="bg-slate-50/80 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800/80 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer border-b border-border/80 transition-all select-none"
                   >
                     <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 rounded-lg bg-slate-200/60 dark:bg-slate-700/60 flex items-center justify-center text-text-secondary">
+                      <div className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-700/60 flex items-center justify-center text-slate-700 dark:text-slate-300">
                         {isExpanded ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
                       </div>
-                      <h3 className="text-xl font-bold text-primary flex items-center">
-                        <span className="bg-primary/20 text-blue-300 px-3 py-1 rounded-lg text-sm mr-3 uppercase tracking-widest border border-primary/30">
+                      <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center flex-wrap gap-2">
+                        <span className="bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 px-2.5 py-0.5 rounded-lg text-xs font-bold uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/40">
                           Course Category
                         </span>
-                        {categoryName}
+                        <span>{categoryName}</span>
                       </h3>
                     </div>
 
                     <div className="flex items-center space-x-3 flex-wrap gap-2">
-                      <span className="text-primary font-bold bg-primary/10 px-3 py-1.5 rounded-xl border border-primary/20 text-sm">
+                      <span className="text-emerald-700 dark:text-emerald-300 font-bold bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1.5 rounded-xl border border-emerald-200 dark:border-emerald-800/50 text-xs sm:text-sm">
                         {uniqueCategoryStudents.size} Students
                       </span>
-                      <span className="text-purple-400 font-bold bg-purple-500/10 px-3 py-1.5 rounded-xl border border-purple-500/20 text-sm">
+                      <span className="text-purple-700 dark:text-purple-300 font-bold bg-purple-50 dark:bg-purple-950/40 px-3 py-1.5 rounded-xl border border-purple-200 dark:border-purple-800/50 text-xs sm:text-sm">
                         {allCategoryScores.length} Records
                       </span>
-                      <span className="text-primary font-bold bg-primary/10 px-3 py-1.5 rounded-xl border border-primary/20 text-sm">
+                      <span className="text-blue-700 dark:text-blue-300 font-bold bg-blue-50 dark:bg-blue-950/40 px-3 py-1.5 rounded-xl border border-blue-200 dark:border-blue-800/50 text-xs sm:text-sm">
                         {Object.keys(sectionsMap).length} Sections
                       </span>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          generateAggregatedCSV(allCategoryScores, `Course_${categoryName.replace(/\s+/g, "_")}_All_Results`);
+                          generateAggregatedCSV(
+                            allCategoryScores,
+                            `Course_${categoryName.replace(/\s+/g, "_")}_All_Results`
+                          );
                         }}
                         disabled={allCategoryScores.length === 0}
-                        className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-bold text-sm transition-all shadow-md ${allCategoryScores.length > 0
-                            ? "bg-primary hover:bg-primary text-text-inverse shadow-blue-600/20"
+                        className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-bold text-sm transition-all shadow-md ${
+                          allCategoryScores.length > 0
+                            ? "bg-primary hover:bg-primary-hover text-white shadow-blue-600/20"
                             : "bg-slate-100 dark:bg-slate-800 text-text-muted cursor-not-allowed border border-border"
-                          }`}
+                        }`}
                         title="Download CSV for this entire Course Category"
                       >
                         <Download className="w-4 h-4" />
@@ -1570,7 +1930,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                             e.stopPropagation();
                             handleDeleteCategoryResults(categoryName, sectionsMap);
                           }}
-                          className="flex items-center space-x-2 bg-rose-600/20 hover:bg-rose-600/40 text-rose-400 px-3 py-2 rounded-xl text-sm font-bold transition-colors border border-rose-500/30"
+                          className="flex items-center space-x-2 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 dark:hover:bg-rose-900/40 text-rose-600 dark:text-rose-400 px-3 py-2 rounded-xl text-sm font-bold transition-colors border border-rose-200 dark:border-rose-800/40"
                           title={`Delete all test results for ${categoryName}`}
                         >
                           <Trash2 className="w-4 h-4" />
@@ -1581,7 +1941,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
 
                   {/* Assigned Sections List when Expanded */}
                   {isExpanded && (
-                    <div className="p-6 bg-white/40 dark:bg-slate-950/40 space-y-4">
+                    <div className="p-6 bg-slate-50/50 dark:bg-slate-950/40 space-y-4">
                       {Object.keys(sectionsMap).length === 0 ? (
                         <div className="p-6 text-center text-text-muted text-sm">
                           No sections assigned to this category yet.
@@ -1596,26 +1956,30 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                             return aName.localeCompare(bName);
                           })
                           .map(([sectionName, sectionScores]) => {
-                            const uniqueSectionStudents = new Set(sectionScores.map((s) => s.studentEmail || s.studentName));
+                            const uniqueSectionStudents = new Set(
+                              sectionScores.map((s) => s.studentEmail || s.studentName)
+                            );
 
                             return (
                               <div
                                 key={sectionName}
-                                className="bg-slate-50/80 dark:bg-slate-900/80 border border-border/80 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-purple-500/30 transition-all"
+                                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-purple-500/40 transition-all shadow-sm"
                               >
                                 <div className="flex items-center space-x-3">
-                                  <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 font-bold">
+                                  <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800/40 flex items-center justify-center text-purple-700 dark:text-purple-300 font-bold">
                                     <Layers className="w-5 h-5" />
                                   </div>
                                   <div>
-                                    <div className="flex items-center space-x-2">
-                                      <span className="text-xs uppercase tracking-wider font-bold bg-purple-500/20 text-purple-300 px-2.5 py-0.5 rounded-full border border-purple-500/30">
+                                    <div className="flex items-center space-x-2 flex-wrap">
+                                      <span className="text-xs uppercase tracking-wider font-bold bg-purple-100 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 px-2.5 py-0.5 rounded-full border border-purple-200 dark:border-purple-800/40">
                                         Assigned Section
                                       </span>
-                                      <h4 className="text-lg font-bold text-text-primary">{sectionName}</h4>
+                                      <h4 className="text-lg font-bold text-slate-900 dark:text-white">
+                                        {sectionName}
+                                      </h4>
                                     </div>
-                                    <p className="text-xs text-text-muted mt-1 font-medium">
-                                      {uniqueSectionStudents.size} Students â€¢ {sectionScores.length} Test Records
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">
+                                      {uniqueSectionStudents.size} Students • {sectionScores.length} Test Records
                                     </p>
                                   </div>
                                 </div>
@@ -1629,10 +1993,11 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                                       )
                                     }
                                     disabled={sectionScores.length === 0}
-                                    className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-bold text-sm transition-all shadow-md ${sectionScores.length > 0
-                                        ? "bg-primary hover:bg-primary text-text-inverse shadow-blue-600/20"
+                                    className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-bold text-sm transition-all shadow-md ${
+                                      sectionScores.length > 0
+                                        ? "bg-primary hover:bg-primary-hover text-white shadow-blue-600/20"
                                         : "bg-slate-100 dark:bg-slate-800 text-text-muted cursor-not-allowed border border-border"
-                                      }`}
+                                    }`}
                                     title="Download CSV for this assigned section"
                                   >
                                     <Download className="w-4 h-4" />
@@ -1642,7 +2007,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                                   {sectionScores.length > 0 && (
                                     <button
                                       onClick={() => handleDeleteSectionResults(sectionName)}
-                                      className="flex items-center space-x-2 bg-rose-600/10 hover:bg-rose-600/20 text-rose-400 p-2.5 rounded-xl text-sm font-bold transition-colors border border-rose-500/20"
+                                      className="flex items-center space-x-2 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 dark:hover:bg-rose-900/40 text-rose-600 dark:text-rose-400 p-2.5 rounded-xl text-sm font-bold transition-colors border border-rose-200 dark:border-rose-800/40"
                                       title={`Delete all test results for ${sectionName}`}
                                     >
                                       <Trash2 className="w-4 h-4" />
@@ -1660,14 +2025,16 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
             })
           )}
         </div>
-      ) : masterStudentList.length === 0 ? (
+      ) : filteredMasterStudents.length === 0 && masterStudentList.length === 0 ? (
         <div className="bg-surface dark:bg-[#111827] rounded-3xl border border-border shadow-xl overflow-hidden p-12 text-center text-text-muted">
           <User className="w-16 h-16 mx-auto mb-4 opacity-20" />
           <h3 className="text-xl font-bold text-text-muted mb-2">No Student Records Found</h3>
-          <p className="mb-6">Students added in Course Categories or who complete tests will appear here with their DSA & Aptitude solved stats.</p>
+          <p className="mb-6">
+            Students added in Course Categories or who complete tests will appear here with their DSA & Aptitude solved stats.
+          </p>
           <button
             onClick={() => setIsAddStudentModalOpen(true)}
-            className="inline-flex items-center space-x-2 px-6 py-3 bg-primary hover:bg-primary text-text-inverse font-bold rounded-xl transition-all shadow-lg"
+            className="inline-flex items-center space-x-2 px-6 py-3 bg-primary hover:bg-primary-hover text-white font-bold rounded-xl transition-all shadow-lg"
           >
             <Plus className="w-5 h-5" />
             <span>Add First Student Record</span>
@@ -1675,39 +2042,29 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
         </div>
       ) : (
         /* All Record View */
-        <div className="bg-surface dark:bg-[#111827] rounded-3xl border border-border shadow-xl overflow-hidden p-6 space-y-6">
+        <div className="bg-surface dark:bg-[#111827] rounded-3xl border border-border shadow-md overflow-hidden p-6 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h3 className="text-xl font-bold text-text-primary flex items-center">
-                <User className="w-5 h-5 mr-2 text-purple-400" />
-                All College Student Records ({masterStudentList.length})
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center">
+                <User className="w-5 h-5 mr-2 text-purple-600 dark:text-purple-400" />
+                All College Student Records ({filteredMasterStudents.length})
               </h3>
-              <p className="text-xs text-text-muted mt-1">
-                Track DSA and Aptitude question solving stats for every student added to {collegeName}.
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                Track DSA and Aptitude question solving stats for every student in {selectedCollegeFilter === "all" ? "All Colleges" : selectedCollegeFilter}.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              <div className="relative w-full sm:w-64">
-                <Search className="w-4 h-4 text-text-muted absolute left-3 top-3.5" />
-                <input
-                  type="text"
-                  placeholder="Search student, reg no, email, course..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl pl-9 pr-4 py-2 text-sm text-text-primary placeholder-slate-500 focus:outline-none focus:border-purple-500"
-                />
-              </div>
               <button
                 onClick={() => setIsAddStudentModalOpen(true)}
-                className="flex items-center space-x-2 px-4 py-2 bg-primary hover:bg-primary text-text-inverse font-bold rounded-xl text-sm transition-all shadow-lg"
+                className="flex items-center space-x-2 px-4 py-2 bg-primary hover:bg-primary-hover text-white font-bold rounded-xl text-sm transition-all shadow-md"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add Student Record</span>
               </button>
-              {masterStudentList.length > 0 && (
+              {filteredMasterStudents.length > 0 && (
                 <button
                   onClick={() => generateAllStudentRecordsCSV(filteredMasterStudents)}
-                  className="flex items-center space-x-2 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-text-primary font-bold rounded-xl text-sm transition-all shadow-lg"
+                  className="flex items-center space-x-2 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-sm transition-all shadow-md"
                 >
                   <Download className="w-4 h-4" />
                   <span>Download Records (CSV)</span>
@@ -1719,63 +2076,65 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-border text-xs uppercase tracking-wider text-text-muted">
-                  <th className="pb-3 pr-4 font-bold">Student Name</th>
-                  <th className="pb-3 px-4 font-bold">Reg Number</th>
-                  <th className="pb-3 px-4 font-bold">Email</th>
-                  <th className="pb-3 px-4 font-bold">Course & Section</th>
-                  <th className="pb-3 px-4 font-bold">DSA Solved</th>
-                  <th className="pb-3 px-4 font-bold">Aptitude Solved</th>
-                  <th className="pb-3 pl-4 font-bold text-right">Action</th>
+                <tr className="border-b border-slate-200 dark:border-slate-800 text-xs uppercase tracking-wider text-slate-600 dark:text-slate-400 bg-slate-50/60 dark:bg-slate-900/40">
+                  <th className="py-3.5 pr-4 pl-3 font-bold">Student Name</th>
+                  <th className="py-3.5 px-4 font-bold">Reg Number</th>
+                  <th className="py-3.5 px-4 font-bold">Email</th>
+                  <th className="py-3.5 px-4 font-bold">Course & Section</th>
+                  <th className="py-3.5 px-4 font-bold">DSA Solved</th>
+                  <th className="py-3.5 px-4 font-bold">Aptitude Solved</th>
+                  <th className="py-3.5 pl-4 pr-3 font-bold text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60 text-sm">
-                {filteredMasterStudents.map((s, idx) => (
-                  <tr key={idx} className="hover:bg-slate-200/40 dark:hover:bg-slate-800/40 transition-colors">
-                    <td className="py-4 pr-4 font-bold text-text-primary">{s.name || "N/A"}</td>
-                    <td className="py-4 px-4 text-text-secondary font-mono">{s.regNum || "N/A"}</td>
-                    <td className="py-4 px-4 text-text-muted">{s.email || "unknown"}</td>
-                    <td className="py-4 px-4">
-                      <div className="text-sm text-text-secondary font-semibold">{s.courseName}</div>
-                      <div className="text-xs text-text-muted">{s.sectionName}</div>
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center space-x-1.5 flex-wrap gap-y-1">
-                        <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-text-secondary rounded text-xs font-semibold">
-                          Att: {s.dsaAttempted}
-                        </span>
-                        <span className="px-2 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded text-xs font-bold">
-                          âœ“ {s.dsaCorrect}
-                        </span>
-                        <span className="px-2 py-0.5 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded text-xs font-bold">
-                          âœ— {s.dsaWrong}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center space-x-1.5 flex-wrap gap-y-1">
-                        <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-text-secondary rounded text-xs font-semibold">
-                          Att: {s.aptAttempted}
-                        </span>
-                        <span className="px-2 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded text-xs font-bold">
-                          âœ“ {s.aptCorrect}
-                        </span>
-                        <span className="px-2 py-0.5 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded text-xs font-bold">
-                          âœ— {s.aptWrong}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="py-4 pl-4 text-right">
-                      <button
-                        onClick={() => setEditingStudentStats({ ...s })}
-                        className="inline-flex items-center space-x-1 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-purple-300 rounded-lg text-xs font-semibold border border-border transition-colors"
-                      >
-                        <Edit2 className="w-3.5 h-3.5 mr-1" />
-                        <span>Edit Stats</span>
-                      </button>
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60 text-sm">
+                {filteredMasterStudents.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="py-8 text-center text-slate-500 dark:text-slate-400">
+                      No student records match the active filter criteria.
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  filteredMasterStudents.map((s, idx) => (
+                    <tr
+                      key={idx}
+                      className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors"
+                    >
+                      <td className="py-4 pr-4 pl-3 font-bold text-slate-900 dark:text-white">
+                        <div>{s.name || "N/A"}</div>
+                        {selectedCollegeFilter === "all" && s.collegeName && (
+                          <div className="text-[11px] font-semibold text-primary">{s.collegeName}</div>
+                        )}
+                      </td>
+                      <td className="py-4 px-4 text-slate-700 dark:text-slate-300 font-mono text-xs">
+                        {s.regNum || "N/A"}
+                      </td>
+                      <td className="py-4 px-4 text-slate-500 dark:text-slate-400 text-xs">
+                        {s.email || "unknown"}
+                      </td>
+                      <td className="py-4 px-4">
+                        <div className="text-sm text-slate-900 dark:text-slate-200 font-semibold">
+                          {s.courseName}
+                        </div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400">{s.sectionName}</div>
+                      </td>
+                      <td className="py-4 px-4">
+                        {renderSolvedStatsCell(s.dsaAttempted, s.dsaCorrect, s.dsaWrong)}
+                      </td>
+                      <td className="py-4 px-4">
+                        {renderSolvedStatsCell(s.aptAttempted, s.aptCorrect, s.aptWrong)}
+                      </td>
+                      <td className="py-4 pl-4 pr-3 text-right">
+                        <button
+                          onClick={() => setEditingStudentStats({ ...s })}
+                          className="inline-flex items-center space-x-1 px-3 py-1.5 bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/40 dark:hover:bg-purple-900/50 text-purple-700 dark:text-purple-300 rounded-lg text-xs font-semibold border border-purple-200 dark:border-purple-800/60 transition-colors shadow-sm"
+                        >
+                          <Edit2 className="w-3.5 h-3.5 mr-1" />
+                          <span>Edit Stats</span>
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -1788,7 +2147,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
           <div className="bg-surface dark:bg-[#111827] border border-border rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-6">
             <div className="flex items-center justify-between border-b border-border pb-4">
               <h3 className="text-lg font-bold text-text-primary">
-                Edit Question Records - <span className="text-purple-400">{editingStudentStats.name}</span>
+                Edit Question Records - <span className="text-purple-600 dark:text-purple-400">{editingStudentStats.name}</span>
               </h3>
               <button
                 onClick={() => setEditingStudentStats(null)}
@@ -1799,10 +2158,13 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
             </div>
             <div className="space-y-4">
               <div>
-                <h4 className="text-sm font-bold text-primary mb-2">DSA Questions Solved</h4>
+                <h4 className="text-sm font-bold text-primary mb-2 flex items-center">
+                  <Check className="w-4 h-4 mr-1 text-primary" />
+                  DSA Questions Solved
+                </h4>
                 <div className="grid grid-cols-3 gap-3">
                   <div>
-                    <label className="text-xs text-text-muted block mb-1">Attempted</label>
+                    <label className="text-xs text-slate-700 dark:text-slate-300 font-medium block mb-1">Attempted</label>
                     <input
                       type="number"
                       min="0"
@@ -1813,11 +2175,11 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                           dsaAttempted: Number(e.target.value),
                         })
                       }
-                      className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                      className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-slate-100 font-semibold focus:outline-none focus:border-primary"
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-text-muted block mb-1">Correct</label>
+                    <label className="text-xs text-slate-700 dark:text-slate-300 font-medium block mb-1">Correct</label>
                     <input
                       type="number"
                       min="0"
@@ -1828,11 +2190,11 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                           dsaCorrect: Number(e.target.value),
                         })
                       }
-                      className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                      className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-slate-100 font-semibold focus:outline-none focus:border-primary"
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-text-muted block mb-1">Wrong</label>
+                    <label className="text-xs text-slate-700 dark:text-slate-300 font-medium block mb-1">Wrong</label>
                     <input
                       type="number"
                       min="0"
@@ -1843,17 +2205,20 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                           dsaWrong: Number(e.target.value),
                         })
                       }
-                      className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                      className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-slate-100 font-semibold focus:outline-none focus:border-primary"
                     />
                   </div>
                 </div>
               </div>
 
               <div>
-                <h4 className="text-sm font-bold text-purple-400 mb-2">Aptitude Questions Solved</h4>
+                <h4 className="text-sm font-bold text-purple-600 dark:text-purple-400 mb-2 flex items-center">
+                  <Check className="w-4 h-4 mr-1 text-purple-600 dark:text-purple-400" />
+                  Aptitude Questions Solved
+                </h4>
                 <div className="grid grid-cols-3 gap-3">
                   <div>
-                    <label className="text-xs text-text-muted block mb-1">Attempted</label>
+                    <label className="text-xs text-slate-700 dark:text-slate-300 font-medium block mb-1">Attempted</label>
                     <input
                       type="number"
                       min="0"
@@ -1864,11 +2229,11 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                           aptAttempted: Number(e.target.value),
                         })
                       }
-                      className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                      className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-slate-100 font-semibold focus:outline-none focus:border-primary"
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-text-muted block mb-1">Correct</label>
+                    <label className="text-xs text-slate-700 dark:text-slate-300 font-medium block mb-1">Correct</label>
                     <input
                       type="number"
                       min="0"
@@ -1879,11 +2244,11 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                           aptCorrect: Number(e.target.value),
                         })
                       }
-                      className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                      className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-slate-100 font-semibold focus:outline-none focus:border-primary"
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-text-muted block mb-1">Wrong</label>
+                    <label className="text-xs text-slate-700 dark:text-slate-300 font-medium block mb-1">Wrong</label>
                     <input
                       type="number"
                       min="0"
@@ -1894,7 +2259,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                           aptWrong: Number(e.target.value),
                         })
                       }
-                      className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                      className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-slate-100 font-semibold focus:outline-none focus:border-primary"
                     />
                   </div>
                 </div>
@@ -1903,13 +2268,13 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
             <div className="flex justify-end space-x-3 pt-2">
               <button
                 onClick={() => setEditingStudentStats(null)}
-                className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-text-secondary rounded-xl text-sm font-semibold"
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-sm font-semibold border border-slate-200 dark:border-slate-700"
               >
                 Cancel
               </button>
               <button
                 onClick={() => handleSaveStudentStats(editingStudentStats)}
-                className="px-6 py-2 bg-purple-600 hover:bg-purple-500 text-text-primary rounded-xl text-sm font-bold shadow-lg"
+                className="px-6 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-sm font-bold shadow-lg"
               >
                 Save Record
               </button>
@@ -1941,64 +2306,84 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="text-xs text-text-muted block mb-1">Student Name *</label>
+                <label className="text-xs text-slate-700 dark:text-slate-300 font-medium block mb-1">Student Name *</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Rahul Sharma"
                   value={newStudentForm.name}
                   onChange={(e) => setNewStudentForm({ ...newStudentForm, name: e.target.value })}
-                  className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-slate-100 font-medium focus:outline-none focus:border-primary"
                 />
               </div>
               <div>
-                <label className="text-xs text-text-muted block mb-1">Reg Number</label>
+                <label className="text-xs text-slate-700 dark:text-slate-300 font-medium block mb-1">Reg Number</label>
                 <input
                   type="text"
                   placeholder="e.g. REG-10492"
                   value={newStudentForm.regNum}
                   onChange={(e) => setNewStudentForm({ ...newStudentForm, regNum: e.target.value })}
-                  className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary font-mono"
+                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-slate-100 font-mono focus:outline-none focus:border-primary"
                 />
               </div>
               <div className="sm:col-span-2">
-                <label className="text-xs text-text-muted block mb-1">Email Address *</label>
+                <label className="text-xs text-slate-700 dark:text-slate-300 font-medium block mb-1">Email Address *</label>
                 <input
                   type="email"
                   required
                   placeholder="e.g. rahul@example.com"
                   value={newStudentForm.email}
                   onChange={(e) => setNewStudentForm({ ...newStudentForm, email: e.target.value })}
-                  className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-slate-100 font-medium focus:outline-none focus:border-primary"
                 />
               </div>
               <div>
-                <label className="text-xs text-text-muted block mb-1">Course Category</label>
+                <label className="text-xs text-slate-700 dark:text-slate-300 font-medium block mb-1">College</label>
+                <select
+                  value={newStudentForm.collegeName}
+                  onChange={(e) => setNewStudentForm({ ...newStudentForm, collegeName: e.target.value })}
+                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-slate-100 font-medium focus:outline-none focus:border-primary cursor-pointer"
+                >
+                  {allCollegesList.map((col) => (
+                    <option key={col.id || col.name} value={col.name}>
+                      {col.name}
+                    </option>
+                  ))}
+                  {allCollegesList.length === 0 && collegeName && (
+                    <option value={collegeName}>{collegeName}</option>
+                  )}
+                </select>
+              </div>
+              <div>
+                <label className="text-xs text-slate-700 dark:text-slate-300 font-medium block mb-1">Course Category</label>
                 <input
                   type="text"
                   placeholder="e.g. B.Tech / MCA"
                   value={newStudentForm.courseName}
                   onChange={(e) => setNewStudentForm({ ...newStudentForm, courseName: e.target.value })}
-                  className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-slate-100 font-medium focus:outline-none focus:border-primary"
                 />
               </div>
-              <div>
-                <label className="text-xs text-text-muted block mb-1">Section</label>
+              <div className="sm:col-span-2">
+                <label className="text-xs text-slate-700 dark:text-slate-300 font-medium block mb-1">Section</label>
                 <input
                   type="text"
                   placeholder="e.g. Section A"
                   value={newStudentForm.sectionName}
                   onChange={(e) => setNewStudentForm({ ...newStudentForm, sectionName: e.target.value })}
-                  className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-slate-100 font-medium focus:outline-none focus:border-primary"
                 />
               </div>
             </div>
 
             <div>
-              <h4 className="text-sm font-bold text-primary mb-2">DSA Questions Solved</h4>
+              <h4 className="text-sm font-bold text-primary mb-2 flex items-center">
+                <Check className="w-4 h-4 mr-1 text-primary" />
+                DSA Questions Solved
+              </h4>
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="text-xs text-text-muted block mb-1">Attempted</label>
+                  <label className="text-xs text-slate-700 dark:text-slate-300 font-medium block mb-1">Attempted</label>
                   <input
                     type="number"
                     min="0"
@@ -2006,11 +2391,11 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                     onChange={(e) =>
                       setNewStudentForm({ ...newStudentForm, dsaAttempted: Number(e.target.value) })
                     }
-                    className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-slate-100 font-medium focus:outline-none focus:border-primary"
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-text-muted block mb-1">Correct</label>
+                  <label className="text-xs text-slate-700 dark:text-slate-300 font-medium block mb-1">Correct</label>
                   <input
                     type="number"
                     min="0"
@@ -2018,11 +2403,11 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                     onChange={(e) =>
                       setNewStudentForm({ ...newStudentForm, dsaCorrect: Number(e.target.value) })
                     }
-                    className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-slate-100 font-medium focus:outline-none focus:border-primary"
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-text-muted block mb-1">Wrong</label>
+                  <label className="text-xs text-slate-700 dark:text-slate-300 font-medium block mb-1">Wrong</label>
                   <input
                     type="number"
                     min="0"
@@ -2030,17 +2415,20 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                     onChange={(e) =>
                       setNewStudentForm({ ...newStudentForm, dsaWrong: Number(e.target.value) })
                     }
-                    className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-slate-100 font-medium focus:outline-none focus:border-primary"
                   />
                 </div>
               </div>
             </div>
 
             <div>
-              <h4 className="text-sm font-bold text-purple-400 mb-2">Aptitude Questions Solved</h4>
+              <h4 className="text-sm font-bold text-purple-600 dark:text-purple-400 mb-2 flex items-center">
+                <Check className="w-4 h-4 mr-1 text-purple-600 dark:text-purple-400" />
+                Aptitude Questions Solved
+              </h4>
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="text-xs text-text-muted block mb-1">Attempted</label>
+                  <label className="text-xs text-slate-700 dark:text-slate-300 font-medium block mb-1">Attempted</label>
                   <input
                     type="number"
                     min="0"
@@ -2048,11 +2436,11 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                     onChange={(e) =>
                       setNewStudentForm({ ...newStudentForm, aptAttempted: Number(e.target.value) })
                     }
-                    className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-slate-100 font-medium focus:outline-none focus:border-primary"
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-text-muted block mb-1">Correct</label>
+                  <label className="text-xs text-slate-700 dark:text-slate-300 font-medium block mb-1">Correct</label>
                   <input
                     type="number"
                     min="0"
@@ -2060,11 +2448,11 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                     onChange={(e) =>
                       setNewStudentForm({ ...newStudentForm, aptCorrect: Number(e.target.value) })
                     }
-                    className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-slate-100 font-medium focus:outline-none focus:border-primary"
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-text-muted block mb-1">Wrong</label>
+                  <label className="text-xs text-slate-700 dark:text-slate-300 font-medium block mb-1">Wrong</label>
                   <input
                     type="number"
                     min="0"
@@ -2072,7 +2460,7 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
                     onChange={(e) =>
                       setNewStudentForm({ ...newStudentForm, aptWrong: Number(e.target.value) })
                     }
-                    className="w-full bg-slate-50 dark:bg-slate-900 border border-border rounded-xl px-3 py-2 text-sm text-text-primary"
+                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-slate-100 font-medium focus:outline-none focus:border-primary"
                   />
                 </div>
               </div>
@@ -2082,13 +2470,13 @@ function CollegeResultsTab({ collegeName }: { collegeName: string }) {
               <button
                 type="button"
                 onClick={() => setIsAddStudentModalOpen(false)}
-                className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-text-secondary rounded-xl text-sm font-semibold"
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-sm font-semibold border border-slate-200 dark:border-slate-700"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-6 py-2 bg-primary hover:bg-primary text-text-inverse rounded-xl text-sm font-bold shadow-lg"
+                className="px-6 py-2 bg-primary hover:bg-primary-hover text-white rounded-xl text-sm font-bold shadow-lg"
               >
                 Save Student
               </button>

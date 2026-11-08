@@ -20,11 +20,31 @@ const normalizeProblem = (p: any) => {
   const starterCode = (typeof p.starterCode === 'string' ? JSON.parse(p.starterCode || '{}') : null)
     || (typeof p.starterCodes === 'string' ? JSON.parse(p.starterCodes || '{}') : null)
     || p.starterCode || p.starterCodes || {};
+
+  let examples = parseField(p.examples);
+  if ((!examples || examples.length === 0) && Array.isArray(p.testCases)) {
+    examples = p.testCases
+      .filter((tc: any) => !tc.hidden && !tc.isHidden)
+      .map((tc: any) => ({
+        input: tc.input || tc.inputData || '',
+        output: tc.output || tc.expectedOutput || '',
+        explanation: tc.explanation || ''
+      }));
+  }
+
+  const rawDiff = p.difficulty || 'Medium';
+  const difficulty = typeof rawDiff === 'string' 
+    ? (rawDiff.charAt(0).toUpperCase() + rawDiff.slice(1).toLowerCase()) 
+    : 'Medium';
+
   return {
     ...p,
     id: p.id || p._id || p.slug,
+    title: p.title || p.statement || 'Coding Problem',
+    statement: p.statement || p.description || p.content || '',
+    difficulty,
     constraints: parseField(p.constraints),
-    examples: parseField(p.examples),
+    examples: examples || [],
     inputFormat: parseField(p.inputFormat),
     outputFormat: parseField(p.outputFormat),
     tags: parseField(p.tags),
@@ -130,7 +150,7 @@ export default function SolveProblem() {
       const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
       const isSlug = !isUUID;
 
-      // 0. Attempt to load from sessionStorage (if redirected from dashboard/admin)
+      // 0. Attempt to load from sessionStorage (if redirected from dashboard/admin/company problems)
       const sessionData = sessionStorage.getItem('current_problem');
       if (sessionData) {
         try {
@@ -139,18 +159,35 @@ export default function SolveProblem() {
           if (ids.includes(String(id))) {
             const norm = normalizeProblem(parsed);
             applyProblemAndCode(norm);
-            sessionStorage.removeItem('current_problem');
+            sessionStorage.setItem(`codesklii_problem_cache_${id}`, JSON.stringify(norm));
             return;
           }
         } catch (e) { /* ignore */ }
       }
 
-      // 1. Attempt to load from custom problems (admin_custom_problems)
+      // 0b. Attempt to load from cached problem key if page refreshed
+      const cachedData = sessionStorage.getItem(`codesklii_problem_cache_${id}`);
+      if (cachedData) {
+        try {
+          const parsed = JSON.parse(cachedData);
+          const norm = normalizeProblem(parsed);
+          applyProblemAndCode(norm);
+          return;
+        } catch (e) { /* ignore */ }
+      }
+
+      // 1. Attempt to load from custom problems (admin_custom_problems & admin_custom_interview_problems)
       const saved = localStorage.getItem("admin_custom_problems");
+      const savedInterview = localStorage.getItem("admin_custom_interview_problems");
+      const customProblems: any[] = [];
       if (saved) {
-        const customProblems = JSON.parse(saved);
-        const found = customProblems.find((p: any) => p._id === id || p.id === id || p.slug === id);
-        
+        try { customProblems.push(...JSON.parse(saved)); } catch (e) {}
+      }
+      if (savedInterview) {
+        try { customProblems.push(...JSON.parse(savedInterview)); } catch (e) {}
+      }
+      if (customProblems.length > 0) {
+        const found = customProblems.find((p: any) => String(p._id) === String(id) || String(p.id) === String(id) || String(p.slug) === String(id));
         if (found) {
           const norm = normalizeProblem(found);
           applyProblemAndCode(norm);
@@ -248,57 +285,129 @@ export default function SolveProblem() {
     return stripped.length < 10;
   };
 
-  // Simulate running code against a test case
-  const simulateTestCase = (testCase: any, idx: number): Promise<any> => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        let actualOutput = '';
-        let passed = false;
-        const expectedOutput = (testCase.expectedOutput || testCase.output || '').toString().trim();
-
-        try {
-          if (language.id === 'javascript') {
-            // Actually execute JavaScript in sandboxed Function scope
-            const logs: string[] = [];
-            const mockConsole = { log: (...args: any[]) => logs.push(args.map(String).join(' ')) };
-            const callCode = getCallCode(problem, testCase);
-            if (!callCode) {
-              // No harness: can't evaluate, show backend required
-              actualOutput = '[Backend required to run]';
-              passed = false;
-            } else {
-              const fn = new Function('console', code + '\n' + callCode);
-              fn(mockConsole);
-              actualOutput = logs.join('\n').trim();
-              passed = actualOutput === expectedOutput;
-            }
-          } else {
-            // C++, Java, Python: cannot run in browser
-            // Detect if user has not written anything meaningful
-            if (isUnchangedStarter(code)) {
-              actualOutput = '(no output â€” code is empty or unchanged)';
-              passed = false;
-            } else {
-              // User has written code but we can't verify without backend
-              actualOutput = '[Backend required to evaluate ' + language.name + ' code]';
-              passed = false;
-            }
+// Execute JavaScript safely in an isolated Web Worker with strict timeout to prevent browser freeze
+const executeJsSafely = (userCode: string, harnessCode: string, timeoutMs = 2000): Promise<{ output: string; error?: string }> => {
+  return new Promise((resolve) => {
+    let finished = false;
+    const workerScript = `
+      self.onmessage = function(e) {
+        var code = e.data.code;
+        var callCode = e.data.callCode;
+        var logs = [];
+        var mockConsole = {
+          log: function() {
+            var args = Array.prototype.slice.call(arguments);
+            logs.push(args.map(String).join(' '));
           }
-        } catch (e: any) {
-          actualOutput = `Runtime Error: ${e.message}`;
+        };
+        try {
+          var fn = new Function('console', code + '\\n' + callCode);
+          fn(mockConsole);
+          self.postMessage({ success: true, output: logs.join('\\n').trim() });
+        } catch (err) {
+          self.postMessage({ success: false, error: err.message });
+        }
+      };
+    `;
+    let blobUrl = '';
+    let worker = null;
+
+    try {
+      const blob = new Blob([workerScript], { type: 'application/javascript' });
+      blobUrl = URL.createObjectURL(blob);
+      worker = new Worker(blobUrl);
+    } catch {
+      try {
+        const logs = [];
+        const mockConsole = { log: (...args) => logs.push(args.map(String).join(' ')) };
+        const fn = new Function('console', userCode + '\n' + harnessCode);
+        fn(mockConsole);
+        resolve({ output: logs.join('\n').trim() });
+      } catch (e) {
+        resolve({ output: '', error: 'Runtime Error: ' + e.message });
+      }
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      if (finished) return;
+      finished = true;
+      if (worker) worker.terminate();
+      if (blobUrl) URL.revokeObjectURL(blobUrl);
+      resolve({ output: '', error: 'Time Limit Exceeded (> 2.0s). Infinite loop detected!' });
+    }, timeoutMs);
+
+    worker.onmessage = (e) => {
+      if (finished) return;
+      finished = true;
+      clearTimeout(timer);
+      if (worker) worker.terminate();
+      if (blobUrl) URL.revokeObjectURL(blobUrl);
+      if (e.data.success) {
+        resolve({ output: e.data.output });
+      } else {
+        resolve({ output: '', error: 'Runtime Error: ' + e.data.error });
+      }
+    };
+
+    worker.onerror = (err) => {
+      if (finished) return;
+      finished = true;
+      clearTimeout(timer);
+      if (worker) worker.terminate();
+      if (blobUrl) URL.revokeObjectURL(blobUrl);
+      resolve({ output: '', error: 'Runtime Error: ' + (err.message || 'Script error') });
+    };
+
+    worker.postMessage({ code: userCode, callCode: harnessCode });
+  });
+};
+
+  // Simulate running code against a test case with timeout protection
+  const simulateTestCase = async (testCase: any, idx: number): Promise<any> => {
+    await new Promise((r) => setTimeout(r, 80 * (idx + 1)));
+    let actualOutput = '';
+    let passed = false;
+    const expectedOutput = (testCase.expectedOutput || testCase.output || '').toString().trim();
+
+    try {
+      if (language.id === 'javascript') {
+        const callCode = getCallCode(problem, testCase);
+        if (!callCode) {
+          actualOutput = '[Backend required to run]';
+          passed = false;
+        } else {
+          const runRes = await executeJsSafely(code, callCode, 2000);
+          if (runRes.error) {
+            actualOutput = runRes.error;
+            passed = false;
+          } else {
+            actualOutput = runRes.output;
+            passed = actualOutput === expectedOutput;
+          }
+        }
+      } else {
+        if (isUnchangedStarter(code)) {
+          actualOutput = '(no output - code is empty or unchanged)';
+          passed = false;
+        } else {
+          actualOutput = '[Backend required to evaluate ' + language.name + ' code]';
           passed = false;
         }
+      }
+    } catch (e: any) {
+      actualOutput = `Runtime Error: ${e.message}`;
+      passed = false;
+    }
 
-        resolve({
-          idx,
-          input: testCase.input,
-          expected: expectedOutput,
-          actual: actualOutput,
-          passed,
-          hidden: testCase.hidden || testCase.isHidden || false
-        });
-      }, 150 * (idx + 1));
-    });
+    return {
+      idx,
+      input: testCase.input,
+      expected: expectedOutput,
+      actual: actualOutput,
+      passed,
+      hidden: testCase.hidden || testCase.isHidden || false
+    };
   };
 
   const getCallCode = (prob: any, tc: any) => {

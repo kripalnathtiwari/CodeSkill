@@ -75,8 +75,8 @@ export default function ProjectIdeas() {
               <span>Inspiration Hub</span>
             </div>
             
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-text-primary tracking-tight leading-tight mb-6">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-indigo-500">CodeSkill</span> Project Ideas
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-primary tracking-tight leading-tight mb-6">
+              CodeSkill Project Ideas
             </h1>
             
             <p className="text-text-secondary text-lg md:text-xl leading-relaxed max-w-2xl">

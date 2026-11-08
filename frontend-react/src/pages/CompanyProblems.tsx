@@ -799,6 +799,22 @@ export default function CompanyProblems() {
                                 codingQuestions.map((q, idx) => {
                                   const isSolved = solvedCodingProblems.has(String(q.id || q._id));
                                   const diff = (q.difficulty || 'MEDIUM').toUpperCase();
+                                  const problemTargetId = q.slug || q.id || q._id;
+                                  const solvePath = window.location.pathname.startsWith('/dashboard')
+                                    ? `/dashboard/solve/${problemTargetId}`
+                                    : `/solve/${problemTargetId}`;
+
+                                  const handleCacheProblem = () => {
+                                    try {
+                                      sessionStorage.setItem('current_problem', JSON.stringify({
+                                        ...q,
+                                        id: problemTargetId,
+                                        _id: q._id || problemTargetId
+                                      }));
+                                    } catch (err) {
+                                      console.warn('Could not cache problem to sessionStorage', err);
+                                    }
+                                  };
 
                                   return (
                                     <div
@@ -814,11 +830,15 @@ export default function CompanyProblems() {
                                         <div className="w-7 h-7 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-xs shrink-0">
                                           <Code2 className="w-3.5 h-3.5" />
                                         </div>
-                                        <span className={`font-bold text-sm sm:text-base truncate ${
-                                          isSolved ? 'text-text-primary dark:text-slate-300 line-through opacity-85' : 'text-text-primary dark:text-white'
-                                        }`}>
+                                        <Link
+                                          to={solvePath}
+                                          onClick={handleCacheProblem}
+                                          className={`font-bold text-sm sm:text-base truncate hover:text-primary transition-colors ${
+                                            isSolved ? 'text-text-primary dark:text-slate-300 opacity-90' : 'text-text-primary dark:text-white'
+                                          }`}
+                                        >
                                           {q.title || q.statement}
-                                        </span>
+                                        </Link>
                                       </div>
 
                                       <div className="flex items-center justify-between sm:justify-end space-x-4 w-full sm:w-auto shrink-0">
@@ -837,8 +857,9 @@ export default function CompanyProblems() {
                                           </div>
                                         ) : (
                                           <Link
-                                            to={`/solve-problem/${q.slug || q.id || q._id}`}
-                                            className="inline-flex items-center space-x-1.5 px-4 py-1.5 rounded-xl bg-primary hover:bg-primary/90 text-white text-xs font-bold shadow-sm transition-all shrink-0 group"
+                                            to={solvePath}
+                                            onClick={handleCacheProblem}
+                                            className="inline-flex items-center space-x-1.5 px-4 py-1.5 rounded-xl bg-primary hover:bg-primary/90 text-white text-xs font-bold shadow-sm transition-all shrink-0 group cursor-pointer"
                                           >
                                             <Code2 className="w-3.5 h-3.5" />
                                             <span>Solve</span>
@@ -1033,7 +1054,19 @@ export default function CompanyProblems() {
                                 <td className="px-6 py-4 text-center">
                                   {isCoding ? (
                                     <Link
-                                      to={`/solve/${q._id || q.id}`}
+                                      to={window.location.pathname.startsWith('/dashboard') ? `/dashboard/solve/${q.slug || q._id || q.id}` : `/solve/${q.slug || q._id || q.id}`}
+                                      onClick={() => {
+                                        try {
+                                          const pId = q.slug || q.id || q._id;
+                                          sessionStorage.setItem('current_problem', JSON.stringify({
+                                            ...q,
+                                            id: pId,
+                                            _id: q._id || pId
+                                          }));
+                                        } catch (err) {
+                                          console.warn('Could not cache current problem to sessionStorage', err);
+                                        }
+                                      }}
                                       className="inline-flex items-center justify-center bg-[#0066cc] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2 rounded-lg transition-colors shadow-sm"
                                     >
                                       Solve

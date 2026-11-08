@@ -548,10 +548,10 @@ export default function Problems() {
                   </div>
 
                   <div>
-                    <h3 className={`text-[20px] font-bold truncate leading-tight ${isActive ? 'text-primary' : 'text-text-primary dark:text-white'}`}>
+                    <h3 className={`text-base font-bold truncate leading-tight ${isActive ? 'text-primary' : 'text-text-primary dark:text-white'}`}>
                       {track.title}
                     </h3>
-                    <div className="flex items-center justify-between text-[18px] sm:text-[20px] font-bold text-text-muted mt-2">
+                    <div className="flex items-center justify-between text-xs text-text-muted font-medium mt-1.5">
                       <span>{trackSolved} / {trackProblems.length} Solved</span>
                       <span className="font-bold">{Math.round((trackSolved / trackProblems.length) * 100)}%</span>
                     </div>
@@ -578,10 +578,10 @@ export default function Problems() {
                     <Flame className="w-5 h-5" />
                   </div>
                   <div>
-                    <h4 className="text-[20px] font-bold text-text-primary dark:text-white">
+                    <h4 className="text-base sm:text-lg font-bold text-text-primary dark:text-white">
                       {currentTrack.title} Progress
                     </h4>
-                    <p className="text-[18px] sm:text-[20px] font-bold text-text-muted">
+                    <p className="text-sm font-normal text-text-muted mt-0.5">
                       {currentTrack.tagline}
                     </p>
                   </div>
@@ -591,7 +591,7 @@ export default function Problems() {
                   <span className="text-2xl font-black text-primary">
                     {trackStats.solved}
                   </span>
-                  <span className="text-[18px] sm:text-[20px] font-bold text-text-muted"> / {trackStats.total} Solved ({trackStats.percent}%)</span>
+                  <span className="text-sm font-medium text-text-muted"> / {trackStats.total} Solved ({trackStats.percent}%)</span>
                 </div>
               </div>
 
@@ -604,10 +604,10 @@ export default function Problems() {
               </div>
 
               {/* Helpful Hint */}
-              <div className="flex items-center justify-between text-[16px] sm:text-[18px] font-bold text-text-muted pt-1">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs sm:text-sm font-normal text-text-muted pt-1 gap-1">
                 <span>💡 Click any question to solve on its original platform. Check the tick box on the right once solved.</span>
                 {trackStats.percent === 100 && (
-                  <span className="text-emerald-500 font-bold">🎉 Level Complete!</span>
+                  <span className="text-emerald-500 font-bold shrink-0">🎉 Level Complete!</span>
                 )}
               </div>
             </div>
@@ -710,19 +710,19 @@ export default function Problems() {
                       <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
                         <Layers className="w-4 h-4" />
                       </div>
-                      <h2 className="text-[20px] font-bold text-text-primary dark:text-white">
+                      <h2 className="text-base font-bold text-text-primary dark:text-white">
                         {topic}
                       </h2>
-                      <span className="text-[18px] sm:text-[20px] text-text-muted font-bold">
+                      <span className="text-xs sm:text-sm text-text-muted font-normal">
                         ({questions.length} problems)
                       </span>
                     </div>
 
                     <div className="flex items-center gap-3 self-end sm:self-auto">
-                      <div className="text-[18px] sm:text-[20px] text-text-muted font-bold">
-                        <span className="text-primary font-black">{topicSolved}</span> / {questions.length} Solved
+                      <div className="text-xs sm:text-sm text-text-muted font-medium">
+                        <span className="text-primary font-bold">{topicSolved}</span> / {questions.length} Solved
                       </div>
-                      <div className="w-24 bg-slate-200 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                      <div className="w-24 bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
                         <div
                           className="bg-primary h-full rounded-full transition-all duration-300"
                           style={{ width: `${topicPercent}%` }}
@@ -740,29 +740,29 @@ export default function Problems() {
                         <div
                           key={q.id}
                           className={`p-4 sm:px-6 flex items-center justify-between gap-4 transition-colors hover:bg-background/60 dark:hover:bg-slate-900/40 ${
-                            isSolved ? 'bg-emerald-50/30 dark:bg-emerald-950/10' : ''
+                            isSolved ? 'bg-emerald-50/20 dark:bg-emerald-950/10' : ''
                           }`}
                         >
                           {/* Left: Index, Title, Snippet, Badges */}
-                          <div className="flex items-start sm:items-center gap-3.5 min-w-0 flex-1">
-                            <span className="text-[20px] font-bold text-text-muted w-7 text-center shrink-0 mt-0.5 sm:mt-0">
+                          <div className="flex items-start sm:items-center gap-3 min-w-0 flex-1">
+                            <span className="text-[16px] font-medium text-text-muted w-6 text-center shrink-0 mt-0.5 sm:mt-0">
                               {idx + 1}.
                             </span>
 
-                            <div className="min-w-0 flex-1 space-y-1.5">
+                            <div className="min-w-0 flex-1 space-y-1">
                               <div className="flex flex-wrap items-center gap-2.5">
                                 <a
                                   href={q.url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className={`text-[20px] font-bold hover:text-primary transition-colors flex items-center gap-1.5 group ${
-                                    isSolved ? 'text-text-primary dark:text-slate-300 line-through opacity-85' : 'text-text-primary dark:text-white'
+                                  className={`text-[16px] font-bold hover:text-primary transition-colors flex items-center gap-1.5 group ${
+                                    isSolved ? 'text-primary dark:text-emerald-400' : 'text-text-primary dark:text-white'
                                   }`}
                                   title="Open problem in new tab"
                                 >
                                   <span>{q.title}</span>
                                   {q.problemNumber && (
-                                    <span className="text-[18px] sm:text-[20px] text-text-muted font-bold">
+                                    <span className="text-[13px] text-text-muted font-normal">
                                       ({q.problemNumber})
                                     </span>
                                   )}
@@ -774,7 +774,7 @@ export default function Problems() {
                               </div>
 
                               {q.descriptionSnippet && (
-                                <p className="text-[18px] sm:text-[20px] font-bold text-text-secondary dark:text-slate-300 line-clamp-1 leading-relaxed">
+                                <p className="text-[14px] font-normal text-text-secondary dark:text-slate-400 line-clamp-1 leading-relaxed">
                                   {q.descriptionSnippet}
                                 </p>
                               )}

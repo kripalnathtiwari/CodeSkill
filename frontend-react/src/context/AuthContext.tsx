@@ -56,6 +56,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   useEffect(() => {
+    let isRedirecting = false;
     const interceptor = axios.interceptors.response.use(
       (response) => response,
       (error) => {
@@ -65,13 +66,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             (error.response.status === 403 &&
               error.response.data?.error === "Invalid or expired access token"))
         ) {
-          // Token expired or invalid, auto logout
+          const hadToken = Boolean(localStorage.getItem("accessToken"));
+          // Clear credentials
           localStorage.removeItem("accessToken");
           localStorage.removeItem("refreshToken");
           localStorage.removeItem("user");
           setToken(null);
           setUser(null);
-          navigate("/login");
+
+          // Only redirect once and avoid redirecting if already on /login or was an unauthenticated guest
+          if (hadToken && !isRedirecting && window.location.pathname !== "/login") {
+            isRedirecting = true;
+            navigate("/login");
+            setTimeout(() => { isRedirecting = false; }, 2000);
+          }
         }
         return Promise.reject(error);
       }

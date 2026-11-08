@@ -24,6 +24,8 @@ export default function Dashboard() {
   // Reuse existing logic to fetch stats for the new UI
   const { data: dsaStats = { total: 0 } } = useQuery({
     queryKey: ['dsaStats', user?.email],
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       if (!user?.email) return { total: 0 };
       const emailLower = user.email.toLowerCase().trim();
@@ -52,6 +54,8 @@ export default function Dashboard() {
 
   const { data: mcqStats = { attempted: 0, correct: 0, incorrect: 0, accuracy: 0, topicBreakdown: [] } } = useQuery({
     queryKey: ['mcqStats', user?.email],
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       if (!user?.email) return { attempted: 0, correct: 0, incorrect: 0, accuracy: 0, topicBreakdown: [] };
       const emailLower = user.email.toLowerCase().trim();
@@ -157,6 +161,8 @@ export default function Dashboard() {
 
   const { data: enrollmentsData = [] } = useQuery({
     queryKey: ['enrollmentsData', user?.email],
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       if (!user?.email) return [];
       const existingStr = localStorage.getItem("enrolledCourses");
@@ -172,6 +178,8 @@ export default function Dashboard() {
 
   const { data: testStats = { attempted: 0, scores: [] } } = useQuery({
     queryKey: ['testStats', user?.email],
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       if (!user?.email) return { attempted: 0, scores: [] };
       const allScores = JSON.parse(localStorage.getItem("all_student_scores") || "[]");
@@ -183,6 +191,8 @@ export default function Dashboard() {
 
   const { data: weeklyProgress = [] } = useQuery({
     queryKey: ['weeklyProgress', user?.email],
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       if (!user?.email) return [];
       const { getWeeklyProgress } = await import('../utils/progressTracker');
@@ -193,6 +203,8 @@ export default function Dashboard() {
 
   const { data: tagsProgress = [] } = useQuery({
     queryKey: ['tagsProgress', user?.email],
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       if (!user?.email) return [];
       const emailLower = user.email.toLowerCase().trim();
@@ -274,6 +286,8 @@ export default function Dashboard() {
 
   const { data: userRank = null } = useQuery({
     queryKey: ['userRank', user?.email],
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       if (!user?.email) return null;
       const allScores = JSON.parse(localStorage.getItem("all_student_scores") || "[]");

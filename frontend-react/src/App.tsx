@@ -116,7 +116,9 @@ function AppContent() {
               <Route path="/contests" element={<GuestRoute><Contests /></GuestRoute>} />
               <Route path="/take-test/:id" element={<ProtectedRoute><DashboardLayout><TakeTest /></DashboardLayout></ProtectedRoute>} />
               <Route path="/solve/:id" element={<ProtectedRoute><SolveProblem /></ProtectedRoute>} />
+              <Route path="/solve-problem/:id" element={<ProtectedRoute><SolveProblem /></ProtectedRoute>} />
               <Route path="/dashboard/solve/:id" element={<ProtectedRoute><DashboardLayout><SolveProblem /></DashboardLayout></ProtectedRoute>} />
+              <Route path="/dashboard/solve-problem/:id" element={<ProtectedRoute><DashboardLayout><SolveProblem /></DashboardLayout></ProtectedRoute>} />
               <Route path="/aptitude/:id" element={<ProtectedRoute><SolveAptitude /></ProtectedRoute>} />
               <Route path="/dashboard/aptitude/:id" element={<ProtectedRoute><DashboardLayout><SolveAptitude /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/aptitude/topic/:topic" element={<ProtectedRoute><DashboardLayout><AptitudeTopic /></DashboardLayout></ProtectedRoute>} />

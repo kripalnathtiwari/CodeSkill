@@ -205,10 +205,11 @@ export default function AptitudeManagement() {
       const dataToMap = response.data.data || response.data;
       const parsedProblems = dataToMap.map((p: any) => {
         let opts = p.options;
+        let depth = 0;
         try {
-          while (typeof opts === 'string') {
+          while (typeof opts === 'string' && depth++ < 5) {
             const parsed = JSON.parse(opts);
-            if (parsed === opts || typeof parsed !== 'string' && typeof parsed !== 'object') break;
+            if (parsed === opts || (!parsed && typeof parsed !== 'object')) break;
             opts = parsed;
           }
         } catch(e) {}

@@ -1,10 +1,8 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../config/db";
 import path from "path";
 import fs from "fs";
 import { uploadMedia, deleteMedia } from "../services/cloudinaryService";
-
-const prisma = new PrismaClient();
 
 // Get all global notes (for students to view)
 export const getMyNotes = async (req: Request, res: Response) => {

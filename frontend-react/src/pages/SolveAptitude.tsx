@@ -28,10 +28,11 @@ export default function SolveAptitude() {
   const parseOptions = (opts: any) => {
     if (!opts) return {};
     let parsed = opts;
+    let depth = 0;
     try {
-      while (typeof parsed === 'string') {
+      while (typeof parsed === 'string' && depth++ < 5) {
         const next = JSON.parse(parsed);
-        if (next === parsed || (typeof next !== 'string' && typeof next !== 'object')) break;
+        if (next === parsed || (!next && typeof next !== 'object')) break;
         parsed = next;
       }
     } catch (e) {}

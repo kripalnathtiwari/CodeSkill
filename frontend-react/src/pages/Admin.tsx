@@ -23,7 +23,8 @@ import {
   Lightbulb,
   StickyNote,
   Sun,
-  Moon
+  Moon,
+  MessageSquare
 } from "lucide-react";
 
 import DashboardOverview from "./admin/DashboardOverview";
@@ -44,6 +45,7 @@ import OtherPracticeManagement from "./admin/OtherPracticeManagement";
 import ProjectIdeaManagement from "./admin/ProjectIdeaManagement";
 import NotesManagement from "./admin/NotesManagement";
 import CollegeDataManagement from "./admin/CollegeDataManagement";
+import MentorshipManagement from "./admin/MentorshipManagement";
 
 export default function AdminDashboard() {
   const { user, isLoading, logout } = useAuth();
@@ -85,6 +87,7 @@ export default function AdminDashboard() {
     { id: "cv_management", label: "CV Management", icon: FileText, roles: ["ADMIN"] },
     { id: "publish_job", label: "Publish Jobs", icon: Megaphone, roles: ["ADMIN"] },
     { id: "project_ideas", label: "Project Ideas", icon: Lightbulb, roles: ["ADMIN"] },
+    { id: "mentorship", label: "Mentorship", icon: Users, roles: ["ADMIN"] },
     { id: "other_practice", label: "More Practice", icon: Target, roles: ["ADMIN"] },
     { id: "user_activity", label: "User Activity", icon: TrendingUp, roles: ["ADMIN"] },
     { id: "activity", label: "Activity Logs", icon: Activity, roles: ["ADMIN"] },
@@ -171,6 +174,7 @@ export default function AdminDashboard() {
         { activeTab === "database" && <DatabaseManagement />}
         { activeTab === "other_practice" && <OtherPracticeManagement />}
         { activeTab === "project_ideas" && <ProjectIdeaManagement />}
+        { activeTab === "mentorship" && <MentorshipManagement />}
         { activeTab === "notes_management" && <NotesManagement />}
         { activeTab === "college_data" && <CollegeDataManagement />}
       </main>

@@ -1,10 +1,11 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Clock, CheckCircle2, Users, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { getCoursesByCategory } from "../../data/coursesData";
 
 export default function FeaturedCourses() {
+  const navigate = useNavigate();
   return (
     <section className="py-20 px-6 w-full z-10 relative">
       <motion.div
@@ -33,12 +34,13 @@ export default function FeaturedCourses() {
           {getCoursesByCategory("featured").map((course, index) => (
             <motion.div
               key={course.id}
+              onClick={() => navigate(`/course/${course.id}`)}
               variants={{
                 hidden: { opacity: 0, x: index % 2 === 0 ? -100 : 100 },
                 visible: { opacity: 1, x: 0, transition: { duration: 0.8, type: "spring", bounce: 0.4 } }
               }}
               whileHover={{ y: -8 }}
-              className="group bg-surface dark:bg-background rounded-2xl border border-border dark:border-border hover:border-primary/50 transition-all flex flex-col shadow-sm hover:shadow-2xl overflow-hidden"
+              className="group bg-surface dark:bg-background rounded-2xl border border-border dark:border-border hover:border-primary/50 transition-all flex flex-col shadow-sm hover:shadow-2xl overflow-hidden cursor-pointer"
             >
               {/* Course Image */}
               <div className="w-full aspect-video overflow-hidden relative bg-slate-100 dark:bg-slate-800">
@@ -118,12 +120,12 @@ export default function FeaturedCourses() {
                     </div>
                   )}
 
-                  <Link to={`/course/${course.id}`} className="block mt-4">
-                    <button className="w-full py-2.5 rounded-lg border border-border dark:border-border text-text-primary dark:text-text-secondary font-bold hover:bg-primary hover:text-text-inverse dark:hover:bg-primary hover:border-primary transition-all duration-300 flex items-center justify-center space-x-2 group-hover:shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                  <div className="mt-4">
+                    <div className="w-full py-2.5 rounded-lg border border-border dark:border-border text-text-primary dark:text-text-secondary font-bold group-hover:bg-primary group-hover:text-text-inverse dark:group-hover:bg-primary group-hover:border-primary transition-all duration-300 flex items-center justify-center space-x-2 group-hover:shadow-[0_0_15px_rgba(16,185,129,0.3)]">
                       <span>Explore Syllabus</span>
                       <ArrowRight className="h-4 w-4" />
-                    </button>
-                  </Link>
+                    </div>
+                  </div>
                 </div>
               </div>
             </motion.div>

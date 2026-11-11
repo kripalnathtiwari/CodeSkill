@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { CheckCircle2, Calendar, Clock, ChevronDown } from "lucide-react";
+import { CheckCircle2, Calendar, Clock, ChevronDown, User, Star, Briefcase, Award } from "lucide-react";
 import { getCourseById } from "../data/coursesData";
 import { useAuth } from "../context/AuthContext";
 
@@ -34,6 +34,7 @@ export default function CourseRegistration() {
     }
   }, [id, navigate, user]);
 
+  const [showMentor, setShowMentor] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -183,21 +184,21 @@ export default function CourseRegistration() {
 
             <div>
               <label className="block text-sm font-medium text-text-secondary mb-2">
-                Graduation Year <span className="text-red-500">*</span>
+                Graduation Year <span className="text-text-muted text-xs font-normal">(Optional)</span>
               </label>
               <input 
                 type="text" 
                 name="gradYear"
                 value={formData.gradYear}
                 onChange={handleChange}
-                required
+                placeholder="e.g. 2026 (Optional)"
                 className="w-full bg-background border border-border rounded-lg px-4 py-3 text-text-primary focus:outline-none focus:border-primary transition-colors"
               />
             </div>
 
             <button 
               type="submit"
-              className="w-full py-3.5 mt-4 bg-blue-700 hover:bg-primary text-text-primary dark:text-text-inverse font-bold rounded-lg transition-colors shadow-lg"
+              className="w-full py-3.5 mt-4 bg-primary hover:bg-primary-hover text-white font-bold rounded-lg transition-colors shadow-lg shadow-primary/25 cursor-pointer"
             >
               Save & Continue
             </button>
@@ -213,7 +214,7 @@ export default function CourseRegistration() {
           <div className="bg-surface rounded-2xl border border-border/50 p-8 shadow-2xl">
             <div className="flex items-center justify-between mb-2">
               <h2 className="text-2xl font-bold text-text-primary">Batches Available</h2>
-              <span className="bg-blue-900/50 text-primary text-xs px-3 py-1 rounded-full font-semibold border border-blue-800/50">
+              <span className="bg-emerald-500/10 text-primary dark:text-primary text-xs px-3 py-1 rounded-full font-bold border border-primary/30">
                 1 option
               </span>
             </div>
@@ -244,10 +245,69 @@ export default function CourseRegistration() {
                 </div>
               </div>
               
-              <div className="bg-slate-50 hover:bg-slate-100 dark:bg-background dark:hover:bg-surface px-6 py-4 flex justify-between items-center cursor-pointer transition-colors border-t border-border/50">
-                <span className="text-primary font-semibold text-sm">View Mentor</span>
-                <ChevronDown className="w-4 h-4 text-primary" />
+              <div 
+                onClick={() => setShowMentor(prev => !prev)}
+                className="bg-slate-50 hover:bg-slate-100 dark:bg-background dark:hover:bg-surface px-6 py-4 flex justify-between items-center cursor-pointer transition-colors border-t border-border/50 select-none"
+              >
+                <span className="text-primary font-bold text-sm">View Mentor Details</span>
+                <ChevronDown className={`w-4 h-4 text-primary transition-transform duration-200 ${showMentor ? "rotate-180" : ""}`} />
               </div>
+
+              {/* Mentor Details Collapsible */}
+              {showMentor && (
+                <div className="p-6 bg-slate-50/70 dark:bg-slate-900/40 border-t border-border/50 space-y-4 animate-in fade-in duration-200">
+                  <div className="flex items-center space-x-4">
+                    {course?.trainer?.image ? (
+                      <img 
+                        src={course.trainer.image} 
+                        alt={course.trainer.name || "Mentor"} 
+                        className="w-14 h-14 rounded-full object-cover border-2 border-primary shrink-0"
+                      />
+                    ) : (
+                      <div className="w-14 h-14 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xl shrink-0">
+                        <User className="w-7 h-7" />
+                      </div>
+                    )}
+                    <div>
+                      <h4 className="font-bold text-text-primary text-base">
+                        {course?.trainer?.name || "Senior Tech Architect"}
+                      </h4>
+                      <p className="text-xs text-primary font-semibold">
+                        {course?.trainer?.role || "Lead Instructor & Mentor"}
+                      </p>
+                      {course?.trainer?.company && (
+                        <div className="flex items-center text-xs text-text-muted mt-0.5">
+                          <Briefcase className="w-3.5 h-3.5 mr-1 text-text-muted" />
+                          <span>{course.trainer.company}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {course?.trainer?.bio && (
+                    <p className="text-xs text-text-secondary leading-relaxed bg-background/80 p-3 rounded-lg border border-border/50">
+                      {course.trainer.bio}
+                    </p>
+                  )}
+
+                  <div className="grid grid-cols-2 gap-2 text-xs pt-1">
+                    <div className="flex items-center space-x-2 bg-background p-2.5 rounded-lg border border-border/50">
+                      <Star className="w-4 h-4 text-amber-500 fill-amber-400 shrink-0" />
+                      <div>
+                        <div className="font-bold text-text-primary">{course?.trainer?.rating || "4.9"} / 5.0</div>
+                        <div className="text-[10px] text-text-muted">Rating</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2 bg-background p-2.5 rounded-lg border border-border/50">
+                      <Award className="w-4 h-4 text-primary shrink-0" />
+                      <div>
+                        <div className="font-bold text-text-primary">{course?.trainer?.experience || "8+ Years"}</div>
+                        <div className="text-[10px] text-text-muted">Experience</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
             
           </div>

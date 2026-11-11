@@ -108,100 +108,106 @@ export default function CoursesTraining() {
 
         {/* Courses Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredCourses.map((course: any) => (
-            <div key={course.id} className="bg-surface dark:bg-[#111827] rounded-2xl border border-border dark:border-border overflow-hidden hover:border-primary/50 hover:shadow-xl transition-all group flex flex-col">
-              
-              {/* Course Image */}
-              <div className="w-full h-48 relative overflow-hidden bg-surface-secondary dark:bg-background">
-                {course.image ? (
-                  <img 
-                    src={course.image} 
-                    alt={course.title} 
-                    loading="lazy"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-90"
-                  />
-                ) : (
-                  <div className={`w-full h-full bg-gradient-to-br ${course.color} opacity-80`} />
-                )}
-                
-                <div className="absolute top-4 left-4">
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold shadow-lg ${
-                    course.category === 'summer' 
-                      ? 'bg-amber-500 text-text-inverse' 
-                      : 'bg-primary text-text-inverse'
-                  }`}>
-                    {course.category === 'summer' ? 'Internship' : 'Course'}
-                  </span>
-                </div>
-                <div className="absolute top-4 right-4">
-                   <div className="w-10 h-10 rounded-full bg-black/50 backdrop-blur flex items-center justify-center">
-                     <course.icon className="w-5 h-5 text-text-inverse" />
-                   </div>
-                </div>
-              </div>
-
-              {/* Course Info */}
-              <div className="p-6 flex flex-col flex-1">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-2xl font-bold text-text-primary dark:text-text-primary group-hover:text-primary transition-colors line-clamp-2">
-                    {course.title}
-                  </h3>
-                </div>
-                
-                <p className="text-base md:text-lg text-text-secondary dark:text-text-muted mb-6 flex-1 line-clamp-3">
-                  {course.description}
-                </p>
-                
-                <div className="space-y-4 mt-auto">
-                  <div className="flex flex-wrap gap-2">
-                    {(Array.isArray(course.tags) ? course.tags.slice(0, 3) : []).map((tag: string) => (
-                      <span key={tag} className="bg-surface-secondary dark:bg-slate-800 text-text-secondary dark:text-text-secondary text-xs px-2 py-1 rounded-md uppercase font-semibold tracking-wider">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Trainer Info */}
-                  {(course.trainer?.name || course.trainerName) && (
-                    <div className="flex items-center space-x-2.5 pt-3 border-t border-slate-100 dark:border-border/60">
-                      <div className="w-8 h-8 rounded-full overflow-hidden bg-primary/10 border border-primary/20 shrink-0">
-                        <img 
-                          src={course.trainer?.image || course.trainerImage || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100"} 
-                          alt="" 
-                          className="w-full h-full object-cover" 
-                        />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs font-bold text-text-primary dark:text-text-primary truncate">
-                          {course.trainer?.name || course.trainerName}
-                        </p>
-                        <p className="text-[11px] text-text-muted dark:text-text-muted truncate">
-                          {course.trainer?.role || course.trainerRole || "Course Instructor"}
-                        </p>
-                      </div>
-                    </div>
+          {filteredCourses.map((course: any) => {
+            const coursePath = isDashboard ? `/dashboard/course/${course.id}` : `/course/${course.id}`;
+            return (
+              <Link 
+                key={course.id} 
+                to={coursePath}
+                className="bg-surface dark:bg-[#111827] rounded-2xl border border-border dark:border-border overflow-hidden hover:border-primary/50 hover:shadow-xl transition-all group flex flex-col cursor-pointer block text-inherit no-underline"
+              >
+                {/* Course Image */}
+                <div className="w-full h-48 relative overflow-hidden bg-surface-secondary dark:bg-background">
+                  {course.image ? (
+                    <img 
+                      src={course.image} 
+                      alt={course.title} 
+                      loading="lazy"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-90"
+                    />
+                  ) : (
+                    <div className={`w-full h-full bg-gradient-to-br ${course.color} opacity-80`} />
                   )}
                   
-                  <div className="flex items-center justify-between text-base pt-3 border-t border-slate-100 dark:border-border/60 text-text-muted dark:text-text-muted font-medium">
-                    <div className="flex items-center space-x-1.5">
-                      <Clock className="h-5 w-5" />
-                      <span>{course.duration}</span>
-                    </div>
-                    <div className="flex items-center space-x-1.5 text-primary dark:text-primary font-bold">
-                      <span>{course.price}</span>
-                    </div>
+                  <div className="absolute top-4 left-4">
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold shadow-lg ${
+                      course.category === 'summer' 
+                        ? 'bg-amber-500 text-text-inverse' 
+                        : 'bg-primary text-text-inverse'
+                    }`}>
+                      {course.category === 'summer' ? 'Internship' : 'Course'}
+                    </span>
+                  </div>
+                  <div className="absolute top-4 right-4">
+                     <div className="w-10 h-10 rounded-full bg-black/50 backdrop-blur flex items-center justify-center">
+                       <course.icon className="w-5 h-5 text-text-inverse" />
+                     </div>
+                  </div>
+                </div>
+
+                {/* Course Info */}
+                <div className="p-6 flex flex-col flex-1">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-2xl font-bold text-text-primary dark:text-text-primary group-hover:text-primary transition-colors line-clamp-2">
+                      {course.title}
+                    </h3>
                   </div>
                   
-                  <Link to={isDashboard ? `/dashboard/course/${course.id}` : `/course/${course.id}`} className="block pt-2">
-                    <button className="w-full py-3 rounded-xl border-2 border-border dark:border-border text-text-primary dark:text-text-primary font-bold hover:bg-primary hover:border-primary hover:text-text-inverse transition-colors flex items-center justify-center space-x-2">
-                      <span>View Details</span>
-                      <ChevronRight className="h-4 w-4" />
-                    </button>
-                  </Link>
+                  <p className="text-base md:text-lg text-text-secondary dark:text-text-muted mb-6 flex-1 line-clamp-3">
+                    {course.description}
+                  </p>
+                  
+                  <div className="space-y-4 mt-auto">
+                    <div className="flex flex-wrap gap-2">
+                      {(Array.isArray(course.tags) ? course.tags.slice(0, 3) : []).map((tag: string) => (
+                        <span key={tag} className="bg-surface-secondary dark:bg-slate-800 text-text-secondary dark:text-text-secondary text-xs px-2 py-1 rounded-md uppercase font-semibold tracking-wider">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* Trainer Info */}
+                    {(course.trainer?.name || course.trainerName) && (
+                      <div className="flex items-center space-x-2.5 pt-3 border-t border-slate-100 dark:border-border/60">
+                        <div className="w-8 h-8 rounded-full overflow-hidden bg-primary/10 border border-primary/20 shrink-0">
+                          <img 
+                            src={course.trainer?.image || course.trainerImage || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100"} 
+                            alt="" 
+                            className="w-full h-full object-cover" 
+                          />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-bold text-text-primary dark:text-text-primary truncate">
+                            {course.trainer?.name || course.trainerName}
+                          </p>
+                          <p className="text-[11px] text-text-muted dark:text-text-muted truncate">
+                            {course.trainer?.role || course.trainerRole || "Course Instructor"}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div className="flex items-center justify-between text-base pt-3 border-t border-slate-100 dark:border-border/60 text-text-muted dark:text-text-muted font-medium">
+                      <div className="flex items-center space-x-1.5">
+                        <Clock className="h-5 w-5" />
+                        <span>{course.duration}</span>
+                      </div>
+                      <div className="flex items-center space-x-1.5 text-primary dark:text-primary font-bold">
+                        <span>{course.price}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="block pt-2">
+                      <div className="w-full py-3 rounded-xl border-2 border-border dark:border-border text-text-primary dark:text-text-primary font-bold group-hover:bg-primary group-hover:border-primary group-hover:text-text-inverse transition-colors flex items-center justify-center space-x-2">
+                        <span>View Details</span>
+                        <ChevronRight className="h-4 w-4" />
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
+              </Link>
+            );
+          })}
         </div>
         
         {filteredCourses.length === 0 && (

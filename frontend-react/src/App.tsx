@@ -49,6 +49,8 @@ const TestSeries = lazy(() => import('./pages/TestSeries'));
 const OurProduct = lazy(() => import('./pages/OurProduct'));
 const ProjectIdeas = lazy(() => import('./pages/ProjectIdeas'));
 const ProjectIdeaDetail = lazy(() => import('./pages/ProjectIdeaDetail'));
+const LearningPath = lazy(() => import('./pages/LearningPath'));
+const MockInterview = lazy(() => import('./pages/MockInterview'));
 const Leaderboard = lazy(() => import('./pages/Leaderboard'));
 
 import ErrorBoundary from './components/ErrorBoundary';
@@ -81,6 +83,7 @@ function AppContent() {
               <Route path="/change-password" element={<GuestRoute><ChangePassword /></GuestRoute>} />
               <Route path="/sandbox" element={<ProtectedRoute><Sandbox /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/dashboard/learning-path" element={<ProtectedRoute><DashboardLayout><LearningPath /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/courses" element={<ProtectedRoute><DashboardLayout><CoursesTraining /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/practice" element={<ProtectedRoute><DashboardLayout><Problems /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/practice/:tag" element={<ProtectedRoute><DashboardLayout><TagProblems /></DashboardLayout></ProtectedRoute>} />
@@ -91,6 +94,7 @@ function AppContent() {
               <Route path="/dashboard/compiler" element={<ProtectedRoute><DashboardLayout><Sandbox /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/notes" element={<ProtectedRoute><DashboardLayout><Notes /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/career" element={<ProtectedRoute><DashboardLayout><Jobs /></DashboardLayout></ProtectedRoute>} />
+              <Route path="/dashboard/career/mock-interview" element={<ProtectedRoute><DashboardLayout><MockInterview /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/career/resume-maker" element={<ProtectedRoute><DashboardLayout><CVBuilder /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/career/resume-analysis" element={<ProtectedRoute><DashboardLayout><ATSChecker /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/projects" element={<ProtectedRoute><DashboardLayout><ProjectIdeas /></DashboardLayout></ProtectedRoute>} />

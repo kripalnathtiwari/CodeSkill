@@ -20,7 +20,9 @@ import {
   Terminal,
   Building,
   BrainCircuit,
-  LayoutGrid
+  LayoutGrid,
+  Compass,
+  Video
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -28,23 +30,27 @@ const getNavItems = (userRole?: string) => {
   const items: any[] = [
     { isHeader: true, label: 'Menu' },
     { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { path: '/dashboard/learning-path', label: 'Learning Path', icon: Compass },
     { path: '/dashboard/courses', label: 'Courses', icon: BookOpen },
     { path: '/dashboard/my-courses', label: 'Enrolled Courses', icon: GraduationCap },
     
     { isHeader: true, label: 'Practice' },
     { path: '/dashboard/practice', label: 'DSA Practice', icon: Terminal },
-    { path: '/dashboard/practice/company-problems', label: 'Company Interview Prep', icon: Building },
+    { path: '/dashboard/tests', label: 'Tests', icon: Trophy },
+    { path: '/dashboard/compiler', label: 'Compiler', icon: Code2 },
     { path: '/dashboard/practice/aptitude', label: 'Aptitude Question', icon: BrainCircuit },
     { path: '/dashboard/practice/other', label: 'More Practice', icon: LayoutGrid },
     
-    { isHeader: true, label: 'More' },
-    { path: '/dashboard/tests', label: 'Tests', icon: Trophy },
-    { path: '/dashboard/compiler', label: 'Compiler', icon: Code2 },
-    { path: '/dashboard/notes', label: 'Notes', icon: StickyNote },
+    { isHeader: true, label: 'Career Development' },
+    { path: '/dashboard/practice/company-problems', label: 'Company Interview Prep', icon: Building },
+    { path: '/dashboard/career/mock-interview', label: 'Mock Interview', icon: Video },
     { path: '/dashboard/career', label: 'Career', icon: Briefcase },
     { path: '/dashboard/career/resume-maker', label: 'Resume Maker', icon: FileEdit },
     { path: '/dashboard/career/resume-analysis', label: 'Resume Analysis', icon: ScanSearch },
     { path: '/dashboard/projects', label: 'Project Ideas', icon: Lightbulb },
+    
+    { isHeader: true, label: 'More' },
+    { path: '/dashboard/notes', label: 'Notes', icon: StickyNote },
   ];
 
   if (['ADMIN', 'INSTRUCTOR', 'COLLEGE_ADMIN'].includes(userRole || '')) {

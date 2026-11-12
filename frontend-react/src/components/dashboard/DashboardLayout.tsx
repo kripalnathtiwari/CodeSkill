@@ -37,7 +37,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       )}
 
       {/* Unified Sidebar */}
-      <div className={`fixed inset-y-0 left-0 transform ${isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:relative lg:translate-x-0 z-50 transition-transform duration-300 ease-in-out`}>
+      <div className={`fixed inset-y-0 left-0 transform ${isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:relative lg:translate-x-0 z-50 transition-transform duration-300 ease-in-out shrink-0`}>
         <div className="absolute top-4 right-4 lg:hidden z-[60]">
           <button onClick={() => setIsMobileSidebarOpen(false)} className="p-2 text-text-secondary bg-background rounded-lg border border-border shadow-sm">
             <X className="h-5 w-5" />

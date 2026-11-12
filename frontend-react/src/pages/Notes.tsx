@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Download, Clock, StickyNote, FileText, Loader } from 'lucide-react';
+import { Search, Download, StickyNote, FileText, Loader } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
@@ -75,11 +75,6 @@ export default function Notes() {
     (n.content && n.content.toLowerCase().includes(searchQuery.toLowerCase())) ||
     (n.courseName && n.courseName.toLowerCase().includes(searchQuery.toLowerCase()))
   );
-
-  const formatDate = (dateString: string) => {
-    const d = new Date(dateString);
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  };
 
   return (
     <div className="flex-1 p-6 md:p-8 w-full max-w-7xl mx-auto space-y-8">
@@ -177,7 +172,7 @@ export default function Notes() {
                 )}
 
                 {note.pdfUrl && (
-                  <div className="mt-5 flex gap-2 w-full">
+                <div className="mt-5 flex gap-2 w-full">
                     <button
                       onClick={async (e) => {
                         e.preventDefault();
@@ -206,10 +201,6 @@ export default function Notes() {
                   </div>
                 )}
 
-                <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center text-[13px] text-slate-500 dark:text-slate-400 font-medium">
-                  <Clock className="w-3.5 h-3.5 mr-1.5 opacity-70" />
-                  {formatDate(note.updatedAt)}
-                </div>
               </div>
             </motion.div>
           ))}

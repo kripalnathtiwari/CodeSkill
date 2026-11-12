@@ -101,6 +101,7 @@ function AppContent() {
               <Route path="/dashboard/projects/:id" element={<ProtectedRoute><DashboardLayout><ProjectIdeaDetail /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
               <Route path="/dashboard/edit-profile" element={<ProtectedRoute><DashboardLayout><EditProfile /></DashboardLayout></ProtectedRoute>} />
+              <Route path="/dashboard/change-password" element={<ProtectedRoute><DashboardLayout><ChangePassword /></DashboardLayout></ProtectedRoute>} />
               <Route path="/my-courses" element={<ProtectedRoute><MyCourses /></ProtectedRoute>} />
               <Route path="/dashboard/my-courses" element={<ProtectedRoute><DashboardLayout><MyCourses /></DashboardLayout></ProtectedRoute>} />
               <Route path="/problems" element={<GuestRoute><Problems /></GuestRoute>} />

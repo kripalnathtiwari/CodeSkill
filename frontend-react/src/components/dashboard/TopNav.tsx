@@ -83,7 +83,7 @@ export default function TopNav({ isDark, toggleTheme }: TopNavProps) {
                   <Settings className="w-4 h-4 mr-3" />
                   Edit Profile
                 </Link>
-                <Link to="/change-password" onClick={() => setIsProfileOpen(false)} className="flex items-center px-4 py-2 text-sm text-text-primary hover:bg-background hover:text-primary transition-colors">
+                <Link to="/dashboard/change-password" onClick={() => setIsProfileOpen(false)} className="flex items-center px-4 py-2 text-sm text-text-primary hover:bg-background hover:text-primary transition-colors">
                   <Lock className="w-4 h-4 mr-3" />
                   Change Password
                 </Link>

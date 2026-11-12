@@ -52,6 +52,7 @@ const ProjectIdeaDetail = lazy(() => import('./pages/ProjectIdeaDetail'));
 const LearningPath = lazy(() => import('./pages/LearningPath'));
 const MockInterview = lazy(() => import('./pages/MockInterview'));
 const Leaderboard = lazy(() => import('./pages/Leaderboard'));
+const BeAMentor = lazy(() => import('./pages/BeAMentor'));
 
 import ErrorBoundary from './components/ErrorBoundary';
 
@@ -139,6 +140,7 @@ function AppContent() {
               <Route path="/ats-checker" element={<GuestRoute><ATSChecker /></GuestRoute>} />
               <Route path="/jobs" element={<GuestRoute><Jobs /></GuestRoute>} />
               <Route path="/our-product" element={<GuestRoute><OurProduct /></GuestRoute>} />
+              <Route path="/be-a-mentor" element={<BeAMentor />} />
             </Routes>
           </main>
 

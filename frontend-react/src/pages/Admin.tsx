@@ -24,7 +24,8 @@ import {
   StickyNote,
   Sun,
   Moon,
-  MessageSquare
+  MessageSquare,
+  UserCheck
 } from "lucide-react";
 
 import DashboardOverview from "./admin/DashboardOverview";
@@ -46,6 +47,7 @@ import ProjectIdeaManagement from "./admin/ProjectIdeaManagement";
 import NotesManagement from "./admin/NotesManagement";
 import CollegeDataManagement from "./admin/CollegeDataManagement";
 import MentorshipManagement from "./admin/MentorshipManagement";
+import MentorRequestManagement from "./admin/MentorRequestManagement";
 
 export default function AdminDashboard() {
   const { user, isLoading, logout } = useAuth();
@@ -88,6 +90,7 @@ export default function AdminDashboard() {
     { id: "publish_job", label: "Publish Jobs", icon: Megaphone, roles: ["ADMIN"] },
     { id: "project_ideas", label: "Project Ideas", icon: Lightbulb, roles: ["ADMIN"] },
     { id: "mentorship", label: "Mentorship", icon: Users, roles: ["ADMIN"] },
+    { id: "mentor_requests", label: "Mentor Requests", icon: UserCheck, roles: ["ADMIN"] },
     { id: "other_practice", label: "More Practice", icon: Target, roles: ["ADMIN"] },
     { id: "user_activity", label: "User Activity", icon: TrendingUp, roles: ["ADMIN"] },
     { id: "activity", label: "Activity Logs", icon: Activity, roles: ["ADMIN"] },
@@ -175,6 +178,7 @@ export default function AdminDashboard() {
         { activeTab === "other_practice" && <OtherPracticeManagement />}
         { activeTab === "project_ideas" && <ProjectIdeaManagement />}
         { activeTab === "mentorship" && <MentorshipManagement />}
+        { activeTab === "mentor_requests" && <MentorRequestManagement />}
         { activeTab === "notes_management" && <NotesManagement />}
         { activeTab === "college_data" && <CollegeDataManagement />}
       </main>

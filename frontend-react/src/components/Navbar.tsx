@@ -152,6 +152,9 @@ export default function Navbar() {
         <Link to="/about" className={`hover:text-primary transition-colors flex items-center space-x-1 uppercase ${activeSection === '/about' ? 'text-primary border-b-2 border-primary' : ''}`}>
           <span>About Us</span>
         </Link>
+        <Link to="/be-a-mentor" className={`hover:text-primary transition-colors flex items-center space-x-1 uppercase ${activeSection === '/be-a-mentor' ? 'text-primary border-b-2 border-primary' : ''}`}>
+          <span>Be a Mentor</span>
+        </Link>
 
         {user && (
           <>
@@ -365,6 +368,9 @@ export default function Navbar() {
           </Link>
           <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className={`py-3 px-4 rounded-lg flex items-center space-x-2 uppercase ${activeSection === '/about' ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary text-text-primary dark:text-text-secondary'}`}>
             <span>About Us</span>
+          </Link>
+          <Link to="/be-a-mentor" onClick={() => setIsMobileMenuOpen(false)} className={`py-3 px-4 rounded-lg flex items-center space-x-2 uppercase ${activeSection === '/be-a-mentor' ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-background dark:hover:bg-slate-800/50 hover:text-primary text-text-primary dark:text-text-secondary'}`}>
+            <span>Be a Mentor</span>
           </Link>
 
           {user && (

@@ -4,7 +4,7 @@ import {
   Search, BrainCircuit, CheckCircle2, ChevronRight, Sparkles,
   Trophy, Target, BookOpen, Layers, ArrowRight, TrendingUp,
   LayoutGrid, List, Building2, RotateCcw, Calculator, Compass,
-  Zap, Award, Check
+  Zap, Award, Check, CheckSquare
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
@@ -55,6 +55,17 @@ export default function AptitudePage() {
   const [topicCounts, setTopicCounts] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [solvedIds, setSolvedIds] = useState<Set<string>>(new Set());
+  const [mcqAnalytics, setMcqAnalytics] = useState<{
+    attempted: number;
+    correct: number;
+    incorrect: number;
+    accuracy: number;
+  }>({
+    attempted: 0,
+    correct: 0,
+    incorrect: 0,
+    accuracy: 0
+  });
 
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 9;
@@ -89,19 +100,74 @@ export default function AptitudePage() {
 
     fetchAptitudeData();
 
-    // Fetch Solved Status for user
+    // Fetch Solved Status and MCQ Analytics for user
     if (user?.email) {
+      const emailLower = user.email.toLowerCase().trim();
+      let attempted = 0;
+      let correct = 0;
+      const solved = new Set<string>();
+
       try {
-        const key = `aptitude_analytics_${user.email.toLowerCase()}`;
-        const saved = JSON.parse(localStorage.getItem(key) || "[]");
-        const solved = new Set<string>();
-        saved.forEach((q: any) => {
-          if (q.correct) solved.add(String(q.id || q._id));
-        });
-        setSolvedIds(solved);
+        const key = `aptitude_analytics_${emailLower}`;
+        const raw = localStorage.getItem(key) || localStorage.getItem(`aptitude_analytics_${user.email}`);
+        if (raw) {
+          const list = JSON.parse(raw);
+          if (Array.isArray(list)) {
+            list.forEach((item: any) => {
+              attempted++;
+              const isCorrect = Boolean(item.correct);
+              if (isCorrect) {
+                correct++;
+                solved.add(String(item.id || item._id));
+              }
+            });
+          }
+        }
       } catch (e) {
         console.error("[Aptitude Debug] Error reading analytics", e);
       }
+
+      // Also check other practice analytics
+      try {
+        const rawOther = localStorage.getItem(`other_practice_analytics_${emailLower}`) || localStorage.getItem(`other_practice_analytics_${user.email}`);
+        if (rawOther) {
+          const list = JSON.parse(rawOther);
+          if (Array.isArray(list)) {
+            list.forEach((item: any) => {
+              attempted++;
+              if (item.correct) correct++;
+            });
+          }
+        }
+      } catch (e) {}
+
+      // Also check test scores
+      try {
+        const allScores = JSON.parse(localStorage.getItem("all_student_scores") || "[]");
+        const myScores = allScores.filter((s: any) => 
+          s.studentEmail?.toLowerCase().trim() === emailLower ||
+          s.studentEmail?.toLowerCase().trim() === user.email?.toLowerCase().trim()
+        );
+        myScores.forEach((s: any) => {
+          const totalQ = Number(s.totalQuestions) || 0;
+          const score = Number(s.score) || 0;
+          if (totalQ > 0) {
+            attempted += totalQ;
+            correct += Math.min(score, totalQ);
+          }
+        });
+      } catch (e) {}
+
+      const incorrect = Math.max(0, attempted - correct);
+      const accuracy = attempted > 0 ? Math.round((correct / attempted) * 100) : 0;
+
+      setSolvedIds(solved);
+      setMcqAnalytics({
+        attempted,
+        correct,
+        incorrect,
+        accuracy
+      });
     }
   }, [user]);
 
@@ -301,7 +367,119 @@ export default function AptitudePage() {
           </div>
         </div>
 
-        {/* 2. SEARCH & CONTROLS TOOLBAR */}
+        {/* 2. MCQ PRACTICE & PERFORMANCE ANALYTICS SECTION */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Card 1: MCQ PROBLEMS */}
+          <div className="lg:col-span-1 p-5 sm:p-6 rounded-2xl bg-surface dark:bg-[#111827] border border-indigo-500/20 shadow-sm hover:border-indigo-500/40 hover:shadow-md transition-all flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2.5 rounded-xl bg-indigo-500/15 text-indigo-600 dark:text-indigo-400">
+                    <CheckSquare className="w-5 h-5" />
+                  </div>
+                  <span className="text-sm font-extrabold text-indigo-700 dark:text-indigo-300 uppercase tracking-wider">
+                    MCQ Problems
+                  </span>
+                </div>
+                <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">
+                  {mcqAnalytics.accuracy}% Accuracy
+                </span>
+              </div>
+
+              <div className="mt-3 flex items-baseline gap-2.5">
+                <span className="text-3xl sm:text-4xl font-black text-text-primary dark:text-white">
+                  {mcqAnalytics.correct}
+                </span>
+                <span className="text-sm font-semibold text-text-muted">
+                  Right out of <span className="font-bold text-text-primary dark:text-white">{mcqAnalytics.attempted}</span> Attempted
+                </span>
+              </div>
+
+              <p className="text-xs sm:text-sm text-text-muted mt-2 leading-relaxed">
+                Quantitative, Logical, Verbal, and placement assessment MCQs.
+              </p>
+            </div>
+
+            <div className="mt-5 pt-3.5 border-t border-indigo-500/15 flex items-center justify-between">
+              <span className="text-xs sm:text-sm font-bold text-indigo-600 dark:text-indigo-400">
+                {mcqAnalytics.incorrect} Incorrect • {mcqAnalytics.correct} Correct
+              </span>
+              <button 
+                onClick={() => {
+                  const firstTopic = Object.keys(topicCounts)[0] || "Percentage";
+                  handleNavigateTopic(firstTopic);
+                }}
+                className="inline-flex items-center gap-1.5 text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
+              >
+                <span>Practice MCQs</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Card 2: Visual Distribution & Accuracy Gauge */}
+          <div className="lg:col-span-2 p-5 sm:p-6 rounded-2xl bg-surface dark:bg-[#111827] border border-border/80 shadow-sm flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-3.5 flex-wrap gap-2">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-emerald-500" />
+                  <h3 className="text-base font-black text-text-primary dark:text-white tracking-tight">
+                    MCQ Performance Breakdown
+                  </h3>
+                </div>
+                <div className="flex items-center gap-3.5 text-xs sm:text-sm font-semibold text-text-muted flex-wrap">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-sm bg-indigo-500 inline-block" /> Attempted
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-sm bg-emerald-500 inline-block" /> Right
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-sm bg-rose-500 inline-block" /> Wrong
+                  </span>
+                </div>
+              </div>
+
+              {/* Accuracy Gauge Bar */}
+              <div className="space-y-2 mt-4">
+                <div className="flex justify-between text-xs font-bold text-text-muted">
+                  <span>Accuracy Ratio</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-extrabold">{mcqAnalytics.accuracy}% Success Rate</span>
+                </div>
+                <div className="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-3 overflow-hidden flex shadow-inner">
+                  <div 
+                    className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-all duration-700"
+                    style={{ width: `${mcqAnalytics.attempted > 0 ? (mcqAnalytics.correct / mcqAnalytics.attempted) * 100 : 0}%` }}
+                    title={`${mcqAnalytics.correct} Correct`}
+                  />
+                  <div 
+                    className="h-full bg-gradient-to-r from-rose-500 to-red-500 transition-all duration-700"
+                    style={{ width: `${mcqAnalytics.attempted > 0 ? (mcqAnalytics.incorrect / mcqAnalytics.attempted) * 100 : 0}%` }}
+                    title={`${mcqAnalytics.incorrect} Incorrect`}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Metric Highlights */}
+            <div className="grid grid-cols-3 gap-3 pt-4 border-t border-border/60 mt-4 text-center">
+              <div className="p-3 rounded-xl bg-background dark:bg-slate-900 border border-border/60">
+                <div className="text-xs text-text-muted font-bold uppercase tracking-wider">Attempted</div>
+                <div className="text-xl sm:text-2xl font-black text-indigo-600 dark:text-indigo-400 mt-0.5">{mcqAnalytics.attempted}</div>
+              </div>
+              <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                <div className="text-xs text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider">Right</div>
+                <div className="text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-0.5">{mcqAnalytics.correct}</div>
+              </div>
+              <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
+                <div className="text-xs text-rose-600 dark:text-rose-400 font-bold uppercase tracking-wider">Wrong</div>
+                <div className="text-xl sm:text-2xl font-black text-rose-600 dark:text-rose-400 mt-0.5">{mcqAnalytics.incorrect}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 3. SEARCH & CONTROLS TOOLBAR */}
         <div className="bg-surface dark:bg-[#111827] rounded-2xl border border-border/80 p-4 shadow-sm flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
           {/* Search Input */}
           <div className="relative flex-1 min-w-[240px]">

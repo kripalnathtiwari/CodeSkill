@@ -85,48 +85,28 @@ export default function MyProgress({
     };
   }) || [];
 
-  // Metrics for MCQ & Coding
+  // Metrics for Coding & DSA
   const codingCount = codingSolved;
-  const mcqAttempted = mcqStats?.attempted ?? 0;
-  const mcqCorrect = mcqStats?.correct ?? 0;
-  const mcqIncorrect = mcqStats?.incorrect ?? Math.max(0, mcqAttempted - mcqCorrect);
-  const mcqAccuracy = mcqStats?.accuracy ?? (mcqAttempted > 0 ? Math.round((mcqCorrect / mcqAttempted) * 100) : 0);
 
-  // Bar plot data
-  const barPlotData = [
-    { 
-      name: 'MCQ Attempted', 
-      shortName: 'Attempted',
-      value: mcqAttempted, 
-      color: '#6366f1', 
-      unit: 'Attempted',
-      description: 'Total MCQ questions attempted'
-    },
-    { 
-      name: 'Questions Right', 
-      shortName: 'Right',
-      value: mcqCorrect, 
-      color: '#10b981', 
-      unit: 'Right',
-      description: 'MCQ questions answered correctly'
-    },
-    { 
-      name: 'Questions Wrong', 
-      shortName: 'Wrong',
-      value: mcqIncorrect, 
-      color: '#f43f5e', 
-      unit: 'Wrong',
-      description: 'MCQ questions answered incorrectly'
-    },
-    { 
-      name: 'Coding Solved', 
-      shortName: 'Coding',
-      value: codingCount, 
-      color: '#0284c7', 
-      unit: 'Solved',
-      description: 'Coding / DSA problems solved'
-    }
-  ];
+  // DSA Topic Bar plot data
+  const dsaBarPlotData = dsaProgressData && dsaProgressData.length > 0
+    ? dsaProgressData.map((item, idx) => {
+        const colors = ['#0ea5e9', '#10b981', '#6366f1', '#f59e0b', '#ec4899', '#8b5cf6'];
+        return {
+          name: item.name,
+          shortName: item.name.length > 9 ? item.name.substring(0, 8) + '..' : item.name,
+          value: item.value,
+          color: colors[idx % colors.length],
+          unit: 'Solved',
+          description: `${item.value} problems solved in ${item.name}`
+        };
+      })
+    : [
+        { name: 'Arrays', shortName: 'Arrays', value: Math.min(codingCount, 8), color: '#0ea5e9', unit: 'Solved', description: 'Array fundamentals' },
+        { name: 'Strings', shortName: 'Strings', value: Math.min(Math.max(0, codingCount - 8), 6), color: '#10b981', unit: 'Solved', description: 'String algorithms' },
+        { name: 'Linked List', shortName: 'LinkedList', value: Math.min(Math.max(0, codingCount - 14), 5), color: '#6366f1', unit: 'Solved', description: 'Pointers & lists' },
+        { name: 'Dynamic Prog', shortName: 'DP', value: Math.max(0, codingCount - 19), color: '#f59e0b', unit: 'Solved', description: 'Dynamic Programming' }
+      ];
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -144,7 +124,7 @@ export default function MyProgress({
     return null;
   };
 
-  const hasActivity = codingCount > 0 || mcqAttempted > 0;
+  const hasActivity = codingCount > 0;
 
   return (
     <div className="bg-surface dark:bg-[#111827] border border-border dark:border-border/80 rounded-2xl p-6 sm:p-7 shadow-sm hover:shadow-md transition-all flex flex-col justify-between w-full h-full min-h-[460px]">
@@ -258,11 +238,11 @@ export default function MyProgress({
           </div>
         )}
 
-        {/* Tab 2: Practice (Problem Solving with MCQ & Coding Breakdown + Bar Plot) */}
+        {/* Tab 2: Practice (Problem Solving with DSA Track Breakdown & Topic Distribution) */}
         {activeTab === 'Practice' && (
           <div className="space-y-4">
             
-            {/* Top Dual Cards: Coding vs MCQ Problem Breakdown */}
+            {/* Top Dual Cards: Coding Problems & DSA Topic Progress */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               
               {/* Card 1: Coding Problems (DSA) */}
@@ -310,46 +290,46 @@ export default function MyProgress({
                 </div>
               </div>
 
-              {/* Card 2: MCQ & Aptitude Problems */}
-              <div className="p-4 sm:p-5 rounded-xl bg-indigo-500/5 dark:bg-indigo-500/10 border border-indigo-500/20 hover:border-indigo-500/40 transition-all flex flex-col justify-between">
+              {/* Card 2: DSA Track Progress */}
+              <div className="p-4 sm:p-5 rounded-xl bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/20 hover:border-emerald-500/40 transition-all flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between mb-2.5">
                     <div className="flex items-center gap-2.5">
-                      <div className="p-2.5 rounded-lg bg-indigo-500/15 text-indigo-600 dark:text-indigo-400">
-                        <CheckSquare className="w-4.5 h-4.5" />
+                      <div className="p-2.5 rounded-lg bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
+                        <Layers className="w-4.5 h-4.5" />
                       </div>
-                      <span className="text-sm font-extrabold text-indigo-700 dark:text-indigo-300 uppercase tracking-wider">
-                        MCQ Problems
+                      <span className="text-sm font-extrabold text-emerald-700 dark:text-emerald-300 uppercase tracking-wider">
+                        DSA Topic Mastery
                       </span>
                     </div>
                     <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">
-                      {mcqAccuracy}% Accuracy
+                      {dsaProgressData.length || (codingCount > 0 ? 1 : 0)} Topics Active
                     </span>
                   </div>
 
                   <div className="mt-2 flex items-baseline gap-2.5">
                     <span className="text-3xl sm:text-4xl font-black text-text-primary dark:text-white">
-                      {mcqCorrect}
+                      {codingCount}
                     </span>
                     <span className="text-sm font-semibold text-text-muted">
-                      Right out of <span className="font-bold text-text-primary dark:text-white">{mcqAttempted}</span> Attempted
+                      Solved across <span className="font-bold text-text-primary dark:text-white">{dsaProgressData.length || 1}</span> categories
                     </span>
                   </div>
 
                   <p className="text-xs sm:text-sm text-text-muted mt-1.5 leading-relaxed">
-                    Quantitative, Logical, Verbal, and placement assessment MCQs.
+                    Arrays, Strings, Linked Lists, Trees, Graphs, and Dynamic Programming.
                   </p>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-indigo-500/15 flex items-center justify-between">
-                  <span className="text-xs sm:text-sm font-bold text-indigo-600 dark:text-indigo-400">
-                    {mcqIncorrect} Incorrect • {mcqCorrect} Correct
+                <div className="mt-4 pt-3 border-t border-emerald-500/15 flex items-center justify-between">
+                  <span className="text-xs sm:text-sm font-bold text-emerald-600 dark:text-emerald-400">
+                    Foundation & Core Tracks
                   </span>
                   <button 
-                    onClick={() => navigate('/aptitude')}
-                    className="inline-flex items-center gap-1.5 text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
+                    onClick={() => navigate('/dashboard/practice')}
+                    className="inline-flex items-center gap-1.5 text-sm font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors"
                   >
-                    <span>Practice MCQs</span>
+                    <span>Explore Tracks</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
@@ -363,22 +343,15 @@ export default function MyProgress({
                 <div className="flex items-center gap-2">
                   <BarChart3 className="w-4.5 h-4.5 text-primary" />
                   <h3 className="text-base font-black text-text-primary dark:text-white tracking-tight">
-                    Problem Solving Distribution (MCQ vs Coding)
+                    DSA Problem Solving by Topic
                   </h3>
                 </div>
                 <div className="flex items-center gap-3.5 text-xs sm:text-sm font-semibold text-text-muted flex-wrap">
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-sm bg-indigo-500 inline-block" /> Attempted
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-sm bg-emerald-500 inline-block" /> Right
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-sm bg-rose-500 inline-block" /> Wrong
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-sm bg-sky-500 inline-block" /> Coding
-                  </span>
+                  {dsaBarPlotData.map((d, i) => (
+                    <span key={i} className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{ backgroundColor: d.color }} /> {d.name} ({d.value})
+                    </span>
+                  ))}
                 </div>
               </div>
 
@@ -386,7 +359,7 @@ export default function MyProgress({
               <div className="h-48 w-full pt-1">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart 
-                    data={barPlotData}
+                    data={dsaBarPlotData}
                     margin={{ top: 10, right: 10, left: -15, bottom: 0 }}
                     barSize={40}
                   >
@@ -409,7 +382,7 @@ export default function MyProgress({
                       dataKey="value" 
                       radius={[6, 6, 0, 0]}
                     >
-                      {barPlotData.map((entry, index) => (
+                      {dsaBarPlotData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Bar>
@@ -417,43 +390,34 @@ export default function MyProgress({
                 </ResponsiveContainer>
               </div>
 
-              {/* MCQ Accuracy Horizontal Progress Gauge */}
+              {/* DSA Milestone Progress Gauge */}
               <div className="mt-3.5 pt-3.5 border-t border-border/60">
                 <div className="flex items-center justify-between text-sm font-bold mb-1.5 flex-wrap gap-1">
                   <span className="text-text-muted flex items-center gap-1.5">
                     <TrendingUp className="w-4 h-4 text-primary" />
-                    MCQ Performance Breakdown
+                    DSA Milestone Progress
                   </span>
-                  <span className="text-emerald-600 dark:text-emerald-400 font-extrabold">
-                    {mcqAccuracy}% Accuracy ({mcqCorrect} Right / {mcqAttempted} Total)
+                  <span className="text-sky-600 dark:text-sky-400 font-extrabold">
+                    {codingCount} Problems Solved Across Practice Tracks
                   </span>
                 </div>
 
                 <div className="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-3 overflow-hidden flex shadow-inner">
                   <div 
-                    className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-all duration-700"
-                    style={{ width: `${mcqAttempted > 0 ? (mcqCorrect / mcqAttempted) * 100 : 0}%` }}
-                    title={`${mcqCorrect} Correct`}
-                  />
-                  <div 
-                    className="h-full bg-gradient-to-r from-rose-500 to-red-500 transition-all duration-700"
-                    style={{ width: `${mcqAttempted > 0 ? (mcqIncorrect / mcqAttempted) * 100 : 0}%` }}
-                    title={`${mcqIncorrect} Incorrect`}
+                    className="h-full bg-gradient-to-r from-sky-500 to-emerald-500 transition-all duration-700"
+                    style={{ width: `${Math.min(100, Math.max(10, (codingCount / 50) * 100))}%` }}
+                    title={`${codingCount} Solved`}
                   />
                 </div>
 
                 <div className="flex items-center justify-between text-xs sm:text-sm text-text-muted mt-2.5 flex-wrap gap-2">
-                  <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-bold">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                    {mcqCorrect} Questions Right
-                  </span>
-                  <span className="flex items-center gap-1.5 text-rose-500 dark:text-rose-400 font-bold">
-                    <span className="w-2 h-2 rounded-full bg-rose-500 inline-block" />
-                    {mcqIncorrect} Questions Wrong
-                  </span>
                   <span className="flex items-center gap-1.5 text-sky-600 dark:text-sky-400 font-bold">
                     <Code className="w-3.5 h-3.5 text-sky-500" />
-                    {codingCount} Coding Solved
+                    {codingCount} Total Coding Solved
+                  </span>
+                  <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-bold">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                    {dsaProgressData.length || (codingCount > 0 ? 1 : 0)} Topics Covered
                   </span>
                 </div>
               </div>
@@ -477,26 +441,6 @@ export default function MyProgress({
                   </div>
                 </div>
               )}
-
-              {/* Friendly prompt if 0 MCQs attempted */}
-              {mcqAttempted === 0 && (
-                <div className="mt-3.5 p-3.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-sm">
-                  <div>
-                    <p className="font-bold text-indigo-900 dark:text-indigo-200">
-                      Build your placement MCQ accuracy profile
-                    </p>
-                    <p className="text-indigo-700/80 dark:text-indigo-300/80 text-xs">
-                      Take quantitative or logical reasoning mocks to see your live right vs. wrong plot.
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => navigate('/aptitude')}
-                    className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shrink-0 transition-colors shadow-xs"
-                  >
-                    Start MCQ Test →
-                  </button>
-                </div>
-              )}
             </div>
 
           </div>
@@ -508,7 +452,7 @@ export default function MyProgress({
         <span className="text-sm font-semibold text-text-muted">
           {activeTab === 'Courses' 
             ? `${enrollments.length} Active Courses` 
-            : `${codingCount} Coding + ${mcqAttempted} MCQs Logged`}
+            : `${codingCount} Coding Problems Logged`}
         </span>
         <button 
           onClick={() => navigate(activeTab === 'Courses' ? '/dashboard/my-courses' : '/dashboard/practice')}

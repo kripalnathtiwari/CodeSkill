@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, Bell, Sun, Moon, User, Settings, Lock, LogOut } from 'lucide-react';
+import { Search, Sun, Moon, User, Settings, Lock, LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
 
@@ -51,11 +51,6 @@ export default function TopNav({ isDark, toggleTheme }: TopNavProps) {
           title="Toggle Theme"
         >
           {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-        </button>
-
-        <button className="p-2 rounded-lg text-text-secondary hover:bg-background transition-colors relative">
-          <Bell className="h-5 w-5" />
-          <span className="absolute top-1 right-1 w-2 h-2 bg-accent rounded-full border border-surface"></span>
         </button>
 
         <div className="h-8 w-px bg-border mx-2"></div>

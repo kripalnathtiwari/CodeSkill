@@ -2,9 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Plus, Edit, Trash2, Search, Target, ArrowLeft, Save, X, BookOpen, Clock, Upload, Loader2, Users, FileText } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
-import * as pdfjsLib from "pdfjs-dist";
-
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+import { parseQuestionsFromPdf } from "../../utils/pdfQuestionParser";
 
 type Question = {
   id: number;
@@ -166,120 +164,11 @@ export default function OtherPracticeManagement() {
     setIsParsingPdf(true);
     
     try {
-      const arrayBuffer = await file.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      let fullText = "";
-      
-      for (let i = 1; i <= pdf.numPages; i++) {
-        const page = await pdf.getPage(i);
-        const content = await page.getTextContent();
-        const pageText = content.items.map((item: any) => item.str).join(" ");
-        fullText += pageText + "\n";
-      }
-
-      // Regex-based parsing
-      // Regex-based parsing
-      let parsedQuestions: Question[] = [];
-      const lines = fullText.split("\n").map(l => l.trim()).filter(l => l.length > 0);
-      
-      let currentQuestion: Question | null = null;
-      
-      // Extremely forgiving regexes
-      const questionRegex = /^(?:(?:Q|Question|Qns)\s*\d*|\d+)\s*[\.\)\-:]\s*(.+)/i;
-      const optionRegex = /^(?:[\[\(]?\s*(?:[a-e]|[1-5]|i|ii|iii|iv)\s*[\]\)\.]|[-•\*])\s*(.+)/i;
-      const answerRegex = /^(?:answer|ans|correct|solution)[\s:\-]*([a-e1-5]?.*)/i;
-
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        
-        const qMatch = line.match(questionRegex);
-        if (qMatch || (line.endsWith("?") && (!currentQuestion || currentQuestion.options.length > 0))) {
-          if (currentQuestion) {
-            while (currentQuestion.options.length < 4) currentQuestion.options.push("");
-            parsedQuestions.push(currentQuestion);
-          }
-          currentQuestion = {
-            id: Date.now() + Math.random() + i,
-            text: qMatch ? qMatch[1].trim() : line,
-            options: [],
-            answer: ""
-          };
-          continue;
-        }
-
-        const oMatch = line.match(optionRegex);
-        if (oMatch && currentQuestion && currentQuestion.options.length < 4 && !line.match(questionRegex)) {
-          currentQuestion.options.push(oMatch[1].trim());
-          continue;
-        }
-
-        const aMatch = line.match(answerRegex);
-        if (aMatch && currentQuestion) {
-          currentQuestion.answer = aMatch[1].trim() || line;
-          continue;
-        }
-
-        if (currentQuestion) {
-           if (currentQuestion.options.length === 0 && !line.toLowerCase().startsWith('answer')) {
-               currentQuestion.text += " " + line;
-           } else if (currentQuestion.options.length > 0 && currentQuestion.options.length < 4) {
-               currentQuestion.options.push(line);
-           } else {
-               parsedQuestions.push(currentQuestion);
-               currentQuestion = {
-                 id: Date.now() + Math.random() + i,
-                 text: line,
-                 options: [],
-                 answer: ""
-               };
-           }
-        } else {
-           currentQuestion = {
-             id: Date.now() + Math.random() + i,
-             text: line,
-             options: [],
-             answer: ""
-           };
-        }
-      }
-
-      if (currentQuestion) {
-        while (currentQuestion.options.length < 4) currentQuestion.options.push("");
-        parsedQuestions.push(currentQuestion);
-      }
-      
-      const hasStructuredOptions = parsedQuestions.some(q => q.options.some(o => o.trim() !== ""));
-      
-      if (!hasStructuredOptions && lines.length > 0) {
-          // Fallback naive chunking (1 question, 4 options)
-          parsedQuestions = [];
-          let q: Question | null = null;
-          for (let i = 0; i < lines.length; i++) {
-             const line = lines[i];
-             if (!q) {
-                q = { id: Date.now() + Math.random() + i, text: line, options: [], answer: "" };
-             } else if (q.options.length < 4) {
-                q.options.push(line);
-             } else {
-                if (line.toLowerCase().startsWith('ans') || line.toLowerCase().startsWith('answer')) {
-                   q.answer = line;
-                   parsedQuestions.push(q);
-                   q = null;
-                } else {
-                   parsedQuestions.push(q);
-                   q = { id: Date.now() + Math.random() + i, text: line, options: [], answer: "" };
-                }
-             }
-          }
-          if (q) {
-             while (q.options.length < 4) q.options.push("");
-             parsedQuestions.push(q);
-          }
-      }
+      const parsedQuestions = await parseQuestionsFromPdf(file);
       
       if (parsedQuestions.length === 0) {
-          alert("Could not extract any text from the PDF. It might be an image-based PDF.");
-          return;
+        alert("Could not extract any questions from the PDF. Please ensure the PDF is text-based and contains questions.");
+        return;
       }
       
       setQuestions(prev => {
@@ -288,8 +177,8 @@ export default function OtherPracticeManagement() {
       });
       alert(`Successfully extracted ${parsedQuestions.length} questions from PDF!`);
     } catch (error: any) {
-      console.error(error);
-      alert("Error parsing PDF. " + (error.message || ""));
+      console.error("Error parsing PDF:", error);
+      alert("Error parsing PDF: " + (error.message || "Failed to process PDF"));
     } finally {
       setIsParsingPdf(false);
       e.target.value = "";

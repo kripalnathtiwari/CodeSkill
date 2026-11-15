@@ -7,6 +7,7 @@ import {
   Radio, CalendarClock, ArrowLeft, Timer, Users, Download, Upload, Eye, X, Building2, Video, Loader2,
   Search, Calendar, Filter
 } from "lucide-react";
+import { parseQuestionsFromPdf } from "../../utils/pdfQuestionParser";
 
 type Question = {
   id: number;
@@ -403,79 +404,26 @@ export default function TestManagement() {
     setQuestions(prev => prev.filter(q => q.id !== id));
   };
 
-  const handlePdfUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setIsParsingPdf(true);
-    // Simulate OCR / PDF parsing delay
-    setTimeout(() => {
-      const parsedQuestions = [
-        {
-          id: Date.now() + 1,
-          text: "What is the time complexity of binary search?",
-          options: ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
-          answer: ""
-        },
-        {
-          id: Date.now() + 2,
-          text: "Which of the following is not a React hook?",
-          options: ["useState", "useEffect", "useComponent", "useMemo"],
-          answer: ""
-        },
-        {
-          id: Date.now() + 3,
-          text: "What does CSS stand for?",
-          options: ["Computer Style Sheets", "Cascading Style Sheets", "Creative Style Sheets", "Colorful Style Sheets"],
-          answer: ""
-        },
-        {
-          id: Date.now() + 4,
-          text: "Which keyword is used to declare a constant in JavaScript?",
-          options: ["var", "let", "const", "static"],
-          answer: ""
-        },
-        {
-          id: Date.now() + 5,
-          text: "What is the virtual DOM in React?",
-          options: ["A direct copy of the actual DOM", "A lightweight JavaScript representation of the DOM", "A browser extension for debugging", "A database for storing HTML"],
-          answer: ""
-        },
-        {
-          id: Date.now() + 6,
-          text: "Which method is used to add an element to the end of an array in JS?",
-          options: ["push()", "pop()", "shift()", "unshift()"],
-          answer: ""
-        },
-        {
-          id: Date.now() + 7,
-          text: "What does HTML stand for?",
-          options: ["Hyper Text Markup Language", "High Text Machine Language", "Hyper Tabular Markup Language", "None of the above"],
-          answer: ""
-        },
-        {
-          id: Date.now() + 8,
-          text: "In React, how do you pass data to a child component?",
-          options: ["Using state", "Using props", "Using context", "Using hooks"],
-          answer: ""
-        },
-        {
-          id: Date.now() + 9,
-          text: "Which protocol is used to secure HTTP connections?",
-          options: ["FTP", "SSH", "HTTPS", "TCP"],
-          answer: ""
-        },
-        {
-          id: Date.now() + 10,
-          text: "What is the primary function of a database index?",
-          options: ["To encrypt data", "To speed up data retrieval", "To backup data", "To delete old records"],
-          answer: ""
-        }
-      ];
+    try {
+      const parsedQuestions = await parseQuestionsFromPdf(file);
+      if (parsedQuestions.length === 0) {
+        alert("Could not extract any questions from the PDF. Please ensure the PDF is text-based and contains questions.");
+        return;
+      }
       setQuestions(parsedQuestions);
+      alert(`Successfully extracted ${parsedQuestions.length} questions from PDF!`);
+    } catch (err: any) {
+      console.error("Error parsing PDF:", err);
+      alert("Error parsing PDF: " + (err.message || "Failed to process PDF"));
+    } finally {
       setIsParsingPdf(false);
-      e.target.value = ""; // reset input
-    }, 2000);
+      e.target.value = "";
+    }
   };
 
   const handleDeleteTest = (id: string) => {

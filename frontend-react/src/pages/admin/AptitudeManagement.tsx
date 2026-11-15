@@ -6,6 +6,7 @@ import {
   Copy, Layers, CheckCircle2, FileUp, ListPlus, ChevronDown, ChevronRight, Minimize2, Maximize2
 } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
+import { parseQuestionsFromPdf } from "../../utils/pdfQuestionParser";
 
 // Set up PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
@@ -365,11 +366,49 @@ export default function AptitudeManagement() {
             }));
           } catch (aiErr: any) {
             console.warn("Gemini parsing failed, falling back to local regex parser:", aiErr);
-            parsed = parseQuestionsFromText(fullText, assignedTopic);
+            const pdfQ = await parseQuestionsFromPdf(file);
+            parsed = pdfQ.map(q => ({
+              _id: "aptitude-pdf-" + Date.now() + Math.random().toString(36).substr(2, 9),
+              title: q.text.length > 70 ? q.text.substring(0, 67) + "..." : q.text,
+              description: q.text,
+              difficulty: "Easy",
+              topic: assignedTopic,
+              options: {
+                A: q.options[0] || "",
+                B: q.options[1] || "",
+                C: q.options[2] || "",
+                D: q.options[3] || ""
+              },
+              correctOption: q.answer === q.options[0] ? "A" :
+                             q.answer === q.options[1] ? "B" :
+                             q.answer === q.options[2] ? "C" :
+                             q.answer === q.options[3] ? "D" : (q.answer || ""),
+              company: "",
+              type: "MCQ"
+            }));
           }
         } else {
-          // Robust local regex parser (No API Key Required!)
-          parsed = parseQuestionsFromText(fullText, assignedTopic);
+          // Robust local parser (No API Key Required!)
+          const pdfQ = await parseQuestionsFromPdf(file);
+          parsed = pdfQ.map(q => ({
+            _id: "aptitude-pdf-" + Date.now() + Math.random().toString(36).substr(2, 9),
+            title: q.text.length > 70 ? q.text.substring(0, 67) + "..." : q.text,
+            description: q.text,
+            difficulty: "Easy",
+            topic: assignedTopic,
+            options: {
+              A: q.options[0] || "",
+              B: q.options[1] || "",
+              C: q.options[2] || "",
+              D: q.options[3] || ""
+            },
+            correctOption: q.answer === q.options[0] ? "A" :
+                           q.answer === q.options[1] ? "B" :
+                           q.answer === q.options[2] ? "C" :
+                           q.answer === q.options[3] ? "D" : (q.answer || ""),
+            company: "",
+            type: "MCQ"
+          }));
         }
 
         if (parsed.length === 0) {

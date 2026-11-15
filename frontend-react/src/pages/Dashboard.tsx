@@ -3,7 +3,6 @@ import { useAuth } from "../context/AuthContext";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { BookOpen, Award, Lock } from "lucide-react";
 import UserRankCard from "../components/dashboard/UserRankCard";
-import TopPerformersCard from "../components/dashboard/TopPerformersCard";
 
 
 import DashboardLayout from "../components/dashboard/DashboardLayout";
@@ -367,7 +366,6 @@ export default function Dashboard() {
               testTotal={testStats.attempted}
               weeklyProgress={weeklyProgress} 
             />
-            <TopPerformersCard />
           </div>
           
         </div>

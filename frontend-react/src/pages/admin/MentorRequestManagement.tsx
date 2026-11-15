@@ -472,9 +472,9 @@ export default function MentorRequestManagement() {
                       <div className="space-y-1">
                         <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-border text-xs font-bold text-text-primary">
                           <Building2 className="w-3 h-3 text-primary" />
-                          <span>{req.currentCompany}</span>
+                          <span>{req.currentCompany || 'Not Specified'}</span>
                         </div>
-                        <p className="text-xs text-text-secondary font-medium">{req.currentRole}</p>
+                        <p className="text-xs text-text-secondary font-medium">{req.currentRole || 'Mentor'}</p>
                       </div>
                     </td>
 
@@ -597,23 +597,25 @@ export default function MentorRequestManagement() {
                   {selectedRequest.phone}
                 </a>
               </div>
-              <div className="flex items-center space-x-2">
-                <LinkedinIcon className="w-4 h-4 text-blue-600 shrink-0" />
-                <a 
-                  href={selectedRequest.linkedinUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="text-blue-600 hover:underline font-bold flex items-center gap-1"
-                >
-                  <span>LinkedIn Profile</span>
-                  <ExternalLink className="w-3 h-3" />
-                </a>
-              </div>
+              {selectedRequest.linkedinUrl ? (
+                <div className="flex items-center space-x-2">
+                  <LinkedinIcon className="w-4 h-4 text-blue-600 shrink-0" />
+                  <a 
+                    href={selectedRequest.linkedinUrl.startsWith('http') ? selectedRequest.linkedinUrl : `https://${selectedRequest.linkedinUrl}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="text-blue-600 hover:underline font-bold flex items-center gap-1"
+                  >
+                    <span>LinkedIn Profile</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+              ) : null}
               {selectedRequest.githubOrPortfolioUrl && (
                 <div className="flex items-center space-x-2">
                   <Globe className="w-4 h-4 text-primary shrink-0" />
                   <a 
-                    href={selectedRequest.githubOrPortfolioUrl} 
+                    href={selectedRequest.githubOrPortfolioUrl.startsWith('http') ? selectedRequest.githubOrPortfolioUrl : `https://${selectedRequest.githubOrPortfolioUrl}`} 
                     target="_blank" 
                     rel="noopener noreferrer" 
                     className="text-primary hover:underline font-bold flex items-center gap-1 truncate"
@@ -689,7 +691,7 @@ export default function MentorRequestManagement() {
                     </div>
                   </div>
                   <a
-                    href={selectedRequest.resumeUrl}
+                    href={selectedRequest.resumeUrl.startsWith('http') ? selectedRequest.resumeUrl : `https://${selectedRequest.resumeUrl}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-4 py-2 bg-primary text-text-inverse rounded-xl text-xs font-bold hover:bg-primary-dark transition-colors inline-flex items-center gap-1.5 shadow-sm"

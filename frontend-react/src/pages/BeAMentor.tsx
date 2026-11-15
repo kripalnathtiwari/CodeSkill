@@ -93,14 +93,10 @@ export default function BeAMentor() {
     e.preventDefault();
     setErrorMsg('');
 
-    // Basic validation
+    // Basic validation - only contact details are strictly required
     if (!formData.fullName.trim()) return setErrorMsg('Please enter your full name.');
     if (!formData.email.trim() || !formData.email.includes('@')) return setErrorMsg('Please enter a valid email address.');
     if (!formData.phone.trim()) return setErrorMsg('Please enter your phone or WhatsApp number.');
-    if (!formData.currentCompany.trim()) return setErrorMsg('Please enter your current company or organization.');
-    if (!formData.currentRole.trim()) return setErrorMsg('Please enter your current designation / role.');
-    if (!formData.linkedinUrl.trim()) return setErrorMsg('Please provide your LinkedIn profile URL.');
-    if (!formData.shortBio.trim()) return setErrorMsg('Please share a short bio or motivation for joining.');
 
     setIsSubmitting(true);
 
@@ -108,6 +104,12 @@ export default function BeAMentor() {
       const newRequest = {
         id: `mentor_req_${Date.now()}`,
         ...formData,
+        currentCompany: formData.currentCompany.trim() || 'Not Specified',
+        currentRole: formData.currentRole.trim() || 'Independent Mentor',
+        linkedinUrl: formData.linkedinUrl.trim(),
+        githubOrPortfolioUrl: formData.githubOrPortfolioUrl.trim(),
+        resumeUrl: formData.resumeUrl.trim(),
+        shortBio: formData.shortBio.trim(),
         status: 'PENDING',
         appliedAt: new Date().toISOString()
       };
@@ -374,18 +376,22 @@ export default function BeAMentor() {
 
                 {/* Section 2: Professional Background */}
                 <div className="space-y-4 pt-2">
-                  <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">
-                    2. Professional Background
-                  </h3>
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">
+                      2. Professional Background
+                    </h3>
+                    <span className="text-[11px] font-semibold text-text-muted bg-surface-secondary px-2 py-0.5 rounded-md border border-border">
+                      All Optional
+                    </span>
+                  </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-text-primary mb-1">
-                        Current Company / Organization <span className="text-rose-500">*</span>
+                        Current Company / Organization
                       </label>
                       <input
                         type="text"
-                        required
                         placeholder="e.g. Microsoft, Google, Razorpay"
                         value={formData.currentCompany}
                         onChange={(e) => setFormData({ ...formData, currentCompany: e.target.value })}
@@ -395,11 +401,10 @@ export default function BeAMentor() {
 
                     <div>
                       <label className="block text-xs font-bold text-text-primary mb-1">
-                        Current Designation / Role <span className="text-rose-500">*</span>
+                        Current Designation / Role
                       </label>
                       <input
                         type="text"
-                        required
                         placeholder="e.g. Senior Software Engineer"
                         value={formData.currentRole}
                         onChange={(e) => setFormData({ ...formData, currentRole: e.target.value })}
@@ -409,7 +414,7 @@ export default function BeAMentor() {
 
                     <div>
                       <label className="block text-xs font-bold text-text-primary mb-1">
-                        Total Industry Experience <span className="text-rose-500">*</span>
+                        Total Industry Experience
                       </label>
                       <select
                         value={formData.experienceYears}
@@ -424,11 +429,10 @@ export default function BeAMentor() {
 
                     <div>
                       <label className="block text-xs font-bold text-text-primary mb-1">
-                        LinkedIn Profile URL <span className="text-rose-500">*</span>
+                        LinkedIn Profile URL
                       </label>
                       <input
                         type="url"
-                        required
                         placeholder="https://linkedin.com/in/username"
                         value={formData.linkedinUrl}
                         onChange={(e) => setFormData({ ...formData, linkedinUrl: e.target.value })}
@@ -451,7 +455,7 @@ export default function BeAMentor() {
 
                     <div>
                       <label className="block text-xs font-bold text-text-primary mb-1">
-                        Resume / CV Link (Google Drive / Dropbox)
+                        Resume / CV Link (Google Drive / Dropbox) (Optional)
                       </label>
                       <input
                         type="url"
@@ -473,7 +477,7 @@ export default function BeAMentor() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-text-primary mb-1">
-                        Primary Expertise Domain <span className="text-rose-500">*</span>
+                        Primary Expertise Domain
                       </label>
                       <select
                         value={formData.primaryDomain}
@@ -488,7 +492,7 @@ export default function BeAMentor() {
 
                     <div>
                       <label className="block text-xs font-bold text-text-primary mb-1">
-                        Weekly Availability <span className="text-rose-500">*</span>
+                        Weekly Availability
                       </label>
                       <select
                         value={formData.weeklyAvailability}
@@ -546,12 +550,11 @@ export default function BeAMentor() {
 
                   <div>
                     <label className="block text-xs font-bold text-text-primary mb-1">
-                      Short Bio & Pitch (Why do you want to mentor on CodeSkill?) <span className="text-rose-500">*</span>
+                      Short Bio & Pitch (Why do you want to mentor on CodeSkill?) (Optional)
                     </label>
                     <textarea
                       rows={4}
-                      required
-                      placeholder="Tell us about your background, the tech stack you love, and how you plan to help students crack top tech interviews..."
+                      placeholder="Tell us about your background, the tech stack you love, and how you plan to help students crack top tech interviews (optional)..."
                       value={formData.shortBio}
                       onChange={(e) => setFormData({ ...formData, shortBio: e.target.value })}
                       className="w-full bg-background border border-border rounded-xl p-3.5 text-sm text-text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-text-muted"

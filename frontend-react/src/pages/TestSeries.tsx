@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { 
   Building2, 
   Search, 
@@ -209,9 +209,10 @@ export default function TestSeries() {
   const [testList, setTestList] = useState<TestCardData[]>(DEFAULT_TESTS);
   const [isLoading, setIsLoading] = useState(true);
 
-  // View state: "directory" (card grid) or "problems" (company practice view)
-  const [activeView, setActiveView] = useState<"directory" | "problems">("directory");
-  const [selectedTest, setSelectedTest] = useState<string>("");
+  // View state synced with URL searchParams so browser back / moving back restores the exact test series
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedTest = searchParams.get("test") || "";
+  const activeView: "directory" | "problems" = selectedTest ? "problems" : "directory";
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [problemSearchQuery, setProblemSearchQuery] = useState("");
@@ -350,13 +351,12 @@ export default function TestSeries() {
   }, [questions, selectedSection]);
 
   const handleStartPreparing = (testName: string) => {
-    setSelectedTest(testName);
-    setActiveView("problems");
+    setSearchParams({ test: testName });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleBackToDirectory = () => {
-    setActiveView("directory");
+    setSearchParams({});
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -579,6 +579,7 @@ export default function TestSeries() {
             <div className="flex justify-end mt-4 mb-2">
               <Link
                 to={`/take-test/${encodeURIComponent(selectedTest)}`}
+                state={{ from: window.location.pathname + window.location.search }}
                 className="bg-primary hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-all flex items-center space-x-2"
               >
                 <span>Start Test</span>

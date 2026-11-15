@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { recordContribution } from "../utils/contributions";
 import { getApiUrl } from "../utils/apiConfig";
 import { recordDailyProgress } from "../utils/progressTracker";
-import { AlertTriangle, Clock, CheckCircle, ShieldAlert, Award, ChevronLeft, ChevronRight, Trophy, Minus, XCircle, LogOut, Info, AlertOctagon, Bookmark, Maximize } from "lucide-react";
+import { AlertTriangle, Clock, CheckCircle, ShieldAlert, Award, ChevronLeft, ChevronRight, Trophy, Minus, XCircle, LogOut, Info, AlertOctagon, Bookmark, Maximize, ArrowLeft } from "lucide-react";
 
 // Mock Python Questions
 const PYTHON_QUESTIONS = [
@@ -26,6 +26,17 @@ export default function TakeTest() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, token } = useAuth();
+
+  const handleReturn = () => {
+    if (document.fullscreenElement) document.exitFullscreen().catch(console.error);
+    if (location.state?.from) {
+      navigate(location.state.from);
+    } else if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/dashboard/practice/other');
+    }
+  };
 
   const testQuestions = React.useMemo(() => {
     // 1. Try to fetch from old Test Management logic
@@ -537,10 +548,10 @@ export default function TakeTest() {
                   Cross-check Results
                 </button>
                 <button
-                  onClick={() => navigate('/contests')}
+                  onClick={handleReturn}
                   className="bg-slate-900 dark:bg-surface text-text-inverse dark:text-text-primary font-bold py-4 px-8 rounded-xl hover:scale-[1.02] transition-transform"
                 >
-                  Return to Dashboard
+                  Return to Tests
                 </button>
               </div>
             </>
@@ -594,10 +605,10 @@ export default function TakeTest() {
 
               <div className="pt-6 border-t border-border dark:border-border flex justify-end">
                 <button
-                  onClick={() => navigate('/contests')}
+                  onClick={handleReturn}
                   className="bg-slate-900 dark:bg-surface text-text-inverse dark:text-text-primary font-bold py-4 px-8 rounded-xl hover:scale-[1.02] transition-transform"
                 >
-                  Return to Dashboard
+                  Return to Tests
                 </button>
               </div>
             </div>
@@ -626,6 +637,12 @@ export default function TakeTest() {
             className="w-full bg-primary hover:bg-primary text-text-inverse py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-blue-500/30"
           >
             I Understand, Start Test
+          </button>
+          <button 
+            onClick={handleReturn}
+            className="w-full mt-3 py-3 rounded-xl font-semibold text-sm text-text-muted hover:text-text-primary dark:hover:text-text-inverse border border-border dark:border-border hover:bg-surface dark:hover:bg-slate-800 transition-all flex items-center justify-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" /> Go Back
           </button>
         </div>
         <div ref={testContainerRef} className="hidden" /> {/* Hidden container to trigger fullscreen */}
@@ -667,10 +684,7 @@ export default function TakeTest() {
           <h1 className="font-bold text-lg text-slate-800">Aptitude [All Topics] - Set 2</h1>
         </div>
         
-        <button onClick={() => {
-            if (document.fullscreenElement) document.exitFullscreen().catch(console.error);
-            navigate(-1);
-          }} 
+        <button onClick={handleReturn} 
           className="flex items-center space-x-2 text-rose-500 border border-rose-200 hover:bg-rose-50 font-semibold px-4 py-1.5 rounded-lg transition-colors text-sm"
         >
           <LogOut className="w-4 h-4" />

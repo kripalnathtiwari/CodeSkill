@@ -1,20 +1,21 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Search, Target, BookOpen, ArrowLeft, Home, Book, CheckCircle2, ChevronRight, Award, ArrowUpRight, FileText, Download } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 export default function OtherPractice() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
   const [questions, setQuestions] = useState<any[]>([]);
   const [subjects, setSubjects] = useState<string[]>([]);
   const [subjectNotes, setSubjectNotes] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(true);
 
-  // View state: "directory" (subjects grid) or "topics" (topics inside a subject)
-  const [activeView, setActiveView] = useState<"directory" | "topics">("directory");
-  const [selectedSubject, setSelectedSubject] = useState<string>("");
+  // View state synced with URL searchParams so browser back / moving back restores the exact subject
+  const selectedSubject = searchParams.get("subject") || "";
+  const activeView: "directory" | "topics" = selectedSubject ? "topics" : "directory";
 
   useEffect(() => {
     try {
@@ -38,14 +39,13 @@ export default function OtherPractice() {
   }, []);
 
   const handleBackToDirectory = () => {
-    setActiveView("directory");
+    setSearchParams({});
     setSearchQuery("");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleStartSubject = (subject: string) => {
-    setSelectedSubject(subject);
-    setActiveView("topics");
+    setSearchParams({ subject });
     setSearchQuery("");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -301,6 +301,7 @@ export default function OtherPractice() {
                       
                       <Link 
                         to={`/take-test/${test.id}`}
+                        state={{ from: window.location.pathname + window.location.search }}
                         className={`px-4 py-2 text-white rounded-lg font-bold transition-colors shadow-md text-sm inline-flex items-center space-x-1 ${hasTaken ? 'bg-green-500 hover:bg-green-600' : 'bg-rose-500 hover:bg-rose-600'}`}
                       >
                         <span>{hasTaken ? 'Test Taken' : 'Take Test'}</span>

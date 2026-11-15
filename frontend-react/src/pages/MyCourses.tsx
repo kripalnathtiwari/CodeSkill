@@ -464,7 +464,7 @@ export default function MyCourses() {
                           <span>Student:</span>
                         </span>
                         <span className="font-semibold text-text-primary dark:text-text-secondary">
-                          {course.fullName || user?.name || "Student"}
+                          {course.fullName || (user ? `${user.firstName} ${user.lastName}`.trim() : "") || "Student"}
                         </span>
                       </div>
 

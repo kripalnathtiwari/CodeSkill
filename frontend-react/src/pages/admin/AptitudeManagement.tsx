@@ -12,116 +12,139 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjsLib.vers
 
 // Helper: robust local parser for extracting MCQs from raw text or PDFs
 function parseQuestionsFromText(text: string, defaultTopic: string = "General Aptitude") {
-  const cleanText = text.replace(/\r\n/g, "\n");
+  const cleanText = text.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
   const lines = cleanText.split("\n").map(l => l.trim()).filter(l => l.length > 0);
 
   const questions: any[] = [];
   let currentQ: any = null;
 
+  // Matches: "Q1.", "Q. 1", "Question 1.", "1.", "1)" — but NOT "1) O(n)" when it looks like an option
+  // Key: question starters always have substantial text after them (>5 chars) and don't start with a number only used for options
   const isQuestionStart = (line: string) => {
-    return /^(?:(?:Q|Question|Qns|Prob|Problem)\s*#?\s*\d*|\d+)[\.\)\-:]\s*(.+)/i.test(line);
+    // Named question prefix: Q1, Q. 2, Question 3, etc.
+    if (/^(?:Q\.?\s*\d+|Question\s*\d+|Qns?\s*\d+|Prob(?:lem)?\s*\d+)[\.\)\-:]\s*.{5,}/i.test(line)) return true;
+    // Bare number, but only if the rest is a proper question sentence (doesn't look like an option value)
+    // e.g. "5. What is..." — not "5) O(n log n)"
+    if (/^\d+[\.\)]\s+[A-Z].{10,}/.test(line)) return true;
+    return false;
   };
 
   const getQuestionText = (line: string) => {
-    const m = line.match(/^(?:(?:Q|Question|Qns|Prob|Problem)\s*#?\s*\d*|\d+)[\.\)\-:]\s*(.+)/i);
-    return m ? m[1].trim() : line;
+    const m = line.match(/^(?:Q\.?\s*\d+|Question\s*\d+|Qns?\s*\d+|Prob(?:lem)?\s*\d+|(\d+))[\.\)\-:]\s*(.+)/i);
+    if (m) return (m[2] || m[1] || "").trim();
+    return line;
   };
 
-  const optionRegex = /^(?:[\(\[]?([A-Da-d1-4])[\)\]\.\-:]|\b([A-Da-d])\))\s*(.+)/;
+  // Matches option lines: "A) text", "a. text", "(B) text", "1) text", "2. text"
+  // For numeric options (1-4), only treat as option if we're inside a question
+  const optionLetterRegex = /^[\(\[]?([A-Da-d])[\)\]\.\-:]\s*(.+)/;
+  const optionNumericRegex = /^[\(\[]?([1-4])[\)\]\.\-:]\s*(.+)/;
   const answerRegex = /^(?:answer|ans|correct\s*(?:option|answer)?|solution)[\s:\-]*\(?([A-Da-d1-4])\)?/i;
+
+  // Inline options: "A) foo  B) bar  C) baz  D) qux" or "1) foo  2) bar  3) baz  4) qux"
+  const inlineLetterPattern = /(?:^|\s)[\(\[]?([A-Da-d])[\)\]\.\-:]\s*([^\s][^A-Da-d\(\)\[\]]{1,60}?)(?=\s+[\(\[]?[A-Da-d][\)\]\.\-:]|$)/g;
+  const inlineNumericPattern = /(?:^|\s)[\(\[]?([1-4])[\)\]\.\-:]\s*([^\s].{1,60}?)(?=\s+[\(\[]?[1-4][\)\]\.\-:]|$)/g;
+
+  const makeQ = (text: string) => ({
+    _id: "apt-" + Date.now() + "-" + Math.random().toString(36).substr(2, 7),
+    title: text.length > 80 ? text.substring(0, 77) + "..." : text,
+    description: text,
+    difficulty: "Easy",
+    topic: defaultTopic || "General Aptitude",
+    options: { A: "", B: "", C: "", D: "" },
+    correctOption: "",
+    company: "",
+    type: "MCQ"
+  });
+
+  const numToLetter = (n: string) =>
+    ({ '1': 'A', '2': 'B', '3': 'C', '4': 'D' }[n] || n.toUpperCase());
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
 
+    // Skip header / metadata lines
+    if (/^(?:DSA Interview MCQs?|Page \d+|\d+ questions?|Choose the correct|Instructions?)/i.test(line)) continue;
+
+    // ---- New question detected ----
     if (isQuestionStart(line)) {
-      if (currentQ && (currentQ.description || currentQ.title)) {
-        questions.push(currentQ);
-      }
-      const qText = getQuestionText(line);
-      currentQ = {
-        _id: "apt-" + Date.now() + "-" + Math.random().toString(36).substr(2, 7),
-        title: qText.length > 70 ? qText.substring(0, 67) + "..." : qText,
-        description: qText,
-        difficulty: "Easy",
-        topic: defaultTopic || "General Aptitude",
-        options: { A: "", B: "", C: "", D: "" },
-        correctOption: "",
-        company: ""
-      };
+      if (currentQ) questions.push(currentQ);
+      currentQ = makeQ(getQuestionText(line));
       continue;
     }
 
     if (!currentQ) {
-      currentQ = {
-        _id: "apt-" + Date.now() + "-" + Math.random().toString(36).substr(2, 7),
-        title: line.length > 70 ? line.substring(0, 67) + "..." : line,
-        description: line,
-        difficulty: "Easy",
-        topic: defaultTopic || "General Aptitude",
-        options: { A: "", B: "", C: "", D: "" },
-        correctOption: "",
-        company: ""
-      };
+      // If line looks like a question sentence, start one
+      if (line.length > 15 && /[?]/.test(line)) {
+        currentQ = makeQ(line);
+      }
       continue;
     }
 
-    // Check for inline options like: A) 10  B) 20  C) 30  D) 40
-    const inlineMatch = line.match(/(?:^|\s+)(?:[\(\[]?([A-Da-d])[\)\]\.\-:])\s*([^A-Da-d\(\)\[\]\n]+)/g);
-    if (inlineMatch && inlineMatch.length >= 2) {
-      inlineMatch.forEach(chunk => {
-        const single = chunk.trim().match(/^[(\[]?([A-Da-d])[)\]\.\-:]\s*(.+)/);
-        if (single) {
-          const letter = single[1].toUpperCase();
-          if (['A', 'B', 'C', 'D'].includes(letter)) {
-            currentQ.options[letter] = single[2].trim();
-          }
-        }
+    // ---- Check for answer line ----
+    const ansMatch = line.match(answerRegex);
+    if (ansMatch) {
+      currentQ.correctOption = numToLetter(ansMatch[1]);
+      continue;
+    }
+
+    // ---- Try inline letter options: "A) foo  B) bar  C) baz  D) qux" ----
+    const inlineLetterMatches: string[][] = [];
+    let ilm: RegExpExecArray | null;
+    const ilPat = new RegExp(inlineLetterPattern.source, 'g');
+    while ((ilm = ilPat.exec(line)) !== null) {
+      inlineLetterMatches.push([ilm[1], ilm[2].trim()]);
+    }
+    if (inlineLetterMatches.length >= 2) {
+      inlineLetterMatches.forEach(([l, v]) => {
+        const key = l.toUpperCase();
+        if (['A','B','C','D'].includes(key)) currentQ.options[key] = v;
       });
       continue;
     }
 
-    // Check for single option
-    const optMatch = line.match(optionRegex);
-    if (optMatch) {
-      let letter = (optMatch[1] || optMatch[2]).toUpperCase();
-      if (letter === '1') letter = 'A';
-      if (letter === '2') letter = 'B';
-      if (letter === '3') letter = 'C';
-      if (letter === '4') letter = 'D';
-      if (['A', 'B', 'C', 'D'].includes(letter)) {
-        currentQ.options[letter] = optMatch[3].trim();
-        continue;
-      }
+    // ---- Try inline numeric options: "1) foo  2) bar  3) baz  4) qux" ----
+    const inlineNumMatches: string[][] = [];
+    let inm: RegExpExecArray | null;
+    const inPat = new RegExp(inlineNumericPattern.source, 'g');
+    while ((inm = inPat.exec(line)) !== null) {
+      inlineNumMatches.push([inm[1], inm[2].trim()]);
+    }
+    if (inlineNumMatches.length >= 2) {
+      inlineNumMatches.forEach(([n, v]) => {
+        currentQ.options[numToLetter(n)] = v;
+      });
+      continue;
     }
 
-    // Check for answer
-    const ansMatch = line.match(answerRegex);
-    if (ansMatch) {
-      let letter = ansMatch[1].toUpperCase();
-      if (letter === '1') letter = 'A';
-      if (letter === '2') letter = 'B';
-      if (letter === '3') letter = 'C';
-      if (letter === '4') letter = 'D';
-      if (['A', 'B', 'C', 'D'].includes(letter)) {
-        currentQ.correctOption = letter;
-        continue;
-      }
+    // ---- Single letter option line ----
+    const lOptMatch = line.match(optionLetterRegex);
+    if (lOptMatch) {
+      const key = lOptMatch[1].toUpperCase();
+      currentQ.options[key] = lOptMatch[2].trim();
+      continue;
     }
 
-    // Otherwise, append to description if options haven't started
-    if (!currentQ.options.A && !currentQ.options.B) {
+    // ---- Single numeric option line (only inside a question) ----
+    const nOptMatch = line.match(optionNumericRegex);
+    if (nOptMatch) {
+      currentQ.options[numToLetter(nOptMatch[1])] = nOptMatch[2].trim();
+      continue;
+    }
+
+    // ---- Continuation of question text (before any options filled) ----
+    if (!currentQ.options.A && !currentQ.options.B && !currentQ.options.C) {
       currentQ.description += " " + line;
-      if (currentQ.title.endsWith("...")) {
-        currentQ.title = currentQ.description.length > 70 ? currentQ.description.substring(0, 67) + "..." : currentQ.description;
-      }
+      currentQ.title = currentQ.description.length > 80
+        ? currentQ.description.substring(0, 77) + "..."
+        : currentQ.description;
     }
   }
 
-  if (currentQ && (currentQ.description || currentQ.title)) {
-    questions.push(currentQ);
-  }
+  if (currentQ) questions.push(currentQ);
 
-  return questions;
+  // Filter out empty / garbage entries
+  return questions.filter(q => q.description && q.description.length > 5);
 }
 
 export default function AptitudeManagement() {
@@ -295,8 +318,21 @@ export default function AptitudeManagement() {
         for (let i = 1; i <= pdf.numPages; i++) {
           const page = await pdf.getPage(i);
           const content = await page.getTextContent();
-          const pageText = content.items.map((item: any) => item.str).join(" ");
-          fullText += pageText + "\n";
+
+          // Group items by their Y position (vertical line) to reconstruct real line breaks
+          const lineMap: Map<number, string[]> = new Map();
+          for (const item of content.items as any[]) {
+            if (!item.str) continue;
+            // Round Y to nearest 2px to group items on the same visual line
+            const y = Math.round(item.transform[5] / 2) * 2;
+            if (!lineMap.has(y)) lineMap.set(y, []);
+            lineMap.get(y)!.push(item.str);
+          }
+
+          // Sort lines top-to-bottom (highest Y = top in PDF coords)
+          const sortedYs = Array.from(lineMap.keys()).sort((a, b) => b - a);
+          const pageLines = sortedYs.map(y => lineMap.get(y)!.join(" ").trim()).filter(l => l.length > 0);
+          fullText += pageLines.join("\n") + "\n";
         }
 
         if (!fullText.trim()) {

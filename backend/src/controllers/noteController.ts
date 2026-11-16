@@ -60,9 +60,9 @@ export const createGlobalNote = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Title is required" });
     }
 
-    const imageUrl = req.body.imageUrl || null;
+    const imageUrl = req.body.imageUrl?.trim() || null;
+    let pdfUrl = req.body.pdfUrl?.trim() || null;
 
-    let pdfUrl = null;
     if (req.file) {
       const originalName = req.file.originalname;
       const result = await uploadMedia(req.file.buffer, "lms/pdfs/notes", "raw", originalName);
@@ -98,13 +98,17 @@ export const deleteNote = async (req: Request, res: Response) => {
     }
 
     if (note.pdfUrl) {
-      if (note.pdfUrl.includes("cloudinary.com")) {
-        await deleteMedia(note.pdfUrl, "raw");
-      } else {
-        const filePath = path.join(__dirname, "../../", note.pdfUrl);
-        if (fs.existsSync(filePath)) {
-          fs.unlinkSync(filePath);
+      try {
+        if (note.pdfUrl.includes("cloudinary.com") && note.pdfUrl.includes("lms/pdfs/notes")) {
+          await deleteMedia(note.pdfUrl, "raw");
+        } else if (!note.pdfUrl.includes("http")) {
+          const filePath = path.join(__dirname, "../../", note.pdfUrl);
+          if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+          }
         }
+      } catch (fileErr) {
+        console.warn("Could not delete physical note file, proceeding with record deletion:", fileErr);
       }
     }
 
@@ -122,18 +126,23 @@ export const deleteNote = async (req: Request, res: Response) => {
 export const updateNote = async (req: Request, res: Response) => {
   try {
     const { noteId } = req.params;
-    const { title, content, courseName, imageUrl } = req.body;
+    const { title, content, courseName, imageUrl, pdfUrl: bodyPdfUrl } = req.body;
 
     const existingNote = await prisma.note.findUnique({ where: { id: noteId } });
     if (!existingNote) {
       return res.status(404).json({ error: "Note not found" });
     }
 
-    let pdfUrl = existingNote.pdfUrl;
+    let pdfUrl = bodyPdfUrl !== undefined ? (bodyPdfUrl?.trim() || null) : existingNote.pdfUrl;
+
     if (req.file) {
-      // If a new PDF is uploaded, delete the old one from Cloudinary if it exists
-      if (existingNote.pdfUrl) {
-        await deleteMedia(existingNote.pdfUrl, "raw");
+      // If a new PDF is uploaded, delete the old one from Cloudinary if it was uploaded to our folder
+      if (existingNote.pdfUrl && existingNote.pdfUrl.includes("lms/pdfs/notes")) {
+        try {
+          await deleteMedia(existingNote.pdfUrl, "raw");
+        } catch (delErr) {
+          console.warn("Could not delete old note file from Cloudinary:", delErr);
+        }
       }
       const originalName = req.file.originalname;
       const result = await uploadMedia(req.file.buffer, "lms/pdfs/notes", "raw", originalName);
@@ -146,7 +155,7 @@ export const updateNote = async (req: Request, res: Response) => {
         title: title || existingNote.title,
         content: content !== undefined ? content : existingNote.content,
         courseName: courseName !== undefined ? courseName : existingNote.courseName,
-        imageUrl: imageUrl !== undefined ? imageUrl : existingNote.imageUrl,
+        imageUrl: imageUrl !== undefined ? (imageUrl?.trim() || null) : existingNote.imageUrl,
         pdfUrl: pdfUrl,
       },
     });

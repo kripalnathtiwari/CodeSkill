@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { StickyNote, Trash2, Loader, Upload, FileText, Pencil, X, Search } from "lucide-react";
+import { StickyNote, Trash2, Loader, Upload, FileText, Pencil, X, Search, Download } from "lucide-react";
 import axios from "axios";
 import { getApiUrl } from "../../utils/apiConfig";
 
@@ -9,6 +9,7 @@ export default function NotesManagement() {
   const [newNoteContent, setNewNoteContent] = useState("");
   const [newCourseName, setNewCourseName] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [pdfUrl, setPdfUrl] = useState("");
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -40,16 +41,17 @@ export default function NotesManagement() {
     }
     setIsSubmittingNote(true);
     try {
-      if (editingNoteId) {
-        const formData = new FormData();
-        formData.append("title", newNoteTitle);
-        formData.append("content", newNoteContent);
-        formData.append("courseName", newCourseName);
-        if (imageUrl) formData.append("imageUrl", imageUrl);
-        if (pdfFile) {
-          formData.append("pdf", pdfFile);
-        }
+      const formData = new FormData();
+      formData.append("title", newNoteTitle);
+      formData.append("content", newNoteContent);
+      formData.append("courseName", newCourseName);
+      if (imageUrl) formData.append("imageUrl", imageUrl.trim());
+      if (pdfUrl) formData.append("pdfUrl", pdfUrl.trim());
+      if (pdfFile) {
+        formData.append("pdf", pdfFile);
+      }
 
+      if (editingNoteId) {
         const res = await axios.put(getApiUrl(`/api/v1/notes/admin/notes/${editingNoteId}`), formData, {
           headers: { 
             Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
@@ -58,15 +60,6 @@ export default function NotesManagement() {
         });
         setGlobalNotes(globalNotes.map(n => n.id === editingNoteId ? res.data : n));
       } else {
-        const formData = new FormData();
-        formData.append("title", newNoteTitle);
-        formData.append("content", newNoteContent);
-        formData.append("courseName", newCourseName);
-        if (imageUrl) formData.append("imageUrl", imageUrl);
-        if (pdfFile) {
-          formData.append("pdf", pdfFile);
-        }
-
         const res = await axios.post(getApiUrl(`/api/v1/notes/admin/global-notes`), formData, {
           headers: { 
             Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
@@ -89,16 +82,18 @@ export default function NotesManagement() {
     setNewNoteContent("");
     setNewCourseName("");
     setImageUrl("");
+    setPdfUrl("");
     setPdfFile(null);
     setEditingNoteId(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const handleEditNote = (note: any) => {
-    setNewNoteTitle(note.title);
+    setNewNoteTitle(note.title || "");
     setNewNoteContent(note.content || "");
     setNewCourseName(note.courseName || "");
     setImageUrl(note.imageUrl || "");
+    setPdfUrl(note.pdfUrl || "");
     setEditingNoteId(note.id);
     setPdfFile(null); // Clear selected file when starting edit
     if (fileInputRef.current) fileInputRef.current.value = "";
@@ -156,27 +151,49 @@ export default function NotesManagement() {
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input 
-                type="text" 
-                value={newNoteTitle}
-                onChange={e => setNewNoteTitle(e.target.value)}
-                placeholder="Note Title *" 
-                className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-primary"
-              />
-              <input 
-                type="text" 
-                value={newCourseName}
-                onChange={e => setNewCourseName(e.target.value)}
-                placeholder="Course Name (Optional)" 
-                className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-primary"
-              />
-              <input 
-                type="url" 
-                value={imageUrl}
-                onChange={e => setImageUrl(e.target.value)}
-                placeholder="Cover Image URL (Optional)" 
-                className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-primary md:col-span-2"
-              />
+              <div>
+                <label className="block text-xs font-semibold text-text-secondary mb-1.5">Note Title *</label>
+                <input 
+                  type="text" 
+                  value={newNoteTitle}
+                  onChange={e => setNewNoteTitle(e.target.value)}
+                  placeholder="Note Title *" 
+                  className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-primary"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-text-secondary mb-1.5">Course Name (Optional)</label>
+                <input 
+                  type="text" 
+                  value={newCourseName}
+                  onChange={e => setNewCourseName(e.target.value)}
+                  placeholder="Course Name (Optional)" 
+                  className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-primary"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-xs font-semibold text-text-secondary mb-1.5">PDF Document URL from Cloudinary (or Direct PDF Link)</label>
+                <input 
+                  type="url" 
+                  value={pdfUrl}
+                  onChange={e => setPdfUrl(e.target.value)}
+                  placeholder="https://res.cloudinary.com/.../document.pdf" 
+                  className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-primary"
+                />
+                <span className="text-xs text-text-muted mt-1 block">
+                  Paste the Cloudinary URL of the PDF here. Students will be able to view and download it directly.
+                </span>
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-xs font-semibold text-text-secondary mb-1.5">Cover Image URL (Optional)</label>
+                <input 
+                  type="url" 
+                  value={imageUrl}
+                  onChange={e => setImageUrl(e.target.value)}
+                  placeholder="Cover Image URL (Optional)" 
+                  className="w-full bg-white dark:bg-[#1a2333] border border-border rounded-lg px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-primary"
+                />
+              </div>
             </div>
             
             <textarea 
@@ -288,15 +305,27 @@ export default function NotesManagement() {
                       )}
                       
                       {note.pdfUrl && (
-                        <div className="mt-4">
+                        <div className="mt-4 flex flex-wrap items-center gap-3">
                           <a 
-                            href={getApiUrl(note.pdfUrl)} 
+                            href={note.pdfUrl} 
                             target="_blank" 
                             rel="noopener noreferrer"
                             className="inline-flex items-center text-sm font-semibold text-primary hover:text-primary-dark transition-colors bg-primary/10 px-4 py-2 rounded-lg"
                           >
                             <FileText className="w-4 h-4 mr-2" />
                             View Attached PDF
+                          </a>
+                          <a 
+                            href={note.pdfUrl.includes('res.cloudinary.com') && !note.pdfUrl.includes('/fl_attachment') 
+                              ? note.pdfUrl.replace('/upload/', '/upload/fl_attachment/') 
+                              : note.pdfUrl} 
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            download={`${note.title.replace(/\s+/g, '_')}.pdf`}
+                            className="inline-flex items-center text-sm font-semibold text-text-secondary hover:text-text-primary transition-colors bg-slate-100 dark:bg-slate-800 px-3 py-2 rounded-lg"
+                          >
+                            <Download className="w-4 h-4 mr-1.5" />
+                            Download PDF
                           </a>
                         </div>
                       )}

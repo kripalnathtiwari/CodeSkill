@@ -54,19 +54,37 @@ export default function Notes() {
   const handlePdfDownload = async (pdfUrl: string, title: string, e: React.MouseEvent) => {
     e.stopPropagation();
     try {
-      const response = await axios.get(getApiUrl(pdfUrl), {
-        responseType: 'blob'
-      });
-      const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+      // For Cloudinary URLs, use Cloudinary's fl_attachment transformation to prompt native download without CORS issues
+      if (pdfUrl.includes('res.cloudinary.com')) {
+        let downloadUrl = pdfUrl;
+        if (!downloadUrl.includes('/fl_attachment')) {
+          downloadUrl = downloadUrl.replace('/upload/', '/upload/fl_attachment/');
+        }
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.target = '_blank';
+        link.setAttribute('download', `${title.replace(/\s+/g, '_')}.pdf`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        return;
+      }
+
+      // For self-hosted or other URLs, download via fetch
+      const response = await fetch(getApiUrl(pdfUrl));
+      if (!response.ok) throw new Error("Network response failed");
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', `${title.replace(/\s+/g, '_')}.pdf`);
       document.body.appendChild(link);
       link.click();
       link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error("Failed to download PDF", error);
-      alert("Failed to download PDF. The file may have been deleted or is missing from the server.");
+      console.warn("Direct download failed, opening direct link as fallback:", error);
+      window.open(pdfUrl, '_blank');
     }
   };
 
@@ -163,34 +181,23 @@ export default function Notes() {
                   )}
                 </div>
 
-                {note.content && !note.imageUrl && !note.pdfUrl ? (
-                  <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed flex-1 line-clamp-4 mt-1">
+                {note.content && (
+                  <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed line-clamp-3 mt-1 whitespace-pre-wrap">
                     {note.content}
                   </p>
-                ) : (
-                  <div className="flex-1"></div>
                 )}
 
                 {note.pdfUrl && (
-                <div className="mt-5 flex gap-2 w-full">
-                    <button
-                      onClick={async (e) => {
-                        e.preventDefault();
-                        try {
-                          const response = await axios.get(getApiUrl(note.pdfUrl!), { responseType: 'blob' });
-                          const file = new Blob([response.data], { type: 'application/pdf' });
-                          const fileURL = URL.createObjectURL(file);
-                          window.open(fileURL, '_blank');
-                        } catch (error) {
-                          console.error("Failed to view PDF", error);
-                          alert("Failed to view PDF. The file may have been deleted or blocked.");
-                        }
-                      }}
+                  <div className="mt-5 flex gap-2 w-full">
+                    <a
+                      href={note.pdfUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="flex-1 inline-flex items-center justify-center text-sm font-medium text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors px-4 py-2 rounded-lg shadow-sm"
                     >
-                      <FileText className="w-4 h-4 mr-2 text-slate-400" />
+                      <FileText className="w-4 h-4 mr-2 text-blue-500" />
                       View PDF
-                    </button>
+                    </a>
                     <button
                       onClick={(e) => handlePdfDownload(note.pdfUrl!, note.title, e)}
                       className="inline-flex items-center justify-center text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 px-3 py-2 rounded-lg shadow-sm shrink-0"

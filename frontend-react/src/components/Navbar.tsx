@@ -301,14 +301,6 @@ export default function Navbar() {
               >
                 Log In
               </Link>
-              
-              {/* Register Button */}
-              <Link 
-                to="/login?mode=register" 
-                className="bg-white hover:bg-primary text-primary hover:text-text-inverse border border-primary text-base font-bold px-4 py-2 rounded-lg transition-colors"
-              >
-                Register
-              </Link>
             </div>
           )
         )}
@@ -451,7 +443,6 @@ export default function Navbar() {
           {!user && !isLoading && (
              <div className="pt-4 mt-2 border-t border-border dark:border-border flex flex-col space-y-3">
                <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="w-full text-center py-2.5 font-bold text-text-inverse bg-primary hover:bg-primary rounded-lg transition-colors">Log In</Link>
-               <Link to="/login?mode=register" onClick={() => setIsMobileMenuOpen(false)} className="w-full text-center py-2.5 font-bold text-primary bg-white border border-primary hover:bg-primary hover:text-white rounded-lg transition-colors">Register</Link>
              </div>
           )}
         </div>

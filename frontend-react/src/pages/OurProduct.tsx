@@ -217,7 +217,7 @@ export default function OurProduct({ hideBanner = false }: OurProductProps) {
 
         {/* Demo Button */}
         <div className="mt-16 mb-20 flex justify-center w-full">
-          <Link to="/contact">
+          <Link to="/college-request-session">
             <button className="bg-primary hover:bg-primary/90 text-text-inverse font-bold text-lg px-8 py-4 rounded-xl transition-all duration-300 shadow-lg shadow-primary/40 hover:shadow-xl hover:shadow-primary/50 hover:-translate-y-1 flex items-center space-x-2">
               <span>Ask for Demo LMS</span>
             </button>

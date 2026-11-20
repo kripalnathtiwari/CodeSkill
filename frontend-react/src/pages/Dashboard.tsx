@@ -3,7 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { BookOpen, Award, Lock } from "lucide-react";
 import UserRankCard from "../components/dashboard/UserRankCard";
-
+import { fetchUserProgressFromDB, syncLocalProgressToDB } from "../utils/userProgressSync";
 
 import DashboardLayout from "../components/dashboard/DashboardLayout";
 import WelcomeBanner from "../components/dashboard/WelcomeBanner";
@@ -19,16 +19,36 @@ import Achievements from "../components/dashboard/Achievements";
 export default function Dashboard() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+
+  // Primary source of truth: Authoritative user progress from PostgreSQL database
+  const { data: dbProgress } = useQuery({
+    queryKey: ['userProgressDB', user?.email],
+    staleTime: 60 * 1000,
+    refetchOnWindowFocus: true,
+    queryFn: async () => {
+      if (!user?.email) return null;
+      // Sync any local unsynced cache to database first
+      await syncLocalProgressToDB(user.email);
+      // Fetch fresh consolidated progress from PostgreSQL
+      return await fetchUserProgressFromDB(user.email);
+    },
+    enabled: !!user?.email
+  });
   
-  // Reuse existing logic to fetch stats for the new UI
+  // DSA stats backed by database data
   const { data: dsaStats = { total: 0 } } = useQuery({
-    queryKey: ['dsaStats', user?.email],
-    staleTime: 5 * 60 * 1000,
+    queryKey: ['dsaStats', user?.email, dbProgress?.dsaSolved],
+    staleTime: 60 * 1000,
     refetchOnWindowFocus: false,
     queryFn: async () => {
       if (!user?.email) return { total: 0 };
       const emailLower = user.email.toLowerCase().trim();
       const allSolvedIds = new Set<string>();
+
+      // Read from DB progress first
+      if (dbProgress && Array.isArray(dbProgress.dsaSolved)) {
+        dbProgress.dsaSolved.forEach((id: string) => allSolvedIds.add(String(id)));
+      }
 
       try {
         const dsaSolved = localStorage.getItem(`codeskill_dsa_solved_${emailLower}`) || 
@@ -52,8 +72,8 @@ export default function Dashboard() {
   });
 
   const { data: mcqStats = { attempted: 0, correct: 0, incorrect: 0, accuracy: 0, topicBreakdown: [] } } = useQuery({
-    queryKey: ['mcqStats', user?.email],
-    staleTime: 5 * 60 * 1000,
+    queryKey: ['mcqStats', user?.email, dbProgress?.aptitudeAnalytics, dbProgress?.testScores],
+    staleTime: 60 * 1000,
     refetchOnWindowFocus: false,
     queryFn: async () => {
       if (!user?.email) return { attempted: 0, correct: 0, incorrect: 0, accuracy: 0, topicBreakdown: [] };
@@ -61,7 +81,21 @@ export default function Dashboard() {
 
       const attemptedMap = new Map<string, { correct: boolean; topic?: string; difficulty?: string }>();
 
-      // 1. Aptitude analytics
+      // 1. Database Aptitude analytics
+      if (dbProgress && Array.isArray(dbProgress.aptitudeAnalytics)) {
+        dbProgress.aptitudeAnalytics.forEach((item: any) => {
+          const id = String(item.id || item._id);
+          if (id) {
+            attemptedMap.set(`apt_${id}`, {
+              correct: Boolean(item.correct),
+              topic: item.topic || "Aptitude",
+              difficulty: item.difficulty || "Medium"
+            });
+          }
+        });
+      }
+
+      // 2. Local aptitude analytics fallback
       try {
         const aptData = localStorage.getItem(`aptitude_analytics_${emailLower}`) ||
                         localStorage.getItem(`aptitude_analytics_${user.email}`);
@@ -82,7 +116,20 @@ export default function Dashboard() {
         }
       } catch (e) {}
 
-      // 2. Other practice analytics
+      // 3. Other practice analytics
+      if (dbProgress && Array.isArray(dbProgress.otherAnalytics)) {
+        dbProgress.otherAnalytics.forEach((item: any) => {
+          const id = String(item.id || item._id);
+          if (id) {
+            attemptedMap.set(`other_${id}`, {
+              correct: Boolean(item.correct),
+              topic: item.topic || "Practice",
+              difficulty: item.difficulty || "Medium"
+            });
+          }
+        });
+      }
+
       try {
         const otherData = localStorage.getItem(`other_practice_analytics_${emailLower}`) ||
                           localStorage.getItem(`other_practice_analytics_${user.email}`);
@@ -103,24 +150,36 @@ export default function Dashboard() {
         }
       } catch (e) {}
 
-      // 3. Test MCQs from all_student_scores
+      // 4. Test MCQs from testScores (DB or localStorage)
       let testAttempted = 0;
       let testCorrect = 0;
+      const scoresPool: any[] = [];
+      if (dbProgress && Array.isArray(dbProgress.testScores)) {
+        scoresPool.push(...dbProgress.testScores);
+      }
       try {
         const allScores = JSON.parse(localStorage.getItem("all_student_scores") || "[]");
-        const myScores = allScores.filter((s: { studentEmail?: string }) => 
-          s.studentEmail?.toLowerCase().trim() === emailLower ||
-          s.studentEmail?.toLowerCase().trim() === user.email?.toLowerCase().trim()
-        );
-        myScores.forEach((s: any) => {
-          const totalQ = Number(s.totalQuestions) || 0;
-          const score = Number(s.score) || 0;
-          if (totalQ > 0) {
-            testAttempted += totalQ;
-            testCorrect += Math.min(score, totalQ);
-          }
-        });
+        scoresPool.push(...allScores);
       } catch (e) {}
+
+      const myScores = scoresPool.filter((s: { studentEmail?: string }) => 
+        s.studentEmail?.toLowerCase().trim() === emailLower ||
+        s.studentEmail?.toLowerCase().trim() === user.email?.toLowerCase().trim()
+      );
+
+      const seenScoreKeys = new Set<string>();
+      myScores.forEach((s: any) => {
+        const key = String(s.id || `${s.testId}_${s.timestamp || s.date || ""}`);
+        if (seenScoreKeys.has(key)) return;
+        seenScoreKeys.add(key);
+
+        const totalQ = Number(s.totalQuestions) || 0;
+        const score = Number(s.score) || 0;
+        if (totalQ > 0) {
+          testAttempted += totalQ;
+          testCorrect += Math.min(score, totalQ);
+        }
+      });
 
       let aptitudeAttempted = 0;
       let aptitudeCorrect = 0;
@@ -159,38 +218,85 @@ export default function Dashboard() {
   });
 
   const { data: enrollmentsData = [] } = useQuery({
-    queryKey: ['enrollmentsData', user?.email],
-    staleTime: 5 * 60 * 1000,
+    queryKey: ['enrollmentsData', user?.email, dbProgress?.enrolledCourses],
+    staleTime: 60 * 1000,
     refetchOnWindowFocus: false,
     queryFn: async () => {
       if (!user?.email) return [];
-      const existingStr = localStorage.getItem("enrolledCourses");
-      if (!existingStr) return [];
-      const parsed = JSON.parse(existingStr);
-      return parsed.filter((e: any) => 
-        e.email?.toLowerCase().trim() === user.email?.toLowerCase().trim() || 
-        e.accountEmail?.toLowerCase().trim() === user.email?.toLowerCase().trim()
-      ).sort((a: any, b: any) => new Date(b.dateRegistered || 0).getTime() - new Date(a.dateRegistered || 0).getTime());
+      const emailLower = user.email.toLowerCase().trim();
+
+      const combinedCourses: any[] = [];
+      if (dbProgress && Array.isArray(dbProgress.enrolledCourses)) {
+        combinedCourses.push(...dbProgress.enrolledCourses);
+      }
+
+      try {
+        const existingStr = localStorage.getItem("enrolledCourses");
+        if (existingStr) {
+          const parsed = JSON.parse(existingStr);
+          combinedCourses.push(...parsed);
+        }
+      } catch (e) {}
+
+      const uniqueCourses = new Map<string, any>();
+      combinedCourses
+        .filter((e: any) => 
+          e.email?.toLowerCase().trim() === emailLower || 
+          e.accountEmail?.toLowerCase().trim() === emailLower
+        )
+        .forEach((c: any) => {
+          const key = String(c.courseId || c.id || c.title || c.courseTitle);
+          if (key && !uniqueCourses.has(key)) {
+            uniqueCourses.set(key, c);
+          }
+        });
+
+      return Array.from(uniqueCourses.values())
+        .sort((a: any, b: any) => new Date(b.dateRegistered || 0).getTime() - new Date(a.dateRegistered || 0).getTime());
     },
     enabled: !!user?.email
   });
 
   const { data: testStats = { attempted: 0, scores: [] } } = useQuery({
-    queryKey: ['testStats', user?.email],
-    staleTime: 5 * 60 * 1000,
+    queryKey: ['testStats', user?.email, dbProgress?.testScores],
+    staleTime: 60 * 1000,
     refetchOnWindowFocus: false,
     queryFn: async () => {
       if (!user?.email) return { attempted: 0, scores: [] };
-      const allScores = JSON.parse(localStorage.getItem("all_student_scores") || "[]");
-      const myScores = allScores.filter((s: { studentEmail?: string }) => s.studentEmail === user.email);
+      const emailLower = user.email.toLowerCase().trim();
+
+      const combinedScores: any[] = [];
+      if (dbProgress && Array.isArray(dbProgress.testScores)) {
+        combinedScores.push(...dbProgress.testScores);
+      }
+
+      try {
+        const allScores = JSON.parse(localStorage.getItem("all_student_scores") || "[]");
+        combinedScores.push(...allScores);
+      } catch (e) {}
+
+      const uniqueMap = new Map<string, any>();
+      combinedScores
+        .filter((s: { studentEmail?: string }) => 
+          s.studentEmail?.toLowerCase().trim() === emailLower ||
+          s.studentEmail?.toLowerCase().trim() === user.email?.toLowerCase().trim()
+        )
+        .forEach((s: any) => {
+          const key = String(s.id || `${s.testId}_${s.timestamp || s.date || ""}`);
+          if (!uniqueMap.has(key)) {
+            uniqueMap.set(key, s);
+          }
+        });
+
+      const myScores = Array.from(uniqueMap.values());
       return { attempted: myScores.length, scores: myScores.reverse() };
     },
     enabled: !!user?.email
   });
 
   const { data: weeklyProgress = [] } = useQuery({
-    queryKey: ['weeklyProgress', user?.email],
-    staleTime: 5 * 60 * 1000,
+    queryKey: ['weeklyProgress', user?.email, dbProgress?.dailyProgress],
+    staleTime: 60 * 1000,
     refetchOnWindowFocus: false,
     queryFn: async () => {
       if (!user?.email) return [];
@@ -201,13 +307,17 @@ export default function Dashboard() {
   });
 
   const { data: tagsProgress = [] } = useQuery({
-    queryKey: ['tagsProgress', user?.email],
-    staleTime: 5 * 60 * 1000,
+    queryKey: ['tagsProgress', user?.email, dbProgress?.dsaSolved],
+    staleTime: 60 * 1000,
     refetchOnWindowFocus: false,
     queryFn: async () => {
       if (!user?.email) return [];
       const emailLower = user.email.toLowerCase().trim();
       const allSolvedIds = new Set<string>();
+
+      if (dbProgress && Array.isArray(dbProgress.dsaSolved)) {
+        dbProgress.dsaSolved.forEach((id: string) => allSolvedIds.add(String(id)));
+      }
 
       try {
         const dsaSolved = localStorage.getItem(`codeskill_dsa_solved_${emailLower}`) || 
@@ -284,15 +394,23 @@ export default function Dashboard() {
   }, [user?.email, queryClient]);
 
   const { data: userRank = null } = useQuery({
-    queryKey: ['userRank', user?.email],
-    staleTime: 5 * 60 * 1000,
+    queryKey: ['userRank', user?.email, dbProgress?.testScores],
+    staleTime: 60 * 1000,
     refetchOnWindowFocus: false,
     queryFn: async () => {
       if (!user?.email) return null;
-      const allScores = JSON.parse(localStorage.getItem("all_student_scores") || "[]");
+      const combinedScores: any[] = [];
+      if (dbProgress && Array.isArray(dbProgress.testScores)) {
+        combinedScores.push(...dbProgress.testScores);
+      }
+      try {
+        const allScores = JSON.parse(localStorage.getItem("all_student_scores") || "[]");
+        combinedScores.push(...allScores);
+      } catch (e) {}
+
       const studentTotals: Record<string, { score: number }> = {};
       
-      allScores.forEach((s: { studentEmail?: string, studentName?: string, score?: string | number }) => {
+      combinedScores.forEach((s: { studentEmail?: string, studentName?: string, score?: string | number }) => {
         const email = s.studentEmail || s.studentName;
         if (email) {
           if (!studentTotals[email]) studentTotals[email] = { score: 0 };

@@ -22,6 +22,7 @@ import {
   PartyPopper,
   AlertCircle
 } from 'lucide-react';
+import { saveSolvedProblemToDB, fetchUserProgressFromDB } from '../utils/userProgressSync';
 
 export default function Problems() {
   const { user } = useAuth();
@@ -97,7 +98,19 @@ export default function Problems() {
     } catch (e) {
       console.error('Failed to load DSA practice state:', e);
     }
-  }, [studentKey]);
+
+    if (user?.email) {
+      fetchUserProgressFromDB(user.email).then((data) => {
+        if (data && Array.isArray(data.dsaSolved) && data.dsaSolved.length > 0) {
+          setSolvedIds((prev) => {
+            const next = new Set(prev);
+            data.dsaSolved.forEach((id: string) => next.add(String(id)));
+            return next;
+          });
+        }
+      }).catch(() => {});
+    }
+  }, [studentKey, user?.email]);
 
   // Handle first-time track selection
   const handleSelectInitialTrack = (trackId: 'beginner' | 'intermediate' | 'pro') => {
@@ -157,6 +170,10 @@ export default function Problems() {
     if (user?.email) {
       localStorage.setItem(`solved_problems_progress_${user.email}`, JSON.stringify(solvedArray));
       localStorage.setItem(`codeskill_dsa_solved_${user.email.toLowerCase().trim()}`, JSON.stringify(solvedArray));
+
+      if (!wasSolved) {
+        saveSolvedProblemToDB(user.email, questionId).catch(() => {});
+      }
 
       // Record daily progress for streak & calendar
       import('../utils/progressTracker').then(({ recordDailyProgress }) => {

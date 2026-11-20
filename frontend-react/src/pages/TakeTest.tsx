@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { recordContribution } from "../utils/contributions";
 import { getApiUrl } from "../utils/apiConfig";
 import { recordDailyProgress } from "../utils/progressTracker";
+import { saveTestScoreToDB } from "../utils/userProgressSync";
 import { AlertTriangle, Clock, CheckCircle, ShieldAlert, Award, ChevronLeft, ChevronRight, Trophy, Minus, XCircle, LogOut, Info, AlertOctagon, Bookmark, Maximize, ArrowLeft, Minimize } from "lucide-react";
 
 // Mock Python Questions
@@ -276,6 +277,10 @@ export default function TakeTest() {
         
         existingScores.push(newScoreRecord);
         localStorage.setItem("all_student_scores", JSON.stringify(existingScores));
+        const emailToUse = user?.email || (newScoreRecord.studentEmail !== "Unknown" ? newScoreRecord.studentEmail : undefined);
+        if (emailToUse) {
+          saveTestScoreToDB(emailToUse, newScoreRecord).catch(() => {});
+        }
 
         // Exit fullscreen if active
         if (document.fullscreenElement) {

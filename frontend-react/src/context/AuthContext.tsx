@@ -49,7 +49,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (storedToken && storedUser) {
       setToken(storedToken);
       try {
-        setUser(JSON.parse(storedUser));
+        const parsed = JSON.parse(storedUser);
+        setUser(parsed);
+        if (parsed?.email) {
+          import("../utils/userProgressSync").then(({ fetchUserProgressFromDB }) => {
+            fetchUserProgressFromDB(parsed.email).catch(() => {});
+          });
+        }
       } catch (e) {
         console.error("Failed to parse user from local storage");
       }
@@ -178,6 +184,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.setItem("user", JSON.stringify(userData));
     setToken(accessToken);
     setUser(userData);
+
+    // Immediately synchronize database progress to this device
+    if (userData?.email) {
+      import("../utils/userProgressSync").then(({ fetchUserProgressFromDB }) => {
+        fetchUserProgressFromDB(userData.email).catch(() => {});
+      });
+    }
   };
 
   const logout = async () => {

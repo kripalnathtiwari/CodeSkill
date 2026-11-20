@@ -788,6 +788,211 @@ export class AuthController {
       return res.status(500).json({ error: "Failed to fetch dashboard stats" });
     }
   }
+
+  public static async getUserProgress(req: AuthenticatedRequest, res: Response) {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    try {
+      let syncRecord = await prisma.userProgressSync.findUnique({
+        where: { userId },
+      });
+
+      if (!syncRecord) {
+        syncRecord = await prisma.userProgressSync.create({
+          data: {
+            userId,
+            dsaSolved: [],
+            aptitudeAnalytics: [],
+            otherAnalytics: [],
+            testScores: [],
+            enrolledCourses: [],
+            dailyProgress: {},
+          },
+        });
+      }
+
+      // Also gather any native enrollments from DB
+      const dbEnrollments = await prisma.enrollment.findMany({
+        where: { studentId: userId },
+        include: { course: true },
+      });
+
+      // Also gather any accepted submissions from DB
+      const dbSubmissions = await prisma.submission.findMany({
+        where: { userId, status: "ACCEPTED" },
+        select: { questionId: true },
+        distinct: ["questionId"],
+      });
+
+      // Merge native records into the response
+      const dsaSolvedSet = new Set<string>([
+        ...(Array.isArray(syncRecord.dsaSolved) ? (syncRecord.dsaSolved as string[]) : []),
+        ...dbSubmissions.map((s) => s.questionId),
+      ]);
+
+      const formattedDbEnrollments = dbEnrollments.map((e) => ({
+        courseId: e.courseId,
+        courseTitle: e.course?.title || "Enrolled Course",
+        email: req.user?.email,
+        dateRegistered: e.createdAt.toISOString(),
+      }));
+
+      const existingCourses = Array.isArray(syncRecord.enrolledCourses)
+        ? (syncRecord.enrolledCourses as any[])
+        : [];
+      
+      const enrolledCoursesMap = new Map<string, any>();
+      existingCourses.forEach((c) => {
+        const id = c.courseId || c.id || c.title || c.courseTitle;
+        if (id) enrolledCoursesMap.set(String(id), c);
+      });
+      formattedDbEnrollments.forEach((c) => {
+        if (!enrolledCoursesMap.has(String(c.courseId))) {
+          enrolledCoursesMap.set(String(c.courseId), c);
+        }
+      });
+
+      return res.status(200).json({
+        dsaSolved: Array.from(dsaSolvedSet),
+        aptitudeAnalytics: syncRecord.aptitudeAnalytics || [],
+        otherAnalytics: syncRecord.otherAnalytics || [],
+        testScores: syncRecord.testScores || [],
+        enrolledCourses: Array.from(enrolledCoursesMap.values()),
+        dailyProgress: syncRecord.dailyProgress || {},
+      });
+    } catch (err: any) {
+      logger.error(`Get user progress failed: ${err.message}`);
+      return res.status(500).json({ error: "Failed to fetch user progress" });
+    }
+  }
+
+  public static async syncUserProgress(req: AuthenticatedRequest, res: Response) {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const {
+      dsaSolved,
+      aptitudeAnalytics,
+      otherAnalytics,
+      testScores,
+      enrolledCourses,
+      dailyProgress,
+    } = req.body;
+
+    try {
+      const existing = await prisma.userProgressSync.findUnique({
+        where: { userId },
+      });
+
+      // Merge dsaSolved (unique string IDs)
+      const mergedDsa = new Set<string>();
+      if (existing && Array.isArray(existing.dsaSolved)) {
+        (existing.dsaSolved as string[]).forEach((id) => mergedDsa.add(String(id)));
+      }
+      if (Array.isArray(dsaSolved)) {
+        dsaSolved.forEach((id: string) => mergedDsa.add(String(id)));
+      }
+
+      // Merge aptitudeAnalytics (deduplicate by id)
+      const aptMap = new Map<string, any>();
+      if (existing && Array.isArray(existing.aptitudeAnalytics)) {
+        (existing.aptitudeAnalytics as any[]).forEach((item) => {
+          const key = String(item.id || item._id);
+          if (key) aptMap.set(key, item);
+        });
+      }
+      if (Array.isArray(aptitudeAnalytics)) {
+        aptitudeAnalytics.forEach((item: any) => {
+          const key = String(item.id || item._id);
+          if (key) aptMap.set(key, item);
+        });
+      }
+
+      // Merge otherAnalytics (deduplicate by id)
+      const otherMap = new Map<string, any>();
+      if (existing && Array.isArray(existing.otherAnalytics)) {
+        (existing.otherAnalytics as any[]).forEach((item) => {
+          const key = String(item.id || item._id);
+          if (key) otherMap.set(key, item);
+        });
+      }
+      if (Array.isArray(otherAnalytics)) {
+        otherAnalytics.forEach((item: any) => {
+          const key = String(item.id || item._id);
+          if (key) otherMap.set(key, item);
+        });
+      }
+
+      // Merge testScores (deduplicate by testId + timestamp or id)
+      const scoreMap = new Map<string, any>();
+      if (existing && Array.isArray(existing.testScores)) {
+        (existing.testScores as any[]).forEach((s) => {
+          const key = String(s.id || `${s.testId}_${s.timestamp || s.date || ""}`);
+          scoreMap.set(key, s);
+        });
+      }
+      if (Array.isArray(testScores)) {
+        testScores.forEach((s: any) => {
+          const key = String(s.id || `${s.testId}_${s.timestamp || s.date || ""}`);
+          scoreMap.set(key, s);
+        });
+      }
+
+      // Merge enrolledCourses (deduplicate by courseId / slug / title)
+      const coursesMap = new Map<string, any>();
+      if (existing && Array.isArray(existing.enrolledCourses)) {
+        (existing.enrolledCourses as any[]).forEach((c) => {
+          const key = String(c.courseId || c.id || c.title || c.courseTitle);
+          if (key) coursesMap.set(key, c);
+        });
+      }
+      if (Array.isArray(enrolledCourses)) {
+        enrolledCourses.forEach((c: any) => {
+          const key = String(c.courseId || c.id || c.title || c.courseTitle);
+          if (key) coursesMap.set(key, c);
+        });
+      }
+
+      // Merge dailyProgress (merge days)
+      const mergedDaily = {
+        ...(existing && typeof existing.dailyProgress === "object" && existing.dailyProgress !== null
+          ? (existing.dailyProgress as Record<string, any>)
+          : {}),
+        ...(dailyProgress && typeof dailyProgress === "object" ? dailyProgress : {}),
+      };
+
+      const updatedRecord = await prisma.userProgressSync.upsert({
+        where: { userId },
+        create: {
+          userId,
+          dsaSolved: Array.from(mergedDsa),
+          aptitudeAnalytics: Array.from(aptMap.values()),
+          otherAnalytics: Array.from(otherMap.values()),
+          testScores: Array.from(scoreMap.values()),
+          enrolledCourses: Array.from(coursesMap.values()),
+          dailyProgress: mergedDaily,
+        },
+        update: {
+          dsaSolved: Array.from(mergedDsa),
+          aptitudeAnalytics: Array.from(aptMap.values()),
+          otherAnalytics: Array.from(otherMap.values()),
+          testScores: Array.from(scoreMap.values()),
+          enrolledCourses: Array.from(coursesMap.values()),
+          dailyProgress: mergedDaily,
+        },
+      });
+
+      return res.status(200).json(updatedRecord);
+    } catch (err: any) {
+      logger.error(`Sync user progress failed: ${err.message}`);
+      return res.status(500).json({ error: "Failed to sync user progress" });
+    }
+  }
 }
 
 export default AuthController;

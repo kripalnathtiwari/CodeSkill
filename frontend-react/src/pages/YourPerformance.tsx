@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useAuth } from "../context/AuthContext";
 import { getWeeklyProgress } from "../utils/progressTracker";
+import { fetchUserProgressFromDB } from "../utils/userProgressSync";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
@@ -100,6 +101,14 @@ export default function YourPerformance() {
     if (!user?.email) return;
     setWeeklyData(getWeeklyProgress(user.email));
     setAptitudeData(readAptitudeAnalytics(user.email));
+
+    // Fetch authoritative database progress and refresh state
+    fetchUserProgressFromDB(user.email).then((data) => {
+      if (data) {
+        setWeeklyData(getWeeklyProgress(user.email));
+        setAptitudeData(readAptitudeAnalytics(user.email));
+      }
+    }).catch(() => {});
   }, [user]);
 
   // ── Computed stats ─────────────────────────────────────────────────────────

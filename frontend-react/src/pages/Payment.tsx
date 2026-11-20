@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { CreditCard, ShieldCheck, Lock, CheckCircle2, Building, Smartphone, ChevronRight, Loader2, Tag, AlertCircle } from "lucide-react";
 import { getCourseById } from "../data/coursesData";
 import { motion, AnimatePresence } from "framer-motion";
+import { saveCourseEnrollmentToDB } from "../utils/userProgressSync";
 
 export default function Payment() {
   const location = useLocation();
@@ -125,6 +126,10 @@ export default function Payment() {
         enrollments.push({ ...newEnrollment, status: "PAID" });
       }
       localStorage.setItem("enrolledCourses", JSON.stringify(enrollments));
+
+      if (newEnrollment?.email) {
+        saveCourseEnrollmentToDB(newEnrollment.email, { ...newEnrollment, status: "PAID" }).catch(() => {});
+      }
 
       // Redirect to Dashboard
       setTimeout(() => {

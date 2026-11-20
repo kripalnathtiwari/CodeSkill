@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { getApiUrl } from "../utils/apiConfig";
 import { recordDailyProgress } from "../utils/progressTracker";
+import { saveAptitudeAnalyticsToDB } from "../utils/userProgressSync";
 
 export default function SolveAptitude() {
   const { user } = useAuth();
@@ -272,6 +273,9 @@ export default function SolveAptitude() {
       
       try {
         localStorage.setItem(analyticsKey, JSON.stringify(savedAnalytics));
+        if (user.email) {
+          saveAptitudeAnalyticsToDB(user.email, savedAnalytics).catch(() => {});
+        }
       } catch (e) {
         console.error("Failed to save aptitude analytics", e);
       }

@@ -78,32 +78,6 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      // Mock Authentication for Admin
-      if (email.toLowerCase() === "admin@codeskill.com" && password === "AdminPassword123!") {
-        if (rememberMe) {
-          localStorage.setItem("rememberedEmail", email);
-          localStorage.setItem("rememberedPassword", password);
-        } else {
-          localStorage.removeItem("rememberedEmail");
-          localStorage.removeItem("rememberedPassword");
-        }
-
-        login("mock-token-admin", "mock-refresh", {
-          id: "admin-1",
-          email: "admin@codeskill.com",
-          role: "ADMIN",
-          profile: {
-            firstName: "Super",
-            lastName: "Admin",
-            dailyStreak: 0,
-            totalSolved: 0,
-          },
-        });
-        navigate("/admin");
-        return;
-      }
-
-      // Default fallback to mock API
       const res = await axios.post(getApiUrl("/api/v1/auth/login"), {
         email,
         password,
@@ -121,7 +95,11 @@ export default function LoginPage() {
       }
 
       login(accessToken, refreshToken, user);
-      navigate("/dashboard");
+      if (user.role === "ADMIN") {
+        navigate("/admin");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (err: any) {
       setError(err.response?.data?.error || "Failed to login. Please try again.");
     } finally {

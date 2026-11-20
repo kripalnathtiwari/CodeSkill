@@ -127,7 +127,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           headers: { Authorization: `Bearer ${token}` },
         });
       } catch (err: any) {
-        // Interceptor will automatically trigger logout & redirect if 401 SESSION_REVOKED
+        const status = err.response?.status;
+        const errorData = err.response?.data;
+        if (
+          status === 401 ||
+          errorData?.code === "SESSION_REVOKED" ||
+          errorData?.error?.includes("another device")
+        ) {
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          localStorage.removeItem("user");
+          setToken(null);
+          setUser(null);
+          navigate("/login", {
+            state: {
+              forceLogoutMessage:
+                errorData?.error || "Your account has been logged in on another device.",
+            },
+          });
+        }
       } finally {
         isChecking = false;
       }

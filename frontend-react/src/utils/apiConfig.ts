@@ -4,7 +4,13 @@ import axios from "axios";
 /**
  * Centralized API base URL configuration for local development and Vercel production deployment.
  */
-const rawUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+let rawUrl = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? "https://codesklii-backend-production.up.railway.app" : "http://localhost:5000");
+
+// Fix legacy or misconfigured Railway URLs that omit '.up.'
+if (rawUrl.includes("codesklii-backend-production.railway.app")) {
+  rawUrl = rawUrl.replace("codesklii-backend-production.railway.app", "codesklii-backend-production.up.railway.app");
+}
+
 export const API_BASE_URL = rawUrl.replace(/\/+$/, "");
 
 // Set a global 15-second timeout on all Axios requests to prevent UI hanging when the network or backend is slow/cold

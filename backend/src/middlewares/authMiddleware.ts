@@ -36,42 +36,47 @@ export const authenticateJWT = async (
     };
 
     // --- Single Active Device: validate sessionId ---
-    if (decoded.sessionId) {
-      let isSessionActive = false;
+    if (!decoded.sessionId) {
+      return res.status(401).json({
+        error: "Your account has been logged in on another device.",
+        code: "SESSION_REVOKED",
+      });
+    }
 
-      // Check Redis first for fast lookup
-      if (redis) {
-        try {
-          const redisSession = await redis.get(`session:${decoded.sessionId}`);
-          if (redisSession !== null) {
-            isSessionActive = redisSession === "active";
-            if (!isSessionActive) {
-              return res.status(401).json({
-                error: "Your account has been logged in on another device.",
-                code: "SESSION_REVOKED",
-              });
-            }
+    let isSessionActive = false;
+
+    // Check Redis first for fast lookup
+    if (redis) {
+      try {
+        const redisSession = await redis.get(`session:${decoded.sessionId}`);
+        if (redisSession !== null) {
+          isSessionActive = redisSession === "active";
+          if (!isSessionActive) {
+            return res.status(401).json({
+              error: "Your account has been logged in on another device.",
+              code: "SESSION_REVOKED",
+            });
           }
-          // If key not found in Redis, fall through to DB check
-        } catch (redisErr: any) {
-          logger.warn(`Redis session check failed: ${redisErr.message}`);
-          // Fall through to DB check
         }
+        // If key not found in Redis, fall through to DB check
+      } catch (redisErr: any) {
+        logger.warn(`Redis session check failed: ${redisErr.message}`);
+        // Fall through to DB check
       }
+    }
 
-      // If Redis didn't confirm, check DB
-      if (!isSessionActive) {
-        const session = await prisma.deviceSession.findUnique({
-          where: { sessionId: decoded.sessionId },
-          select: { isActive: true, userId: true },
+    // If Redis didn't confirm, check DB
+    if (!isSessionActive) {
+      const session = await prisma.deviceSession.findUnique({
+        where: { sessionId: decoded.sessionId },
+        select: { isActive: true, userId: true },
+      });
+
+      if (!session || !session.isActive || session.userId !== decoded.id) {
+        return res.status(401).json({
+          error: "Your account has been logged in on another device.",
+          code: "SESSION_REVOKED",
         });
-
-        if (!session || !session.isActive || session.userId !== decoded.id) {
-          return res.status(401).json({
-            error: "Your account has been logged in on another device.",
-            code: "SESSION_REVOKED",
-          });
-        }
       }
     }
 

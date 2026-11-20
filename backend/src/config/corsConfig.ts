@@ -22,8 +22,12 @@ export const corsOptions: CorsOptions = {
       return callback(null, true);
     }
 
-    // 2. Allow explicitly defined origins
-    if (allowedOrigins.includes(origin)) {
+    // 2. Allow explicitly defined origins or any vercel/codeskill deployment
+    const isVercel = origin.endsWith(".vercel.app") || origin.includes("vercel.app");
+    const isCodeSkill = origin.includes("codeskill.com");
+    const isLocalhost = origin.includes("localhost") || origin.includes("127.0.0.1");
+
+    if (allowedOrigins.includes(origin) || isVercel || isCodeSkill || isLocalhost) {
       return callback(null, true);
     }
 

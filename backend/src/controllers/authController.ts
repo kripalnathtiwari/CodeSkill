@@ -43,7 +43,7 @@ export class AuthController {
    * Revoke all existing active sessions for a user, emit force-logout via Socket.IO,
    * and invalidate Redis session keys.
    */
-  private static async revokeExistingSessions(userId: string): Promise<void> {
+  private static async revokeExistingSessions(userId: string, email?: string): Promise<void> {
     // Find all active sessions for the user
     const activeSessions = await prisma.deviceSession.findMany({
       where: { userId, isActive: true },
@@ -70,8 +70,8 @@ export class AuthController {
         }
       }
 
-      // Emit force-logout via Socket.IO
-      emitForceLogout(userId, "Your account has been logged in on another device.");
+      // Emit force-logout via Socket.IO to both user ID and email channels
+      emitForceLogout(userId, "Your account has been logged in on another device.", email);
     }
   }
 
@@ -218,7 +218,7 @@ export class AuthController {
       }
 
       // Single Active Device: Revoke all existing sessions before creating new one
-      await AuthController.revokeExistingSessions(user.id);
+      await AuthController.revokeExistingSessions(user.id, user.email);
 
       // Create new session with tokens
       const { accessToken, refreshToken } = await AuthController.createSessionAndTokens(
@@ -306,7 +306,7 @@ export class AuthController {
       }
 
       // Single Active Device: Revoke all existing sessions before creating new one
-      await AuthController.revokeExistingSessions(user.id);
+      await AuthController.revokeExistingSessions(user.id, user.email);
 
       // Create new session with tokens
       const { accessToken, refreshToken } = await AuthController.createSessionAndTokens(
@@ -992,6 +992,14 @@ export class AuthController {
       logger.error(`Sync user progress failed: ${err.message}`);
       return res.status(500).json({ error: "Failed to sync user progress" });
     }
+  }
+
+  public static async getSessionStatus(req: AuthenticatedRequest, res: Response) {
+    return res.status(200).json({
+      active: true,
+      userId: req.user?.id,
+      sessionId: req.user?.sessionId,
+    });
   }
 }
 

@@ -19,6 +19,7 @@ router.delete("/users/:userId", authenticateJWT, AuthController.deleteUser as an
     router.get("/dashboard-stats", authenticateJWT, AuthController.getDashboardStats as any);
     router.get("/user-progress", authenticateJWT, AuthController.getUserProgress as any);
     router.post("/user-progress", authenticateJWT, AuthController.syncUserProgress as any);
+    router.get("/session-status", authenticateJWT, AuthController.getSessionStatus as any);
 
 // Password Reset Routes
 router.post("/request-otp", rateLimiter({ windowSeconds: 60, maxRequests: 3 }), AuthController.requestOtp);

@@ -87,8 +87,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     socketRef.current = socket;
 
     socket.on("connect", () => {
-      // Join user room for receiving events
+      // Join user room for receiving events (by id and email)
       socket.emit("join-user-room", user.id);
+      if (user.email) {
+        socket.emit("join-user-room", user.email.toLowerCase().trim());
+      }
     });
 
     // Listen for force-logout event (another device logged in)
@@ -109,7 +112,50 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       socket.disconnect();
       socketRef.current = null;
     };
-  }, [user?.id, navigate]);
+  }, [user?.id, user?.email, navigate]);
+
+  // Continuous Active Session Heartbeat & Window Focus Validation
+  useEffect(() => {
+    if (!token || !user) return;
+
+    let isChecking = false;
+    const checkActiveSession = async () => {
+      if (isChecking) return;
+      isChecking = true;
+      try {
+        await axios.get(getApiUrl("/api/v1/auth/session-status"), {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } catch (err: any) {
+        // Interceptor will automatically trigger logout & redirect if 401 SESSION_REVOKED
+      } finally {
+        isChecking = false;
+      }
+    };
+
+    // Immediate check on tab focus or visibility change
+    const handleFocus = () => {
+      checkActiveSession();
+    };
+
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        checkActiveSession();
+      }
+    };
+
+    window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    // Fast 3-second heartbeat polling fallback for environments without WebSockets
+    const heartbeatInterval = setInterval(checkActiveSession, 3000);
+
+    return () => {
+      clearInterval(heartbeatInterval);
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, [token, user]);
 
   useEffect(() => {
     let isRedirecting = false;

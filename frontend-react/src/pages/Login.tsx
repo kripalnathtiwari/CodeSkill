@@ -34,6 +34,16 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Show force-logout message if redirected from session revocation
+  useEffect(() => {
+    const state = location.state as { forceLogoutMessage?: string } | null;
+    if (state?.forceLogoutMessage) {
+      setError(state.forceLogoutMessage);
+      // Clear the state so the message doesn't persist on refresh
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
+
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     if (searchParams.get("mode") === "register") {

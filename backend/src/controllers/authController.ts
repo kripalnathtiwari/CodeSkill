@@ -9,6 +9,7 @@ import { OAuth2Client } from "google-auth-library";
 import crypto from "crypto";
 import redis from "../config/redis";
 import EmailService from "../services/emailService";
+import { emitForceLogout } from "../sockets/socketServer";
 
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 const REFRESH_SECRET = process.env.REFRESH_SECRET || "superrefreshkey";
@@ -38,6 +39,95 @@ async function verifyTurnstile(token: string) {
 }
 
 export class AuthController {
+  /**
+   * Revoke all existing active sessions for a user, emit force-logout via Socket.IO,
+   * and invalidate Redis session keys.
+   */
+  private static async revokeExistingSessions(userId: string): Promise<void> {
+    // Find all active sessions for the user
+    const activeSessions = await prisma.deviceSession.findMany({
+      where: { userId, isActive: true },
+      select: { id: true, sessionId: true },
+    });
+
+    if (activeSessions.length > 0) {
+      // Deactivate all existing sessions atomically
+      await prisma.deviceSession.updateMany({
+        where: { userId, isActive: true },
+        data: { isActive: false },
+      });
+
+      // Invalidate Redis session keys
+      if (redis) {
+        const pipeline = redis.pipeline();
+        for (const session of activeSessions) {
+          pipeline.set(`session:${session.sessionId}`, "revoked", "EX", 86400); // Keep revoked state for 24h
+        }
+        try {
+          await pipeline.exec();
+        } catch (redisErr: any) {
+          logger.warn(`Redis session revocation failed: ${redisErr.message}`);
+        }
+      }
+
+      // Emit force-logout via Socket.IO
+      emitForceLogout(userId, "Your account has been logged in on another device.");
+    }
+  }
+
+  /**
+   * Create a new session, generate tokens with sessionId, and cache in Redis.
+   */
+  private static async createSessionAndTokens(
+    user: { id: string; email: string; role: string },
+    req: Request
+  ): Promise<{ accessToken: string; refreshToken: string; sessionId: string }> {
+    const sessionId = crypto.randomUUID();
+
+    // Generate Access Token with sessionId (Valid for 7d)
+    const accessToken = jwt.sign(
+      { id: user.id, email: user.email, role: user.role, sessionId },
+      JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    // Generate Refresh Token with sessionId (Valid for 7 days)
+    const refreshToken = jwt.sign(
+      { id: user.id, sessionId },
+      REFRESH_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    // Create session record and update lastLoginAt atomically
+    await prisma.$transaction([
+      prisma.deviceSession.create({
+        data: {
+          userId: user.id,
+          sessionId,
+          refreshToken,
+          isActive: true,
+          userAgent: req.headers["user-agent"],
+          ipAddress: req.ip,
+        },
+      }),
+      prisma.user.update({
+        where: { id: user.id },
+        data: { lastLoginAt: new Date() },
+      }),
+    ]);
+
+    // Cache active session in Redis (7 days TTL)
+    if (redis) {
+      try {
+        await redis.set(`session:${sessionId}`, "active", "EX", 604800);
+      } catch (redisErr: any) {
+        logger.warn(`Redis session cache failed: ${redisErr.message}`);
+      }
+    }
+
+    return { accessToken, refreshToken, sessionId };
+  }
+
   public static async register(req: Request, res: Response) {
     const { password, firstName, lastName, role, cfToken, phoneNumber } = req.body;
     const email = req.body.email?.toLowerCase();
@@ -127,35 +217,14 @@ export class AuthController {
         return res.status(401).json({ error: "Invalid email credentials or password" });
       }
 
-      // Generate Access Token (Valid for 7d)
-      const accessToken = jwt.sign(
+      // Single Active Device: Revoke all existing sessions before creating new one
+      await AuthController.revokeExistingSessions(user.id);
+
+      // Create new session with tokens
+      const { accessToken, refreshToken } = await AuthController.createSessionAndTokens(
         { id: user.id, email: user.email, role: user.role },
-        JWT_SECRET,
-        { expiresIn: "7d" }
+        req
       );
-
-      // Generate Refresh Token (Valid for 7 days)
-      const refreshToken = jwt.sign(
-        { id: user.id },
-        REFRESH_SECRET,
-        { expiresIn: "7d" }
-      );
-
-      // Store Refresh Token Session in Database and update lastLoginAt
-      await prisma.$transaction([
-        prisma.deviceSession.create({
-          data: {
-            userId: user.id,
-            refreshToken,
-            userAgent: req.headers["user-agent"],
-            ipAddress: req.ip,
-          },
-        }),
-        prisma.user.update({
-          where: { id: user.id },
-          data: { lastLoginAt: new Date() }
-        })
-      ]);
 
       logger.info(`User authenticated: ${user.id}`);
       return res.status(200).json({
@@ -236,34 +305,14 @@ export class AuthController {
         });
       }
 
-      // Generate Access Token
-      const accessToken = jwt.sign(
+      // Single Active Device: Revoke all existing sessions before creating new one
+      await AuthController.revokeExistingSessions(user.id);
+
+      // Create new session with tokens
+      const { accessToken, refreshToken } = await AuthController.createSessionAndTokens(
         { id: user.id, email: user.email, role: user.role },
-        JWT_SECRET,
-        { expiresIn: "7d" }
+        req
       );
-
-      // Generate Refresh Token
-      const refreshToken = jwt.sign(
-        { id: user.id },
-        REFRESH_SECRET,
-        { expiresIn: "7d" }
-      );
-
-      await prisma.$transaction([
-        prisma.deviceSession.create({
-          data: {
-            userId: user.id,
-            refreshToken,
-            userAgent: req.headers["user-agent"],
-            ipAddress: req.ip,
-          },
-        }),
-        prisma.user.update({
-          where: { id: user.id },
-          data: { lastLoginAt: new Date() }
-        })
-      ]);
 
       logger.info(`User authenticated via Google: ${user.id}`);
       return res.status(200).json({
@@ -301,19 +350,38 @@ export class AuthController {
         return res.status(403).json({ error: "Session expired or invalid token" });
       }
 
+      // Check if session is still active (single-device enforcement)
+      if (!session.isActive) {
+        return res.status(401).json({
+          error: "Your account has been logged in on another device.",
+          code: "SESSION_REVOKED",
+        });
+      }
+
       // Verify JWT signature
-      const decoded = jwt.verify(refreshToken, REFRESH_SECRET) as { id: string };
+      const decoded = jwt.verify(refreshToken, REFRESH_SECRET) as { id: string; sessionId?: string };
 
       if (decoded.id !== session.userId) {
         return res.status(403).json({ error: "Token tampering detected" });
       }
 
-      // Refresh Access Token
+      // Refresh Access Token with sessionId
       const accessToken = jwt.sign(
-        { id: session.user.id, email: session.user.email, role: session.user.role },
+        {
+          id: session.user.id,
+          email: session.user.email,
+          role: session.user.role,
+          sessionId: session.sessionId,
+        },
         JWT_SECRET,
         { expiresIn: "7d" }
       );
+
+      // Update lastActive
+      await prisma.deviceSession.update({
+        where: { id: session.id },
+        data: { lastActive: new Date() },
+      });
 
       return res.status(200).json({
         accessToken,
@@ -338,9 +406,28 @@ export class AuthController {
     }
 
     try {
-      await prisma.deviceSession.delete({
+      // Find the session to get sessionId before deleting
+      const session = await prisma.deviceSession.findUnique({
         where: { refreshToken },
+        select: { id: true, sessionId: true },
       });
+
+      if (session) {
+        // Invalidate Redis cache
+        if (redis) {
+          try {
+            await redis.del(`session:${session.sessionId}`);
+          } catch (redisErr: any) {
+            logger.warn(`Redis session cleanup on logout failed: ${redisErr.message}`);
+          }
+        }
+
+        // Delete session from DB
+        await prisma.deviceSession.delete({
+          where: { id: session.id },
+        });
+      }
+
       return res.status(200).json({ message: "Logout successful" });
     } catch (err: any) {
       logger.error(`Logout failed: ${err.message}`);

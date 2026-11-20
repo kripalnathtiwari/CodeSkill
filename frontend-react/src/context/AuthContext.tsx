@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { getApiUrl } from "../utils/apiConfig";
+import { io, Socket } from "socket.io-client";
 
 interface User {
   id: string;
@@ -38,6 +39,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
     // Load from local storage on mount
@@ -55,30 +57,110 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(false);
   }, []);
 
+  // Socket.IO connection for force-logout detection
+  useEffect(() => {
+    if (!user?.id) {
+      // Disconnect socket if user is null
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
+      return;
+    }
+
+    // Determine socket URL from API URL
+    const apiUrl = getApiUrl("");
+    const socketUrl = apiUrl.replace(/\/+$/, ""); // Remove trailing slash
+
+    // Create socket connection
+    const socket = io(socketUrl, {
+      transports: ["websocket", "polling"],
+      withCredentials: true,
+    });
+
+    socketRef.current = socket;
+
+    socket.on("connect", () => {
+      // Join user room for receiving events
+      socket.emit("join-user-room", user.id);
+    });
+
+    // Listen for force-logout event (another device logged in)
+    socket.on("force-logout", (data: { message: string }) => {
+      const msg = data?.message || "Your account has been logged in on another device.";
+      // Clear credentials
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("user");
+      setToken(null);
+      setUser(null);
+
+      // Navigate to login with the force-logout message
+      navigate("/login", { state: { forceLogoutMessage: msg } });
+    });
+
+    return () => {
+      socket.disconnect();
+      socketRef.current = null;
+    };
+  }, [user?.id, navigate]);
+
   useEffect(() => {
     let isRedirecting = false;
     const interceptor = axios.interceptors.response.use(
       (response) => response,
       (error) => {
-        if (
-          error.response &&
-          (error.response.status === 401 ||
-            (error.response.status === 403 &&
-              error.response.data?.error === "Invalid or expired access token"))
-        ) {
-          const hadToken = Boolean(localStorage.getItem("accessToken"));
-          // Clear credentials
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("refreshToken");
-          localStorage.removeItem("user");
-          setToken(null);
-          setUser(null);
+        if (error.response) {
+          const status = error.response.status;
+          const errorData = error.response.data;
 
-          // Only redirect once and avoid redirecting if already on /login or was an unauthenticated guest
-          if (hadToken && !isRedirecting && window.location.pathname !== "/login") {
-            isRedirecting = true;
-            navigate("/login");
-            setTimeout(() => { isRedirecting = false; }, 2000);
+          // Handle session revoked (single-device enforcement)
+          if (
+            (status === 401 && errorData?.code === "SESSION_REVOKED") ||
+            (status === 401 && errorData?.error?.includes("another device"))
+          ) {
+            const hadToken = Boolean(localStorage.getItem("accessToken"));
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("user");
+            setToken(null);
+            setUser(null);
+
+            if (hadToken && !isRedirecting && window.location.pathname !== "/login") {
+              isRedirecting = true;
+              navigate("/login", {
+                state: {
+                  forceLogoutMessage:
+                    errorData?.error || "Your account has been logged in on another device.",
+                },
+              });
+              setTimeout(() => {
+                isRedirecting = false;
+              }, 2000);
+            }
+            return Promise.reject(error);
+          }
+
+          // Handle standard 401/403 (expired token, etc.)
+          if (
+            status === 401 ||
+            (status === 403 &&
+              errorData?.error === "Invalid or expired access token")
+          ) {
+            const hadToken = Boolean(localStorage.getItem("accessToken"));
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("user");
+            setToken(null);
+            setUser(null);
+
+            if (hadToken && !isRedirecting && window.location.pathname !== "/login") {
+              isRedirecting = true;
+              navigate("/login");
+              setTimeout(() => {
+                isRedirecting = false;
+              }, 2000);
+            }
           }
         }
         return Promise.reject(error);

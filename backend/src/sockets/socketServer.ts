@@ -43,3 +43,16 @@ export const notifySubmissionUpdate = (userId: string, data: any) => {
   io.to(`user:${userId}`).emit("submission-finished", data);
   logger.debug(`WebSocket broadcast: submission-finished dispatched to user:${userId}`);
 };
+
+/**
+ * Emit a force-logout event to all sockets in a user's room.
+ * Used when a new login session replaces the old one.
+ */
+export const emitForceLogout = (userId: string, message: string) => {
+  if (!io) {
+    logger.warn("Socket.io server uninitialized. Skipping force-logout notification.");
+    return;
+  }
+  io.to(`user:${userId}`).emit("force-logout", { message });
+  logger.info(`Force-logout emitted to user:${userId}`);
+};

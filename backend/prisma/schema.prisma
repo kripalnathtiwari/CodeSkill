@@ -71,7 +71,9 @@ model Profile {
 model DeviceSession {
   id           String   @id @default(uuid()) @db.Uuid
   userId       String   @db.Uuid
+  sessionId    String?  @unique @db.Uuid
   refreshToken String   @unique
+  isActive     Boolean  @default(true)
   userAgent    String?
   ipAddress    String?
   lastActive   DateTime @default(now())
@@ -80,6 +82,8 @@ model DeviceSession {
 
   @@index([userId])
   @@index([lastActive])
+  @@index([sessionId])
+  @@index([userId, isActive])
 }
 
 model UserActivityLog {

@@ -11,7 +11,13 @@ export const getAllAptitudeProblems = async (req: AuthenticatedRequest, res: Res
     const limitNum = Number.isNaN(parsedLimit) || parsedLimit <= 0 ? 20 : Math.min(parsedLimit, 500);
 
     const where: any = {};
-    if (topic && topic !== "All") where.topic = topic;
+    if (topic && topic !== "All") {
+      const decodedTopic = decodeURIComponent(topic as string).trim();
+      where.topic = {
+        equals: decodedTopic,
+        mode: 'insensitive'
+      };
+    }
     if (difficulty && difficulty !== "All") where.difficulty = difficulty;
 
     const problems = await prisma.aptitudeProblem.findMany({
@@ -73,7 +79,8 @@ export const getAptitudeAggregates = async (req: AuthenticatedRequest, res: Resp
 
     const topicCounts: Record<string, number> = {};
     topicGroups.forEach(group => {
-      topicCounts[group.topic || "Uncategorized"] = group._count.id;
+      const trimmedTopic = (group.topic || "Uncategorized").trim();
+      topicCounts[trimmedTopic] = (topicCounts[trimmedTopic] || 0) + group._count.id;
     });
 
     res.status(200).json({ topicCounts });
@@ -112,10 +119,10 @@ export const createAptitudeProblem = async (req: AuthenticatedRequest, res: Resp
 
     const newProblem = await prisma.aptitudeProblem.create({
       data: {
-        title,
-        description,
-        topic,
-        difficulty,
+        title: title.trim(),
+        description: description.trim(),
+        topic: (topic || "General Aptitude").trim(),
+        difficulty: (difficulty || "Medium").trim(),
         options: typeof options === 'string' ? options : JSON.stringify(options || []),
         correctAnswer,
         explanation
@@ -140,10 +147,10 @@ export const createBulkAptitudeProblems = async (req: AuthenticatedRequest, res:
 
     const created = await prisma.aptitudeProblem.createMany({
       data: problems.map((p: any) => ({
-        title: p.title || "Untitled Question",
-        description: p.description || p.title || "No description",
-        topic: p.topic || "General Aptitude",
-        difficulty: p.difficulty || "Medium",
+        title: (p.title || "Untitled Question").trim(),
+        description: (p.description || p.title || "No description").trim(),
+        topic: (p.topic || "General Aptitude").trim(),
+        difficulty: (p.difficulty || "Medium").trim(),
         options: typeof p.options === 'string' ? p.options : JSON.stringify(p.options || []),
         correctAnswer: p.correctAnswer || p.correctOption || "A",
         explanation: p.explanation || null
@@ -166,10 +173,10 @@ export const updateAptitudeProblem = async (req: AuthenticatedRequest, res: Resp
     const updatedProblem = await prisma.aptitudeProblem.update({
       where: { id },
       data: {
-        title,
-        description,
-        topic,
-        difficulty,
+        title: title ? title.trim() : undefined,
+        description: description ? description.trim() : undefined,
+        topic: topic ? topic.trim() : undefined,
+        difficulty: difficulty ? difficulty.trim() : undefined,
         options: typeof options === 'string' ? options : JSON.stringify(options || []),
         correctAnswer,
         explanation
@@ -214,5 +221,98 @@ export const deleteAptitudeProblem = async (req: AuthenticatedRequest, res: Resp
   } catch (error) {
     console.error('Error deleting aptitude problem:', error);
     res.status(500).json({ error: 'Failed to delete aptitude problem' });
+  }
+};
+
+export const renameAptitudeTopic = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { oldTopic, newTopic } = req.body;
+    if (!oldTopic || !newTopic) {
+      res.status(400).json({ error: 'Both oldTopic and newTopic are required' });
+      return;
+    }
+
+    const fromTopic = String(oldTopic).trim();
+    const toTopic = String(newTopic).trim();
+
+    if (!fromTopic || !toTopic) {
+      res.status(400).json({ error: 'Topic names cannot be empty' });
+      return;
+    }
+
+    const result = await prisma.aptitudeProblem.updateMany({
+      where: {
+        topic: {
+          equals: fromTopic,
+          mode: 'insensitive'
+        }
+      },
+      data: {
+        topic: toTopic
+      }
+    });
+
+    await invalidateCachePattern("/api/v1/aptitude-problems");
+
+    res.status(200).json({
+      message: `Topic renamed from "${fromTopic}" to "${toTopic}"`,
+      count: result.count
+    });
+  } catch (error) {
+    console.error('Error renaming aptitude topic:', error);
+    res.status(500).json({ error: 'Failed to rename aptitude topic' });
+  }
+};
+
+export const deleteAptitudeTopic = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { topicName } = req.params;
+    if (!topicName) {
+      res.status(400).json({ error: 'Topic name is required' });
+      return;
+    }
+
+    const cleanTopic = decodeURIComponent(topicName).trim();
+    const userId = req.user?.id;
+
+    // Fetch problems to archive them
+    const problemsToArchive = await prisma.aptitudeProblem.findMany({
+      where: {
+        topic: {
+          equals: cleanTopic,
+          mode: 'insensitive'
+        }
+      }
+    });
+
+    if (problemsToArchive.length > 0) {
+      await prisma.archiveRecord.createMany({
+        data: problemsToArchive.map(p => ({
+          entityType: 'APTITUDE_PROBLEM',
+          originalId: p.id,
+          data: JSON.stringify(p),
+          deletedBy: userId || null
+        }))
+      });
+    }
+
+    const deleted = await prisma.aptitudeProblem.deleteMany({
+      where: {
+        topic: {
+          equals: cleanTopic,
+          mode: 'insensitive'
+        }
+      }
+    });
+
+    await invalidateCachePattern("/api/v1/aptitude-problems");
+
+    res.status(200).json({
+      message: `Successfully deleted topic "${cleanTopic}" and its ${deleted.count} questions`,
+      count: deleted.count
+    });
+  } catch (error) {
+    console.error('Error deleting aptitude topic:', error);
+    res.status(500).json({ error: 'Failed to delete aptitude topic' });
   }
 };

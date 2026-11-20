@@ -66,7 +66,12 @@ export default function AptitudePage() {
       try {
         // 1. Fetch aggregates
         const aggResponse = await axios.get(getApiUrl("/api/v1/aptitude-problems/metadata/aggregates"));
-        const counts = aggResponse.data.topicCounts || {};
+        const rawCounts = aggResponse.data.topicCounts || {};
+        const counts: Record<string, number> = {};
+        Object.entries(rawCounts).forEach(([k, v]) => {
+          const trimmed = (k || "Uncategorized").trim();
+          counts[trimmed] = (counts[trimmed] || 0) + Number(v);
+        });
         setTopicCounts(counts);
 
         // 2. Fetch full list of problems to power search, difficulty & company filters
@@ -121,7 +126,9 @@ export default function AptitudePage() {
   // Unique Topics
   const uniqueTopics = useMemo(() => {
     const topics = new Set<string>();
-    Object.keys(topicCounts).forEach(t => topics.add(t));
+    Object.keys(topicCounts).forEach(t => {
+      if (t && t.trim()) topics.add(t.trim());
+    });
     aptitudeQuestions.forEach(q => {
       if (q.topic && q.topic.trim()) topics.add(q.topic.trim());
     });
@@ -134,11 +141,12 @@ export default function AptitudePage() {
 
     // Seed all known topics
     Object.keys(topicCounts).forEach(t => {
-      if (!groups[t]) groups[t] = [];
+      const clean = (t || "Uncategorized").trim();
+      if (!groups[clean]) groups[clean] = [];
     });
 
     aptitudeQuestions.forEach(q => {
-      const t = q.topic?.trim() || "Uncategorized";
+      const t = (q.topic || "Uncategorized").trim();
       if (!groups[t]) groups[t] = [];
       groups[t].push(q);
     });
@@ -206,9 +214,10 @@ export default function AptitudePage() {
     : 0;
 
   const handleNavigateTopic = (topic: string) => {
+    const cleanTopic = (topic || "").trim();
     const targetUrl = window.location.pathname.startsWith('/dashboard')
-      ? `/dashboard/aptitude/topic/${encodeURIComponent(topic)}`
-      : `/aptitude/topic/${encodeURIComponent(topic)}`;
+      ? `/dashboard/aptitude/topic/${encodeURIComponent(cleanTopic)}`
+      : `/aptitude/topic/${encodeURIComponent(cleanTopic)}`;
     navigate(targetUrl);
   };
 

@@ -17,9 +17,11 @@ export default function AptitudeTopic() {
   const [hasMore, setHasMore] = useState(false);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
 
+  const cleanTopic = decodeURIComponent(topic || "").trim();
+
   const fetchAptitude = async (cursor?: string) => {
     try {
-      let url = getApiUrl(`/api/v1/aptitude-problems?limit=20&topic=${encodeURIComponent(topic || "")}`);
+      let url = getApiUrl(`/api/v1/aptitude-problems?limit=100&topic=${encodeURIComponent(cleanTopic)}`);
       if (cursor) {
         url += `&cursor=${cursor}`;
       }
@@ -78,8 +80,15 @@ export default function AptitudeTopic() {
     }
   }, [user]);
 
-  const decodedTopic = decodeURIComponent(topic || "");
+  const decodedTopic = cleanTopic;
   const topicQuestions = aptitudeQuestions;
+
+  const handleBackToTopics = () => {
+    const backUrl = window.location.pathname.startsWith('/dashboard')
+      ? '/dashboard/practice/aptitude'
+      : '/aptitude';
+    navigate(backUrl);
+  };
 
   return (
     <div className="flex flex-col w-full p-4 md:p-8 gap-8">
@@ -89,10 +98,10 @@ export default function AptitudeTopic() {
         {/* Header Area */}
         <div className="flex flex-col gap-4">
           <button 
-            onClick={() => navigate('/aptitude')}
-            className="flex items-center text-text-muted hover:text-primary transition-colors w-fit"
+            onClick={handleBackToTopics}
+            className="flex items-center text-text-muted hover:text-primary transition-colors w-fit font-medium text-sm"
           >
-            <ArrowLeft className="h-4 w-4 mr-1" />
+            <ArrowLeft className="h-4 w-4 mr-1.5" />
             Back to Topics
           </button>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { recordContribution } from "../utils/contributions";
 import { getApiUrl } from "../utils/apiConfig";
 import { recordDailyProgress } from "../utils/progressTracker";
-import { AlertTriangle, Clock, CheckCircle, ShieldAlert, Award, ChevronLeft, ChevronRight, Trophy, Minus, XCircle, LogOut, Info, AlertOctagon, Bookmark, Maximize, ArrowLeft } from "lucide-react";
+import { AlertTriangle, Clock, CheckCircle, ShieldAlert, Award, ChevronLeft, ChevronRight, Trophy, Minus, XCircle, LogOut, Info, AlertOctagon, Bookmark, Maximize, ArrowLeft, Minimize } from "lucide-react";
 
 // Mock Python Questions
 const PYTHON_QUESTIONS = [
@@ -100,6 +100,7 @@ export default function TakeTest() {
   const [warningCountdown, setWarningCountdown] = useState(5);
   const [showFullscreenPrompt, setShowFullscreenPrompt] = useState(false);
   const [showDetailedResults, setShowDetailedResults] = useState(false);
+  const [isFullScreen, setIsFullScreen] = useState(false);
   
   // Score State
   const [score, setScore] = useState(0);
@@ -325,8 +326,7 @@ export default function TakeTest() {
     };
 
     const handleFullscreenChange = () => {
-      // If user exits fullscreen, treat it as a violation
-      // Disabled per user request
+      setIsFullScreen(!!document.fullscreenElement);
     };
 
     // Aggressive polling to catch OS-level overlays (Win+Tab, Start Menu) that swallow blur events
@@ -673,7 +673,7 @@ export default function TakeTest() {
 
   // 3. Active Test Screen - Redesigned CBT Layout
   return (
-    <div ref={testContainerRef} className="bg-slate-50 h-screen max-h-screen overflow-hidden flex flex-col w-full absolute inset-0 z-50 font-sans text-slate-800">
+    <div ref={testContainerRef} className={`bg-slate-50 h-screen max-h-screen overflow-hidden flex flex-col w-full font-sans text-slate-800 ${isFullScreen ? 'fixed inset-0 z-[99999]' : 'absolute inset-0 z-50'}`}>
       
       {/* Top Header */}
       <div className="bg-white border-b border-slate-200 px-6 py-3 flex justify-between items-center shadow-sm">
@@ -698,17 +698,25 @@ export default function TakeTest() {
           <button 
             onClick={() => {
               if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {
+                document.documentElement.requestFullscreen().then(() => {
+                  setIsFullScreen(true);
+                }).catch(err => {
                   console.error(`Error attempting to enable fullscreen: ${err.message}`);
+                  setIsFullScreen(true);
                 });
               } else {
-                document.exitFullscreen();
+                document.exitFullscreen().then(() => {
+                  setIsFullScreen(false);
+                }).catch(err => {
+                  console.error(`Error attempting to exit fullscreen: ${err.message}`);
+                  setIsFullScreen(false);
+                });
               }
             }}
             className="flex items-center space-x-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded font-medium border border-slate-200 transition-colors"
           >
-            <Maximize className="w-4 h-4" />
-            <span>Full Screen Mode</span>
+            {isFullScreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
+            <span>{isFullScreen ? "Exit Full Screen" : "Full Screen Mode"}</span>
           </button>
         </div>
         <div className="flex items-center space-x-2 bg-slate-50 px-4 py-1.5 rounded-full border border-slate-200 font-bold text-slate-700">

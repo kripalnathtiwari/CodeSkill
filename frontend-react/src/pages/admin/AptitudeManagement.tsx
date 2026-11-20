@@ -165,6 +165,72 @@ export default function AptitudeManagement() {
   // Topic Collapse / Minimize State
   const [collapsedTopics, setCollapsedTopics] = useState<Record<string, boolean>>({});
 
+  // Topic Action Modals State
+  const [editTopicModal, setEditTopicModal] = useState<{ isOpen: boolean; oldTopic: string; newTopic: string }>({
+    isOpen: false,
+    oldTopic: "",
+    newTopic: ""
+  });
+  const [deleteTopicModal, setDeleteTopicModal] = useState<{ isOpen: boolean; topicName: string; count: number }>({
+    isOpen: false,
+    topicName: "",
+    count: 0
+  });
+  const [isSubmittingTopicAction, setIsSubmittingTopicAction] = useState(false);
+
+  const handleRenameTopicSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const oldName = editTopicModal.oldTopic.trim();
+    const newName = editTopicModal.newTopic.trim();
+
+    if (!newName) {
+      alert("Topic name cannot be empty.");
+      return;
+    }
+    if (oldName === newName) {
+      setEditTopicModal({ isOpen: false, oldTopic: "", newTopic: "" });
+      return;
+    }
+
+    try {
+      setIsSubmittingTopicAction(true);
+      await axios.put(
+        `${API_URL}/api/v1/aptitude-problems/topic/rename`,
+        { oldTopic: oldName, newTopic: newName },
+        { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } }
+      );
+      setEditTopicModal({ isOpen: false, oldTopic: "", newTopic: "" });
+      await fetchProblems();
+      alert(`Topic successfully renamed to "${newName}"!`);
+    } catch (err: any) {
+      console.error("Error renaming topic:", err);
+      alert(err.response?.data?.error || "Failed to rename topic");
+    } finally {
+      setIsSubmittingTopicAction(false);
+    }
+  };
+
+  const handleDeleteTopicConfirm = async () => {
+    const topicToDelete = deleteTopicModal.topicName.trim();
+    if (!topicToDelete) return;
+
+    try {
+      setIsSubmittingTopicAction(true);
+      await axios.delete(
+        `${API_URL}/api/v1/aptitude-problems/topic/${encodeURIComponent(topicToDelete)}`,
+        { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } }
+      );
+      setDeleteTopicModal({ isOpen: false, topicName: "", count: 0 });
+      await fetchProblems();
+      alert(`Topic "${topicToDelete}" and its questions were successfully deleted!`);
+    } catch (err: any) {
+      console.error("Error deleting topic:", err);
+      alert(err.response?.data?.error || "Failed to delete topic");
+    } finally {
+      setIsSubmittingTopicAction(false);
+    }
+  };
+
   const toggleCollapse = (topicName: string) => {
     setCollapsedTopics(prev => ({
       ...prev,
@@ -1539,7 +1605,7 @@ Answer: B`}
                 </h3>
                 
                 {/* Per-topic Action Buttons */}
-                <div className="flex items-center space-x-2 w-full sm:w-auto justify-end">
+                <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
                   {/* Topic Upload PDF / File */}
                   <label 
                     className="flex items-center space-x-1.5 bg-purple-600/10 hover:bg-purple-600/20 text-purple-400 border border-purple-500/30 px-3 py-1.5 rounded-lg text-sm font-bold transition-all cursor-pointer shadow-sm"
@@ -1562,6 +1628,26 @@ Answer: B`}
                   >
                     <Plus className="w-4 h-4" />
                     <span>Add Question</span>
+                  </button>
+
+                  {/* Edit Topic Name */}
+                  <button
+                    onClick={() => setEditTopicModal({ isOpen: true, oldTopic: topicName, newTopic: topicName })}
+                    className="flex items-center space-x-1 bg-blue-600/10 hover:bg-blue-600/20 text-blue-500 dark:text-blue-400 border border-blue-500/30 px-3 py-1.5 rounded-lg text-sm font-bold transition-all shadow-sm"
+                    title={`Edit topic name "${topicName}"`}
+                  >
+                    <Edit className="w-4 h-4" />
+                    <span>Edit Topic</span>
+                  </button>
+
+                  {/* Delete Topic */}
+                  <button
+                    onClick={() => setDeleteTopicModal({ isOpen: true, topicName, count: groupedByTopic[topicName].length })}
+                    className="flex items-center space-x-1 bg-rose-600/10 hover:bg-rose-600/20 text-rose-500 dark:text-rose-400 border border-rose-500/30 px-3 py-1.5 rounded-lg text-sm font-bold transition-all shadow-sm"
+                    title={`Delete topic "${topicName}" and all its questions`}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    <span>Delete Topic</span>
                   </button>
 
                   {/* Minimize / Expand Button */}
@@ -1743,6 +1829,121 @@ Answer: B`}
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Topic Modal */}
+      {editTopicModal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div 
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm" 
+            onClick={() => !isSubmittingTopicAction && setEditTopicModal({ isOpen: false, oldTopic: "", newTopic: "" })} 
+          />
+          <div className="relative bg-surface dark:bg-[#111827] border border-border rounded-2xl shadow-2xl p-6 w-full max-w-md">
+            <button 
+              onClick={() => setEditTopicModal({ isOpen: false, oldTopic: "", newTopic: "" })} 
+              disabled={isSubmittingTopicAction}
+              className="absolute top-4 right-4 p-1.5 text-text-muted hover:text-text-primary rounded-lg transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 shrink-0">
+                <Edit className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-text-primary">Edit Topic Name</h3>
+                <p className="text-xs text-text-muted">Rename topic for all associated questions</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleRenameTopicSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-text-muted mb-1.5">Topic Name</label>
+                <input
+                  type="text"
+                  value={editTopicModal.newTopic}
+                  onChange={(e) => setEditTopicModal(prev => ({ ...prev, newTopic: e.target.value }))}
+                  placeholder="Enter topic name..."
+                  disabled={isSubmittingTopicAction}
+                  className="w-full bg-background dark:bg-[#0B0F19] border border-border rounded-xl px-3.5 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary"
+                  autoFocus
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setEditTopicModal({ isOpen: false, oldTopic: "", newTopic: "" })}
+                  disabled={isSubmittingTopicAction}
+                  className="px-4 py-2 text-sm font-semibold rounded-xl border border-border text-text-secondary hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmittingTopicAction || !editTopicModal.newTopic.trim()}
+                  className="px-5 py-2 text-sm font-semibold rounded-xl bg-primary hover:bg-primary/90 text-white flex items-center gap-2 shadow-lg shadow-blue-500/20 disabled:opacity-50 transition-colors"
+                >
+                  {isSubmittingTopicAction ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                  <span>Save Changes</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Topic Modal */}
+      {deleteTopicModal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div 
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm" 
+            onClick={() => !isSubmittingTopicAction && setDeleteTopicModal({ isOpen: false, topicName: "", count: 0 })} 
+          />
+          <div className="relative bg-surface dark:bg-[#111827] border border-border rounded-2xl shadow-2xl p-6 w-full max-w-md">
+            <button 
+              onClick={() => setDeleteTopicModal({ isOpen: false, topicName: "", count: 0 })} 
+              disabled={isSubmittingTopicAction}
+              className="absolute top-4 right-4 p-1.5 text-text-muted hover:text-text-primary rounded-lg transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-full bg-rose-500/15 flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-6 h-6 text-rose-500" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-lg font-bold text-text-primary">Delete Topic & Questions?</h3>
+                <p className="text-sm text-text-muted">
+                  Are you sure you want to delete topic <span className="font-bold text-text-primary">"{deleteTopicModal.topicName}"</span> and all <span className="text-rose-500 font-semibold">{deleteTopicModal.count} questions</span> under it?
+                </p>
+                <p className="text-xs text-rose-400 font-medium pt-1">
+                  This action is permanent and will remove all questions under this topic.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-6 flex items-center justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setDeleteTopicModal({ isOpen: false, topicName: "", count: 0 })}
+                disabled={isSubmittingTopicAction}
+                className="px-4 py-2 text-sm font-semibold rounded-xl border border-border text-text-secondary hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteTopicConfirm}
+                disabled={isSubmittingTopicAction}
+                className="px-5 py-2 text-sm font-semibold rounded-xl bg-rose-600 hover:bg-rose-500 text-white flex items-center gap-2 shadow-lg shadow-rose-500/20 transition-colors"
+              >
+                {isSubmittingTopicAction ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                <span>Delete Topic</span>
+              </button>
             </div>
           </div>
         </div>

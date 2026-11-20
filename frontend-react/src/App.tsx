@@ -53,6 +53,7 @@ const LearningPath = lazy(() => import('./pages/LearningPath'));
 const MockInterview = lazy(() => import('./pages/MockInterview'));
 const Leaderboard = lazy(() => import('./pages/Leaderboard'));
 const BeAMentor = lazy(() => import('./pages/BeAMentor'));
+const YourPerformance = lazy(() => import('./pages/YourPerformance'));
 
 import ErrorBoundary from './components/ErrorBoundary';
 
@@ -98,6 +99,7 @@ function AppContent() {
               <Route path="/dashboard/career/mock-interview" element={<ProtectedRoute><DashboardLayout><MockInterview /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/career/resume-maker" element={<ProtectedRoute><DashboardLayout><CVBuilder /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/career/resume-analysis" element={<ProtectedRoute><DashboardLayout><ATSChecker /></DashboardLayout></ProtectedRoute>} />
+              <Route path="/dashboard/career/your-performance" element={<ProtectedRoute><DashboardLayout><YourPerformance /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/projects" element={<ProtectedRoute><DashboardLayout><ProjectIdeas /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/projects/:id" element={<ProtectedRoute><DashboardLayout><ProjectIdeaDetail /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />

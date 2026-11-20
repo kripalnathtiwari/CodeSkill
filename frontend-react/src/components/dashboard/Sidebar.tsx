@@ -22,7 +22,8 @@ import {
   BrainCircuit,
   LayoutGrid,
   Compass,
-  Video
+  Video,
+  BarChart2
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -47,6 +48,7 @@ const getNavItems = (userRole?: string) => {
     { path: '/dashboard/career', label: 'Career', icon: Briefcase },
     { path: '/dashboard/career/resume-maker', label: 'Resume Maker', icon: FileEdit },
     { path: '/dashboard/career/resume-analysis', label: 'Resume Analysis', icon: ScanSearch },
+    { path: '/dashboard/career/your-performance', label: 'Your Performance', icon: BarChart2 },
     { path: '/dashboard/projects', label: 'Project Ideas', icon: Lightbulb },
     
     { isHeader: true, label: 'More' },

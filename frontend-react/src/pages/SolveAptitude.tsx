@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, CheckCircle2, XCircle, BrainCircuit, ChevronLeft, ChevronRight, Award, LogOut, Info, AlertTriangle, Clock, Heart, CheckSquare, Save, HelpCircle, CloudUpload, Check, Maximize } from "lucide-react";
+import { ArrowLeft, CheckCircle2, XCircle, BrainCircuit, ChevronLeft, ChevronRight, Award, LogOut, Info, AlertTriangle, Clock, Heart, CheckSquare, Save, HelpCircle, CloudUpload, Check, Maximize, Minimize } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { getApiUrl } from "../utils/apiConfig";
@@ -20,6 +20,17 @@ export default function SolveAptitude() {
   const [reviewStatus, setReviewStatus] = useState<Record<number, boolean>>({});
   const [timeLeft, setTimeLeft] = useState(30 * 60); // 30 minutes mock timer
   const [showSolution, setShowSolution] = useState<Record<number, boolean>>({});
+  const [isFullScreen, setIsFullScreen] = useState(false);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullScreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+    };
+  }, []);
   
   // Temporary selection before saving
   // Removed in favor of direct auto-save to `answered` state
@@ -182,12 +193,27 @@ export default function SolveAptitude() {
 
   const toggleFullScreen = () => {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(err => {
+      document.documentElement.requestFullscreen().then(() => {
+        setIsFullScreen(true);
+      }).catch(err => {
         console.error(`Error attempting to enable fullscreen: ${err.message}`);
+        setIsFullScreen(true);
       });
     } else {
-      document.exitFullscreen();
+      document.exitFullscreen().then(() => {
+        setIsFullScreen(false);
+      }).catch(err => {
+        console.error(`Error attempting to exit fullscreen: ${err.message}`);
+        setIsFullScreen(false);
+      });
     }
+  };
+
+  const handleExitMock = () => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {});
+    }
+    navigate("/aptitude");
   };
 
   const handleCheckSolution = () => {
@@ -255,6 +281,9 @@ export default function SolveAptitude() {
       
       alert(`Test Submitted! You scored ${correctCount} out of ${allQuestions.length}.`);
     }
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {});
+    }
     navigate(`/aptitude/topic/${encodeURIComponent(question?.topic || "Uncategorized")}`);
   };
 
@@ -283,7 +312,7 @@ export default function SolveAptitude() {
   const notVisitedCount = allQuestions.length - visitedCount;
 
   return (
-    <div className="h-screen max-h-screen overflow-hidden bg-[#f8f9fa] font-sans flex flex-col text-gray-800">
+    <div className={`overflow-hidden bg-[#f8f9fa] font-sans flex flex-col text-gray-800 ${isFullScreen ? 'fixed inset-0 z-[99999] w-screen h-screen' : 'h-screen max-h-screen'}`}>
       {/* Top Header */}
       <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between shadow-sm z-10">
         <div className="flex items-center gap-3">
@@ -293,7 +322,7 @@ export default function SolveAptitude() {
           <h1 className="text-lg font-bold text-slate-800">Aptitude [{question.topic || "All Topics"}] - Set</h1>
         </div>
         <button 
-          onClick={() => navigate("/aptitude")}
+          onClick={handleExitMock}
           className="flex items-center gap-2 px-4 py-1.5 text-red-500 border border-red-500 hover:bg-red-50 rounded font-semibold text-sm transition-colors"
         >
           <LogOut className="w-4 h-4" />
@@ -308,8 +337,8 @@ export default function SolveAptitude() {
             onClick={toggleFullScreen}
             className="flex items-center gap-1.5 text-gray-600 hover:text-gray-900 text-sm font-medium bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded transition-colors"
           >
-            <Maximize className="w-4 h-4" />
-            Full Screen Mode
+            {isFullScreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
+            {isFullScreen ? "Exit Full Screen" : "Full Screen Mode"}
           </button>
         </div>
         <div className="flex items-center gap-2 bg-gray-50 px-4 py-1.5 rounded-full border border-gray-200">
@@ -498,10 +527,14 @@ export default function SolveAptitude() {
                 <span className="text-xs font-medium text-gray-600">Unsaved</span>
               </div>
             </div>
-            <div className="mt-2 w-full flex items-center border border-gray-200 rounded px-3 py-2 bg-white text-xs font-medium text-gray-700">
+            <button
+              type="button"
+              onClick={toggleFullScreen}
+              className="mt-2 w-full flex items-center border border-gray-200 hover:bg-gray-100 rounded px-3 py-2 bg-white text-xs font-medium text-gray-700 transition-colors cursor-pointer"
+            >
               <div className="w-5 h-5 rounded border-2 border-gray-800 flex items-center justify-center text-gray-800 font-bold text-[10px] mr-2">i</div>
-              Full Screen Exit
-            </div>
+              {isFullScreen ? "Exit Full Screen" : "Full Screen Exit"}
+            </button>
           </div>
 
           {/* Grid */}

@@ -1,5 +1,15 @@
 import { Router } from 'express';
-import { getAllAptitudeProblems, getAptitudeAggregates, getAptitudeProblemById, createAptitudeProblem, createBulkAptitudeProblems, updateAptitudeProblem, deleteAptitudeProblem } from '../controllers/aptitudeController';
+import { 
+  getAllAptitudeProblems, 
+  getAptitudeAggregates, 
+  getAptitudeProblemById, 
+  createAptitudeProblem, 
+  createBulkAptitudeProblems, 
+  updateAptitudeProblem, 
+  deleteAptitudeProblem,
+  renameAptitudeTopic,
+  deleteAptitudeTopic
+} from '../controllers/aptitudeController';
 import { authenticateJWT, requireRole } from '../middlewares/authMiddleware';
 import { cache } from '../middlewares/cacheMiddleware';
 
@@ -10,6 +20,13 @@ router.get('/metadata/aggregates', cache(300), getAptitudeAggregates);
 
 // Bulk create aptitude problems
 router.post('/bulk', authenticateJWT, requireRole(['ADMIN', 'CONTENT_CREATOR']), createBulkAptitudeProblems);
+
+// Topic Management (Must precede /:id)
+// Rename topic and all questions under it
+router.put('/topic/rename', authenticateJWT, requireRole(['ADMIN', 'CONTENT_CREATOR']), renameAptitudeTopic);
+
+// Delete topic and all questions under it
+router.delete('/topic/:topicName', authenticateJWT, requireRole(['ADMIN', 'CONTENT_CREATOR']), deleteAptitudeTopic);
 
 // Get all aptitude problems (cached for 5 minutes)
 router.get('/', cache(300), getAllAptitudeProblems);

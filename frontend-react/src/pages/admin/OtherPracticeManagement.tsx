@@ -3,6 +3,7 @@ import { Plus, Edit, Trash2, Search, Target, ArrowLeft, Save, X, BookOpen, Clock
 import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 import { parseQuestionsFromPdf } from "../../utils/pdfQuestionParser";
+import { getApiUrl } from "../../utils/apiConfig";
 
 type Question = {
   id: number;
@@ -13,10 +14,11 @@ type Question = {
 };
 
 export default function OtherPracticeManagement() {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const [tests, setTests] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [isCreating, setIsCreating] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   // Form State
@@ -37,7 +39,17 @@ export default function OtherPracticeManagement() {
   const [subjectNotes, setSubjectNotes] = useState<Record<string, string>>({});
   const SUBJECT_NOTES_KEY = "admin_subject_notes";
 
-  const fetchTests = () => {
+  const fetchTests = async () => {
+    try {
+      const res = await axios.get(getApiUrl("/api/v1/other-practice/tests"));
+      if (Array.isArray(res.data)) {
+        setTests(res.data);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(res.data));
+        return;
+      }
+    } catch (e) {
+      console.warn("Could not fetch tests from database, falling back to local storage:", e);
+    }
     try {
       const data = localStorage.getItem(STORAGE_KEY);
       if (data) setTests(JSON.parse(data));
@@ -46,8 +58,24 @@ export default function OtherPracticeManagement() {
     }
   };
 
-  useEffect(() => {
-    fetchTests();
+  const fetchSubjects = async () => {
+    try {
+      const res = await axios.get(getApiUrl("/api/v1/other-practice/subjects"));
+      if (Array.isArray(res.data)) {
+        const names = res.data.map((s: any) => s.name);
+        const notes: Record<string, string> = {};
+        res.data.forEach((s: any) => {
+          if (s.noteData) notes[s.name] = s.noteData;
+        });
+        setSubjects(names);
+        setSubjectNotes(notes);
+        localStorage.setItem(SUBJECTS_KEY, JSON.stringify(names));
+        localStorage.setItem(SUBJECT_NOTES_KEY, JSON.stringify(notes));
+        return;
+      }
+    } catch (e) {
+      console.warn("Could not fetch subjects from database, falling back to local storage:", e);
+    }
     const storedSubjects = localStorage.getItem(SUBJECTS_KEY);
     if (storedSubjects) {
       try {
@@ -69,6 +97,11 @@ export default function OtherPracticeManagement() {
         setSubjectNotes({});
       }
     }
+  };
+
+  useEffect(() => {
+    fetchTests();
+    fetchSubjects();
   }, []);
 
   const saveTests = (updatedTests: any[]) => {
@@ -81,18 +114,72 @@ export default function OtherPracticeManagement() {
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = (event) => {
+    reader.onload = async (event) => {
       const base64 = event.target?.result as string;
       const updated = { ...subjectNotes, [subject]: base64 };
       setSubjectNotes(updated);
       localStorage.setItem(SUBJECT_NOTES_KEY, JSON.stringify(updated));
+
+      const authToken = token || localStorage.getItem("accessToken");
+      try {
+        await axios.post(
+          getApiUrl(`/api/v1/other-practice/subjects/${encodeURIComponent(subject)}/note`),
+          { noteData: base64 },
+          { headers: authToken ? { Authorization: `Bearer ${authToken}` } : {} }
+        );
+      } catch (err) {
+        console.error("Failed to sync subject note to database:", err);
+      }
       alert(`Notes added for ${subject}`);
     };
     reader.readAsDataURL(file);
     e.target.value = "";
   };
 
-  const handleSave = () => {
+  const handleAddSubject = async () => {
+    const subjectList = Array.isArray(subjects) ? subjects : [];
+    const trimmed = newSubject.trim();
+    if (!trimmed || subjectList.includes(trimmed)) return;
+
+    const updated = [...subjectList, trimmed];
+    setSubjects(updated);
+    localStorage.setItem(SUBJECTS_KEY, JSON.stringify(updated));
+    setNewSubject("");
+
+    const authToken = token || localStorage.getItem("accessToken");
+    try {
+      await axios.post(
+        getApiUrl("/api/v1/other-practice/subjects"),
+        { name: trimmed },
+        { headers: authToken ? { Authorization: `Bearer ${authToken}` } : {} }
+      );
+    } catch (err) {
+      console.error("Failed to save subject to database:", err);
+    }
+  };
+
+  const handleDeleteSubject = async (s: string) => {
+    const updated = subjects.filter(sub => sub !== s);
+    setSubjects(updated);
+    localStorage.setItem(SUBJECTS_KEY, JSON.stringify(updated));
+    
+    const updatedNotes = { ...subjectNotes };
+    delete updatedNotes[String(s)];
+    setSubjectNotes(updatedNotes);
+    localStorage.setItem(SUBJECT_NOTES_KEY, JSON.stringify(updatedNotes));
+
+    const authToken = token || localStorage.getItem("accessToken");
+    try {
+      await axios.delete(
+        getApiUrl(`/api/v1/other-practice/subjects/${encodeURIComponent(s)}`),
+        { headers: authToken ? { Authorization: `Bearer ${authToken}` } : {} }
+      );
+    } catch (err) {
+      console.error("Failed to delete subject from database:", err);
+    }
+  };
+
+  const handleSave = async () => {
     if (!title || !subject) return alert("Title and subject are required.");
 
     for (let i = 0; i < questions.length; i++) {
@@ -115,12 +202,40 @@ export default function OtherPracticeManagement() {
       createdAt: new Date().toISOString()
     };
 
-    const updated = [...tests, newTest];
-    saveTests(updated);
-    resetForm();
+    setIsSaving(true);
+    const authToken = token || localStorage.getItem("accessToken");
+    try {
+      const res = await axios.post(
+        getApiUrl("/api/v1/other-practice/tests"),
+        newTest,
+        { headers: authToken ? { Authorization: `Bearer ${authToken}` } : {} }
+      );
+      const savedTest = res.data || newTest;
+      const updated = [...tests, savedTest];
+      saveTests(updated);
+      resetForm();
+      alert("Test created and saved to database successfully!");
+    } catch (err: any) {
+      console.error("Error saving test to database:", err);
+      const updated = [...tests, newTest];
+      saveTests(updated);
+      resetForm();
+      alert("Test saved locally (Database sync warning: " + (err.response?.data?.error || err.message) + ")");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
+    const authToken = token || localStorage.getItem("accessToken");
+    try {
+      await axios.delete(
+        getApiUrl(`/api/v1/other-practice/tests/${encodeURIComponent(id)}`),
+        { headers: authToken ? { Authorization: `Bearer ${authToken}` } : {} }
+      );
+    } catch (err) {
+      console.error("Failed to delete test from database:", err);
+    }
     const updated = tests.filter(t => t.id !== id);
     saveTests(updated);
     setDeleteConfirmId(null);
@@ -213,15 +328,7 @@ export default function OtherPracticeManagement() {
               placeholder="New Subject Name"
             />
             <button 
-              onClick={() => {
-                const subjectList = Array.isArray(subjects) ? subjects : [];
-                if (newSubject.trim() && !subjectList.includes(newSubject.trim())) {
-                  const updated = [...subjectList, newSubject.trim()];
-                  setSubjects(updated);
-                  localStorage.setItem(SUBJECTS_KEY, JSON.stringify(updated));
-                  setNewSubject("");
-                }
-              }}
+              onClick={handleAddSubject}
               className="px-6 py-3 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-bold transition-all shadow-md"
             >
               Add
@@ -257,16 +364,7 @@ export default function OtherPracticeManagement() {
                       <Upload className="w-5 h-5" />
                     </label>
                     <button 
-                      onClick={() => {
-                        const updated = subjects.filter(sub => sub !== s);
-                        setSubjects(updated);
-                        localStorage.setItem(SUBJECTS_KEY, JSON.stringify(updated));
-                        
-                        const updatedNotes = { ...subjectNotes };
-                        delete updatedNotes[String(s)];
-                        setSubjectNotes(updatedNotes);
-                        localStorage.setItem(SUBJECT_NOTES_KEY, JSON.stringify(updatedNotes));
-                      }}
+                      onClick={() => handleDeleteSubject(String(s))}
                       className="p-2 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors"
                     >
                       <Trash2 className="w-5 h-5" />
@@ -292,10 +390,11 @@ export default function OtherPracticeManagement() {
           <h2 className="text-2xl font-bold text-text-primary">Create New Test</h2>
           <button 
             onClick={handleSave}
-            className="flex items-center gap-2 px-6 py-2.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(244,63,94,0.3)] hover:shadow-[0_0_25px_rgba(244,63,94,0.5)]"
+            disabled={isSaving}
+            className="flex items-center gap-2 px-6 py-2.5 bg-rose-500 hover:bg-rose-600 disabled:opacity-50 text-white rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(244,63,94,0.3)] hover:shadow-[0_0_25px_rgba(244,63,94,0.5)]"
           >
-            <Save className="w-5 h-5" />
-            <span>Save Test</span>
+            {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+            <span>{isSaving ? "Saving..." : "Save Test"}</span>
           </button>
         </div>
 

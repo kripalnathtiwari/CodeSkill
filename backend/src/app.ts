@@ -32,6 +32,7 @@ import jobRoutes from "./routes/jobRoutes";
 import cvRoutes from "./routes/cvRoutes";
 import projectIdeaRoutes from "./routes/projectIdeaRoutes";
 import noteRoutes from "./routes/noteRoutes";
+import otherPracticeRoutes from "./routes/otherPracticeRoutes";
 
 // Background Jobs
 // import "./jobs/submissionWorker";
@@ -113,6 +114,7 @@ app.use("/api/v1/jobs", jobRoutes);
 app.use("/api/v1/cv", cvRoutes);
 app.use("/api/v1/projects", projectIdeaRoutes);
 app.use("/api/v1/notes", noteRoutes);
+app.use("/api/v1/other-practice", otherPracticeRoutes);
 
 // Root informational endpoint
 app.get("/", (req, res) => {

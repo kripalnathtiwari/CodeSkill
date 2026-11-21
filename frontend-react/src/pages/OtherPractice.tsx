@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import axios from "axios";
+import { getApiUrl } from "../utils/apiConfig";
 import {
   Search, Target, BookOpen, ArrowLeft, Home, Book, CheckCircle2, ChevronRight,
   Award, ArrowUpRight, FileText, Download, Clock, Sparkles, Filter, Layers,
@@ -92,28 +94,61 @@ export default function OtherPractice() {
   const activeView: "directory" | "topics" = selectedSubject ? "topics" : "directory";
 
   useEffect(() => {
+    // 1. Initial quick load from local cache if present
     try {
       const data = localStorage.getItem("admin_other_practice_tests");
-      if (data) {
-        setQuestions(JSON.parse(data));
-      }
+      if (data) setQuestions(JSON.parse(data));
       const subjectsData = localStorage.getItem("admin_subjects_data");
-      if (subjectsData) {
-        setSubjects(JSON.parse(subjectsData));
-      }
+      if (subjectsData) setSubjects(JSON.parse(subjectsData));
       const notesData = localStorage.getItem("admin_subject_notes");
-      if (notesData) {
-        setSubjectNotes(JSON.parse(notesData));
-      }
+      if (notesData) setSubjectNotes(JSON.parse(notesData));
       const savedBookmarks = localStorage.getItem("user_bookmarked_subjects");
-      if (savedBookmarks) {
-        setBookmarkedSubjects(new Set(JSON.parse(savedBookmarks)));
-      }
+      if (savedBookmarks) setBookmarkedSubjects(new Set(JSON.parse(savedBookmarks)));
     } catch (e) {
       console.error(e);
-    } finally {
-      setIsLoading(false);
     }
+
+    // 2. Fetch fresh data directly from PostgreSQL backend
+    let isMounted = true;
+    const loadFromDatabase = async () => {
+      try {
+        const [testsRes, subjectsRes] = await Promise.allSettled([
+          axios.get(getApiUrl("/api/v1/other-practice/tests")),
+          axios.get(getApiUrl("/api/v1/other-practice/subjects"))
+        ]);
+
+        if (isMounted && testsRes.status === "fulfilled" && Array.isArray(testsRes.value.data)) {
+          setQuestions(testsRes.value.data);
+          try {
+            localStorage.setItem("admin_other_practice_tests", JSON.stringify(testsRes.value.data));
+          } catch (e) {}
+        }
+
+        if (isMounted && subjectsRes.status === "fulfilled" && Array.isArray(subjectsRes.value.data)) {
+          const names = subjectsRes.value.data.map((s: any) => s.name);
+          const notes: Record<string, string> = {};
+          subjectsRes.value.data.forEach((s: any) => {
+            if (s.noteData) notes[s.name] = s.noteData;
+          });
+          setSubjects(names);
+          setSubjectNotes(notes);
+          try {
+            localStorage.setItem("admin_subjects_data", JSON.stringify(names));
+            localStorage.setItem("admin_subject_notes", JSON.stringify(notes));
+          } catch (e) {}
+        }
+      } catch (err) {
+        console.warn("Could not sync other practice data from API:", err);
+      } finally {
+        if (isMounted) setIsLoading(false);
+      }
+    };
+
+    loadFromDatabase();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const toggleBookmark = (subj: string, e: React.MouseEvent) => {

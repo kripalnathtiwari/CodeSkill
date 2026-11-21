@@ -39,7 +39,28 @@ export default function TakeTest() {
     }
   };
 
+  const [remoteQuestions, setRemoteQuestions] = useState<any[] | null>(null);
+
+  useEffect(() => {
+    if (!id) return;
+    let isMounted = true;
+    axios.get(getApiUrl(`/api/v1/other-practice/tests/${id}`))
+      .then((res) => {
+        if (isMounted && res.data?.questions && Array.isArray(res.data.questions) && res.data.questions.length > 0) {
+          setRemoteQuestions(res.data.questions);
+        }
+      })
+      .catch(() => {
+        // Silently continue with local storage/fallback
+      });
+    return () => { isMounted = false; };
+  }, [id]);
+
   const testQuestions = React.useMemo(() => {
+    if (remoteQuestions && remoteQuestions.length > 0) {
+      return remoteQuestions;
+    }
+
     // 1. Try to fetch from old Test Management logic
     const saved = localStorage.getItem("admin_custom_tests");
     if (saved && id) {
@@ -82,7 +103,7 @@ export default function TakeTest() {
 
     // 3. Fallback
     return PYTHON_QUESTIONS;
-  }, [id]);
+  }, [id, remoteQuestions]);
   
   // Test State
   const [hasStarted, setHasStarted] = useState(false);

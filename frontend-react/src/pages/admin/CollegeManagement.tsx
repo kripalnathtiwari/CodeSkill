@@ -71,20 +71,34 @@ export default function CollegeManagement() {
 
     const mergedMap = new Map<string, College>();
 
-    // 1. Existing localStorage colleges
-    localColleges.forEach(c => {
-      if (c && c.id) mergedMap.set(String(c.id), c);
+    // 1. Authoritative colleges from backend API / PostgreSQL database
+    apiColleges.forEach(c => {
+      if (c && c.id) {
+        mergedMap.set(String(c.id), {
+          ...c,
+          tutors: c.tutors || []
+        });
+      }
     });
 
-    // 2. Override/enrich with API colleges
-    apiColleges.forEach(c => {
-      if (c && c.id && c.name?.toLowerCase() === "lpu") { // only include LPU from API as well
-        const existing = mergedMap.get(String(c.id));
-        mergedMap.set(String(c.id), {
-          ...existing,
-          ...c,
-          tutors: c.tutors || existing?.tutors || []
+    // 2. Merge local storage colleges (enrich existing or add unique local colleges)
+    localColleges.forEach(c => {
+      if (c && c.id) {
+        const existingKey = Array.from(mergedMap.keys()).find(k => {
+          const item = mergedMap.get(k);
+          return k === String(c.id) || (item?.name && c.name && item.name.toLowerCase() === c.name.toLowerCase());
         });
+
+        if (existingKey) {
+          const existing = mergedMap.get(existingKey)!;
+          mergedMap.set(existingKey, {
+            ...c,
+            ...existing,
+            tutors: existing.tutors && existing.tutors.length > 0 ? existing.tutors : (c.tutors || [])
+          });
+        } else {
+          mergedMap.set(String(c.id), c);
+        }
       }
     });
 

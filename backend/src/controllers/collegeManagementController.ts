@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { AuthenticatedRequest } from '../middlewares/authMiddleware';
 import bcrypt from 'bcryptjs';
 import prisma from '../config/db';
+import { invalidateCachePattern } from '../middlewares/cacheMiddleware';
 
 const syncTutorUsers = async (tutors: any[]) => {
   if (!tutors || tutors.length === 0) return;
@@ -140,6 +141,7 @@ export const createInstitution = async (req: AuthenticatedRequest, res: Response
 
     // Create user accounts for the tutors
     await syncTutorUsers(tutors);
+    await invalidateCachePattern('/api/v1/college-management');
 
     res.status(201).json(newInstitution);
   } catch (error) {
@@ -180,6 +182,7 @@ export const updateInstitution = async (req: AuthenticatedRequest, res: Response
 
     // Create or update user accounts for the tutors
     await syncTutorUsers(tutors);
+    await invalidateCachePattern('/api/v1/college-management');
 
     res.status(200).json(updatedInstitution);
   } catch (error) {
@@ -213,6 +216,7 @@ export const deleteInstitution = async (req: AuthenticatedRequest, res: Response
     await prisma.collegeInstitution.delete({
       where: { id }
     });
+    await invalidateCachePattern('/api/v1/college-management');
     res.status(204).send();
   } catch (error: any) {
     console.error('Error deleting institution:', error);
@@ -244,6 +248,7 @@ export const deleteTutor = async (req: AuthenticatedRequest, res: Response) => {
     await prisma.collegeTutor.delete({
       where: { id: tutorId }
     });
+    await invalidateCachePattern('/api/v1/college-management');
     res.status(204).send();
   } catch (error: any) {
     console.error('Error deleting tutor:', error);

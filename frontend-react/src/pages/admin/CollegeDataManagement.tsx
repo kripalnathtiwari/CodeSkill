@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Building2, Upload, Search, Trash2, Plus, Users, Download, Eye } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import axios from 'axios';
+import { getApiUrl } from '../../utils/apiConfig';
 
 type CollegeData = {
   id: string;
@@ -33,10 +35,53 @@ export default function CollegeDataManagement() {
   const [newStudent, setNewStudent] = useState({ name: "", emailPrefix: "", emailDomain: "", regNum: "", phone: "" });
 
   useEffect(() => {
-    const saved = localStorage.getItem("admin_college_data");
-    if (saved) {
-      setCollegeDataList(JSON.parse(saved));
-    }
+    const loadColleges = async () => {
+      let localList: CollegeData[] = [];
+      try {
+        const saved = localStorage.getItem("admin_college_data");
+        if (saved) localList = JSON.parse(saved);
+      } catch (e) {}
+
+      try {
+        const res = await axios.get(getApiUrl("/api/v1/college-management"), {
+          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+        });
+        if (Array.isArray(res.data)) {
+          const map = new Map<string, CollegeData>();
+          res.data.forEach((c: any) => {
+            if (c && c.name) {
+              const domainVal = c.adminEmail ? c.adminEmail.split('@')[1] || "" : "";
+              map.set(c.name.toLowerCase().trim(), {
+                id: c.id || "cd_" + Date.now(),
+                collegeName: c.name,
+                domain: domainVal,
+                students: []
+              });
+            }
+          });
+          localList.forEach((c) => {
+            if (c && c.collegeName) {
+              const key = c.collegeName.toLowerCase().trim();
+              const existing = map.get(key);
+              map.set(key, {
+                ...c,
+                ...existing,
+                domain: c.domain || existing?.domain || "",
+                students: c.students && c.students.length > 0 ? c.students : (existing?.students || [])
+              });
+            }
+          });
+          const merged = Array.from(map.values());
+          setCollegeDataList(merged);
+          localStorage.setItem("admin_college_data", JSON.stringify(merged));
+          return;
+        }
+      } catch (err) {}
+
+      setCollegeDataList(localList);
+    };
+
+    loadColleges();
   }, []);
 
   const saveToStorage = (data: CollegeData[]) => {

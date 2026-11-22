@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useAuth } from "../context/AuthContext";
 import { getWeeklyProgress } from "../utils/progressTracker";
-import { fetchUserProgressFromDB } from "../utils/userProgressSync";
+import { useUserProgress } from "../utils/userProgressSync";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
@@ -93,6 +93,7 @@ const SuggestionCard = ({ icon, title, description, severity }: {
 
 export default function YourPerformance() {
   const { user } = useAuth();
+  const { data: dbProgress } = useUserProgress(user?.email);
   const [weeklyData, setWeeklyData] = useState<any[]>([]);
   const [aptitudeData, setAptitudeData] = useState<any[]>([]);
   const [showReport, setShowReport] = useState(false);
@@ -101,15 +102,7 @@ export default function YourPerformance() {
     if (!user?.email) return;
     setWeeklyData(getWeeklyProgress(user.email));
     setAptitudeData(readAptitudeAnalytics(user.email));
-
-    // Fetch authoritative database progress and refresh state
-    fetchUserProgressFromDB(user.email).then((data) => {
-      if (data) {
-        setWeeklyData(getWeeklyProgress(user.email));
-        setAptitudeData(readAptitudeAnalytics(user.email));
-      }
-    }).catch(() => {});
-  }, [user]);
+  }, [user?.email, dbProgress]);
 
   // ── Computed stats ─────────────────────────────────────────────────────────
   const totalAttempted   = aptitudeData.length;

@@ -116,10 +116,18 @@ export class AuthController {
       }),
     ]);
 
-    // Cache active session in Redis (7 days TTL)
+    // Cache active session and user metadata in Redis (7 days TTL) for sub-2ms authentication
     if (redis) {
       try {
-        await redis.set(`session:${sessionId}`, "active", "EX", 604800);
+        await redis.set(
+          `session:${sessionId}`,
+          JSON.stringify({
+            status: "active",
+            user: { id: user.id, email: user.email, role: user.role }
+          }),
+          "EX",
+          604800
+        );
       } catch (redisErr: any) {
         logger.warn(`Redis session cache failed: ${redisErr.message}`);
       }
@@ -795,6 +803,18 @@ export class AuthController {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
+    const cacheKey = `cache:user_progress:${userId}`;
+    if (redis) {
+      try {
+        const cached = await redis.get(cacheKey);
+        if (cached) {
+          return res.status(200).json(JSON.parse(cached));
+        }
+      } catch (redisErr: any) {
+        logger.warn(`Redis progress cache lookup failed: ${redisErr.message}`);
+      }
+    }
+
     try {
       let syncRecord = await prisma.userProgressSync.findUnique({
         where: { userId },
@@ -855,14 +875,20 @@ export class AuthController {
         }
       });
 
-      return res.status(200).json({
+      const responsePayload = {
         dsaSolved: Array.from(dsaSolvedSet),
         aptitudeAnalytics: syncRecord.aptitudeAnalytics || [],
         otherAnalytics: syncRecord.otherAnalytics || [],
         testScores: syncRecord.testScores || [],
         enrolledCourses: Array.from(enrolledCoursesMap.values()),
         dailyProgress: syncRecord.dailyProgress || {},
-      });
+      };
+
+      if (redis) {
+        redis.set(cacheKey, JSON.stringify(responsePayload), "EX", 60).catch(() => {});
+      }
+
+      return res.status(200).json(responsePayload);
     } catch (err: any) {
       logger.error(`Get user progress failed: ${err.message}`);
       return res.status(500).json({ error: "Failed to fetch user progress" });
@@ -986,6 +1012,10 @@ export class AuthController {
           dailyProgress: mergedDaily,
         },
       });
+
+      if (redis) {
+        redis.del(`cache:user_progress:${userId}`).catch(() => {});
+      }
 
       return res.status(200).json(updatedRecord);
     } catch (err: any) {

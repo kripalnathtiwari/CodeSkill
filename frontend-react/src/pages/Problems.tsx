@@ -22,7 +22,7 @@ import {
   PartyPopper,
   AlertCircle
 } from 'lucide-react';
-import { saveSolvedProblemToDB, fetchUserProgressFromDB } from '../utils/userProgressSync';
+import { saveSolvedProblemToDB, useUserProgress } from '../utils/userProgressSync';
 
 export default function Problems() {
   const { user } = useAuth();
@@ -35,6 +35,7 @@ export default function Problems() {
   const solvedStorageKey = `codeskill_dsa_solved_${studentKey}`;
 
   // State
+  const { data: dbProgress } = useUserProgress(user?.email);
   const [selectedTrackId, setSelectedTrackId] = useState<'beginner' | 'intermediate' | 'pro' | null>(null);
   const [unlockedTracks, setUnlockedTracks] = useState<string[]>([]);
   const [solvedIds, setSolvedIds] = useState<Set<string>>(new Set());
@@ -98,19 +99,18 @@ export default function Problems() {
     } catch (e) {
       console.error('Failed to load DSA practice state:', e);
     }
+  }, [studentKey]);
 
-    if (user?.email) {
-      fetchUserProgressFromDB(user.email).then((data) => {
-        if (data && Array.isArray(data.dsaSolved) && data.dsaSolved.length > 0) {
-          setSolvedIds((prev) => {
-            const next = new Set(prev);
-            data.dsaSolved.forEach((id: string) => next.add(String(id)));
-            return next;
-          });
-        }
-      }).catch(() => {});
+  // Synchronize solved IDs from cached database progress
+  useEffect(() => {
+    if (dbProgress && Array.isArray(dbProgress.dsaSolved) && dbProgress.dsaSolved.length > 0) {
+      setSolvedIds((prev) => {
+        const next = new Set(prev);
+        dbProgress.dsaSolved.forEach((id: string) => next.add(String(id)));
+        return next;
+      });
     }
-  }, [studentKey, user?.email]);
+  }, [dbProgress]);
 
   // Handle first-time track selection
   const handleSelectInitialTrack = (trackId: 'beginner' | 'intermediate' | 'pro') => {

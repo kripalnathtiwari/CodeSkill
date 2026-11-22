@@ -3,6 +3,7 @@ import { Trophy, Calendar, Clock, Users, ArrowRight, Award, Star, Search, Lock, 
 import Fuse from "fuse.js";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { getApiUrl } from "../utils/apiConfig";
 import TestCalendarFilter, { formatDateKey, formatDisplayDate } from "../components/contests/TestCalendarFilter";
@@ -97,8 +98,29 @@ export default function Contests() {
   const [selectedTestId, setSelectedTestId] = useState<string | number | null>(null);
 
   const [customTests, setCustomTests] = useState<any[]>([]);
-  const [colleges, setColleges] = useState<any[]>([]);
-  const [courseCategories, setCourseCategories] = useState<any[]>([]);
+
+  // Cached public colleges and course categories (cached for 10 minutes to eliminate repeated network fetches)
+  const { data: colleges = [] } = useQuery<any[]>({
+    queryKey: ["publicColleges"],
+    staleTime: 10 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    queryFn: async () => {
+      const response = await axios.get(getApiUrl("/api/v1/college-management/public"), { timeout: 8000 });
+      return Array.isArray(response.data) ? response.data : [];
+    },
+  });
+
+  const { data: courseCategories = [] } = useQuery<any[]>({
+    queryKey: ["publicCourses"],
+    staleTime: 10 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    queryFn: async () => {
+      const response = await axios.get(getApiUrl("/api/v1/college-management/public/courses"), { timeout: 8000 });
+      return Array.isArray(response.data) ? response.data : [];
+    },
+  });
 
   const [selectedCollegeId, setSelectedCollegeId] = useState<string>(() => {
     return localStorage.getItem("user_selected_college_id") || "all";
@@ -127,24 +149,6 @@ export default function Contests() {
     if (savedTests) {
       setCustomTests(JSON.parse(savedTests));
     }
-    const fetchColleges = async () => {
-      try {
-        const response = await axios.get(getApiUrl("/api/v1/college-management/public"));
-        setColleges(response.data);
-      } catch (error) {
-        console.error('Error fetching colleges:', error);
-      }
-    };
-    const fetchCourses = async () => {
-      try {
-        const response = await axios.get(getApiUrl("/api/v1/college-management/public/courses"));
-        setCourseCategories(response.data);
-      } catch (error) {
-        console.error('Error fetching course categories:', error);
-      }
-    };
-    fetchColleges();
-    fetchCourses();
   }, []);
 
   const getCategoriesForCollege = (collegeId: string): string[] => {

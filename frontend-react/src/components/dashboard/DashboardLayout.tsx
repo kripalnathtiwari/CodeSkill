@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import TopNav from './TopNav';
 import { Menu, X } from 'lucide-react';
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({ children }: { children?: React.ReactNode }) {
   const [isDark, setIsDark] = useState(() => {
     if (typeof window !== "undefined") {
       return document.documentElement.classList.contains("dark") ||
@@ -62,7 +63,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
           <div className="w-full space-y-6">
-            {children}
+            {children || <Outlet />}
           </div>
         </main>
       </div>

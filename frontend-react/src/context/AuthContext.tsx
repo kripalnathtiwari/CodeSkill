@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { getApiUrl } from "../utils/apiConfig";
 import { io, Socket } from "socket.io-client";
 
@@ -39,6 +40,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
@@ -114,19 +116,49 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, [user?.id, user?.email, navigate]);
 
-  // Continuous Active Session Heartbeat & Window Focus Validation
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const lastCheckedRef = useRef<number>(0);
+
+  // Optimized Active Session Validation with WebSocket-first fallback & AbortController
   useEffect(() => {
     if (!token || !user) return;
 
     let isChecking = false;
-    const checkActiveSession = async () => {
+    const checkActiveSession = async (force = false) => {
       if (isChecking) return;
+      const now = Date.now();
+
+      // Throttle: don't check more than once every 30 seconds unless explicitly forced
+      if (!force && now - lastCheckedRef.current < 30_000) {
+        return;
+      }
+
+      // If WebSockets is actively connected and healthy, socket server emits real-time force-logout.
+      // A passive fallback check every 60 seconds is more than sufficient.
+      if (socketRef.current?.connected && !force && now - lastCheckedRef.current < 60_000) {
+        return;
+      }
+
       isChecking = true;
+      lastCheckedRef.current = now;
+
+      // Abort any prior in-flight session-status check to prevent hanging/stale requests
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+
       try {
         await axios.get(getApiUrl("/api/v1/auth/session-status"), {
           headers: { Authorization: `Bearer ${token}` },
+          signal: controller.signal,
+          timeout: 5000, // Safe 5-second timeout prevents 15s hanging
         });
       } catch (err: any) {
+        if (axios.isCancel(err) || err?.name === "CanceledError" || err?.name === "AbortError") {
+          return; // Request was aborted cleanly on navigation or unmount
+        }
         const status = err.response?.status;
         const errorData = err.response?.data;
         if (
@@ -151,29 +183,32 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     };
 
-    // Immediate check on tab focus or visibility change
+    // Throttled check when window/tab regains focus
     const handleFocus = () => {
-      checkActiveSession();
-    };
-
-    const handleVisibility = () => {
       if (document.visibilityState === "visible") {
-        checkActiveSession();
+        checkActiveSession(false);
       }
     };
 
     window.addEventListener("focus", handleFocus);
-    document.addEventListener("visibilitychange", handleVisibility);
+    document.addEventListener("visibilitychange", handleFocus);
 
-    // Fast 3-second heartbeat polling fallback for environments without WebSockets
-    const heartbeatInterval = setInterval(checkActiveSession, 3000);
+    // Passive 60-second fallback polling interval (instead of aggressive 3s)
+    const heartbeatInterval = setInterval(() => {
+      if (document.visibilityState === "visible") {
+        checkActiveSession(false);
+      }
+    }, 60_000);
 
     return () => {
       clearInterval(heartbeatInterval);
       window.removeEventListener("focus", handleFocus);
-      document.removeEventListener("visibilitychange", handleVisibility);
+      document.removeEventListener("visibilitychange", handleFocus);
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
     };
-  }, [token, user]);
+  }, [token, user?.id, navigate]);
 
   useEffect(() => {
     let isRedirecting = false;
@@ -243,6 +278,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [navigate]);
 
   const login = (accessToken: string, refreshToken: string, userData: User) => {
+    // Clear any previous user's query cache to ensure strict account isolation
+    queryClient.clear();
     localStorage.setItem("accessToken", accessToken);
     localStorage.setItem("refreshToken", refreshToken);
     localStorage.setItem("user", JSON.stringify(userData));
@@ -264,6 +301,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         await axios.post(getApiUrl("/api/v1/auth/logout"), { refreshToken }).catch(() => {});
       }
     } finally {
+      queryClient.clear();
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("user");

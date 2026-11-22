@@ -84,29 +84,44 @@ function AppContent() {
               <Route path="/forgot-password" element={<GuestRoute><ForgotPassword /></GuestRoute>} />
               <Route path="/change-password" element={<GuestRoute><ChangePassword /></GuestRoute>} />
               <Route path="/sandbox" element={<ProtectedRoute><Sandbox /></ProtectedRoute>} />
-              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-              <Route path="/dashboard/learning-path" element={<ProtectedRoute><DashboardLayout><LearningPath /></DashboardLayout></ProtectedRoute>} />
-              <Route path="/dashboard/courses" element={<ProtectedRoute><DashboardLayout><CoursesTraining /></DashboardLayout></ProtectedRoute>} />
-              <Route path="/dashboard/practice" element={<ProtectedRoute><DashboardLayout><Problems /></DashboardLayout></ProtectedRoute>} />
-              <Route path="/dashboard/practice/:tag" element={<ProtectedRoute><DashboardLayout><TagProblems /></DashboardLayout></ProtectedRoute>} />
-              <Route path="/dashboard/practice/company-problems" element={<ProtectedRoute><DashboardLayout><CompanyProblems /></DashboardLayout></ProtectedRoute>} />
-              <Route path="/dashboard/practice/aptitude" element={<ProtectedRoute><DashboardLayout><Aptitude /></DashboardLayout></ProtectedRoute>} />
-              <Route path="/dashboard/practice/other" element={<ProtectedRoute><DashboardLayout><OtherPractice /></DashboardLayout></ProtectedRoute>} />
-              <Route path="/dashboard/tests" element={<ProtectedRoute><DashboardLayout><Contests /></DashboardLayout></ProtectedRoute>} />
-              <Route path="/dashboard/compiler" element={<ProtectedRoute><DashboardLayout><Sandbox /></DashboardLayout></ProtectedRoute>} />
-              <Route path="/dashboard/notes" element={<ProtectedRoute><DashboardLayout><Notes /></DashboardLayout></ProtectedRoute>} />
-              <Route path="/dashboard/career" element={<ProtectedRoute><DashboardLayout><Jobs /></DashboardLayout></ProtectedRoute>} />
-              <Route path="/dashboard/career/mock-interview" element={<ProtectedRoute><DashboardLayout><MockInterview /></DashboardLayout></ProtectedRoute>} />
-              <Route path="/dashboard/career/resume-maker" element={<ProtectedRoute><DashboardLayout><CVBuilder /></DashboardLayout></ProtectedRoute>} />
-              <Route path="/dashboard/career/resume-analysis" element={<ProtectedRoute><DashboardLayout><ATSChecker /></DashboardLayout></ProtectedRoute>} />
-              <Route path="/dashboard/career/your-performance" element={<ProtectedRoute><DashboardLayout><YourPerformance /></DashboardLayout></ProtectedRoute>} />
-              <Route path="/dashboard/projects" element={<ProtectedRoute><DashboardLayout><ProjectIdeas /></DashboardLayout></ProtectedRoute>} />
-              <Route path="/dashboard/projects/:id" element={<ProtectedRoute><DashboardLayout><ProjectIdeaDetail /></DashboardLayout></ProtectedRoute>} />
-              <Route path="/dashboard/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
-              <Route path="/dashboard/edit-profile" element={<ProtectedRoute><DashboardLayout><EditProfile /></DashboardLayout></ProtectedRoute>} />
-              <Route path="/dashboard/change-password" element={<ProtectedRoute><DashboardLayout><ChangePassword /></DashboardLayout></ProtectedRoute>} />
+              
+              {/* ✅ Unified Dashboard Layout Parent Route: preserves Sidebar & TopNav across all section switches */}
+              <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+                <Route index element={<Dashboard />} />
+                <Route path="learning-path" element={<LearningPath />} />
+                <Route path="courses" element={<CoursesTraining />} />
+                <Route path="practice" element={<Problems />} />
+                <Route path="practice/:tag" element={<TagProblems />} />
+                <Route path="practice/company-problems" element={<CompanyProblems />} />
+                <Route path="practice/aptitude" element={<Aptitude />} />
+                <Route path="practice/other" element={<OtherPractice />} />
+                <Route path="tests" element={<Contests />} />
+                <Route path="compiler" element={<Sandbox />} />
+                <Route path="notes" element={<Notes />} />
+                <Route path="career" element={<Jobs />} />
+                <Route path="career/mock-interview" element={<MockInterview />} />
+                <Route path="career/resume-maker" element={<CVBuilder />} />
+                <Route path="career/resume-analysis" element={<ATSChecker />} />
+                <Route path="career/your-performance" element={<YourPerformance />} />
+                <Route path="projects" element={<ProjectIdeas />} />
+                <Route path="projects/:id" element={<ProjectIdeaDetail />} />
+                <Route path="leaderboard" element={<Leaderboard />} />
+                <Route path="edit-profile" element={<EditProfile />} />
+                <Route path="change-password" element={<ChangePassword />} />
+                <Route path="my-courses" element={<MyCourses />} />
+                <Route path="course/:id" element={<CourseDetails />} />
+                <Route path="register/:id" element={<CourseRegistration />} />
+                <Route path="payment/:id" element={<Payment />} />
+                <Route path="solve/:id" element={<SolveProblem />} />
+                <Route path="solve-problem/:id" element={<SolveProblem />} />
+                <Route path="aptitude/:id" element={<SolveAptitude />} />
+                <Route path="aptitude/topic/:topic" element={<AptitudeTopic />} />
+                <Route path="other-practice/topic/:topic" element={<OtherPracticeTopic />} />
+                <Route path="other-practice/solve/:id" element={<SolveOtherPractice />} />
+                <Route path="career/cv-templates" element={<CVTemplates />} />
+              </Route>
+
               <Route path="/my-courses" element={<ProtectedRoute><MyCourses /></ProtectedRoute>} />
-              <Route path="/dashboard/my-courses" element={<ProtectedRoute><DashboardLayout><MyCourses /></DashboardLayout></ProtectedRoute>} />
               <Route path="/problems" element={<GuestRoute><Problems /></GuestRoute>} />
               <Route path="/problems/:tag" element={<GuestRoute><TagProblems /></GuestRoute>} />
               <Route path="/aptitude" element={<GuestRoute><Aptitude /></GuestRoute>} />
@@ -115,30 +130,18 @@ function AppContent() {
               <Route path="/test-series" element={<ProtectedRoute><TestSeries /></ProtectedRoute>} />
               <Route path="/courses-training" element={<CoursesTraining />} />
               <Route path="/course/:id" element={<CourseDetails />} />
-              <Route path="/dashboard/course/:id" element={<ProtectedRoute><DashboardLayout><CourseDetails /></DashboardLayout></ProtectedRoute>} />
               <Route path="/register/:id" element={<ProtectedRoute><CourseRegistration /></ProtectedRoute>} />
-              <Route path="/dashboard/register/:id" element={<ProtectedRoute><DashboardLayout><CourseRegistration /></DashboardLayout></ProtectedRoute>} />
-              <Route path="/payment/:id" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
-              <Route path="/dashboard/payment/:id" element={<ProtectedRoute><DashboardLayout><Payment /></DashboardLayout></ProtectedRoute>} />
+              <Route path="/payment/:id" element={<Payment />} />
               <Route path="/admin" element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>} />
               <Route path="/contests" element={<GuestRoute><Contests /></GuestRoute>} />
               <Route path="/take-test/:id" element={<ProtectedRoute><DashboardLayout><TakeTest /></DashboardLayout></ProtectedRoute>} />
               <Route path="/solve/:id" element={<ProtectedRoute><SolveProblem /></ProtectedRoute>} />
               <Route path="/solve-problem/:id" element={<ProtectedRoute><SolveProblem /></ProtectedRoute>} />
-              <Route path="/dashboard/solve/:id" element={<ProtectedRoute><DashboardLayout><SolveProblem /></DashboardLayout></ProtectedRoute>} />
-              <Route path="/dashboard/solve-problem/:id" element={<ProtectedRoute><DashboardLayout><SolveProblem /></DashboardLayout></ProtectedRoute>} />
               <Route path="/aptitude/:id" element={<ProtectedRoute><SolveAptitude /></ProtectedRoute>} />
-              <Route path="/dashboard/aptitude/:id" element={<ProtectedRoute><DashboardLayout><SolveAptitude /></DashboardLayout></ProtectedRoute>} />
-              <Route path="/dashboard/aptitude/topic/:topic" element={<ProtectedRoute><DashboardLayout><AptitudeTopic /></DashboardLayout></ProtectedRoute>} />
               <Route path="/other-practice" element={<GuestRoute><OtherPractice /></GuestRoute>} />
               <Route path="/other-practice/topic/:topic" element={<GuestRoute><OtherPracticeTopic /></GuestRoute>} />
-              <Route path="/dashboard/other-practice/topic/:topic" element={<ProtectedRoute><DashboardLayout><OtherPracticeTopic /></DashboardLayout></ProtectedRoute>} />
               <Route path="/other-practice/solve/:id" element={<ProtectedRoute><SolveOtherPractice /></ProtectedRoute>} />
-              <Route path="/dashboard/other-practice/solve/:id" element={<ProtectedRoute><DashboardLayout><SolveOtherPractice /></DashboardLayout></ProtectedRoute>} />
               <Route path="/verify" element={<VerifyCertificate />} />
-              <Route path="/cv-builder" element={<GuestRoute><CVBuilder /></GuestRoute>} />
-              <Route path="/cv-templates" element={<GuestRoute><CVTemplates /></GuestRoute>} />
-              <Route path="/dashboard/career/cv-templates" element={<ProtectedRoute><DashboardLayout><CVTemplates /></DashboardLayout></ProtectedRoute>} />
               <Route path="/ats-checker" element={<GuestRoute><ATSChecker /></GuestRoute>} />
               <Route path="/jobs" element={<GuestRoute><Jobs /></GuestRoute>} />
               <Route path="/our-product" element={<GuestRoute><OurProduct /></GuestRoute>} />

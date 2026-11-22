@@ -7,6 +7,7 @@ import {
   Zap, Award, Check
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { getApiUrl } from "../utils/apiConfig";
 
@@ -51,50 +52,47 @@ export default function AptitudePage() {
   const [selectedTopic, setSelectedTopic] = useState<string>("All");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
-  const [aptitudeQuestions, setAptitudeQuestions] = useState<any[]>([]);
-  const [topicCounts, setTopicCounts] = useState<Record<string, number>>({});
-  const [isLoading, setIsLoading] = useState(true);
   const [solvedIds, setSolvedIds] = useState<Set<string>>(new Set());
 
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 9;
 
-  // Load Aggregates and Problem List
-  useEffect(() => {
-    const fetchAptitudeData = async () => {
-      setIsLoading(true);
-      try {
-        // 1. Fetch aggregates
-        const aggResponse = await axios.get(getApiUrl("/api/v1/aptitude-problems/metadata/aggregates"));
-        const rawCounts = aggResponse.data.topicCounts || {};
-        const counts: Record<string, number> = {};
-        Object.entries(rawCounts).forEach(([k, v]) => {
-          const trimmed = (k || "Uncategorized").trim();
-          counts[trimmed] = (counts[trimmed] || 0) + Number(v);
-        });
-        setTopicCounts(counts);
+  // Cached Aggregates Query (5 mins staleTime)
+  const { data: topicCounts = {} } = useQuery<Record<string, number>>({
+    queryKey: ["aptitudeAggregates"],
+    staleTime: 5 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    queryFn: async () => {
+      const aggResponse = await axios.get(getApiUrl("/api/v1/aptitude-problems/metadata/aggregates"), { timeout: 8000 });
+      const rawCounts = aggResponse.data.topicCounts || {};
+      const counts: Record<string, number> = {};
+      Object.entries(rawCounts).forEach(([k, v]) => {
+        const trimmed = (k || "Uncategorized").trim();
+        counts[trimmed] = (counts[trimmed] || 0) + Number(v);
+      });
+      return counts;
+    },
+  });
 
-        // 2. Fetch full list of problems to power search, difficulty & company filters
-        const probResponse = await axios.get(getApiUrl("/api/v1/aptitude-problems?limit=500"));
-        const dataList = probResponse.data?.data || probResponse.data || [];
-
-        if (Array.isArray(dataList) && dataList.length > 0) {
-          setAptitudeQuestions(dataList);
-        } else {
-          // Fallback if list is empty
-          const topicsList = Object.keys(counts).sort();
-          setAptitudeQuestions(topicsList.map(t => ({ topic: t, title: t })));
-        }
-      } catch (error) {
-        console.error("Error fetching aptitude data:", error);
-      } finally {
-        setIsLoading(false);
+  // Cached Problems Query (5 mins staleTime)
+  const { data: aptitudeQuestions = [], isLoading } = useQuery<any[]>({
+    queryKey: ["aptitudeProblems"],
+    staleTime: 5 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    queryFn: async () => {
+      const probResponse = await axios.get(getApiUrl("/api/v1/aptitude-problems?limit=500"), { timeout: 8000 });
+      const dataList = probResponse.data?.data || probResponse.data || [];
+      if (Array.isArray(dataList) && dataList.length > 0) {
+        return dataList;
       }
-    };
+      return [];
+    },
+  });
 
-    fetchAptitudeData();
-
-    // Fetch Solved Status for user
+  // Fetch Solved Status for user
+  useEffect(() => {
     if (user?.email) {
       try {
         const key = `aptitude_analytics_${user.email.toLowerCase()}`;

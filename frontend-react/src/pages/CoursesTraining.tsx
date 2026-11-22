@@ -36,19 +36,22 @@ export default function CoursesTraining() {
     }
   }, []);
 
+  const fuse = React.useMemo(() => {
+    return new Fuse(courses, {
+      keys: ['title', 'description', 'tags'],
+      threshold: 0.4
+    });
+  }, [courses]);
+
   const filteredCourses = React.useMemo(() => {
     let processed = courses;
 
     if (searchQuery.trim()) {
-      const fuse = new Fuse(processed, {
-        keys: ['title', 'description', 'tags'],
-        threshold: 0.4
-      });
       processed = fuse.search(searchQuery).map(res => res.item);
     }
 
     return processed.filter(c => activeCategory === "all" || c.category === activeCategory);
-  }, [courses, searchQuery, activeCategory]);
+  }, [courses, searchQuery, activeCategory, fuse]);
 
   return (
     <div className="flex-1 p-6 md:p-12 w-full space-y-12">

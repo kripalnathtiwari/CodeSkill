@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { getApiUrl } from "../utils/apiConfig";
 import {
@@ -83,73 +84,94 @@ export default function OtherPractice() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
-  const [questions, setQuestions] = useState<any[]>([]);
-  const [subjects, setSubjects] = useState<string[]>([]);
-  const [subjectNotes, setSubjectNotes] = useState<Record<string, string>>({});
-  const [bookmarkedSubjects, setBookmarkedSubjects] = useState<Set<string>>(new Set());
-  const [isLoading, setIsLoading] = useState(true);
+  const [questions, setQuestions] = useState<any[]>(() => {
+    try {
+      const data = localStorage.getItem("admin_other_practice_tests");
+      return data ? JSON.parse(data) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [subjects, setSubjects] = useState<string[]>(() => {
+    try {
+      const data = localStorage.getItem("admin_subjects_data");
+      return data ? JSON.parse(data) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [subjectNotes, setSubjectNotes] = useState<Record<string, string>>(() => {
+    try {
+      const data = localStorage.getItem("admin_subject_notes");
+      return data ? JSON.parse(data) : {};
+    } catch {
+      return {};
+    }
+  });
+  const [bookmarkedSubjects, setBookmarkedSubjects] = useState<Set<string>>(() => {
+    try {
+      const data = localStorage.getItem("user_bookmarked_subjects");
+      return data ? new Set(JSON.parse(data)) : new Set();
+    } catch {
+      return new Set();
+    }
+  });
+
+  // TanStack Query for tests (cached for 5 minutes)
+  const { data: dbTests, isLoading: isTestsLoading } = useQuery({
+    queryKey: ['otherPracticeTests'],
+    staleTime: 5 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    queryFn: async () => {
+      const res = await axios.get(getApiUrl("/api/v1/other-practice/tests"), { timeout: 8000 });
+      return Array.isArray(res.data) ? res.data : [];
+    },
+  });
+
+  // TanStack Query for subjects (cached for 5 minutes)
+  const { data: dbSubjects, isLoading: isSubjectsLoading } = useQuery({
+    queryKey: ['otherPracticeSubjects'],
+    staleTime: 5 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    queryFn: async () => {
+      const res = await axios.get(getApiUrl("/api/v1/other-practice/subjects"), { timeout: 8000 });
+      return Array.isArray(res.data) ? res.data : [];
+    },
+  });
+
+  const isLoading = isTestsLoading || isSubjectsLoading;
+
+  // Sync state when fresh data arrives from database
+  useEffect(() => {
+    if (dbTests && Array.isArray(dbTests)) {
+      setQuestions(dbTests);
+      try {
+        localStorage.setItem("admin_other_practice_tests", JSON.stringify(dbTests));
+      } catch (e) {}
+    }
+  }, [dbTests]);
+
+  useEffect(() => {
+    if (dbSubjects && Array.isArray(dbSubjects)) {
+      const names = dbSubjects.map((s: any) => s.name);
+      const notes: Record<string, string> = {};
+      dbSubjects.forEach((s: any) => {
+        if (s.noteData) notes[s.name] = s.noteData;
+      });
+      setSubjects(names);
+      setSubjectNotes(notes);
+      try {
+        localStorage.setItem("admin_subjects_data", JSON.stringify(names));
+        localStorage.setItem("admin_subject_notes", JSON.stringify(notes));
+      } catch (e) {}
+    }
+  }, [dbSubjects]);
 
   // View state synced with URL searchParams so browser back / moving back restores the exact subject
   const selectedSubject = searchParams.get("subject") || "";
   const activeView: "directory" | "topics" = selectedSubject ? "topics" : "directory";
-
-  useEffect(() => {
-    // 1. Initial quick load from local cache if present
-    try {
-      const data = localStorage.getItem("admin_other_practice_tests");
-      if (data) setQuestions(JSON.parse(data));
-      const subjectsData = localStorage.getItem("admin_subjects_data");
-      if (subjectsData) setSubjects(JSON.parse(subjectsData));
-      const notesData = localStorage.getItem("admin_subject_notes");
-      if (notesData) setSubjectNotes(JSON.parse(notesData));
-      const savedBookmarks = localStorage.getItem("user_bookmarked_subjects");
-      if (savedBookmarks) setBookmarkedSubjects(new Set(JSON.parse(savedBookmarks)));
-    } catch (e) {
-      console.error(e);
-    }
-
-    // 2. Fetch fresh data directly from PostgreSQL backend
-    let isMounted = true;
-    const loadFromDatabase = async () => {
-      try {
-        const [testsRes, subjectsRes] = await Promise.allSettled([
-          axios.get(getApiUrl("/api/v1/other-practice/tests")),
-          axios.get(getApiUrl("/api/v1/other-practice/subjects"))
-        ]);
-
-        if (isMounted && testsRes.status === "fulfilled" && Array.isArray(testsRes.value.data)) {
-          setQuestions(testsRes.value.data);
-          try {
-            localStorage.setItem("admin_other_practice_tests", JSON.stringify(testsRes.value.data));
-          } catch (e) {}
-        }
-
-        if (isMounted && subjectsRes.status === "fulfilled" && Array.isArray(subjectsRes.value.data)) {
-          const names = subjectsRes.value.data.map((s: any) => s.name);
-          const notes: Record<string, string> = {};
-          subjectsRes.value.data.forEach((s: any) => {
-            if (s.noteData) notes[s.name] = s.noteData;
-          });
-          setSubjects(names);
-          setSubjectNotes(notes);
-          try {
-            localStorage.setItem("admin_subjects_data", JSON.stringify(names));
-            localStorage.setItem("admin_subject_notes", JSON.stringify(notes));
-          } catch (e) {}
-        }
-      } catch (err) {
-        console.warn("Could not sync other practice data from API:", err);
-      } finally {
-        if (isMounted) setIsLoading(false);
-      }
-    };
-
-    loadFromDatabase();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
   const toggleBookmark = (subj: string, e: React.MouseEvent) => {
     e.stopPropagation();

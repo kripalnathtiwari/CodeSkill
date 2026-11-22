@@ -14,6 +14,7 @@ import { corsOptions } from "./config/corsConfig";
 import { errorHandler } from "./middlewares/errorMiddleware";
 import { initSocketServer } from "./sockets/socketServer";
 import compression from "compression";
+import { performanceLogger } from "./middlewares/performanceLogger";
 
 // Route lists
 import authRoutes from "./routes/authRoutes";
@@ -60,6 +61,7 @@ app.use(cors(corsOptions));
 app.options("*", cors(corsOptions)); // Explicit preflight handling
 app.use(express.json());
 app.use(compression());
+app.use(performanceLogger);
 
 // Performance & Cache-Control middleware for public read-only endpoints
 app.use((req, res, next) => {

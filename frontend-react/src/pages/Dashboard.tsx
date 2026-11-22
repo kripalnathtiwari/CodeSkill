@@ -3,9 +3,8 @@ import { useAuth } from "../context/AuthContext";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { BookOpen, Award, Lock } from "lucide-react";
 import UserRankCard from "../components/dashboard/UserRankCard";
-import { fetchUserProgressFromDB, syncLocalProgressToDB } from "../utils/userProgressSync";
+import { useUserProgress } from "../utils/userProgressSync";
 
-import DashboardLayout from "../components/dashboard/DashboardLayout";
 import WelcomeBanner from "../components/dashboard/WelcomeBanner";
 import StatCards from "../components/dashboard/StatCards";
 import MyProgress from "../components/dashboard/MyProgress";
@@ -20,20 +19,8 @@ export default function Dashboard() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  // Primary source of truth: Authoritative user progress from PostgreSQL database
-  const { data: dbProgress } = useQuery({
-    queryKey: ['userProgressDB', user?.email],
-    staleTime: 60 * 1000,
-    refetchOnWindowFocus: true,
-    queryFn: async () => {
-      if (!user?.email) return null;
-      // Sync any local unsynced cache to database first
-      await syncLocalProgressToDB(user.email);
-      // Fetch fresh consolidated progress from PostgreSQL
-      return await fetchUserProgressFromDB(user.email);
-    },
-    enabled: !!user?.email
-  });
+  // Primary source of truth: Authoritative user progress from PostgreSQL database (cached)
+  const { data: dbProgress } = useUserProgress(user?.email);
   
   // DSA stats backed by database data
   const { data: dsaStats = { total: 0 } } = useQuery({
@@ -428,8 +415,7 @@ export default function Dashboard() {
   });
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6 pb-12 w-full max-w-7xl mx-auto">
+    <div className="space-y-6 pb-12 w-full max-w-7xl mx-auto">
         
         {/* Top Banner */}
         <WelcomeBanner solvedCount={dsaStats.total + mcqStats.correct} />
@@ -519,6 +505,5 @@ export default function Dashboard() {
           </div>
         )}
       </div>
-    </DashboardLayout>
   );
 }

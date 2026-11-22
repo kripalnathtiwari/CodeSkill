@@ -6,6 +6,12 @@ import { getCoursesByCategory } from "../../data/coursesData";
 
 export default function FeaturedCourses() {
   const navigate = useNavigate();
+  const featuredCourses = getCoursesByCategory("featured");
+
+  if (featuredCourses.length === 0) {
+    return null;
+  }
+
   return (
     <section className="py-20 px-6 w-full z-10 relative">
       <motion.div
@@ -31,7 +37,7 @@ export default function FeaturedCourses() {
           viewport={{ once: true, margin: "-50px" }}
           className="grid grid-cols-1 md:grid-cols-3 gap-6"
         >
-          {getCoursesByCategory("featured").map((course, index) => (
+          {featuredCourses.map((course, index) => (
             <motion.div
               key={course.id}
               onClick={() => navigate(`/course/${course.id}`)}

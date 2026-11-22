@@ -1,13 +1,18 @@
 import React from 'react';
 import { ArrowRight, Clock, Book } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { COURSES_DATA } from '../../data/coursesData';
+import { getAllCourses } from '../../data/coursesData';
 
 export default function Recommendations() {
   const navigate = useNavigate();
 
-  const recommendations = Object.values(COURSES_DATA).filter(c => c.category === 'featured').slice(0, 2);
-  const displayCourses = recommendations.length >= 2 ? recommendations : Object.values(COURSES_DATA).slice(0, 2);
+  const allCourses = getAllCourses();
+  const recommendations = allCourses.filter(c => c.category === 'featured').slice(0, 2);
+  const displayCourses = recommendations.length >= 2 ? recommendations : allCourses.slice(0, 2);
+
+  if (displayCourses.length === 0) {
+    return null;
+  }
 
   return (
     <div className="bg-surface dark:bg-[#111827] border border-border rounded-2xl p-6 shadow-sm flex flex-col h-full">

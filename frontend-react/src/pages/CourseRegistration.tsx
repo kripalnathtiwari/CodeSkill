@@ -21,7 +21,7 @@ export default function CourseRegistration() {
         const enrollments = JSON.parse(existingStr);
         if (user && user.email) {
           const alreadyEnrolled = enrollments.find((e: any) => 
-            e.courseId === (id || "c-1") && 
+            e.courseId === id && 
             (e.email?.toLowerCase().trim() === user.email?.toLowerCase().trim() || e.accountEmail?.toLowerCase().trim() === user.email?.toLowerCase().trim()) &&
             ["PAID", "active", "completed", "Success"].includes(e.status)
           );
@@ -67,8 +67,8 @@ export default function CourseRegistration() {
 
     // Save enrollment to local storage
     const newEnrollment = {
-      courseId: id || "c-1",
-      courseName: course?.title || "Generative AI Training Program",
+      courseId: id || "",
+      courseName: course?.title || "Training Program",
       fullName: formData.fullName,
       email: formData.email,
       accountEmail: user?.email,
@@ -87,7 +87,7 @@ export default function CourseRegistration() {
     
     // Safety check against duplicate registration
     const existingIndex = enrollments.findIndex((e: any) => 
-      e.courseId === (id || "c-1") && 
+      e.courseId === id && 
       (e.email?.toLowerCase().trim() === formData.email?.toLowerCase().trim() || e.accountEmail?.toLowerCase().trim() === user?.email?.toLowerCase().trim())
     );
     if (existingIndex > -1) {
@@ -106,9 +106,21 @@ export default function CourseRegistration() {
 
     // Redirect to Payment
     const isDashboard = location.pathname.startsWith("/dashboard");
-    const nextPath = isDashboard ? `/dashboard/payment/${id || "c-1"}` : `/payment/${id || "c-1"}`;
+    const nextPath = isDashboard ? `/dashboard/payment/${id}` : `/payment/${id}`;
     navigate(nextPath, { state: { newEnrollment } });
   };
+
+  if (!course) {
+    return (
+      <div className="flex-1 bg-background text-text-primary flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold mb-4">Course Not Found</h1>
+          <p className="text-text-muted mb-8">The course you are attempting to register for does not exist.</p>
+          <button onClick={() => navigate('/courses-training')} className="bg-primary px-6 py-3 rounded-lg font-bold text-text-inverse">Browse Courses</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 bg-background w-full min-h-screen py-16 px-6">

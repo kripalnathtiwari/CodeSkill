@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useSearchParams, useLocation } from "react-router-dom";
 import { GraduationCap, Calendar, Clock, ChevronRight, Users, CheckCircle2, Search } from "lucide-react";
 import Fuse from "fuse.js";
-import { COURSES_DATA } from "../data/coursesData";
+import { getAllCourses } from "../data/coursesData";
 
 const CATEGORIES = [
   { id: "all", label: "All Programs" },
@@ -17,7 +17,7 @@ export default function CoursesTraining() {
   const isDashboard = location.pathname.startsWith('/dashboard');
   const [activeCategory, setActiveCategory] = useState(searchParams.get("category") || "all");
   const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
-  const [courses, setCourses] = useState<any[]>(Object.values(COURSES_DATA));
+  const [courses, setCourses] = useState<any[]>(getAllCourses());
 
   useEffect(() => {
     const cat = searchParams.get("category");
@@ -30,10 +30,7 @@ export default function CoursesTraining() {
   }, [searchParams]);
 
   useEffect(() => {
-    const saved = localStorage.getItem("admin_custom_courses");
-    if (saved) {
-      setCourses([...Object.values(COURSES_DATA), ...JSON.parse(saved)]);
-    }
+    setCourses(getAllCourses());
   }, []);
 
   const fuse = React.useMemo(() => {
@@ -143,7 +140,11 @@ export default function CoursesTraining() {
                   </div>
                   <div className="absolute top-4 right-4">
                      <div className="w-10 h-10 rounded-full bg-black/50 backdrop-blur flex items-center justify-center">
-                       <course.icon className="w-5 h-5 text-text-inverse" />
+                       {course.icon ? (
+                         <course.icon className="w-5 h-5 text-text-inverse" />
+                       ) : (
+                         <GraduationCap className="w-5 h-5 text-text-inverse" />
+                       )}
                      </div>
                   </div>
                 </div>

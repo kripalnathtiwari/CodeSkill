@@ -10,11 +10,11 @@ export default function Payment() {
   const navigate = useNavigate();
 
   const { newEnrollment } = location.state || {};
-  const course = getCourseById(newEnrollment?.courseId || "c-1");
+  const course = getCourseById(newEnrollment?.courseId || "");
   
   // Parse base price
-  const basePriceStr = course?.price || "₹3,999";
-  const basePriceNum = parseInt(basePriceStr.replace(/[^0-9]/g, "")) || 3999;
+  const basePriceStr = course?.price || "₹0";
+  const basePriceNum = parseInt(basePriceStr.replace(/[^0-9]/g, "")) || 0;
 
   const [paymentMethod, setPaymentMethod] = useState("card"); // card, upi, netbanking
   
@@ -42,10 +42,10 @@ export default function Payment() {
   const [otp, setOtp] = useState("");
 
   useEffect(() => {
-    if (!newEnrollment) {
+    if (!newEnrollment || !course) {
       navigate("/courses-training");
     }
-  }, [newEnrollment, navigate]);
+  }, [newEnrollment, course, navigate]);
 
   const applyPromoCode = () => {
     if (promoCode.toUpperCase() === "CODESKILL50") {

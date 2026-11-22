@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Plus, Edit, Trash2, Search, Image as ImageIcon, AlertTriangle, X, Save, ArrowLeft, Lock, UserCheck, User, Sparkles } from "lucide-react";
-import { COURSES_DATA } from "../../data/coursesData";
+import { getAllCourses } from "../../data/coursesData";
 
 export default function CourseManagement() {
-  const [courses, setCourses] = useState<any[]>(Object.values(COURSES_DATA));
+  const [courses, setCourses] = useState<any[]>(getAllCourses());
   const [search, setSearch] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [editingCourse, setEditingCourse] = useState<any | null>(null);
@@ -35,10 +35,7 @@ export default function CourseManagement() {
   const [trainerLinkedin, setTrainerLinkedin] = useState("");
 
   useEffect(() => {
-    const saved = localStorage.getItem("admin_custom_courses");
-    if (saved) {
-      setCourses([...Object.values(COURSES_DATA), ...JSON.parse(saved)]);
-    }
+    setCourses(getAllCourses());
   }, []);
 
   const resetForm = () => {
@@ -131,7 +128,7 @@ export default function CourseManagement() {
           : c
       );
       localStorage.setItem("admin_custom_courses", JSON.stringify(updatedCustom));
-      setCourses([...Object.values(COURSES_DATA), ...updatedCustom]);
+      setCourses(updatedCustom);
     } else if (!editingCourse) {
       // CREATE new course
       const newCourse = {
@@ -175,7 +172,7 @@ export default function CourseManagement() {
       const existingCustom = saved ? JSON.parse(saved) : [];
       const updatedCustom = [...existingCustom, newCourse];
       localStorage.setItem("admin_custom_courses", JSON.stringify(updatedCustom));
-      setCourses([...Object.values(COURSES_DATA), ...updatedCustom]);
+      setCourses(updatedCustom);
     }
 
     setIsCreating(false);
@@ -195,13 +192,11 @@ export default function CourseManagement() {
 
   const confirmDelete = () => {
     if (!deleteConfirmId) return;
-    if (!isDefaultCourse(deleteConfirmId)) {
-      const saved = localStorage.getItem("admin_custom_courses");
-      if (saved) {
-        const updatedCustom = JSON.parse(saved).filter((c: any) => c.id !== deleteConfirmId);
-        localStorage.setItem("admin_custom_courses", JSON.stringify(updatedCustom));
-        setCourses([...Object.values(COURSES_DATA), ...updatedCustom]);
-      }
+    const saved = localStorage.getItem("admin_custom_courses");
+    if (saved) {
+      const updatedCustom = JSON.parse(saved).filter((c: any) => c.id !== deleteConfirmId);
+      localStorage.setItem("admin_custom_courses", JSON.stringify(updatedCustom));
+      setCourses(updatedCustom);
     }
     setDeleteConfirmId(null);
   };

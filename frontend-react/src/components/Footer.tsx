@@ -95,15 +95,12 @@ export default function Footer() {
           </div>
 
           <div className="space-y-4">
-            <h4 className="text-primary font-bold text-lg mb-4">Courses</h4>
+            <h4 className="text-primary font-bold text-lg mb-4">Courses & Programs</h4>
             <ul className="space-y-3 text-sm">
-              <li><Link to="/course/st-1" className="text-slate-300 hover:text-white transition-colors">Full Stack Web Dev Bootcamp</Link></li>
-              <li><Link to="/course/st-2" className="text-slate-300 hover:text-white transition-colors">Data Science & AI Program</Link></li>
-              <li><Link to="/course/c-1" className="text-slate-300 hover:text-white transition-colors">Data Science & Machine Learning</Link></li>
-              <li><Link to="/course/c-2" className="text-slate-300 hover:text-white transition-colors">Full Stack Web Development</Link></li>
-              <li><Link to="/course/c-3" className="text-slate-300 hover:text-white transition-colors">Cloud Architecture & System Design</Link></li>
-              <li><Link to="/course/dsa-1" className="text-slate-300 hover:text-white transition-colors">Advanced DSA</Link></li>
-              <li><Link to="/course/sd-1" className="text-slate-300 hover:text-white transition-colors">System Design Masterclass</Link></li>
+              <li><Link to="/courses-training?category=all" className="text-slate-300 hover:text-white transition-colors">All Programs</Link></li>
+              <li><Link to="/courses-training?category=summer" className="text-slate-300 hover:text-white transition-colors">Summer Internship</Link></li>
+              <li><Link to="/courses-training?category=featured" className="text-slate-300 hover:text-white transition-colors">Coding Bootcamps</Link></li>
+              <li><Link to="/courses-training?category=standard" className="text-slate-300 hover:text-white transition-colors">Self-Paced Courses</Link></li>
             </ul>
           </div>
 

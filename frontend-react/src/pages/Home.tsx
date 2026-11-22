@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 import letsGoImg from "../assets/lets-go.png";
 
-const FeaturedCourses = lazy(() => import("../components/home/FeaturedCourses"));
 const CampusDrives = lazy(() => import("../components/home/CampusDrives"));
 const EngineSection = lazy(() => import("../components/home/EngineSection"));
 const TrainerReviews = lazy(() => import("../components/home/TrainerReviews"));
@@ -236,7 +235,6 @@ export default function Home() {
       {/* Lazy Loaded Sections */}
       <div className="w-full max-w-[1400px] mx-auto px-3 sm:px-5 lg:px-8 pb-24">
         <Suspense fallback={<SectionSkeleton />}>
-          <FeaturedCourses />
           <CampusDrives />
           <EngineSection />
           <TrainerReviews />

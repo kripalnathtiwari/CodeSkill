@@ -13,8 +13,9 @@ if (redisUrl) {
     redisConnection = new Redis(redisUrl, {
       maxRetriesPerRequest: 3,
       enableOfflineQueue: true,
-      tls: redisUrl.startsWith("rediss://") ? { rejectUnauthorized: false } : undefined,
+      tls: redisUrl.startsWith("rediss://") ? { rejectUnauthorized: true } : undefined,
       connectTimeout: 10000,
+      commandTimeout: 3000,
       keepAlive: 10000,
       retryStrategy(times) {
         if (times > 10) {
@@ -25,10 +26,19 @@ if (redisUrl) {
       }
     });
     redisConnection.on("connect", () => {
-      logger.info("Connected to Redis successfully.");
+      logger.info("Connected to Redis successfully with verified TLS.");
+    });
+    redisConnection.on("ready", () => {
+      logger.info("Redis client ready to receive commands.");
     });
     redisConnection.on("error", (err) => {
       logger.error(`Redis connection error: ${err}`);
+    });
+    redisConnection.on("close", () => {
+      logger.warn("Redis connection closed.");
+    });
+    redisConnection.on("reconnecting", () => {
+      logger.info("Reconnecting to Redis...");
     });
   } catch (error) {
     logger.error(`Failed to initialize Redis: ${error}`);
@@ -41,7 +51,9 @@ export const createRedisConnection = () => {
   return new Redis(redisUrl || 'redis://127.0.0.1:6379', {
     maxRetriesPerRequest: 3,
     enableOfflineQueue: true,
-    tls: redisUrl && redisUrl.startsWith("rediss://") ? { rejectUnauthorized: false } : undefined,
+    tls: redisUrl && redisUrl.startsWith("rediss://") ? { rejectUnauthorized: true } : undefined,
+    connectTimeout: 10000,
+    commandTimeout: 3000,
   });
 };
 

@@ -731,6 +731,8 @@ model AptitudeProblem {
   @@index([topic])
   @@index([difficulty])
   @@index([createdAt(sort: Desc), id(sort: Desc)])
+  @@index([topic, createdAt(sort: Desc), id(sort: Desc)])
+  @@index([topic, difficulty, createdAt(sort: Desc), id(sort: Desc)])
 }
 
 model ArchiveRecord {

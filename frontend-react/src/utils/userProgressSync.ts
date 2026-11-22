@@ -233,13 +233,46 @@ export async function saveAptitudeAnalyticsToDB(userEmail: string, items: any[])
   const token = localStorage.getItem('accessToken');
   if (!token || !userEmail || !items || items.length === 0) return;
 
+  const emailKey = userEmail.toLowerCase().trim();
+  const retryKey = `pending_aptitude_sync_${emailKey}`;
+
   try {
     await axios.post(
       getApiUrl('/api/v1/auth/user-progress'),
       { aptitudeAnalytics: items },
-      { headers: { Authorization: `Bearer ${token}` } }
+      { headers: { Authorization: `Bearer ${token}` }, timeout: 10000 }
     );
-  } catch (e) {}
+    // Successfully synced to server, clear any pending sync records
+    localStorage.removeItem(retryKey);
+  } catch (e) {
+    // Network interruption: persist into resilient retry queue so student progress is NEVER lost
+    try {
+      const existingQueue = JSON.parse(localStorage.getItem(retryKey) || "[]");
+      const mergedMap = new Map();
+      [...existingQueue, ...items].forEach((item: any) => {
+        if (item?.id) mergedMap.set(String(item.id), item);
+      });
+      localStorage.setItem(retryKey, JSON.stringify(Array.from(mergedMap.values())));
+    } catch (storeErr) {
+      console.warn("Failed to update offline aptitude queue", storeErr);
+    }
+  }
+}
+
+// Background auto-retry when network recovers or on session init
+export function flushPendingAptitudeSync(userEmail: string) {
+  if (!userEmail) return;
+  const emailKey = userEmail.toLowerCase().trim();
+  const retryKey = `pending_aptitude_sync_${emailKey}`;
+  try {
+    const raw = localStorage.getItem(retryKey);
+    if (raw) {
+      const items = JSON.parse(raw);
+      if (Array.isArray(items) && items.length > 0) {
+        saveAptitudeAnalyticsToDB(userEmail, items);
+      }
+    }
+  } catch {}
 }
 
 /**

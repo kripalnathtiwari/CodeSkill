@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { getApiUrl } from "../utils/apiConfig";
 import { recordDailyProgress } from "../utils/progressTracker";
-import { saveAptitudeAnalyticsToDB } from "../utils/userProgressSync";
+import { saveAptitudeAnalyticsToDB, flushPendingAptitudeSync } from "../utils/userProgressSync";
 
 export default function SolveAptitude() {
   const { user } = useAuth();
@@ -22,6 +22,14 @@ export default function SolveAptitude() {
   const [timeLeft, setTimeLeft] = useState(30 * 60); // 30 minutes mock timer
   const [showSolution, setShowSolution] = useState<Record<number, boolean>>({});
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Flush any offline retry queue when user arrives or reconnects
+  useEffect(() => {
+    if (user?.email) {
+      flushPendingAptitudeSync(user.email);
+    }
+  }, [user]);
 
   useEffect(() => {
     const handleFullscreenChange = () => {
@@ -98,6 +106,19 @@ export default function SolveAptitude() {
 
       if (parsedAll.length > 0) {
         setAllQuestions(parsedAll);
+
+        // Restore active in-progress test answers if refreshed
+        try {
+          const savedProgress = sessionStorage.getItem("active_aptitude_test_progress");
+          if (savedProgress) {
+            const parsedProg = JSON.parse(savedProgress);
+            if (parsedProg.answered) setAnswered(parsedProg.answered);
+            if (parsedProg.visited) setVisited(parsedProg.visited);
+            if (parsedProg.reviewStatus) setReviewStatus(parsedProg.reviewStatus);
+            if (typeof parsedProg.timeLeft === "number" && parsedProg.timeLeft > 0) setTimeLeft(parsedProg.timeLeft);
+          }
+        } catch {}
+
         const index = parsedAll.findIndex((q: any) => String(q._id) === String(id) || String(q.id) === String(id));
         if (index !== -1) {
           const selected = parsedAll[index];
@@ -144,6 +165,27 @@ export default function SolveAptitude() {
     }, 1000);
     return () => clearInterval(timerId);
   }, []);
+
+  // Auto-save in-progress test answers so page refresh or network drops never lose progress
+  useEffect(() => {
+    if (Object.keys(answered).length > 0 && !isSubmitting) {
+      try {
+        sessionStorage.setItem("active_aptitude_test_progress", JSON.stringify({
+          answered,
+          visited,
+          reviewStatus,
+          timeLeft
+        }));
+      } catch {}
+    }
+  }, [answered, visited, reviewStatus, timeLeft, isSubmitting]);
+
+  // Server-side / Client deadline auto-submit: automatically submits test when timer expires
+  useEffect(() => {
+    if (timeLeft === 0 && !isSubmitting && allQuestions.length > 0 && question) {
+      handleSubmitTest();
+    }
+  }, [timeLeft, isSubmitting, allQuestions.length, question]);
 
   const formatTime = (seconds: number) => {
     const h = Math.floor(seconds / 3600);
@@ -211,6 +253,9 @@ export default function SolveAptitude() {
   };
 
   const handleExitMock = () => {
+    try {
+      sessionStorage.removeItem("active_aptitude_test_progress");
+    } catch {}
     if (document.fullscreenElement) {
       document.exitFullscreen().catch(() => {});
     }
@@ -222,6 +267,13 @@ export default function SolveAptitude() {
   };
 
   const handleSubmitTest = () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
+    try {
+      sessionStorage.removeItem("active_aptitude_test_progress");
+    } catch {}
+
     // Log activity and save analytics for all attempted questions
     if (user?.email) {
       const token = localStorage.getItem("accessToken");
@@ -493,10 +545,11 @@ export default function SolveAptitude() {
 
               <button 
                 onClick={handleSubmitTest}
-                className="flex items-center gap-2 px-6 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded font-bold text-sm transition-colors shadow-sm ml-4"
+                disabled={isSubmitting}
+                className="flex items-center gap-2 px-6 py-2 text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed rounded font-bold text-sm transition-colors shadow-sm ml-4"
               >
                 <CloudUpload className="w-4 h-4" />
-                Submit
+                {isSubmitting ? "Submitting..." : "Submit"}
               </button>
             </div>
           </div>

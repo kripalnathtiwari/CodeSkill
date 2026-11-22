@@ -6,6 +6,28 @@ import logger from "../config/logger";
 
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 
+// High-speed in-process cache for verified device sessions (TTL: 20 seconds)
+// Dramatically cuts repeated session-status and navigation authorization overhead to <0.1ms
+interface LocalCachedSession {
+  user: {
+    id: string;
+    email: string;
+    role: string;
+  };
+  expiresAt: number;
+}
+
+const localSessionCache = new Map<string, LocalCachedSession>();
+const LOCAL_SESSION_TTL_MS = 20 * 1000; // 20 seconds
+
+export const invalidateLocalSession = (sessionId?: string) => {
+  if (sessionId) {
+    localSessionCache.delete(sessionId);
+  } else {
+    localSessionCache.clear();
+  }
+};
+
 export interface AuthenticatedRequest extends Request {
   user?: {
     id: string;
@@ -43,14 +65,26 @@ export const authenticateJWT = async (
       });
     }
 
+    const now = Date.now();
+
+    // 1. Check in-process cache first (<0.1ms)
+    const localHit = localSessionCache.get(decoded.sessionId);
+    if (localHit && localHit.expiresAt > now && localHit.user.id === decoded.id) {
+      req.user = { ...localHit.user, sessionId: decoded.sessionId };
+      return next();
+    } else if (localHit) {
+      localSessionCache.delete(decoded.sessionId);
+    }
+
     let isSessionActive = false;
 
-    // Check Redis first for fast lookup (<2ms)
+    // 2. Check Redis for fast distributed session verification (~30-50ms)
     if (redis) {
       try {
         const redisSession = await redis.get(`session:${decoded.sessionId}`);
         if (redisSession !== null) {
           if (redisSession === "revoked") {
+            localSessionCache.delete(decoded.sessionId);
             return res.status(401).json({
               error: "Your account has been logged in on another device.",
               code: "SESSION_REVOKED",
@@ -60,13 +94,18 @@ export const authenticateJWT = async (
           try {
             const parsed = JSON.parse(redisSession);
             if (parsed.status === "revoked" || parsed.active === false) {
+              localSessionCache.delete(decoded.sessionId);
               return res.status(401).json({
                 error: "Your account has been logged in on another device.",
                 code: "SESSION_REVOKED",
               });
             }
             if ((parsed.status === "active" || parsed.active === true) && parsed.user) {
-              // Ultra-fast path: satisfied entirely from Redis in memory
+              // Valid in Redis: cache in process memory for subsequent rapid requests
+              localSessionCache.set(decoded.sessionId, {
+                user: parsed.user,
+                expiresAt: now + LOCAL_SESSION_TTL_MS,
+              });
               req.user = { ...parsed.user, sessionId: decoded.sessionId };
               return next();
             }
@@ -81,7 +120,7 @@ export const authenticateJWT = async (
       }
     }
 
-    // If Redis didn't confirm, verify in PostgreSQL
+    // 3. Fallback: If Redis didn't confirm, verify in PostgreSQL
     if (!isSessionActive) {
       const session = await prisma.deviceSession.findUnique({
         where: { sessionId: decoded.sessionId },
@@ -89,6 +128,7 @@ export const authenticateJWT = async (
       });
 
       if (!session || !session.isActive || session.userId !== decoded.id) {
+        localSessionCache.delete(decoded.sessionId);
         if (redis) {
           redis.set(`session:${decoded.sessionId}`, "revoked", "EX", 86400).catch(() => {});
         }
@@ -105,23 +145,26 @@ export const authenticateJWT = async (
     });
 
     if (!user) {
+      localSessionCache.delete(decoded.sessionId);
       return res.status(401).json({ error: "User session expired or user not found" });
     }
 
-    req.user = { ...user, sessionId: decoded.sessionId } as {
-      id: string;
-      email: string;
-      role: string;
-      sessionId?: string;
-    };
+    const userData = { id: user.id, email: user.email, role: user.role };
+    req.user = { ...userData, sessionId: decoded.sessionId };
 
-    // Cache verified session + user info in Redis for future requests (7 days TTL)
+    // Cache verified session + user info in local process cache
+    localSessionCache.set(decoded.sessionId, {
+      user: userData,
+      expiresAt: now + LOCAL_SESSION_TTL_MS,
+    });
+
+    // Cache verified session in Redis for distributed instances (7 days TTL)
     if (redis) {
       redis.set(
         `session:${decoded.sessionId}`,
         JSON.stringify({
           status: "active",
-          user: { id: user.id, email: user.email, role: user.role }
+          user: userData
         }),
         "EX",
         604800

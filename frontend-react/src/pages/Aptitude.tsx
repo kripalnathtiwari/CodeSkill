@@ -47,151 +47,98 @@ export default function AptitudePage() {
 
   // Filters & State
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCompany, setSelectedCompany] = useState<string>("All");
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("All");
   const [selectedTopic, setSelectedTopic] = useState<string>("All");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const [solvedIds, setSolvedIds] = useState<Set<string>>(new Set());
+  const [solvedByTopic, setSolvedByTopic] = useState<Record<string, number>>({});
 
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 9;
 
-  // Cached Aggregates Query (5 mins staleTime)
-  const { data: topicCounts = {} } = useQuery<Record<string, number>>({
+  // Cached Aggregates Query (10 mins staleTime)
+  const { data: aggregatesData, isLoading } = useQuery<{
+    topicCounts?: Record<string, number>;
+    totalQuestions?: number;
+    topics?: string[];
+  }>({
     queryKey: ["aptitudeAggregates"],
-    staleTime: 5 * 60 * 1000,
-    gcTime: 15 * 60 * 1000,
+    staleTime: 10 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
     refetchOnWindowFocus: false,
     queryFn: async () => {
       const aggResponse = await axios.get(getApiUrl("/api/v1/aptitude-problems/metadata/aggregates"), { timeout: 8000 });
-      const rawCounts = aggResponse.data.topicCounts || {};
-      const counts: Record<string, number> = {};
-      Object.entries(rawCounts).forEach(([k, v]) => {
-        const trimmed = (k || "Uncategorized").trim();
-        counts[trimmed] = (counts[trimmed] || 0) + Number(v);
-      });
-      return counts;
+      return aggResponse.data;
     },
   });
 
-  // Cached Problems Query (5 mins staleTime)
-  const { data: aptitudeQuestions = [], isLoading } = useQuery<any[]>({
-    queryKey: ["aptitudeProblems"],
-    staleTime: 5 * 60 * 1000,
-    gcTime: 15 * 60 * 1000,
-    refetchOnWindowFocus: false,
-    queryFn: async () => {
-      const probResponse = await axios.get(getApiUrl("/api/v1/aptitude-problems?limit=500"), { timeout: 8000 });
-      const dataList = probResponse.data?.data || probResponse.data || [];
-      if (Array.isArray(dataList) && dataList.length > 0) {
-        return dataList;
-      }
-      return [];
-    },
-  });
+  const topicCounts: Record<string, number> = useMemo(() => {
+    const rawCounts = aggregatesData?.topicCounts || {};
+    const counts: Record<string, number> = {};
+    Object.entries(rawCounts).forEach(([k, v]) => {
+      const trimmed = (k || "Uncategorized").trim();
+      counts[trimmed] = (counts[trimmed] || 0) + Number(v);
+    });
+    return counts;
+  }, [aggregatesData]);
 
   // Fetch Solved Status for user
   useEffect(() => {
     if (user?.email) {
       try {
-        const key = `aptitude_analytics_${user.email.toLowerCase()}`;
+        const key = `aptitude_analytics_${user.email.toLowerCase().trim()}`;
         const saved = JSON.parse(localStorage.getItem(key) || "[]");
         const solved = new Set<string>();
+        const topicMap: Record<string, number> = {};
         saved.forEach((q: any) => {
-          if (q.correct) solved.add(String(q.id || q._id));
+          if (q.correct) {
+            solved.add(String(q.id || q._id));
+            const t = (q.topic || "Uncategorized").trim();
+            topicMap[t] = (topicMap[t] || 0) + 1;
+          }
         });
         setSolvedIds(solved);
+        setSolvedByTopic(topicMap);
       } catch (e) {
         console.error("[Aptitude Debug] Error reading analytics", e);
       }
     }
   }, [user]);
 
-  // Unique Companies
+  // Standard Company Badges
   const uniqueCompanies = useMemo(() => {
-    const companies = new Set<string>();
-    aptitudeQuestions.forEach(q => {
-      if (q.company && q.company.trim()) {
-        companies.add(q.company.trim());
-      }
-    });
-    // Add popular placement recruitment firms if not present
-    ["TCS", "Infosys", "Wipro", "Amazon", "Accenture", "Cognizant"].forEach(c => companies.add(c));
-    return ["All", ...Array.from(companies).sort()];
-  }, [aptitudeQuestions]);
+    return ["All", "Accenture", "Amazon", "Cognizant", "Infosys", "TCS", "Wipro"];
+  }, []);
 
   // Unique Topics
   const uniqueTopics = useMemo(() => {
-    const topics = new Set<string>();
-    Object.keys(topicCounts).forEach(t => {
-      if (t && t.trim()) topics.add(t.trim());
-    });
-    aptitudeQuestions.forEach(q => {
-      if (q.topic && q.topic.trim()) topics.add(q.topic.trim());
-    });
-    return ["All", ...Array.from(topics).sort()];
-  }, [topicCounts, aptitudeQuestions]);
+    const topics = Object.keys(topicCounts).sort();
+    return ["All", ...topics];
+  }, [topicCounts]);
 
-  // Group questions by Topic
-  const groupedByTopic = useMemo(() => {
-    const groups: Record<string, any[]> = {};
-
-    // Seed all known topics
-    Object.keys(topicCounts).forEach(t => {
-      const clean = (t || "Uncategorized").trim();
-      if (!groups[clean]) groups[clean] = [];
-    });
-
-    aptitudeQuestions.forEach(q => {
-      const t = (q.topic || "Uncategorized").trim();
-      if (!groups[t]) groups[t] = [];
-      groups[t].push(q);
-    });
-
-    return groups;
-  }, [aptitudeQuestions, topicCounts]);
-
-  // Filter topics based on search, company, difficulty, topic
+  // Filter topics based on search and topic filter
   const filteredTopicKeys = useMemo(() => {
-    const allTopics = Object.keys(groupedByTopic);
+    const allTopics = Object.keys(topicCounts).sort();
 
     return allTopics.filter(t => {
-      const qList = groupedByTopic[t] || [];
       const matchesTopic = selectedTopic === "All" || t === selectedTopic;
       if (!matchesTopic) return false;
 
       // Filter by search query
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase();
-        const topicMatches = t.toLowerCase().includes(query);
-        const anyQuestionMatches = qList.some((q: any) => 
-          (q.title || "").toLowerCase().includes(query) ||
-          (q.description || "").toLowerCase().includes(query)
-        );
-        if (!topicMatches && !anyQuestionMatches) return false;
-      }
-
-      // Filter by company
-      if (selectedCompany !== "All") {
-        const hasCompany = qList.some((q: any) => q.company && q.company.trim().toLowerCase() === selectedCompany.toLowerCase());
-        if (!hasCompany) return false;
-      }
-
-      // Filter by difficulty
-      if (selectedDifficulty !== "All") {
-        const hasDifficulty = qList.some((q: any) => q.difficulty && q.difficulty.toLowerCase() === selectedDifficulty.toLowerCase());
-        if (!hasDifficulty && qList.length > 0) return false;
+        if (!t.toLowerCase().includes(query)) return false;
       }
 
       return true;
-    }).sort();
-  }, [groupedByTopic, searchQuery, selectedTopic, selectedCompany, selectedDifficulty]);
+    });
+  }, [topicCounts, searchQuery, selectedTopic]);
 
   // Reset to page 1 whenever filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedCompany, selectedDifficulty, selectedTopic]);
+  }, [searchQuery, selectedDifficulty, selectedTopic]);
 
   const totalFilteredTopics = filteredTopicKeys.length;
   const totalPages = Math.ceil(totalFilteredTopics / ITEMS_PER_PAGE);
@@ -203,8 +150,8 @@ export default function AptitudePage() {
 
   // Compute Overall Stats
   const totalQuestionsAllTopics = useMemo(() => {
-    return Object.values(topicCounts).reduce((a, b) => a + b, 0) || aptitudeQuestions.length;
-  }, [topicCounts, aptitudeQuestions]);
+    return aggregatesData?.totalQuestions || Object.values(topicCounts).reduce((a, b) => a + b, 0);
+  }, [aggregatesData, topicCounts]);
 
   const totalSolvedCount = solvedIds.size;
   const overallPercentage = totalQuestionsAllTopics > 0 
@@ -414,7 +361,6 @@ export default function AptitudePage() {
             </p>
             <button
               onClick={() => {
-                setSelectedCompany("All");
                 setSelectedDifficulty("All");
                 setSelectedTopic("All");
                 setSearchQuery("");
@@ -428,13 +374,12 @@ export default function AptitudePage() {
           /* GRID VIEW */
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {paginatedTopics.map((topic, idx) => {
-              const qCount = topicCounts[topic] ?? groupedByTopic[topic]?.length ?? 0;
+              const qCount = topicCounts[topic] ?? 0;
               const color = getTopicColor(idx);
               const icon = getTopicIcon(topic);
-              const qList = groupedByTopic[topic] || [];
-              const solvedInTopic = qList.filter((q: any) => solvedIds.has(String(q._id || q.id))).length;
-              const percentInTopic = qCount > 0 ? Math.round((solvedInTopic / qCount) * 100) : 0;
-              const isAllSolved = qCount > 0 && solvedInTopic === qCount;
+              const solvedInTopic = solvedByTopic[topic] ?? 0;
+              const percentInTopic = qCount > 0 ? Math.round((Math.min(solvedInTopic, qCount) / qCount) * 100) : 0;
+              const isAllSolved = qCount > 0 && solvedInTopic >= qCount;
 
               return (
                 <div
@@ -501,12 +446,11 @@ export default function AptitudePage() {
           /* LIST VIEW */
           <div className="space-y-3.5">
             {paginatedTopics.map((topic, idx) => {
-              const qCount = topicCounts[topic] ?? groupedByTopic[topic]?.length ?? 0;
+              const qCount = topicCounts[topic] ?? 0;
               const color = getTopicColor(idx);
               const icon = getTopicIcon(topic);
-              const qList = groupedByTopic[topic] || [];
-              const solvedInTopic = qList.filter((q: any) => solvedIds.has(String(q._id || q.id))).length;
-              const percentInTopic = qCount > 0 ? Math.round((solvedInTopic / qCount) * 100) : 0;
+              const solvedInTopic = solvedByTopic[topic] ?? 0;
+              const percentInTopic = qCount > 0 ? Math.round((Math.min(solvedInTopic, qCount) / qCount) * 100) : 0;
 
               return (
                 <div

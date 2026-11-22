@@ -11,14 +11,17 @@ let redisConnection: Redis | null = null;
 if (redisUrl) {
   try {
     redisConnection = new Redis(redisUrl, {
-      maxRetriesPerRequest: null,
-      enableOfflineQueue: false,
+      maxRetriesPerRequest: 3,
+      enableOfflineQueue: true,
+      tls: redisUrl.startsWith("rediss://") ? { rejectUnauthorized: false } : undefined,
+      connectTimeout: 10000,
+      keepAlive: 10000,
       retryStrategy(times) {
-        if (times > 3) {
-          logger.warn("Redis connection failed after 3 retries. Disabling further retries.");
+        if (times > 10) {
+          logger.warn("Redis connection failed after 10 retries.");
           return null; // Stop retrying
         }
-        return Math.min(times * 50, 2000);
+        return Math.min(times * 100, 3000);
       }
     });
     redisConnection.on("connect", () => {
@@ -36,8 +39,9 @@ if (redisUrl) {
 
 export const createRedisConnection = () => {
   return new Redis(redisUrl || 'redis://127.0.0.1:6379', {
-    maxRetriesPerRequest: null,
-    enableReadyCheck: false,
+    maxRetriesPerRequest: 3,
+    enableOfflineQueue: true,
+    tls: redisUrl && redisUrl.startsWith("rediss://") ? { rejectUnauthorized: false } : undefined,
   });
 };
 

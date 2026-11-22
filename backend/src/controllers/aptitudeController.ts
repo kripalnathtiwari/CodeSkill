@@ -1,7 +1,22 @@
 import { Response } from 'express';
 import { AuthenticatedRequest } from '../middlewares/authMiddleware';
 import prisma from '../config/db';
+import redisConnection from '../config/redis';
 import { invalidateCachePattern } from '../middlewares/cacheMiddleware';
+
+export const invalidateAptitudeCaches = async () => {
+  try {
+    await invalidateCachePattern("/api/v1/aptitude-problems");
+    if (redisConnection) {
+      const keys = await redisConnection.keys("aptitude:*").catch(() => []);
+      if (keys && keys.length > 0) {
+        await redisConnection.del(...keys);
+      }
+    }
+  } catch (err) {
+    console.error("Error invalidating aptitude caches:", err);
+  }
+};
 
 export const getAllAptitudeProblems = async (req: AuthenticatedRequest, res: Response) => {
   try {
@@ -10,9 +25,21 @@ export const getAllAptitudeProblems = async (req: AuthenticatedRequest, res: Res
     const parsedLimit = parseInt(limit as string, 10);
     const limitNum = Number.isNaN(parsedLimit) || parsedLimit <= 0 ? 20 : Math.min(parsedLimit, 500);
 
+    const decodedTopic = topic && topic !== "All" ? decodeURIComponent(topic as string).trim() : null;
+    const cacheKey = `aptitude:problems:${decodedTopic || 'all'}:${difficulty || 'all'}:${limitNum}:${cursor || 'start'}`;
+
+    if (redisConnection) {
+      try {
+        const cached = await redisConnection.get(cacheKey);
+        if (cached) {
+          res.setHeader("X-Cache", "HIT-REDIS");
+          return res.status(200).json(JSON.parse(cached));
+        }
+      } catch (e) {}
+    }
+
     const where: any = {};
-    if (topic && topic !== "All") {
-      const decodedTopic = decodeURIComponent(topic as string).trim();
+    if (decodedTopic) {
       where.topic = {
         equals: decodedTopic,
         mode: 'insensitive'
@@ -52,13 +79,19 @@ export const getAllAptitudeProblems = async (req: AuthenticatedRequest, res: Res
 
     const nextCursor = problems.length > 0 ? problems[problems.length - 1].id : null;
 
-    res.status(200).json({
+    const result = {
       data: problems,
       pagination: {
         hasMore,
         nextCursor
       }
-    });
+    };
+
+    if (redisConnection) {
+      redisConnection.setex(cacheKey, 1800, JSON.stringify(result)).catch(() => {});
+    }
+
+    res.status(200).json(result);
   } catch (error) {
     console.error('Error fetching aptitude problems:', error);
     res.status(500).json({ error: 'Failed to fetch aptitude problems' });
@@ -67,6 +100,17 @@ export const getAllAptitudeProblems = async (req: AuthenticatedRequest, res: Res
 
 export const getAptitudeAggregates = async (req: AuthenticatedRequest, res: Response) => {
   try {
+    const cacheKey = "aptitude:metadata:aggregates";
+    if (redisConnection) {
+      try {
+        const cached = await redisConnection.get(cacheKey);
+        if (cached) {
+          res.setHeader("X-Cache", "HIT-REDIS");
+          return res.status(200).json(JSON.parse(cached));
+        }
+      } catch (e) {}
+    }
+
     const topicGroups = await prisma.aptitudeProblem.groupBy({
       by: ['topic'],
       _count: {
@@ -78,12 +122,25 @@ export const getAptitudeAggregates = async (req: AuthenticatedRequest, res: Resp
     });
 
     const topicCounts: Record<string, number> = {};
+    let totalQuestions = 0;
     topicGroups.forEach(group => {
       const trimmedTopic = (group.topic || "Uncategorized").trim();
-      topicCounts[trimmedTopic] = (topicCounts[trimmedTopic] || 0) + group._count.id;
+      const count = group._count.id;
+      topicCounts[trimmedTopic] = (topicCounts[trimmedTopic] || 0) + count;
+      totalQuestions += count;
     });
 
-    res.status(200).json({ topicCounts });
+    const result = {
+      topicCounts,
+      totalQuestions,
+      topics: Object.keys(topicCounts).sort()
+    };
+
+    if (redisConnection) {
+      redisConnection.setex(cacheKey, 3600, JSON.stringify(result)).catch(() => {});
+    }
+
+    res.status(200).json(result);
   } catch (error) {
     console.error('Error fetching aptitude aggregates:', error);
     res.status(500).json({ error: 'Failed to fetch aptitude aggregates' });
@@ -93,12 +150,28 @@ export const getAptitudeAggregates = async (req: AuthenticatedRequest, res: Resp
 export const getAptitudeProblemById = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
+    const cacheKey = `aptitude:problem:${id}`;
+
+    if (redisConnection) {
+      try {
+        const cached = await redisConnection.get(cacheKey);
+        if (cached) {
+          res.setHeader("X-Cache", "HIT-REDIS");
+          return res.status(200).json(JSON.parse(cached));
+        }
+      } catch (e) {}
+    }
+
     const problem = await prisma.aptitudeProblem.findUnique({
       where: { id }
     });
 
     if (!problem) {
       return res.status(404).json({ error: "Aptitude problem not found" });
+    }
+
+    if (redisConnection) {
+      redisConnection.setex(cacheKey, 3600, JSON.stringify(problem)).catch(() => {});
     }
 
     res.status(200).json(problem);
@@ -129,7 +202,7 @@ export const createAptitudeProblem = async (req: AuthenticatedRequest, res: Resp
       }
     });
 
-    await invalidateCachePattern("/api/v1/aptitude-problems");
+    await invalidateAptitudeCaches();
     res.status(201).json(newProblem);
   } catch (error) {
     console.error('Error creating aptitude problem:', error);
@@ -157,7 +230,7 @@ export const createBulkAptitudeProblems = async (req: AuthenticatedRequest, res:
       }))
     });
 
-    await invalidateCachePattern("/api/v1/aptitude-problems");
+    await invalidateAptitudeCaches();
     res.status(201).json({ count: created.count, message: `Successfully created ${created.count} questions` });
   } catch (error) {
     console.error('Error creating bulk aptitude problems:', error);
@@ -183,7 +256,7 @@ export const updateAptitudeProblem = async (req: AuthenticatedRequest, res: Resp
       }
     });
 
-    await invalidateCachePattern("/api/v1/aptitude-problems");
+    await invalidateAptitudeCaches();
     res.status(200).json(updatedProblem);
   } catch (error) {
     console.error('Error updating aptitude problem:', error);
@@ -216,7 +289,7 @@ export const deleteAptitudeProblem = async (req: AuthenticatedRequest, res: Resp
       where: { id }
     });
     
-    await invalidateCachePattern("/api/v1/aptitude-problems");
+    await invalidateAptitudeCaches();
     res.status(204).send();
   } catch (error) {
     console.error('Error deleting aptitude problem:', error);
@@ -252,7 +325,7 @@ export const renameAptitudeTopic = async (req: AuthenticatedRequest, res: Respon
       }
     });
 
-    await invalidateCachePattern("/api/v1/aptitude-problems");
+    await invalidateAptitudeCaches();
 
     res.status(200).json({
       message: `Topic renamed from "${fromTopic}" to "${toTopic}"`,
@@ -305,7 +378,7 @@ export const deleteAptitudeTopic = async (req: AuthenticatedRequest, res: Respon
       }
     });
 
-    await invalidateCachePattern("/api/v1/aptitude-problems");
+    await invalidateAptitudeCaches();
 
     res.status(200).json({
       message: `Successfully deleted topic "${cleanTopic}" and its ${deleted.count} questions`,

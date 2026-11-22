@@ -10,7 +10,11 @@ interface MemoryCacheItem {
 const memoryCache = new Map<string, MemoryCacheItem>();
 const MAX_MEMORY_CACHE_KEYS = 1000;
 
-const isRedisReady = () => Boolean(redisConnection && redisConnection.status === "ready");
+const isRedisReady = () => Boolean(
+  redisConnection && 
+  redisConnection.status !== "end" && 
+  redisConnection.status !== "close"
+);
 
 export const cache = (durationInSeconds: number) => {
   return async (req: Request, res: Response, next: NextFunction) => {

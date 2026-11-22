@@ -244,13 +244,6 @@ export default function SolveAptitude() {
 
           if (isCorrect) {
             correctCount++;
-            if (token) {
-              axios.post(getApiUrl("/api/v1/auth/log-activity"), {
-                action: `APTITUDE_SOLVED_${qId}`
-              }, {
-                headers: { Authorization: `Bearer ${token}` }
-              }).catch(err => console.error("Failed to log aptitude", err));
-            }
           }
 
           const recordIndex = savedAnalytics.findIndex((item: any) => String(item.id) === String(qId));
@@ -270,6 +263,15 @@ export default function SolveAptitude() {
           }
         }
       });
+
+      // Log consolidated activity once instead of firing 30 parallel requests
+      if (token && correctCount > 0) {
+        axios.post(getApiUrl("/api/v1/auth/log-activity"), {
+          action: `APTITUDE_SUBMITTED_${(question?.topic || 'GENERAL').toUpperCase()}_SCORE_${correctCount}_OF_${allQuestions.length}`
+        }, {
+          headers: { Authorization: `Bearer ${token}` }
+        }).catch(err => console.error("Failed to log aptitude activity", err));
+      }
       
       try {
         localStorage.setItem(analyticsKey, JSON.stringify(savedAnalytics));

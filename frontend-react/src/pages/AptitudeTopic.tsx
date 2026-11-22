@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Search, BrainCircuit, Lock, CheckCircle2, ArrowLeft } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { getApiUrl } from "../utils/apiConfig";
 
@@ -10,23 +11,26 @@ export default function AptitudeTopic() {
   const navigate = useNavigate();
   const { topic } = useParams();
   
-  const [aptitudeQuestions, setAptitudeQuestions] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [extraQuestions, setExtraQuestions] = useState<any[]>([]);
   const [solvedIds, setSolvedIds] = useState<Set<string>>(new Set());
-
-  const [hasMore, setHasMore] = useState(false);
-  const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const [hasMoreCursor, setHasMoreCursor] = useState<string | null>(null);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const cleanTopic = decodeURIComponent(topic || "").trim();
 
-  const fetchAptitude = async (cursor?: string) => {
-    try {
-      let url = getApiUrl(`/api/v1/aptitude-problems?limit=100&topic=${encodeURIComponent(cleanTopic)}`);
-      if (cursor) {
-        url += `&cursor=${cursor}`;
-      }
-      
-      const response = await axios.get(url);
+  // Cached Topic Problems Query (5 mins staleTime)
+  const { data: initialData, isLoading } = useQuery<{
+    problems: any[];
+    hasMore: boolean;
+    nextCursor: string | null;
+  }>({
+    queryKey: ["aptitudeTopicProblems", cleanTopic],
+    staleTime: 5 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    queryFn: async () => {
+      const url = getApiUrl(`/api/v1/aptitude-problems?limit=50&topic=${encodeURIComponent(cleanTopic)}`);
+      const response = await axios.get(url, { timeout: 8000 });
       
       const parsedProblems = (response.data.data || []).map((p: any) => {
         let opts = p.options;
@@ -46,28 +50,55 @@ export default function AptitudeTopic() {
         };
       });
 
-      if (cursor) {
-        setAptitudeQuestions(prev => [...prev, ...parsedProblems]);
-      } else {
-        setAptitudeQuestions(parsedProblems);
-      }
-      
-      setHasMore(response.data.pagination?.hasMore || false);
-      setNextCursor(response.data.pagination?.nextCursor || null);
-    } catch (error) {
-      console.error("Error fetching aptitude questions:", error);
+      return {
+        problems: parsedProblems,
+        hasMore: response.data.pagination?.hasMore || false,
+        nextCursor: response.data.pagination?.nextCursor || null
+      };
+    },
+  });
+
+  const baseProblems = useMemo(() => initialData?.problems || [], [initialData]);
+  const topicQuestions = useMemo(() => [...baseProblems, ...extraQuestions], [baseProblems, extraQuestions]);
+  const hasMore = hasMoreCursor !== null ? Boolean(hasMoreCursor) : Boolean(initialData?.hasMore);
+  const nextCursor = hasMoreCursor !== null ? hasMoreCursor : initialData?.nextCursor || null;
+
+  const handleLoadMore = async () => {
+    if (!nextCursor || isLoadingMore) return;
+    setIsLoadingMore(true);
+    try {
+      const url = getApiUrl(`/api/v1/aptitude-problems?limit=50&topic=${encodeURIComponent(cleanTopic)}&cursor=${nextCursor}`);
+      const response = await axios.get(url);
+      const parsedMore = (response.data.data || []).map((p: any) => {
+        let opts = p.options;
+        try {
+          while (typeof opts === 'string') {
+            const parsed = JSON.parse(opts);
+            if (parsed === opts || (typeof parsed !== 'string' && typeof parsed !== 'object')) break;
+            opts = parsed;
+          }
+        } catch (e) {}
+        return {
+          ...p,
+          _id: p.id,
+          options: opts,
+          correctOption: p.correctAnswer || p.correctOption
+        };
+      });
+      setExtraQuestions(prev => [...prev, ...parsedMore]);
+      setHasMoreCursor(response.data.pagination?.nextCursor || null);
+    } catch (e) {
+      console.error("Error loading more questions:", e);
     } finally {
-      setIsLoading(false);
+      setIsLoadingMore(false);
     }
   };
 
   useEffect(() => {
-    fetchAptitude();
-    
     // Fetch Solved Status
     if (user?.email) {
       try {
-        const key = `aptitude_analytics_${user.email.toLowerCase()}`;
+        const key = `aptitude_analytics_${user.email.toLowerCase().trim()}`;
         const saved = JSON.parse(localStorage.getItem(key) || "[]");
         const solved = new Set<string>();
         saved.forEach((q: any) => {
@@ -81,7 +112,6 @@ export default function AptitudeTopic() {
   }, [user]);
 
   const decodedTopic = cleanTopic;
-  const topicQuestions = aptitudeQuestions;
 
   const handleBackToTopics = () => {
     const backUrl = window.location.pathname.startsWith('/dashboard')
@@ -208,10 +238,11 @@ export default function AptitudeTopic() {
         {hasMore && (
           <div className="flex justify-center mt-6">
             <button
-              onClick={() => fetchAptitude(nextCursor || undefined)}
-              className="px-6 py-2.5 bg-primary/10 text-primary hover:bg-primary/20 font-semibold rounded-xl transition-colors shadow-sm"
+              onClick={handleLoadMore}
+              disabled={isLoadingMore}
+              className="px-6 py-2.5 bg-primary/10 text-primary hover:bg-primary/20 disabled:opacity-50 font-semibold rounded-xl transition-colors shadow-sm"
             >
-              Load More Problems
+              {isLoadingMore ? "Loading..." : "Load More Problems"}
             </button>
           </div>
         )}

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { AuthenticatedRequest } from "../middlewares/authMiddleware";
+import { AuthenticatedRequest, invalidateLocalSession } from "../middlewares/authMiddleware";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import prisma from "../config/db";
@@ -62,6 +62,7 @@ export class AuthController {
         const pipeline = redis.pipeline();
         for (const session of activeSessions) {
           pipeline.set(`session:${session.sessionId}`, "revoked", "EX", 86400); // Keep revoked state for 24h
+          invalidateLocalSession(session.sessionId);
         }
         try {
           await pipeline.exec();
@@ -421,6 +422,7 @@ export class AuthController {
       });
 
       if (session) {
+        invalidateLocalSession(session.sessionId);
         // Invalidate Redis cache
         if (redis) {
           try {

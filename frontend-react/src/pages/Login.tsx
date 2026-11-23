@@ -197,21 +197,14 @@ export default function LoginPage() {
               </span>
             </Link>
 
-            <button
-              type="button"
-              onClick={() => {
-                if (window.history.state && window.history.state.idx > 0) {
-                  navigate(-1);
-                } else {
-                  navigate("/");
-                }
-              }}
-              className="inline-flex items-center text-xs sm:text-sm font-semibold text-slate-500 hover:text-primary transition-colors py-1 px-2.5 rounded-lg hover:bg-slate-100"
-              title="Go back"
+            <Link
+              to="/"
+              className="inline-flex items-center text-xs sm:text-sm font-semibold text-slate-500 hover:text-primary transition-colors py-1 px-2.5 rounded-lg hover:bg-slate-100 cursor-pointer"
+              title="Back to Home"
             >
               <ArrowLeft className="w-4 h-4 mr-1" />
               Back
-            </button>
+            </Link>
           </div>
 
           {/* Dynamic Heading */}
@@ -386,20 +379,13 @@ export default function LoginPage() {
                 </button>
               </p>
             ) : (
-              <button
-                type="button"
-                onClick={() => {
-                  if (window.history.state && window.history.state.idx > 0) {
-                    navigate(-1);
-                  } else {
-                    navigate("/");
-                  }
-                }}
-                className="inline-flex items-center text-sm font-semibold text-slate-500 hover:text-primary transition-colors group"
+              <Link
+                to="/"
+                className="inline-flex items-center text-sm font-semibold text-slate-500 hover:text-primary transition-colors group cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4 mr-1.5 group-hover:-translate-x-1 transition-transform" />
                 Back to Home
-              </button>
+              </Link>
             )}
           </div>
         </motion.div>

@@ -130,17 +130,36 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Center: Big Brand Name */}
-        <div className="w-full md:w-1/2 flex justify-center text-center">
+        {/* Center: Big Brand Name with Background Logo */}
+        <div className="relative w-full md:w-1/2 flex items-center justify-center text-center min-h-[160px] md:min-h-[220px]">
+          {/* Background CodeSkill Logo Watermark */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0">
+            <div className="relative flex items-center justify-center">
+              {/* Soft ambient emerald radial glow */}
+              <div 
+                className="absolute w-72 h-72 md:w-96 md:h-96 rounded-full blur-3xl pointer-events-none opacity-25"
+                style={{
+                  background: "radial-gradient(circle, rgba(16, 185, 129, 0.45) 0%, transparent 70%)"
+                }}
+              />
+              {/* CodeSkill Brand Logo Emblem */}
+              <img
+                src="/favicon.svg"
+                alt="CodeSkill Logo Watermark"
+                className="w-44 md:w-60 lg:w-72 h-auto object-contain opacity-20 filter drop-shadow-[0_0_40px_rgba(16,185,129,0.35)]"
+              />
+            </div>
+          </div>
+
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="relative text-[14vw] md:text-[10vw] lg:text-[8rem] xl:text-[10rem] font-black tracking-tighter leading-none select-none"
+            className="relative z-10 text-[14vw] md:text-[10vw] lg:text-[8rem] xl:text-[10rem] font-black tracking-tighter leading-none select-none"
           >
             {/* Base text (dim) */}
-            <span className="text-white/5">
+            <span className="text-white/10">
               CodeSkill
             </span>
             

@@ -101,7 +101,7 @@ export default function AdminDashboard() {
   NAV_ITEMS = NAV_ITEMS.filter(item => item.roles.includes(user?.role || "ADMIN"));
 
   return (
-    <div className="flex h-screen bg-background dark:bg-[#0B0F19] text-text-primary overflow-hidden font-sans pt-16">
+    <div className="flex h-screen bg-background dark:bg-[#0B0F19] text-text-primary overflow-hidden font-sans">
       
       {/* Sidebar Navigation */}
       <aside 

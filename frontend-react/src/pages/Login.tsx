@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getApiUrl } from "../utils/apiConfig";
-import { ArrowRight, Eye, EyeOff } from "lucide-react";
+import { ArrowRight, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
 import { Turnstile } from '@marsidev/react-turnstile';
 
@@ -184,17 +184,35 @@ export default function LoginPage() {
           transition={{ duration: 0.5 }}
           className="w-full max-w-md z-10 bg-white rounded-2xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100"
         >
-          {/* Logo */}
-          <Link to="/" className="flex items-center mb-4 group">
-            <img
-              src="/favicon.svg"
-              alt="CodeSkill Logo"
-              className="h-8 w-8 object-contain mr-2.5"
-            />
-            <span className="text-xl font-extrabold tracking-tight text-slate-900">
-              Code<span className="text-primary">Skill</span>
-            </span>
-          </Link>
+          {/* Header Row: Logo & Back Button */}
+          <div className="flex items-center justify-between mb-4">
+            <Link to="/" className="flex items-center group">
+              <img
+                src="/favicon.svg"
+                alt="CodeSkill Logo"
+                className="h-8 w-8 object-contain mr-2.5"
+              />
+              <span className="text-xl font-extrabold tracking-tight text-slate-900">
+                Code<span className="text-primary">Skill</span>
+              </span>
+            </Link>
+
+            <button
+              type="button"
+              onClick={() => {
+                if (window.history.state && window.history.state.idx > 0) {
+                  navigate(-1);
+                } else {
+                  navigate("/");
+                }
+              }}
+              className="inline-flex items-center text-xs sm:text-sm font-semibold text-slate-500 hover:text-primary transition-colors py-1 px-2.5 rounded-lg hover:bg-slate-100"
+              title="Go back"
+            >
+              <ArrowLeft className="w-4 h-4 mr-1" />
+              Back
+            </button>
+          </div>
 
           {/* Dynamic Heading */}
           <h1 className="text-2xl font-bold text-slate-900 mb-1">
@@ -354,8 +372,8 @@ export default function LoginPage() {
             </motion.button>
           </form>
 
-          {/* Mode Switch Link */}
-          <div className="text-center mt-6">
+          {/* Back Action / Mode Switch */}
+          <div className="text-center mt-6 pt-2 border-t border-slate-100">
             {isRegister ? (
               <p className="text-sm text-slate-500 font-medium">
                 Already have an account?{" "}
@@ -368,16 +386,20 @@ export default function LoginPage() {
                 </button>
               </p>
             ) : (
-              <p className="text-sm text-slate-500 font-medium">
-                Don't have an account?{" "}
-                <button
-                  type="button"
-                  onClick={switchMode}
-                  className="text-primary font-bold underline underline-offset-2 hover:text-primary/80 transition-colors"
-                >
-                  Register
-                </button>
-              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  if (window.history.state && window.history.state.idx > 0) {
+                    navigate(-1);
+                  } else {
+                    navigate("/");
+                  }
+                }}
+                className="inline-flex items-center text-sm font-semibold text-slate-500 hover:text-primary transition-colors group"
+              >
+                <ArrowLeft className="w-4 h-4 mr-1.5 group-hover:-translate-x-1 transition-transform" />
+                Back to Home
+              </button>
             )}
           </div>
         </motion.div>

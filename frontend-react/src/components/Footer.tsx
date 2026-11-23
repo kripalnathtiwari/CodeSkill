@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Code2, MapPin, ArrowUp } from "lucide-react";
+import { MapPin, ArrowUp } from "lucide-react";
 import { motion } from "framer-motion";
 
 const Linkedin = ({ className }: { className?: string }) => (
@@ -50,10 +50,12 @@ export default function Footer() {
 
         {/* Brand & Address Section */}
         <div className="w-full xl:w-1/4 space-y-6">
-          <Link to="/" className="flex items-center space-x-2 mb-4 group">
-            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center transform rotate-12 transition-transform group-hover:rotate-0">
-              <Code2 className="w-6 h-6 text-text-inverse" />
-            </div>
+          <Link to="/" className="flex items-center space-x-3 mb-4 group">
+            <img 
+              src="/favicon.svg" 
+              alt="CodeSkill Logo" 
+              className="h-10 w-10 object-contain transition-transform group-hover:scale-105" 
+            />
             <div>
               <span className="text-xl font-black tracking-tight text-text-inverse">Code<span className="text-primary">Skill</span></span>
               <p className="text-[10px] text-text-muted uppercase tracking-widest leading-none">Education Private Limited</p>

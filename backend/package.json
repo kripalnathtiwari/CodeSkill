@@ -9,7 +9,7 @@
     "build": "prisma generate && tsc",
     "start": "node dist/app.js",
     "worker": "node dist/worker.js",
-    "test:unit": "node --test dist/__tests__/emailJob.test.js dist/__tests__/singleFlightCache.test.js",
+    "test:unit": "node --test dist/__tests__/emailJob.test.js dist/__tests__/singleFlightCache.test.js dist/__tests__/noteController.test.js",
     "test:integration": "node --test dist/__tests__/codeExecution.integration.test.js",
     "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",

@@ -198,12 +198,25 @@ export default function OtherPractice() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Filtered tests under selected subject
+  // Filtered tests under selected subject (arranged naturally: Test 1, Test 2, Test 3...)
   const filteredTests = useMemo(() => {
-    return questions.filter(t => 
-      t.subject === selectedSubject &&
-      t.title?.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    return questions
+      .filter(t => 
+        t.subject === selectedSubject &&
+        t.title?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      .sort((a: { title?: string; createdAt?: string }, b: { title?: string; createdAt?: string }) => {
+        const titleA = String(a.title || "").trim().replace(/\s+/g, " ");
+        const titleB = String(b.title || "").trim().replace(/\s+/g, " ");
+        const titleCmp = titleA.localeCompare(titleB, undefined, {
+          numeric: true,
+          sensitivity: "base",
+        });
+        if (titleCmp !== 0) return titleCmp;
+        const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return timeA - timeB;
+      });
   }, [questions, selectedSubject, searchQuery]);
 
   // Filtered subjects in directory view

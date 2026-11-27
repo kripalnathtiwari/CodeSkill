@@ -98,6 +98,20 @@ export const updateSubjectNote = async (req: AuthenticatedRequest, res: Response
 // TEST CONTROLLERS
 // ==========================================
 
+const comparePracticeTests = (
+  a: { title: string; createdAt: Date },
+  b: { title: string; createdAt: Date }
+) => {
+  const titleA = a.title.trim().replace(/\s+/g, ' ');
+  const titleB = b.title.trim().replace(/\s+/g, ' ');
+  const titleCmp = titleA.localeCompare(titleB, undefined, {
+    numeric: true,
+    sensitivity: 'base'
+  });
+  if (titleCmp !== 0) return titleCmp;
+  return a.createdAt.getTime() - b.createdAt.getTime();
+};
+
 export const getAllTests = async (req: Request, res: Response) => {
   try {
     const { subject } = req.query;
@@ -109,8 +123,10 @@ export const getAllTests = async (req: Request, res: Response) => {
 
     const tests = await prisma.otherPracticeTest.findMany({
       where,
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'asc' }
     });
+
+    tests.sort(comparePracticeTests);
 
     // Format for frontend consumption (normalize test.id to testId if present)
     const formatted = tests.map(t => ({

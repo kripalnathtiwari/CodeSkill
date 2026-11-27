@@ -1,18 +1,67 @@
 import axios from 'axios';
-import { useQuery } from '@tanstack/react-query';
+import { QueryClient, useQuery } from '@tanstack/react-query';
 import { getApiUrl } from './apiConfig';
+
+export interface PracticeAnalyticsItem {
+  id?: string | number;
+  _id?: string | number;
+  topic?: string;
+  difficulty?: string;
+  correct?: boolean;
+  attemptedAt?: string;
+}
+
+export interface TestScoreRecord {
+  id?: string | number;
+  testId?: string | number;
+  testTitle?: string;
+  topic?: string;
+  studentEmail?: string;
+  score?: number;
+  totalQuestions?: number;
+  timestamp?: string;
+  date?: string;
+}
+
+export interface EnrolledCourseRecord {
+  id?: string | number;
+  courseId?: string | number;
+  title?: string;
+  courseTitle?: string;
+  email?: string;
+  accountEmail?: string;
+}
+
+export interface DailyProgressEntry {
+  questionsSolved: number;
+  pointsEarned: number;
+  loggedIn?: boolean;
+}
 
 export interface UserProgressData {
   dsaSolved: string[];
-  aptitudeAnalytics: any[];
-  otherAnalytics: any[];
-  testScores: any[];
-  enrolledCourses: any[];
-  dailyProgress: Record<string, any>;
+  codingAnalytics?: PracticeAnalyticsItem[];
+  aptitudeAnalytics: PracticeAnalyticsItem[];
+  otherAnalytics: PracticeAnalyticsItem[];
+  testScores: TestScoreRecord[];
+  enrolledCourses: EnrolledCourseRecord[];
+  dailyProgress: Record<string, DailyProgressEntry>;
 }
 
 // In-flight request deduplication map to prevent multiple simultaneous progress requests
 let activeFetchPromise: Promise<UserProgressData | null> | null = null;
+let registeredQueryClient: QueryClient | null = null;
+
+export function registerProgressQueryClient(client: QueryClient) {
+  registeredQueryClient = client;
+}
+
+export function invalidateUserProgressQueries() {
+  if (!registeredQueryClient) return;
+  registeredQueryClient.invalidateQueries({ queryKey: ['userProgress'] });
+  registeredQueryClient.invalidateQueries({ queryKey: ['dsaStats'] });
+  registeredQueryClient.invalidateQueries({ queryKey: ['mcqStats'] });
+}
 
 /**
  * Fetch authoritative user progress directly from PostgreSQL database via API.
@@ -51,27 +100,25 @@ export async function fetchUserProgressFromDB(userEmail?: string): Promise<UserP
           localStorage.setItem(`other_practice_analytics_${emailLower}`, JSON.stringify(data.otherAnalytics));
         }
 
-        if (Array.isArray(data.dailyProgress)) {
-          localStorage.setItem(`daily_progress_${emailLower}`, JSON.stringify(data.dailyProgress));
-        } else if (data.dailyProgress && typeof data.dailyProgress === 'object') {
+        if (Array.isArray(data.dailyProgress) || (data.dailyProgress && typeof data.dailyProgress === 'object')) {
           localStorage.setItem(`daily_progress_${emailLower}`, JSON.stringify(data.dailyProgress));
         }
 
         // Merge test scores
         if (Array.isArray(data.testScores)) {
           try {
-            const localScores = JSON.parse(localStorage.getItem('all_student_scores') || '[]');
-            const scoreMap = new Map<string, any>();
-            localScores.forEach((s: any) => {
+            const localScores: TestScoreRecord[] = JSON.parse(localStorage.getItem('all_student_scores') || '[]');
+            const scoreMap = new Map<string, TestScoreRecord>();
+            localScores.forEach((s) => {
               const key = String(s.id || `${s.testId}_${s.studentEmail || ''}_${s.timestamp || ''}`);
               scoreMap.set(key, s);
             });
-            data.testScores.forEach((s: any) => {
+            data.testScores.forEach((s) => {
               const key = String(s.id || `${s.testId}_${s.studentEmail || ''}_${s.timestamp || ''}`);
               scoreMap.set(key, s);
             });
             localStorage.setItem('all_student_scores', JSON.stringify(Array.from(scoreMap.values())));
-          } catch (e) {
+          } catch {
             localStorage.setItem('all_student_scores', JSON.stringify(data.testScores));
           }
         }
@@ -79,18 +126,18 @@ export async function fetchUserProgressFromDB(userEmail?: string): Promise<UserP
         // Merge enrolled courses
         if (Array.isArray(data.enrolledCourses)) {
           try {
-            const localCourses = JSON.parse(localStorage.getItem('enrolledCourses') || '[]');
-            const courseMap = new Map<string, any>();
-            localCourses.forEach((c: any) => {
+            const localCourses: EnrolledCourseRecord[] = JSON.parse(localStorage.getItem('enrolledCourses') || '[]');
+            const courseMap = new Map<string, EnrolledCourseRecord>();
+            localCourses.forEach((c) => {
               const key = String(c.courseId || c.id || c.title || c.courseTitle);
               if (key) courseMap.set(key, c);
             });
-            data.enrolledCourses.forEach((c: any) => {
+            data.enrolledCourses.forEach((c) => {
               const key = String(c.courseId || c.id || c.title || c.courseTitle);
               if (key) courseMap.set(key, c);
             });
             localStorage.setItem('enrolledCourses', JSON.stringify(Array.from(courseMap.values())));
-          } catch (e) {
+          } catch {
             localStorage.setItem('enrolledCourses', JSON.stringify(data.enrolledCourses));
           }
         }
@@ -110,16 +157,16 @@ export async function fetchUserProgressFromDB(userEmail?: string): Promise<UserP
 
 /**
  * Centralized TanStack React Query hook for user progress.
- * Caches progress across all sections (Dashboard, Problems, YourPerformance)
- * with a 3-minute staleTime and 10-minute gcTime to eliminate redundant API calls on navigation.
+ * Refetches on mount so YourPerformance and Dashboard always show updated backend metrics.
  */
 export function useUserProgress(userEmail?: string) {
   const emailKey = userEmail ? userEmail.toLowerCase().trim() : null;
   return useQuery({
     queryKey: ['userProgress', emailKey],
     enabled: Boolean(emailKey && localStorage.getItem('accessToken')),
-    staleTime: 3 * 60 * 1000, // 3 minutes
-    gcTime: 10 * 60 * 1000,   // 10 minutes
+    staleTime: 30 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnMount: 'always',
     refetchOnWindowFocus: false,
     queryFn: async () => {
       if (!userEmail) return null;
@@ -137,57 +184,73 @@ export async function syncLocalProgressToDB(userEmail: string): Promise<UserProg
 
   const emailLower = userEmail.toLowerCase().trim();
 
-  // Gather whatever progress exists in local storage on this device
   let dsaSolved: string[] = [];
   try {
-    const raw = localStorage.getItem(`codeskill_dsa_solved_${emailLower}`) ||
-                localStorage.getItem(`codeskill_dsa_solved_${userEmail}`);
+    const raw =
+      localStorage.getItem(`codeskill_dsa_solved_${emailLower}`) ||
+      localStorage.getItem(`codeskill_dsa_solved_${userEmail}`);
     if (raw) dsaSolved = JSON.parse(raw);
-  } catch (e) {}
+  } catch {
+    /* ignore malformed storage */
+  }
 
-  let aptitudeAnalytics: any[] = [];
+  let aptitudeAnalytics: PracticeAnalyticsItem[] = [];
   try {
-    const raw = localStorage.getItem(`aptitude_analytics_${emailLower}`) ||
-                localStorage.getItem(`aptitude_analytics_${userEmail}`);
+    const raw =
+      localStorage.getItem(`aptitude_analytics_${emailLower}`) ||
+      localStorage.getItem(`aptitude_analytics_${userEmail}`);
     if (raw) aptitudeAnalytics = JSON.parse(raw);
-  } catch (e) {}
+  } catch {
+    /* ignore malformed storage */
+  }
 
-  let otherAnalytics: any[] = [];
+  let otherAnalytics: PracticeAnalyticsItem[] = [];
   try {
-    const raw = localStorage.getItem(`other_practice_analytics_${emailLower}`) ||
-                localStorage.getItem(`other_practice_analytics_${userEmail}`);
+    const raw =
+      localStorage.getItem(`other_practice_analytics_${emailLower}`) ||
+      localStorage.getItem(`other_practice_analytics_${userEmail}`);
     if (raw) otherAnalytics = JSON.parse(raw);
-  } catch (e) {}
+  } catch {
+    /* ignore malformed storage */
+  }
 
-  let testScores: any[] = [];
+  let testScores: TestScoreRecord[] = [];
   try {
     const raw = localStorage.getItem('all_student_scores');
     if (raw) {
-      const all = JSON.parse(raw);
-      testScores = all.filter((s: any) =>
-        s.studentEmail?.toLowerCase().trim() === emailLower ||
-        s.studentEmail?.toLowerCase().trim() === userEmail.toLowerCase().trim()
+      const all: TestScoreRecord[] = JSON.parse(raw);
+      testScores = all.filter(
+        (s) =>
+          s.studentEmail?.toLowerCase().trim() === emailLower ||
+          s.studentEmail?.toLowerCase().trim() === userEmail.toLowerCase().trim()
       );
     }
-  } catch (e) {}
+  } catch {
+    /* ignore malformed storage */
+  }
 
-  let enrolledCourses: any[] = [];
+  let enrolledCourses: EnrolledCourseRecord[] = [];
   try {
     const raw = localStorage.getItem('enrolledCourses');
     if (raw) {
-      const all = JSON.parse(raw);
-      enrolledCourses = all.filter((c: any) =>
-        c.email?.toLowerCase().trim() === emailLower ||
-        c.accountEmail?.toLowerCase().trim() === emailLower
+      const all: EnrolledCourseRecord[] = JSON.parse(raw);
+      enrolledCourses = all.filter(
+        (c) =>
+          c.email?.toLowerCase().trim() === emailLower ||
+          c.accountEmail?.toLowerCase().trim() === emailLower
       );
     }
-  } catch (e) {}
+  } catch {
+    /* ignore malformed storage */
+  }
 
-  let dailyProgress: Record<string, any> = {};
+  let dailyProgress: Record<string, DailyProgressEntry> = {};
   try {
     const raw = localStorage.getItem(`daily_progress_${emailLower}`);
     if (raw) dailyProgress = JSON.parse(raw);
-  } catch (e) {}
+  } catch {
+    /* ignore malformed storage */
+  }
 
   try {
     const res = await axios.post(
@@ -202,7 +265,7 @@ export async function syncLocalProgressToDB(userEmail: string): Promise<UserProg
       },
       { headers: { Authorization: `Bearer ${token}` } }
     );
-
+    invalidateUserProgressQueries();
     return res.data;
   } catch (error) {
     console.warn('Could not sync local progress to DB', error);
@@ -210,9 +273,6 @@ export async function syncLocalProgressToDB(userEmail: string): Promise<UserProg
   }
 }
 
-/**
- * Save a newly solved DSA problem directly to DB
- */
 export async function saveSolvedProblemToDB(userEmail: string, questionId: string) {
   const token = localStorage.getItem('accessToken');
   if (!token || !userEmail || !questionId) return;
@@ -223,13 +283,13 @@ export async function saveSolvedProblemToDB(userEmail: string, questionId: strin
       { dsaSolved: [String(questionId)] },
       { headers: { Authorization: `Bearer ${token}` } }
     );
-  } catch (e) {}
+    invalidateUserProgressQueries();
+  } catch {
+    /* ignore transient network errors */
+  }
 }
 
-/**
- * Save aptitude question answers directly to DB
- */
-export async function saveAptitudeAnalyticsToDB(userEmail: string, items: any[]) {
+export async function saveAptitudeAnalyticsToDB(userEmail: string, items: PracticeAnalyticsItem[]) {
   const token = localStorage.getItem('accessToken');
   if (!token || !userEmail || !items || items.length === 0) return;
 
@@ -242,24 +302,57 @@ export async function saveAptitudeAnalyticsToDB(userEmail: string, items: any[])
       { aptitudeAnalytics: items },
       { headers: { Authorization: `Bearer ${token}` }, timeout: 10000 }
     );
-    // Successfully synced to server, clear any pending sync records
     localStorage.removeItem(retryKey);
-  } catch (e) {
-    // Network interruption: persist into resilient retry queue so student progress is NEVER lost
+    invalidateUserProgressQueries();
+  } catch {
     try {
-      const existingQueue = JSON.parse(localStorage.getItem(retryKey) || "[]");
-      const mergedMap = new Map();
-      [...existingQueue, ...items].forEach((item: any) => {
+      const existingQueue: PracticeAnalyticsItem[] = JSON.parse(localStorage.getItem(retryKey) || '[]');
+      const mergedMap = new Map<string, PracticeAnalyticsItem>();
+      [...existingQueue, ...items].forEach((item) => {
         if (item?.id) mergedMap.set(String(item.id), item);
       });
       localStorage.setItem(retryKey, JSON.stringify(Array.from(mergedMap.values())));
     } catch (storeErr) {
-      console.warn("Failed to update offline aptitude queue", storeErr);
+      console.warn('Failed to update offline aptitude queue', storeErr);
     }
   }
 }
 
-// Background auto-retry when network recovers or on session init
+export async function saveOtherAnalyticsToDB(userEmail: string, items: PracticeAnalyticsItem[]) {
+  const token = localStorage.getItem('accessToken');
+  if (!token || !userEmail || !items || items.length === 0) return;
+
+  try {
+    await axios.post(
+      getApiUrl('/api/v1/auth/user-progress'),
+      { otherAnalytics: items },
+      { headers: { Authorization: `Bearer ${token}` }, timeout: 10000 }
+    );
+    invalidateUserProgressQueries();
+  } catch {
+    /* ignore transient network errors */
+  }
+}
+
+export async function saveDailyProgressToDB(
+  userEmail: string,
+  dailyProgress: Record<string, DailyProgressEntry>
+) {
+  const token = localStorage.getItem('accessToken');
+  if (!token || !userEmail || !dailyProgress) return;
+
+  try {
+    await axios.post(
+      getApiUrl('/api/v1/auth/user-progress'),
+      { dailyProgress },
+      { headers: { Authorization: `Bearer ${token}` }, timeout: 10000 }
+    );
+    invalidateUserProgressQueries();
+  } catch {
+    /* ignore transient network errors */
+  }
+}
+
 export function flushPendingAptitudeSync(userEmail: string) {
   if (!userEmail) return;
   const emailKey = userEmail.toLowerCase().trim();
@@ -269,16 +362,15 @@ export function flushPendingAptitudeSync(userEmail: string) {
     if (raw) {
       const items = JSON.parse(raw);
       if (Array.isArray(items) && items.length > 0) {
-        saveAptitudeAnalyticsToDB(userEmail, items);
+        void saveAptitudeAnalyticsToDB(userEmail, items);
       }
     }
-  } catch {}
+  } catch {
+    /* ignore malformed queue */
+  }
 }
 
-/**
- * Save test score directly to DB
- */
-export async function saveTestScoreToDB(userEmail: string, scoreRecord: any) {
+export async function saveTestScoreToDB(userEmail: string, scoreRecord: TestScoreRecord) {
   const token = localStorage.getItem('accessToken');
   if (!token || !userEmail || !scoreRecord) return;
 
@@ -288,13 +380,13 @@ export async function saveTestScoreToDB(userEmail: string, scoreRecord: any) {
       { testScores: [scoreRecord] },
       { headers: { Authorization: `Bearer ${token}` } }
     );
-  } catch (e) {}
+    invalidateUserProgressQueries();
+  } catch {
+    /* ignore transient network errors */
+  }
 }
 
-/**
- * Save course enrollment directly to DB
- */
-export async function saveCourseEnrollmentToDB(userEmail: string, courseRecord: any) {
+export async function saveCourseEnrollmentToDB(userEmail: string, courseRecord: EnrolledCourseRecord) {
   const token = localStorage.getItem('accessToken');
   if (!token || !userEmail || !courseRecord) return;
 
@@ -304,5 +396,8 @@ export async function saveCourseEnrollmentToDB(userEmail: string, courseRecord: 
       { enrolledCourses: [courseRecord] },
       { headers: { Authorization: `Bearer ${token}` } }
     );
-  } catch (e) {}
+    invalidateUserProgressQueries();
+  } catch {
+    /* ignore transient network errors */
+  }
 }

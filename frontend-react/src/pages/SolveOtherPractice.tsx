@@ -6,6 +6,7 @@ import axios from "axios";
 import { getApiUrl } from "../utils/apiConfig";
 import PracticeTimer from "../components/PracticeTimer";
 import { recordDailyProgress } from "../utils/progressTracker";
+import { saveOtherAnalyticsToDB } from "../utils/userProgressSync";
 
 export default function SolveOtherPractice() {
   const { user } = useAuth();
@@ -125,13 +126,28 @@ export default function SolveOtherPractice() {
       const saved = JSON.parse(localStorage.getItem(key) || "[]");
 
       const questionId = question._id || question.id;
+      const entry = {
+        id: questionId,
+        topic: question.topic || "Practice",
+        difficulty: question.difficulty || "Medium",
+        correct: isCorrect,
+        attemptedAt: new Date().toISOString(),
+      };
       const recordIndex = saved.findIndex((q: any) => String(q.id) === String(questionId));
       if (recordIndex === -1) {
-        saved.push({ id: questionId, difficulty: question.difficulty, correct: isCorrect });
+        saved.push(entry);
       } else {
-        if (isCorrect) saved[recordIndex].correct = true;
+        saved[recordIndex] = {
+          ...saved[recordIndex],
+          ...entry,
+          correct: isCorrect || saved[recordIndex].correct,
+        };
       }
       localStorage.setItem(key, JSON.stringify(saved));
+
+      // Sync attempt immediately to backend DB so YourPerformance stays current across devices
+      saveOtherAnalyticsToDB(user.email, [recordIndex === -1 ? entry : saved[recordIndex]]).catch(() => {});
+      recordDailyProgress(user.email, 1, isCorrect ? 5 : 1);
 
       if (isCorrect) {
         const token = localStorage.getItem("accessToken");
@@ -142,9 +158,6 @@ export default function SolveOtherPractice() {
             headers: { Authorization: `Bearer ${token}` }
           }).catch(err => console.error("Failed to log aptitude", err));
         }
-        
-        // Track real progress
-        recordDailyProgress(user?.email, 1, 5);
       }
     }
   };

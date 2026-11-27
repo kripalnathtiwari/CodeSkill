@@ -475,6 +475,9 @@ export default function SolveAptitude() {
                               saved[recIdx].attemptedAt = new Date().toISOString();
                             }
                             localStorage.setItem(analyticsKey, JSON.stringify(saved));
+                            const latestEntry = saved[recIdx === -1 ? saved.length - 1 : recIdx];
+                            saveAptitudeAnalyticsToDB(user.email, [latestEntry]).catch(() => {});
+                            recordDailyProgress(user.email, 1, isCorr ? 5 : 1);
                           } catch (e) {}
                         }
                       }

@@ -44,6 +44,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
+    import("../utils/userProgressSync").then(({ registerProgressQueryClient }) => {
+      registerProgressQueryClient(queryClient);
+    });
+  }, [queryClient]);
+
+  useEffect(() => {
     // Load from local storage on mount
     const storedToken = localStorage.getItem("accessToken");
     const storedUser = localStorage.getItem("user");

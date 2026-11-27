@@ -1,3 +1,5 @@
+import { saveDailyProgressToDB } from './userProgressSync';
+
 export interface DailyProgress {
   questionsSolved: number;
   pointsEarned: number;
@@ -12,7 +14,9 @@ export const recordLogin = (userEmail: string | undefined | null) => {
   try {
     const saved = localStorage.getItem(key);
     if (saved) currentProgress = JSON.parse(saved);
-  } catch (e) {}
+  } catch {
+    /* ignore malformed storage */
+  }
 
   if (!currentProgress[today]) {
     currentProgress[today] = { questionsSolved: 0, pointsEarned: 0, loggedIn: true };
@@ -47,6 +51,9 @@ export const recordDailyProgress = (userEmail: string | undefined | null, questi
   currentProgress[today].pointsEarned += pointsDelta;
 
   localStorage.setItem(key, JSON.stringify(currentProgress));
+
+  // Sync updated day entry directly to backend DB
+  void saveDailyProgressToDB(userEmail, { [today]: currentProgress[today] });
 };
 
 export const getWeeklyProgress = (userEmail: string | undefined | null) => {

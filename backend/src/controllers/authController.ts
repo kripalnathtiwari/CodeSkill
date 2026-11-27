@@ -840,10 +840,10 @@ export class AuthController {
       return await respondWithCachedJson(req, res, {
         key: cacheKey,
         ttlSeconds: 60,
-        cacheControl: "private, max-age=30",
+        cacheControl: "private, no-cache",
         loader: async () => {
-          // Run all 3 independent reads concurrently instead of 3 sequential DB round-trips
-          const [existingSyncRecord, dbEnrollments, dbSubmissions] = await Promise.all([
+          // Run all independent DB reads concurrently
+          const [existingSyncRecord, dbEnrollments, dbSubmissions, dbTestAttempts] = await Promise.all([
             prisma.userProgressSync.findUnique({
               where: { userId },
             }),
@@ -856,9 +856,37 @@ export class AuthController {
               },
             }),
             prisma.submission.findMany({
-              where: { userId, status: "ACCEPTED" },
-              select: { questionId: true },
-              distinct: ["questionId"],
+              where: { userId },
+              orderBy: { createdAt: "desc" },
+              select: {
+                questionId: true,
+                status: true,
+                createdAt: true,
+                question: {
+                  select: { difficulty: true, type: true, tags: true },
+                },
+              },
+            }),
+            prisma.testAttempt.findMany({
+              where: {
+                userId,
+                status: { in: ["SUBMITTED", "GRADED", "PUBLISHED", "COMPLETED"] },
+              },
+              orderBy: { createdAt: "desc" },
+              select: {
+                id: true,
+                testId: true,
+                score: true,
+                maxScore: true,
+                endTime: true,
+                createdAt: true,
+                test: {
+                  select: {
+                    title: true,
+                    _count: { select: { questions: true } },
+                  },
+                },
+              },
             }),
           ]);
 
@@ -879,9 +907,52 @@ export class AuthController {
             });
           }
 
+          // Deduplicate latest/best submission status per questionId
+          const codingByQuestion = new Map<
+            string,
+            {
+              id: string;
+              topic: string;
+              difficulty: string;
+              correct: boolean;
+              attemptedAt: string;
+              type: string;
+            }
+          >();
+          const acceptedCodingIds: string[] = [];
+
+          for (const sub of dbSubmissions) {
+            const isAccepted = sub.status === "ACCEPTED";
+            if (isAccepted && !acceptedCodingIds.includes(sub.questionId)) {
+              acceptedCodingIds.push(sub.questionId);
+            }
+            const existing = codingByQuestion.get(sub.questionId);
+            if (!existing || (isAccepted && !existing.correct)) {
+              let primaryTag = sub.question?.type === "MCQ" ? "MCQ" : "Coding";
+              if (sub.question?.tags) {
+                try {
+                  const parsedTags = JSON.parse(sub.question.tags);
+                  if (Array.isArray(parsedTags) && parsedTags[0]) {
+                    primaryTag = String(parsedTags[0]);
+                  }
+                } catch {
+                  // Fallback to default topic label
+                }
+              }
+              codingByQuestion.set(sub.questionId, {
+                id: sub.questionId,
+                topic: primaryTag,
+                difficulty: sub.question?.difficulty || "Medium",
+                correct: existing ? existing.correct || isAccepted : isAccepted,
+                attemptedAt: sub.createdAt.toISOString(),
+                type: sub.question?.type || "CODING",
+              });
+            }
+          }
+
           const dsaSolvedSet = new Set<string>([
             ...(Array.isArray(syncRecord.dsaSolved) ? (syncRecord.dsaSolved as string[]) : []),
-            ...dbSubmissions.map((s) => s.questionId),
+            ...acceptedCodingIds,
           ]);
 
           const formattedDbEnrollments = dbEnrollments.map((e) => ({
@@ -906,13 +977,90 @@ export class AuthController {
             }
           });
 
+          const aptitudeAnalytics = Array.isArray(syncRecord.aptitudeAnalytics)
+            ? (syncRecord.aptitudeAnalytics as any[])
+            : [];
+          const otherAnalytics = Array.isArray(syncRecord.otherAnalytics)
+            ? (syncRecord.otherAnalytics as any[])
+            : [];
+
+          // Merge synced testScores with native DB TestAttempt rows
+          const scoreMap = new Map<string, any>();
+          if (Array.isArray(syncRecord.testScores)) {
+            (syncRecord.testScores as any[]).forEach((s) => {
+              const key = String(s.id || `${s.testId}_${s.timestamp || s.date || ""}`);
+              scoreMap.set(key, s);
+            });
+          }
+          dbTestAttempts.forEach((attempt) => {
+            const key = String(attempt.id);
+            if (!scoreMap.has(key)) {
+              scoreMap.set(key, {
+                id: attempt.id,
+                testId: attempt.testId,
+                testTitle: attempt.test?.title || "Assessment Test",
+                studentEmail: req.user?.email,
+                score: attempt.score,
+                maxScore: attempt.maxScore,
+                totalQuestions: attempt.test?._count?.questions || 0,
+                timestamp: (attempt.endTime || attempt.createdAt).toISOString(),
+              });
+            }
+          });
+          const mergedTestScores = Array.from(scoreMap.values());
+
+          // Merge stored dailyProgress with derived activity counts so weekly charts never read empty
+          const storedDaily =
+            syncRecord.dailyProgress && typeof syncRecord.dailyProgress === "object"
+              ? ({ ...(syncRecord.dailyProgress as Record<string, any>) })
+              : {};
+          const derivedDaily: Record<string, { questionsSolved: number; pointsEarned: number }> = {};
+
+          const bumpDay = (isoOrDate: unknown, solvedDelta: number, pointsDelta: number) => {
+            if (!isoOrDate) return;
+            const d = new Date(String(isoOrDate));
+            if (Number.isNaN(d.getTime())) return;
+            const dayKey = d.toISOString().split("T")[0];
+            if (!derivedDaily[dayKey]) {
+              derivedDaily[dayKey] = { questionsSolved: 0, pointsEarned: 0 };
+            }
+            derivedDaily[dayKey].questionsSolved += solvedDelta;
+            derivedDaily[dayKey].pointsEarned += pointsDelta;
+          };
+
+          codingByQuestion.forEach((entry) => {
+            bumpDay(entry.attemptedAt, 1, entry.correct ? 10 : 2);
+          });
+          aptitudeAnalytics.forEach((item) => {
+            bumpDay(item?.attemptedAt, 1, item?.correct ? 5 : 1);
+          });
+          otherAnalytics.forEach((item) => {
+            bumpDay(item?.attemptedAt, 1, item?.correct ? 5 : 1);
+          });
+          mergedTestScores.forEach((s) => {
+            const totalQ = Number(s?.totalQuestions) || 0;
+            const rightQ = Math.min(Number(s?.score) || 0, totalQ || Number(s?.score) || 0);
+            bumpDay(s?.timestamp || s?.date, totalQ || 1, rightQ * 5);
+          });
+
+          const mergedDaily: Record<string, any> = { ...storedDaily };
+          Object.entries(derivedDaily).forEach(([dayKey, derived]) => {
+            const existing = mergedDaily[dayKey] || { questionsSolved: 0, pointsEarned: 0, loggedIn: true };
+            mergedDaily[dayKey] = {
+              ...existing,
+              questionsSolved: Math.max(Number(existing.questionsSolved) || 0, derived.questionsSolved),
+              pointsEarned: Math.max(Number(existing.pointsEarned) || 0, derived.pointsEarned),
+            };
+          });
+
           return {
             dsaSolved: Array.from(dsaSolvedSet),
-            aptitudeAnalytics: syncRecord.aptitudeAnalytics || [],
-            otherAnalytics: syncRecord.otherAnalytics || [],
-            testScores: syncRecord.testScores || [],
+            codingAnalytics: Array.from(codingByQuestion.values()),
+            aptitudeAnalytics,
+            otherAnalytics,
+            testScores: mergedTestScores,
             enrolledCourses: Array.from(enrolledCoursesMap.values()),
-            dailyProgress: syncRecord.dailyProgress || {},
+            dailyProgress: mergedDaily,
           };
         },
       });
@@ -1011,13 +1159,26 @@ export class AuthController {
         });
       }
 
-      // Merge dailyProgress (merge days)
-      const mergedDaily = {
-        ...(existing && typeof existing.dailyProgress === "object" && existing.dailyProgress !== null
+      // Merge dailyProgress per date keeping max activity so partial device syncs never regress counts
+      const existingDaily =
+        existing && typeof existing.dailyProgress === "object" && existing.dailyProgress !== null
           ? (existing.dailyProgress as Record<string, any>)
-          : {}),
-        ...(dailyProgress && typeof dailyProgress === "object" ? dailyProgress : {}),
-      };
+          : {};
+      const incomingDaily =
+        dailyProgress && typeof dailyProgress === "object"
+          ? (dailyProgress as Record<string, any>)
+          : {};
+      const mergedDaily: Record<string, any> = { ...existingDaily };
+
+      Object.entries(incomingDaily).forEach(([dayKey, val]) => {
+        if (!val || typeof val !== "object") return;
+        const prev = mergedDaily[dayKey] || { questionsSolved: 0, pointsEarned: 0, loggedIn: false };
+        mergedDaily[dayKey] = {
+          loggedIn: Boolean(prev.loggedIn || val.loggedIn),
+          questionsSolved: Math.max(Number(prev.questionsSolved) || 0, Number(val.questionsSolved) || 0),
+          pointsEarned: Math.max(Number(prev.pointsEarned) || 0, Number(val.pointsEarned) || 0),
+        };
+      });
 
       const updatedRecord = await prisma.userProgressSync.upsert({
         where: { userId },

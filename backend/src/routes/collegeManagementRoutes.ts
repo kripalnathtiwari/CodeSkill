@@ -24,14 +24,20 @@ import { cache } from '../middlewares/cacheMiddleware';
 
 const router = Router();
 
-// Get public institutions (cached for 5 minutes)
-router.get('/public', cache(300), getPublicInstitutions);
+const PUBLIC_CATALOG_CACHE = cache(600, {
+  scope: 'public',
+  maxAge: 60,
+  staleWhileRevalidate: 600,
+});
 
-// Get public course categories (cached for 5 minutes)
-router.get('/public/courses', cache(300), getPublicCourseCategories);
+// Get public institutions (cached 10m server-side, 60s browser + 600s SWR)
+router.get('/public', PUBLIC_CATALOG_CACHE, getPublicInstitutions);
+
+// Get public course categories (cached 10m server-side, 60s browser + 600s SWR)
+router.get('/public/courses', PUBLIC_CATALOG_CACHE, getPublicCourseCategories);
 
 // Get all institutions
-router.get('/', authenticateJWT, cache(300), getAllInstitutions);
+router.get('/', authenticateJWT, cache(300, 'private'), getAllInstitutions);
 
 // Create a new institution
 router.post('/', authenticateJWT, requireRole(['ADMIN']), createInstitution);

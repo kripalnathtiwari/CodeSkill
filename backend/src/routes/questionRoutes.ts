@@ -5,10 +5,16 @@ import { cache } from "../middlewares/cacheMiddleware";
 
 const router = Router();
 
+const PUBLIC_CATALOG_CACHE = cache(600, {
+  scope: "public",
+  maxAge: 60,
+  staleWhileRevalidate: 600,
+});
+
 // Public lists or user searches
-router.get("/", cache(300), QuestionController.getQuestions);
-router.get("/metadata/aggregates", cache(3600), QuestionController.getTagsAndCompanies); // Cache for 1 hour
-router.get("/:slug", cache(300), QuestionController.getQuestionDetails);
+router.get("/", PUBLIC_CATALOG_CACHE, QuestionController.getQuestions);
+router.get("/metadata/aggregates", QuestionController.getTagsAndCompanies); // Cached 1h with singleflight in controller
+router.get("/:slug", PUBLIC_CATALOG_CACHE, QuestionController.getQuestionDetails);
 
 // Instructor and admin authorized configurations
 router.post(

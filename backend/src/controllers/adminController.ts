@@ -1,109 +1,124 @@
 import { Request, Response } from "express";
 import prisma from "../config/db";
 import logger from "../config/logger";
+import { getOrSetCache } from "../middlewares/cacheMiddleware";
 
 export const getDashboardStats = async (req: Request, res: Response): Promise<any> => {
   try {
-    // 1. Total Revenue
-    const revenueAgg = await prisma.payment.aggregate({
-      _sum: { amount: true }
-    });
-    const totalRevenue = revenueAgg._sum.amount || 0;
+    res.setHeader("Cache-Control", "private, max-age=60");
 
-    // 2. Course Enrollments
-    const enrollments = await prisma.enrollment.count();
+    const { value: data, source } = await getOrSetCache(
+      "cache:/api/v1/admin/dashboard-stats",
+      300,
+      async () => {
+        const activeCutoff = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        const currentYearStart = new Date(new Date().getFullYear(), 0, 1);
 
-    // 3. Registered Users
-    const users = await prisma.user.count();
+        // Execute all 8 independent DB queries concurrently instead of 9 sequential round-trips,
+        // and aggregate monthly revenue directly in PostgreSQL instead of fetching all Payment rows.
+        const [
+          revenueAgg,
+          enrollments,
+          users,
+          active,
+          colleges,
+          instructors,
+          monthlyRevenueRows,
+          recentEnrollments,
+          recentUsers,
+        ] = await Promise.all([
+          prisma.payment.aggregate({ _sum: { amount: true } }),
+          prisma.enrollment.count(),
+          prisma.user.count(),
+          prisma.deviceSession.count({
+            where: { lastActive: { gte: activeCutoff } },
+          }),
+          prisma.collegeInstitution.count(),
+          prisma.user.count({ where: { role: "INSTRUCTOR" } }),
+          prisma.$queryRaw<Array<{ month: number; revenue: number }>>`
+            SELECT
+              EXTRACT(MONTH FROM "createdAt")::int AS month,
+              COALESCE(SUM(amount), 0)::double precision AS revenue
+            FROM "Payment"
+            WHERE "createdAt" >= ${currentYearStart}
+            GROUP BY 1
+          `,
+          prisma.enrollment.findMany({
+            take: 5,
+            orderBy: { createdAt: "desc" },
+            select: {
+              createdAt: true,
+              student: {
+                select: {
+                  email: true,
+                  profile: { select: { firstName: true, lastName: true } },
+                },
+              },
+              course: { select: { title: true } },
+            },
+          }),
+          prisma.user.findMany({
+            take: 5,
+            orderBy: { createdAt: "desc" },
+            select: {
+              email: true,
+              profile: { select: { firstName: true, lastName: true } },
+              createdAt: true,
+            },
+          }),
+        ]);
 
-    // 4. Active Sandbox Sessions (active in last 24 hours)
-    const active = await prisma.deviceSession.count({
-      where: {
-        lastActive: {
-          gte: new Date(Date.now() - 24 * 60 * 60 * 1000)
-        }
+        const totalRevenue = revenueAgg._sum.amount || 0;
+
+        const monthlyRevenue = Array(7).fill(0);
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"];
+        monthlyRevenueRows.forEach((row) => {
+          const idx = Number(row.month) - 1;
+          if (idx >= 0 && idx < 7) {
+            monthlyRevenue[idx] = Number(row.revenue) || 0;
+          }
+        });
+
+        const chartData = months.map((name, i) => ({
+          name,
+          revenue: monthlyRevenue[i],
+        }));
+
+        const activities = [
+          ...recentEnrollments.map((e) => ({
+            type: "ENROLLMENT",
+            title: "New Enrollment",
+            description: `${e.student?.profile?.firstName || e.student.email.split("@")[0]} enrolled in "${e.course?.title || "a course"}"`,
+            timestamp: e.createdAt,
+          })),
+          ...recentUsers.map((u) => ({
+            type: "USER",
+            title: "New User Registration",
+            description: `${u.profile?.firstName || u.email.split("@")[0]} registered on the platform`,
+            timestamp: u.createdAt,
+          })),
+        ];
+
+        activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+        const recentActivities = activities.slice(0, 10);
+
+        return {
+          revenue: totalRevenue,
+          enrollments,
+          users,
+          active,
+          colleges,
+          instructors,
+          chartData,
+          recentActivities,
+        };
       }
-    });
+    );
 
-    // 5. Total Colleges
-    const colleges = await prisma.collegeInstitution.count();
-
-    // 6. Total Instructors
-    const instructors = await prisma.user.count({
-      where: { role: "INSTRUCTOR" }
-    });
-
-    // 7. Revenue Chart Data - Only fetch payments from current year to optimize query size
-    const currentYearStart = new Date(new Date().getFullYear(), 0, 1);
-    const payments = await prisma.payment.findMany({
-      where: {
-        createdAt: { gte: currentYearStart }
-      },
-      select: { amount: true, createdAt: true }
-    });
-
-    // Basic aggregation for the last 7 months of the year
-    const monthlyRevenue = Array(7).fill(0);
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'];
-    
-    payments.forEach(p => {
-        const month = p.createdAt.getMonth();
-        if (month < 7) {
-            monthlyRevenue[month] += p.amount;
-        }
-    });
-
-    const chartData = months.map((name, i) => ({
-      name,
-      revenue: monthlyRevenue[i]
-    }));
-
-    // 8. Recent System Activity
-    const recentEnrollments = await prisma.enrollment.findMany({
-      take: 5,
-      orderBy: { createdAt: "desc" },
-      include: {
-        student: { select: { email: true, profile: { select: { firstName: true, lastName: true } } } },
-        course: { select: { title: true } }
-      }
-    });
-    
-    const recentUsers = await prisma.user.findMany({
-      take: 5,
-      orderBy: { createdAt: "desc" },
-      select: { email: true, profile: { select: { firstName: true, lastName: true } }, createdAt: true }
-    });
-
-    const activities = [
-      ...recentEnrollments.map(e => ({
-        type: 'ENROLLMENT',
-        title: 'New Enrollment',
-        description: `${e.student?.profile?.firstName || e.student.email.split('@')[0]} enrolled in "${e.course?.title || 'a course'}"`,
-        timestamp: e.createdAt
-      })),
-      ...recentUsers.map(u => ({
-        type: 'USER',
-        title: 'New User Registration',
-        description: `${u.profile?.firstName || u.email.split('@')[0]} registered on the platform`,
-        timestamp: u.createdAt
-      }))
-    ];
-
-    activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-    const recentActivities = activities.slice(0, 10);
-
+    res.setHeader("X-Cache", source);
     return res.status(200).json({
       success: true,
-      data: {
-        revenue: totalRevenue,
-        enrollments,
-        users,
-        active,
-        colleges,
-        instructors,
-        chartData,
-        recentActivities
-      }
+      data,
     });
   } catch (error: any) {
     logger.error(`Error fetching dashboard stats: ${error.message}`);

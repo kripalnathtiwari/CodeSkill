@@ -12,9 +12,15 @@ dotenv.config();
 import logger from "./config/logger";
 import { corsOptions } from "./config/corsConfig";
 import { errorHandler } from "./middlewares/errorMiddleware";
+import { requestIdMiddleware } from "./middlewares/requestIdMiddleware";
 import { initSocketServer } from "./sockets/socketServer";
 import compression from "compression";
 import { performanceLogger } from "./middlewares/performanceLogger";
+import healthRoutes from "./routes/healthRoutes";
+import { createAdminQueuesRouter } from "./routes/adminQueueRoutes";
+import { closeAllQueues } from "./queues";
+import { closeAllRedisConnections } from "./lib/redis";
+import { disconnectPrisma, getPoolConfigSummary, measureDbLatencyMs } from "./config/db";
 
 // Route lists
 import authRoutes from "./routes/authRoutes";
@@ -57,6 +63,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(requestIdMiddleware);
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions)); // Explicit preflight handling
 app.use(express.json());
@@ -76,7 +83,7 @@ app.use((req, res, next) => {
       req.path.startsWith("/api/v1/admin/cv/job-skills") ||
       req.path.startsWith("/api/v1/jobs"))
   ) {
-    res.setHeader("Cache-Control", "public, max-age=60, stale-while-revalidate=300");
+    res.setHeader("Cache-Control", "public, max-age=60, stale-while-revalidate=600");
   } else if (req.method === "GET" && req.path.startsWith("/public")) {
     res.setHeader("Cache-Control", "public, max-age=86400, immutable");
   }
@@ -94,10 +101,11 @@ app.use(
   })
 );
 
-// Health check endpoint
-app.get("/health", (req, res) => {
-  res.status(200).json({ status: "healthy", timestamp: new Date() });
-});
+// Health check & BullMQ queue metrics endpoints
+app.use("/health", healthRoutes);
+
+// Bull Board admin UI behind JWT + ADMIN role middleware
+app.use("/admin/queues", createAdminQueuesRouter());
 
 // Bind API route paths
 app.use("/api/v1/auth", authRoutes);
@@ -140,6 +148,23 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
 initBackupCronJob();
 server.listen(PORT, "0.0.0.0", () => {
   logger.info(`Server running on port ${PORT} in ${process.env.NODE_ENV || "development"} mode.`);
+  logger.info(`[Startup] Prisma pool config: ${JSON.stringify(getPoolConfigSummary())}`);
+  measureDbLatencyMs()
+    .then((ms) => logger.info(`[Startup] PostgreSQL round-trip ping: ${ms} ms`))
+    .catch((err) => logger.warn(`[Startup] PostgreSQL ping failed: ${err.message}`));
 });
+
+const shutdownApi = async (signal: string) => {
+  logger.info(`[API] Received ${signal}. Closing HTTP server, queues, Redis, and Prisma...`);
+  server.close(async () => {
+    await closeAllQueues();
+    await closeAllRedisConnections();
+    await disconnectPrisma();
+    process.exit(0);
+  });
+};
+
+process.on("SIGTERM", () => void shutdownApi("SIGTERM"));
+process.on("SIGINT", () => void shutdownApi("SIGINT"));
 
 export default app;

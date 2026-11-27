@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import prisma from "../config/db";
 import logger from "../config/logger";
-import { invalidateCachePattern } from "../middlewares/cacheMiddleware";
+import { getOrSetCache, invalidateCachePattern } from "../middlewares/cacheMiddleware";
 
 export class QuestionController {
   public static async getQuestions(req: Request, res: Response) {
@@ -99,49 +99,73 @@ export class QuestionController {
 
   public static async getTagsAndCompanies(req: Request, res: Response) {
     try {
-      const type = req.query.type as string | undefined;
-      
-      const tagAggregations: any[] = await prisma.$queryRaw`
-        SELECT 
-            tag as name, 
-            CAST(COUNT(*) AS INTEGER) as count
-        FROM "Question"
-        LEFT JOIN LATERAL jsonb_array_elements_text(
-            CASE 
-                WHEN tags IS NULL OR tags = '' OR tags = '[]' THEN '["Uncategorized"]'::jsonb 
-                ELSE tags::jsonb 
-            END
-        ) AS tag ON true
-        WHERE (${type || null}::text IS NULL OR type = ${type || null})
-        GROUP BY tag;
-      `;
+      const type = (req.query.type as string | undefined)?.trim() || null;
+      const cacheKey = `cache:/api/v1/questions/metadata/aggregates:${type || "ALL"}`;
 
-      const companyAggregations: any[] = await prisma.$queryRaw`
-        SELECT 
-            company as name, 
-            CAST(COUNT(*) AS INTEGER) as count
-        FROM "Question"
-        LEFT JOIN LATERAL jsonb_array_elements_text(
-            CASE 
-                WHEN companies IS NULL OR companies = '' OR companies = '[]' THEN '["Uncategorized"]'::jsonb 
-                ELSE companies::jsonb 
-            END
-        ) AS company ON true
-        WHERE (${type || null}::text IS NULL OR type = ${type || null})
-        GROUP BY company;
-      `;
+      const { value: payload, source } = await getOrSetCache(
+        cacheKey,
+        3600,
+        async () => {
+          // Single-pass CTE scans filtered Question rows once instead of two sequential table scans
+          const rows = await prisma.$queryRaw<
+            Array<{ kind: string; name: string; count: number }>
+          >`
+            WITH filtered_questions AS (
+              SELECT tags, companies
+              FROM "Question"
+              WHERE (${type}::text IS NULL OR type = ${type})
+            ),
+            tag_counts AS (
+              SELECT
+                'tag'::text AS kind,
+                tag AS name,
+                CAST(COUNT(*) AS INTEGER) AS count
+              FROM filtered_questions
+              LEFT JOIN LATERAL jsonb_array_elements_text(
+                CASE
+                  WHEN tags IS NULL OR tags = '' OR tags = '[]' THEN '["Uncategorized"]'::jsonb
+                  ELSE tags::jsonb
+                END
+              ) AS tag ON true
+              GROUP BY tag
+            ),
+            company_counts AS (
+              SELECT
+                'company'::text AS kind,
+                company AS name,
+                CAST(COUNT(*) AS INTEGER) AS count
+              FROM filtered_questions
+              LEFT JOIN LATERAL jsonb_array_elements_text(
+                CASE
+                  WHEN companies IS NULL OR companies = '' OR companies = '[]' THEN '["Uncategorized"]'::jsonb
+                  ELSE companies::jsonb
+                END
+              ) AS company ON true
+              GROUP BY company
+            )
+            SELECT kind, name, count FROM tag_counts
+            UNION ALL
+            SELECT kind, name, count FROM company_counts;
+          `;
 
-      const tagCounts: Record<string, number> = {};
-      tagAggregations.forEach(row => {
-        tagCounts[row.name] = row.count;
-      });
+          const tagCounts: Record<string, number> = {};
+          const companyCounts: Record<string, number> = {};
 
-      const companyCounts: Record<string, number> = {};
-      companyAggregations.forEach(row => {
-        companyCounts[row.name] = row.count;
-      });
+          for (const row of rows) {
+            if (row.kind === "tag") {
+              tagCounts[row.name] = row.count;
+            } else {
+              companyCounts[row.name] = row.count;
+            }
+          }
 
-      return res.status(200).json({ tagCounts, companyCounts });
+          return { tagCounts, companyCounts };
+        }
+      );
+
+      res.setHeader("Cache-Control", "public, max-age=3600");
+      res.setHeader("X-Cache", source);
+      return res.status(200).json(payload);
     } catch (err: any) {
       logger.error(`Get aggregate metadata failed: ${err.message}`);
       return res.status(500).json({ error: "Failed to load metadata" });

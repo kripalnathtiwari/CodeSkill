@@ -3,24 +3,42 @@ import prisma from "../config/db";
 import path from "path";
 import fs from "fs";
 import { uploadMedia, deleteMedia } from "../services/cloudinaryService";
+import { getOrSetCache, invalidateCachePattern, respondWithCachedJson } from "../middlewares/cacheMiddleware";
 
-// Get all global notes (for students to view)
+const NOTES_LIST_SELECT = {
+  id: true,
+  adminId: true,
+  title: true,
+  content: true,
+  pdfUrl: true,
+  imageUrl: true,
+  courseName: true,
+  createdAt: true,
+  updatedAt: true,
+  admin: {
+    select: {
+      email: true,
+      profile: {
+        select: { firstName: true, lastName: true },
+      },
+    },
+  },
+} as const;
+
+// Get all global notes (cached per userId with private Cache-Control + ETag 304 fast-path)
 export const getMyNotes = async (req: Request, res: Response) => {
   try {
-    const notes = await prisma.note.findMany({
-      orderBy: { createdAt: "desc" },
-      include: {
-        admin: {
-          select: { 
-            email: true,
-            profile: {
-              select: { firstName: true, lastName: true }
-            }
-          },
-        },
-      },
+    const userId = (req as any).user?.id || "anonymous";
+    return await respondWithCachedJson(req, res, {
+      key: `cache:my-notes:${userId}`,
+      ttlSeconds: 60,
+      cacheControl: "private, max-age=30",
+      loader: async () =>
+        prisma.note.findMany({
+          orderBy: { createdAt: "desc" },
+          select: NOTES_LIST_SELECT,
+        }),
     });
-    res.json(notes);
   } catch (error) {
     console.error("Error fetching notes:", error);
     res.status(500).json({ error: "Failed to fetch notes" });
@@ -30,19 +48,17 @@ export const getMyNotes = async (req: Request, res: Response) => {
 // Admin: Get all global notes
 export const getGlobalNotes = async (req: Request, res: Response) => {
   try {
-    const notes = await prisma.note.findMany({
-      orderBy: { createdAt: "desc" },
-      include: {
-        admin: {
-          select: { 
-            email: true,
-            profile: {
-              select: { firstName: true, lastName: true }
-            }
-          },
-        },
-      },
-    });
+    res.setHeader("Cache-Control", "private, max-age=60");
+    const { value: notes, source } = await getOrSetCache(
+      "cache:/api/v1/notes/admin/global-notes",
+      300,
+      async () =>
+        prisma.note.findMany({
+          orderBy: { createdAt: "desc" },
+          select: NOTES_LIST_SELECT,
+        })
+    );
+    res.setHeader("X-Cache", source);
     res.json(notes);
   } catch (error) {
     console.error("Error fetching global notes:", error);
@@ -80,6 +96,10 @@ export const createGlobalNote = async (req: Request, res: Response) => {
       },
     });
 
+    await Promise.all([
+      invalidateCachePattern("cache:my-notes:"),
+      invalidateCachePattern("/api/v1/notes"),
+    ]);
     res.status(201).json(note);
   } catch (error) {
     console.error("Error creating global note:", error);
@@ -115,6 +135,10 @@ export const deleteNote = async (req: Request, res: Response) => {
     await prisma.note.delete({
       where: { id: noteId },
     });
+    await Promise.all([
+      invalidateCachePattern("cache:my-notes:"),
+      invalidateCachePattern("/api/v1/notes"),
+    ]);
     res.json({ message: "Note deleted successfully" });
   } catch (error) {
     console.error("Error deleting note:", error);
@@ -160,6 +184,10 @@ export const updateNote = async (req: Request, res: Response) => {
       },
     });
 
+    await Promise.all([
+      invalidateCachePattern("cache:my-notes:"),
+      invalidateCachePattern("/api/v1/notes"),
+    ]);
     res.json(note);
   } catch (error) {
     console.error("Error updating note:", error);

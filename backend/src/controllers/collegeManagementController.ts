@@ -335,6 +335,7 @@ export const createCourseCategory = async (req: AuthenticatedRequest, res: Respo
       },
       include: courseCategoryInclude
     });
+    await invalidateCachePattern('/api/v1/college-management');
     res.status(201).json(course);
   } catch (error: any) {
     console.error('Error creating course category:', error);
@@ -354,6 +355,7 @@ export const updateCourseCategory = async (req: AuthenticatedRequest, res: Respo
       },
       include: courseCategoryInclude
     });
+    await invalidateCachePattern('/api/v1/college-management');
     res.status(200).json(updated);
   } catch (error: any) {
     console.error('Error updating course category:', error);
@@ -367,6 +369,7 @@ export const deleteCourseCategory = async (req: AuthenticatedRequest, res: Respo
     await prisma.collegeCourseCategory.delete({
       where: { id }
     });
+    await invalidateCachePattern('/api/v1/college-management');
     res.status(204).send();
   } catch (error: any) {
     console.error('Error deleting course category:', error);
@@ -396,6 +399,7 @@ export const createCourseClass = async (req: AuthenticatedRequest, res: Response
       where: { id },
       include: courseCategoryInclude
     });
+    await invalidateCachePattern('/api/v1/college-management');
     res.status(201).json(updatedCourse);
   } catch (error: any) {
     console.error('Error creating course class:', error);
@@ -418,6 +422,7 @@ export const updateCourseClass = async (req: AuthenticatedRequest, res: Response
       where: { id: updatedClass.categoryId },
       include: courseCategoryInclude
     });
+    await invalidateCachePattern('/api/v1/college-management');
     res.status(200).json(updatedCourse);
   } catch (error: any) {
     console.error('Error updating course class:', error);
@@ -438,6 +443,7 @@ export const deleteCourseClass = async (req: AuthenticatedRequest, res: Response
       where: { id: classObj.categoryId },
       include: courseCategoryInclude
     });
+    await invalidateCachePattern('/api/v1/college-management');
     res.status(200).json(updatedCourse);
   } catch (error: any) {
     console.error('Error deleting course class:', error);
@@ -484,6 +490,7 @@ export const addCourseStudent = async (req: AuthenticatedRequest, res: Response)
       where: { id },
       include: courseCategoryInclude
     });
+    await invalidateCachePattern('/api/v1/college-management');
     res.status(200).json(updatedCourse);
   } catch (error: any) {
     console.error('Error adding course student(s):', error);
@@ -501,6 +508,7 @@ export const removeCourseStudent = async (req: AuthenticatedRequest, res: Respon
       where: { id },
       include: courseCategoryInclude
     });
+    await invalidateCachePattern('/api/v1/college-management');
     res.status(200).json(updatedCourse);
   } catch (error: any) {
     console.error('Error removing course student:', error);
@@ -535,6 +543,7 @@ export const assignCourseInstructor = async (req: AuthenticatedRequest, res: Res
       where: { id },
       include: courseCategoryInclude
     });
+    await invalidateCachePattern('/api/v1/college-management');
     res.status(200).json(updatedCourse);
   } catch (error: any) {
     console.error('Error assigning course instructor:', error);
@@ -552,6 +561,7 @@ export const removeCourseInstructor = async (req: AuthenticatedRequest, res: Res
       where: { id },
       include: courseCategoryInclude
     });
+    await invalidateCachePattern('/api/v1/college-management');
     res.status(200).json(updatedCourse);
   } catch (error: any) {
     console.error('Error removing course instructor:', error);

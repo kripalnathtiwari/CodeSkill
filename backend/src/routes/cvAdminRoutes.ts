@@ -30,8 +30,14 @@ const requireAdmin = [authenticateJWT, requireRole(['ADMIN', 'SUPERADMIN'])];
 // ==========================
 // CV Samples
 // ==========================
+const PUBLIC_CATALOG_CACHE = cache(600, {
+  scope: 'public',
+  maxAge: 60,
+  staleWhileRevalidate: 600,
+});
+
 router.post('/samples', requireAdmin, upload.single('file'), uploadSampleCv);
-router.get('/samples', cache(300), getSampleCvs); // Public so users can view them
+router.get('/samples', PUBLIC_CATALOG_CACHE, getSampleCvs); // Public so users can view them
 router.delete('/samples/:id', requireAdmin, deleteSampleCv);
 
 // ==========================
@@ -39,7 +45,7 @@ router.delete('/samples/:id', requireAdmin, deleteSampleCv);
 // ==========================
 router.post('/skills', requireAdmin, addJobSkill);
 router.put('/skills/remove/:id', requireAdmin, removeJobSkill);
-router.get('/skills', cache(300), getJobSkills); // Public so CV builder can fetch them
+router.get('/skills', PUBLIC_CATALOG_CACHE, getJobSkills); // Public so CV builder can fetch them
 router.delete('/skills/:id', requireAdmin, deleteJobSkillMap);
 
 export default router;

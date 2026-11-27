@@ -1,11 +1,19 @@
 import { Request, Response } from 'express';
 import prisma from '../config/db';
+import { getOrSetCache, invalidateCachePattern } from '../middlewares/cacheMiddleware';
 
 export const getAllProjectIdeas = async (req: Request, res: Response) => {
   try {
-    const projects = await prisma.projectIdea.findMany({
-      orderBy: { createdAt: 'desc' }
-    });
+    res.setHeader('Cache-Control', 'private, max-age=120');
+    const { value: projects, source } = await getOrSetCache(
+      'cache:/api/v1/projects',
+      600,
+      async () =>
+        prisma.projectIdea.findMany({
+          orderBy: { createdAt: 'desc' },
+        })
+    );
+    res.setHeader('X-Cache', source);
     res.json(projects);
   } catch (error) {
     console.error('Error fetching project ideas:', error);
@@ -46,6 +54,7 @@ export const createProjectIdea = async (req: Request, res: Response) => {
       }
     });
     
+    await invalidateCachePattern('/api/v1/projects');
     res.status(201).json(project);
   } catch (error) {
     console.error('Error creating project idea:', error);
@@ -70,6 +79,7 @@ export const updateProjectIdea = async (req: Request, res: Response) => {
       }
     });
     
+    await invalidateCachePattern('/api/v1/projects');
     res.json(project);
   } catch (error) {
     console.error('Error updating project idea:', error);
@@ -83,6 +93,7 @@ export const deleteProjectIdea = async (req: Request, res: Response) => {
     await prisma.projectIdea.delete({
       where: { id }
     });
+    await invalidateCachePattern('/api/v1/projects');
     res.status(204).send();
   } catch (error) {
     console.error('Error deleting project idea:', error);

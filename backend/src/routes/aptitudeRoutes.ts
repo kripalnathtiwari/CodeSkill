@@ -15,8 +15,14 @@ import { cache } from '../middlewares/cacheMiddleware';
 
 const router = Router();
 
+const PUBLIC_CATALOG_CACHE = cache(600, {
+  scope: 'public',
+  maxAge: 60,
+  staleWhileRevalidate: 600,
+});
+
 // Get aptitude aggregates
-router.get('/metadata/aggregates', cache(300), getAptitudeAggregates);
+router.get('/metadata/aggregates', PUBLIC_CATALOG_CACHE, getAptitudeAggregates);
 
 // Bulk create aptitude problems
 router.post('/bulk', authenticateJWT, requireRole(['ADMIN', 'CONTENT_CREATOR']), createBulkAptitudeProblems);
@@ -28,11 +34,11 @@ router.put('/topic/rename', authenticateJWT, requireRole(['ADMIN', 'CONTENT_CREA
 // Delete topic and all questions under it
 router.delete('/topic/:topicName', authenticateJWT, requireRole(['ADMIN', 'CONTENT_CREATOR']), deleteAptitudeTopic);
 
-// Get all aptitude problems (cached for 5 minutes)
-router.get('/', cache(300), getAllAptitudeProblems);
+// Get all aptitude problems (cached 10 minutes + SWR 600s)
+router.get('/', PUBLIC_CATALOG_CACHE, getAllAptitudeProblems);
 
 // Get aptitude problem by ID
-router.get('/:id', cache(300), getAptitudeProblemById);
+router.get('/:id', PUBLIC_CATALOG_CACHE, getAptitudeProblemById);
 
 // Create a new aptitude problem
 router.post('/', authenticateJWT, requireRole(['ADMIN', 'CONTENT_CREATOR']), createAptitudeProblem);

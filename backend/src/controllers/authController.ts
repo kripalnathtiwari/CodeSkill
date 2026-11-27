@@ -8,7 +8,9 @@ import axios from "axios";
 import { OAuth2Client } from "google-auth-library";
 import crypto from "crypto";
 import redis from "../config/redis";
-import EmailService from "../services/emailService";
+import { getOrSetCache, invalidateCacheKey, respondWithCachedJson } from "../middlewares/cacheMiddleware";
+import { CorrelatedRequest } from "../middlewares/requestIdMiddleware";
+import { enqueueOtpEmail, enqueueTransactionalEmail } from "../queues/emailQueue";
 import { emitForceLogout } from "../sockets/socketServer";
 
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
@@ -180,6 +182,18 @@ export class AuthController {
           profile: true,
         },
       });
+
+      // Dispatch welcome email asynchronously via BullMQ without blocking registration response
+      enqueueTransactionalEmail({
+        kind: "welcome",
+        to: user.email,
+        userId: user.id,
+        userName: firstName,
+        idempotencyKey: `welcome-${user.id}`,
+        requestId: (req as CorrelatedRequest).requestId,
+      }).catch((qErr) => logger.warn(`Welcome email enqueue failed: ${qErr.message}`));
+
+      invalidateCacheKey("cache:/api/v1/admin/dashboard-stats").catch(() => {});
 
       logger.info(`User registered successfully: ${user.id}`);
       return res.status(201).json({
@@ -527,10 +541,21 @@ export class AuthController {
     }
 
     try {
-      await prisma.user.update({
+      const updatedUser = await prisma.user.update({
         where: { id: userId },
         data: { role },
+        select: { id: true },
       });
+      // Invalidate any active cached sessions so updated role takes effect immediately
+      const sessions = await prisma.deviceSession.findMany({
+        where: { userId: updatedUser.id, isActive: true },
+        select: { sessionId: true },
+      });
+      sessions.forEach((s) => invalidateLocalSession(s.sessionId || undefined));
+      if (redis && sessions.length > 0) {
+        const keys = sessions.map((s) => `session:${s.sessionId}`).filter(Boolean);
+        if (keys.length > 0) redis.del(...keys).catch(() => {});
+      }
       return res.status(200).json({ message: "Role updated successfully" });
     } catch (err: any) {
       logger.error(`Failed to update role: ${err.message}`);
@@ -606,8 +631,12 @@ export class AuthController {
         });
       }
 
-      // Send Email
-      await EmailService.sendOtpEmail(email, otp);
+      // Enqueue high-priority OTP email job (worker enforces OTP TTL + Brevo rate limit)
+      await enqueueOtpEmail({
+        to: email,
+        otp,
+        requestId: (req as CorrelatedRequest).requestId,
+      });
 
       return res.status(200).json({ message: "OTP sent successfully" });
     } catch (err: any) {
@@ -805,92 +834,88 @@ export class AuthController {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    const cacheKey = `cache:user_progress:${userId}`;
-    if (redis) {
-      try {
-        const cached = await redis.get(cacheKey);
-        if (cached) {
-          return res.status(200).json(JSON.parse(cached));
-        }
-      } catch (redisErr: any) {
-        logger.warn(`Redis progress cache lookup failed: ${redisErr.message}`);
-      }
-    }
+    const cacheKey = `cache:user-progress:${userId}`;
 
     try {
-      let syncRecord = await prisma.userProgressSync.findUnique({
-        where: { userId },
+      return await respondWithCachedJson(req, res, {
+        key: cacheKey,
+        ttlSeconds: 60,
+        cacheControl: "private, max-age=30",
+        loader: async () => {
+          // Run all 3 independent reads concurrently instead of 3 sequential DB round-trips
+          const [existingSyncRecord, dbEnrollments, dbSubmissions] = await Promise.all([
+            prisma.userProgressSync.findUnique({
+              where: { userId },
+            }),
+            prisma.enrollment.findMany({
+              where: { studentId: userId },
+              select: {
+                courseId: true,
+                createdAt: true,
+                course: { select: { title: true } },
+              },
+            }),
+            prisma.submission.findMany({
+              where: { userId, status: "ACCEPTED" },
+              select: { questionId: true },
+              distinct: ["questionId"],
+            }),
+          ]);
+
+          let syncRecord = existingSyncRecord;
+          if (!syncRecord) {
+            syncRecord = await prisma.userProgressSync.upsert({
+              where: { userId },
+              create: {
+                userId,
+                dsaSolved: [],
+                aptitudeAnalytics: [],
+                otherAnalytics: [],
+                testScores: [],
+                enrolledCourses: [],
+                dailyProgress: {},
+              },
+              update: {},
+            });
+          }
+
+          const dsaSolvedSet = new Set<string>([
+            ...(Array.isArray(syncRecord.dsaSolved) ? (syncRecord.dsaSolved as string[]) : []),
+            ...dbSubmissions.map((s) => s.questionId),
+          ]);
+
+          const formattedDbEnrollments = dbEnrollments.map((e) => ({
+            courseId: e.courseId,
+            courseTitle: e.course?.title || "Enrolled Course",
+            email: req.user?.email,
+            dateRegistered: e.createdAt.toISOString(),
+          }));
+
+          const existingCourses = Array.isArray(syncRecord.enrolledCourses)
+            ? (syncRecord.enrolledCourses as any[])
+            : [];
+
+          const enrolledCoursesMap = new Map<string, any>();
+          existingCourses.forEach((c) => {
+            const id = c.courseId || c.id || c.title || c.courseTitle;
+            if (id) enrolledCoursesMap.set(String(id), c);
+          });
+          formattedDbEnrollments.forEach((c) => {
+            if (!enrolledCoursesMap.has(String(c.courseId))) {
+              enrolledCoursesMap.set(String(c.courseId), c);
+            }
+          });
+
+          return {
+            dsaSolved: Array.from(dsaSolvedSet),
+            aptitudeAnalytics: syncRecord.aptitudeAnalytics || [],
+            otherAnalytics: syncRecord.otherAnalytics || [],
+            testScores: syncRecord.testScores || [],
+            enrolledCourses: Array.from(enrolledCoursesMap.values()),
+            dailyProgress: syncRecord.dailyProgress || {},
+          };
+        },
       });
-
-      if (!syncRecord) {
-        syncRecord = await prisma.userProgressSync.create({
-          data: {
-            userId,
-            dsaSolved: [],
-            aptitudeAnalytics: [],
-            otherAnalytics: [],
-            testScores: [],
-            enrolledCourses: [],
-            dailyProgress: {},
-          },
-        });
-      }
-
-      // Also gather any native enrollments from DB
-      const dbEnrollments = await prisma.enrollment.findMany({
-        where: { studentId: userId },
-        include: { course: true },
-      });
-
-      // Also gather any accepted submissions from DB
-      const dbSubmissions = await prisma.submission.findMany({
-        where: { userId, status: "ACCEPTED" },
-        select: { questionId: true },
-        distinct: ["questionId"],
-      });
-
-      // Merge native records into the response
-      const dsaSolvedSet = new Set<string>([
-        ...(Array.isArray(syncRecord.dsaSolved) ? (syncRecord.dsaSolved as string[]) : []),
-        ...dbSubmissions.map((s) => s.questionId),
-      ]);
-
-      const formattedDbEnrollments = dbEnrollments.map((e) => ({
-        courseId: e.courseId,
-        courseTitle: e.course?.title || "Enrolled Course",
-        email: req.user?.email,
-        dateRegistered: e.createdAt.toISOString(),
-      }));
-
-      const existingCourses = Array.isArray(syncRecord.enrolledCourses)
-        ? (syncRecord.enrolledCourses as any[])
-        : [];
-      
-      const enrolledCoursesMap = new Map<string, any>();
-      existingCourses.forEach((c) => {
-        const id = c.courseId || c.id || c.title || c.courseTitle;
-        if (id) enrolledCoursesMap.set(String(id), c);
-      });
-      formattedDbEnrollments.forEach((c) => {
-        if (!enrolledCoursesMap.has(String(c.courseId))) {
-          enrolledCoursesMap.set(String(c.courseId), c);
-        }
-      });
-
-      const responsePayload = {
-        dsaSolved: Array.from(dsaSolvedSet),
-        aptitudeAnalytics: syncRecord.aptitudeAnalytics || [],
-        otherAnalytics: syncRecord.otherAnalytics || [],
-        testScores: syncRecord.testScores || [],
-        enrolledCourses: Array.from(enrolledCoursesMap.values()),
-        dailyProgress: syncRecord.dailyProgress || {},
-      };
-
-      if (redis) {
-        redis.set(cacheKey, JSON.stringify(responsePayload), "EX", 60).catch(() => {});
-      }
-
-      return res.status(200).json(responsePayload);
     } catch (err: any) {
       logger.error(`Get user progress failed: ${err.message}`);
       return res.status(500).json({ error: "Failed to fetch user progress" });
@@ -1015,9 +1040,7 @@ export class AuthController {
         },
       });
 
-      if (redis) {
-        redis.del(`cache:user_progress:${userId}`).catch(() => {});
-      }
+      await invalidateCacheKey(`cache:user-progress:${userId}`);
 
       return res.status(200).json(updatedRecord);
     } catch (err: any) {

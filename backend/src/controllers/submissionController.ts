@@ -1,9 +1,10 @@
 import { Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
+import { CorrelatedRequest } from "../middlewares/requestIdMiddleware";
 import prisma from "../config/db";
 import CompilerService from "../services/compilerService";
-import { addSubmissionJob } from "../jobs/submissionQueue";
-import logger from "../config/logger";
+import { enqueueCodeExecution } from "../queues/codeExecutionQueue";
+import logger from "../lib/logger";
 
 export class SubmissionController {
   /**
@@ -30,7 +31,10 @@ export class SubmissionController {
   /**
    * Submit code solution (Production-grade asynchronous evaluation queue)
    */
-  public static async submitCode(req: AuthenticatedRequest, res: Response) {
+  public static async submitCode(
+    req: AuthenticatedRequest & CorrelatedRequest,
+    res: Response
+  ) {
     const { code, language, questionId, testAttemptId } = req.body;
     const userId = req.user?.id;
 
@@ -52,22 +56,38 @@ export class SubmissionController {
         return res.status(404).json({ error: "Target question not found" });
       }
 
-      // Create initial pending submission record
-      const submission = await prisma.submission.create({
-        data: {
-          userId,
-          questionId,
-          code,
-          language,
-          status: "PENDING",
-          testAttemptId,
-        },
+      // Create initial PENDING records in PostgreSQL (source of truth) before enqueuing ID only
+      const submission = await prisma.$transaction(async (tx) => {
+        const sub = await tx.submission.create({
+          data: {
+            userId,
+            questionId,
+            code,
+            language,
+            status: "PENDING",
+            testAttemptId,
+          },
+        });
+        await tx.compilerJob.create({
+          data: {
+            submissionId: sub.id,
+            status: "QUEUED",
+          },
+        });
+        return sub;
       });
 
-      // Dispatch to BullMQ for compilation worker
-      await addSubmissionJob(submission.id);
+      await enqueueCodeExecution({
+        submissionId: submission.id,
+        userId,
+        testAttemptId: testAttemptId ?? null,
+        requestId: req.requestId,
+      });
 
-      logger.info(`Submission logged. Dispatched job for submission ID: ${submission.id}`);
+      logger.info("Submission queued for evaluation", {
+        submissionId: submission.id,
+        requestId: req.requestId,
+      });
       return res.status(202).json({
         message: "Submission received and queued for evaluation",
         submissionId: submission.id,
